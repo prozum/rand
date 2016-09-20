@@ -27,3 +27,8 @@
 *.exe
 *.out
 *.app
+
+# Build files
+build
+.idea
+CMakeLists.txt.user
