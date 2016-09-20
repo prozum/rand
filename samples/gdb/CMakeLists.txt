@@ -1,4 +1,4 @@
 generate_arduino_firmware(gdb
 	BOARD uno
 	SRCS main.c
-	LIBS gdb_support)
+	LIBS gdb-support)
