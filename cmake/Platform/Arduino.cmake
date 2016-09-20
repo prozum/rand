@@ -517,6 +517,22 @@ function(GENERATE_ARDUINO_FIRMWARE INPUT_NAME)
 
     if(INPUT_PORT)
         setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
+    else()
+       # Detect port
+       if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+           file(GLOB INPUT_PORTS /dev/ttyACM*)
+       elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+           file(GLOB INPUT_PORTS /dev/cu.usbmodem*)
+       else()
+           message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet." )
+       endif()
+
+       if(INPUT_PORTS)
+           list(SORT INPUT_PORTS)
+           list(GET INPUT_PORTS 0 INPUT_PORT)
+           message("-- * Detected port: ${INPUT_PORT}")
+           setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
+       endif()
     endif()
     
     if(INPUT_SERIAL)
@@ -632,7 +648,7 @@ function(GENERATE_ARDUINO_EXAMPLE INPUT_NAME)
     if(INPUT_PORT)
         setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
     endif()
-    
+
     if(INPUT_SERIAL)
         setup_serial_target(${INPUT_NAME} "${INPUT_SERIAL}" "${INPUT_PORT}")
     endif()
