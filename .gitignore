@@ -32,3 +32,6 @@
 build
 .idea
 CMakeLists.txt.user
+
+# Vim
+*.swp
