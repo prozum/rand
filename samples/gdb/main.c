@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
 #include "avr8-stub.h"
 
 int cnt = 0;
@@ -20,7 +21,6 @@ int main(void)
     	PORTB &= ~_BV(5);	// LED off
     	cnt++;
     }
-    return 0;
 }
 
 int function(int a)
