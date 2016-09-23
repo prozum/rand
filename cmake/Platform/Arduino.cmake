@@ -534,11 +534,22 @@ function(GENERATE_ARDUINO_FIRMWARE INPUT_NAME)
            setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
        endif()
     endif()
-    
+
     if(INPUT_SERIAL)
         setup_serial_target(${INPUT_NAME} "${INPUT_SERIAL}" "${INPUT_PORT}")
-    endif()
+    else()
+       if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+           set(INPUT_SERIAL "screen")
+       elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+           set(INPUT_SERIAL "screen")
+       else()
+           message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet." )
+       endif()
 
+       if(INPUT_SERIAL)
+           setup_serial_target(${INPUT_NAME} "${INPUT_SERIAL}" "${INPUT_PORT}")
+       endif()
+    endif()
 endfunction()
 
 #=============================================================================#
@@ -1455,14 +1466,20 @@ endfunction()
 #
 #         TARGET_NAME - Target name
 #         CMD         - Serial terminal command
+#         SERIAL_PORT - Serial port
 #
 # Creates a target (${TARGET_NAME}-serial) for launching the serial termnial.
 #
 #=============================================================================#
 function(setup_serial_target TARGET_NAME CMD SERIAL_PORT)
-    string(CONFIGURE "${CMD}" FULL_CMD @ONLY)
+    file(GLOB TERMINALS "/usr/bin/gnome-terminal" "/usr/bin/konsole" "/usr/bin/xterm")
+    list(GET TERMINALS 0 TERMINAL)
+
+    set(ARGUMENTS "-e" "'${CMD} ${SERIAL_PORT}'")
+    separate_arguments(ARGUMENTS)
+
     add_custom_target(${TARGET_NAME}-serial
-                      COMMAND ${FULL_CMD})
+                      COMMAND ${TERMINAL} ${ARGUMENTS})
 endfunction()
 
 
