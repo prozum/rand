@@ -2,7 +2,7 @@ language: c
 dist: trusty
 
 before_install:
-  - sudo apt-get -qq install gcc-avr gdb-avr avrdude
+  - sudo apt-get -qq install gcc-avr gdb-avr avrdude arduino
 
 install:
   - mkdir build && cd build
