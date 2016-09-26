@@ -1,5 +1,5 @@
 /*
- * avr8-stub.h
+ * gdb.h
  *
  *  Created on: 25. 3. 2015
  *      Author: Jan Dolinay
@@ -21,10 +21,10 @@
  * set_debug_traps
  * This routine arranges for handle_exception to run when your program stops. You must call this subroutine explicitly in your program's startup code.
  * handle_exception
- * This is the central workhorse, but your program never calls it explicitly—the setup code arranges for handle_exception to run when a trap is triggered.
+ * This is the central workhorse, but your program never calls it explicitlyï¿½the setup code arranges for handle_exception to run when a trap is triggered.
  * handle_exception takes control when your program stops during execution (for example, on a breakpoint), and mediates communications with gdb on the host machine. This is where the communications protocol is implemented; handle_exception acts as the gdb representative on the target machine. It begins by sending summary information on the state of your program, then continues to execute, retrieving and transmitting any information gdb needs, until you execute a gdb command that makes your program resume; at that point, handle_exception returns control to your own code on the target machine.
  * breakpoint
- * Use this auxiliary subroutine to make your program contain a breakpoint. Depending on the particular situation, this may be the only way for gdb to get control. For instance, if your target machine has some sort of interrupt button, you won't need to call this; pressing the interrupt button transfers control to handle_exception—in effect, to gdb. On some machines, simply receiving characters on the serial port may also trigger a trap; again, in that situation, you don't need to call breakpoint from your own program—simply running ‘target remote’ from the host gdb session gets control.
+ * Use this auxiliary subroutine to make your program contain a breakpoint. Depending on the particular situation, this may be the only way for gdb to get control. For instance, if your target machine has some sort of interrupt button, you won't need to call this; pressing the interrupt button transfers control to handle_exceptionï¿½in effect, to gdb. On some machines, simply receiving characters on the serial port may also trigger a trap; again, in that situation, you don't need to call breakpoint from your own programï¿½simply running ï¿½target remoteï¿½ from the host gdb session gets control.
  * Call breakpoint if none of these is true, or if you simply want to make certain your program stops at a predetermined point for the start of your debugging session.
  * (end quote)
  *

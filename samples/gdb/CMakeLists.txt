@@ -1,4 +1,4 @@
-generate_arduino_firmware(gdb
+generate_arduino_firmware(gdb-sample
 	BOARD uno
 	SRCS main.c
-	LIBS gdb-support)
+	LIBS gdb)

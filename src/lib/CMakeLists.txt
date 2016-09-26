@@ -1,0 +1,15 @@
+# I/O board library
+add_subdirectory(io)
+
+# Logging framework library
+add_subdirectory(log)
+
+# gdb library
+add_subdirectory(gdb)
+
+# Flight Controller library
+add_subdirectory(fc)
+
+# Sensor libraries
+add_subdirectory(ir)
+add_subdirectory(sonar)

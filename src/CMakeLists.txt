@@ -1,1 +1,1 @@
-add_subdirectory(gdb-support)
+add_subdirectory(lib)

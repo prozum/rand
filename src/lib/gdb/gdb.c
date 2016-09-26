@@ -1,5 +1,5 @@
 /*
-a * avr8-stub.c
+ * gdb.c
  *
  *  Created on: 25. 3. 2015
  *      Author: Jan Dolinay
@@ -25,7 +25,7 @@ a * avr8-stub.c
 #include <stdio.h>
 #include <string.h>
 
-#include "avr8-stub.h"
+#include "gdb.h"
 
 
 /* Configuration */
@@ -158,7 +158,7 @@ static uint8_t safe_pgm_read_byte(uint32_t rom_addr_b);
 #if 0
 #define		GDB_STACK_CANARY	(0xAA)
 static void wfill_stack_canary(uint8_t* buff, uint8_t size);
-static uint8_t wcheck_stack_usage(uint8_t* buff, uint8_t size );	/* returns how many bytes are used from given buffer */¨
+static uint8_t wcheck_stack_usage(uint8_t* buff, uint8_t size );	/* returns how many bytes are used from given buffer */ï¿½
 #endif
 
 
