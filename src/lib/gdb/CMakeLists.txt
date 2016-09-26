@@ -1,5 +1,5 @@
 generate_arduino_library(gdb
     BOARD uno
 	SRCS gdb.c
-	HDRS gdb.h
+	HDRS ../gdb.h
 	NO_AUTOLIBS)

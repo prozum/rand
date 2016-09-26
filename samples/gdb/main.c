@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#include "gdb/gdb.h"
+#include "gdb.h"
 
 int cnt = 0;
 int function(int a);
