@@ -17,8 +17,8 @@ typedef enum pin_mode_e {
 //      http://www.avrfreaks.net/forum/tut-c-newbies-guide-avr-adc?name=PNphpBB2&file=viewtopic&t=56429
 
 // set a pin to either input or output
-void io_set_pin(uint8_t port, uint8_t pin, pin_mode_t);
-//void io_clear(uint8_t port, uint8_t pin);
+void io_set_pin(uint8_t port, uint8_t pin, pin_mode_t pmode);
+void io_clear_pin(uint8_t port, uint8_t pin);
 
 void io_digital_write(uint8_t pin, char out);
 char io_digital_read(uint8_t pin);
