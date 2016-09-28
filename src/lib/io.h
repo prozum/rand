@@ -24,16 +24,21 @@ typedef enum port_e {
     _PORTB = 0,
     _PORTC = 1,
     _PORTD = 2
-} port_t ;
+} port_t;
 
-typedef struct pin_s {
-    uint8_t digital[16];
+typedef struct pins_t {
+    uint8_t portb_out[8];
+    uint8_t portb_in[8];
+    uint8_t portd_out[8];
+    uint8_t portd_in[8];
     
-} pin_t;
+} pins_t;
 
-pin_t pins = {
-        {_BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3), _BV(PORTB4), _BV(PORTB5), _BV(PORTB6), _BV(PORTB7),
-                _BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3), _BV(PORTD4), _BV(PORTD5), _BV(PORTD6), _BV(PORTD7)},
+pins_t pins = {
+        {_BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3), _BV(PORTB4), _BV(PORTB5), _BV(PORTB6), _BV(PORTB7)},
+        {_BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3), _BV(PORTD4), _BV(PORTD5), _BV(PORTD6), _BV(PORTD7)},
+        {_BV(PINB0), _BV(PINB1), _BV(PINB2), _BV(PINB3), _BV(PINB4), _BV(PINB5), _BV(PINB6), _BV(PINB7)},
+        {_BV(PIND0), _BV(PIND1), _BV(PIND2), _BV(PIND3), _BV(PIND4), _BV(PIND5), _BV(PIND6), _BV(PIND7)}
 };
 
 // DDRx is data direction register
@@ -50,6 +55,8 @@ void io_digital_write(port_t port, uint8_t pin, pin_state_t ps);
 
 // read state from digital pin
 pin_state_t io_digital_read(port_t port, uint8_t pin);
+
+void io_analog_init(uint8_t pin);
 
 void io_analog_write(uint8_t pin, uint16_t);
 uint16_t io_analog_read(uint8_t pin);
