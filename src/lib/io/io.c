@@ -1,7 +1,8 @@
 #include <io.h>
-
-void io_set_pin(port_t port, uint8_t pin, pin_mode_t pm)
+/*
+void set_pin_mode(dpin_t pin, pin_mode_t pm)
 {
+
     switch (port) {
         case _PORTB:
             DDRB |= (pins.portb_out[pin] * pm);
@@ -14,7 +15,7 @@ void io_set_pin(port_t port, uint8_t pin, pin_mode_t pm)
     }
 }
 
-void io_digital_write(port_t port, uint8_t pin, pin_state_t ps)
+void digital_write(port_t port, uint8_t pin, pin_state_t ps)
 {
     switch (port) {
         case _PORTB:
@@ -28,7 +29,7 @@ void io_digital_write(port_t port, uint8_t pin, pin_state_t ps)
     }
 }
 
-pin_state_t io_digital_read(port_t port, uint8_t pin)
+pin_state_t digital_read(port_t port, uint8_t pin)
 {
     switch (port) {
         case _PORTB:
@@ -41,7 +42,7 @@ pin_state_t io_digital_read(port_t port, uint8_t pin)
     }
 }
 
-void io_analog_init(uint8_t pin)
+void analog_init(uint8_t pin)
 {
     ADMUX = pin;
     ADMUX |= (1 << REFS0);
@@ -55,7 +56,8 @@ void io_analog_init(uint8_t pin)
     ADCSRA |= (1 << ADSC);
 }
 
-uint16_t io_analog_read(uint8_t pin)
+uint16_t analog_read(uint8_t pin)
 {
 
 }
+*/

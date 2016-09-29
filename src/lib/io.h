@@ -6,9 +6,11 @@
 #include <stdint.h>
 #include <log.h>
 
-
-#define F_CPU 16000000UL
-#define BAUD 9600
+#if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
+#   include "m328p.h"
+#elif defined (__AVR_ATmega1280__)
+#   include "m1280.h"
+#endif
 
 typedef enum pin_mode_e {
     OUTPUT  = 0,
@@ -20,45 +22,21 @@ typedef enum pin_state_e {
     HIGH    = 1
 } pin_state_t;
 
-typedef enum port_e {
-    _PORTB = 0,
-    _PORTC = 1,
-    _PORTD = 2
-} port_t;
-
-typedef struct pins_t {
-    uint8_t portb_out[8];
-    uint8_t portb_in[8];
-    uint8_t portd_out[8];
-    uint8_t portd_in[8];
-    
-} pins_t;
-
-pins_t pins = {
-        {_BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3), _BV(PORTB4), _BV(PORTB5), _BV(PORTB6), _BV(PORTB7)},
-        {_BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3), _BV(PORTD4), _BV(PORTD5), _BV(PORTD6), _BV(PORTD7)},
-        {_BV(PINB0), _BV(PINB1), _BV(PINB2), _BV(PINB3), _BV(PINB4), _BV(PINB5), _BV(PINB6), _BV(PINB7)},
-        {_BV(PIND0), _BV(PIND1), _BV(PIND2), _BV(PIND3), _BV(PIND4), _BV(PIND5), _BV(PIND6), _BV(PIND7)}
-};
-
-// DDRx is data direction register
-// PORTx is the port state
-
-// analog IO example:
-//      http://www.avrfreaks.net/forum/tut-c-newbies-guide-avr-adc?name=PNphpBB2&file=viewtopic&t=56429
+typedef uint16_t analog_data;
 
 // sets the pin mode
-void io_set_pin(port_t port, uint8_t pin, pin_mode_t pm);
+void set_pin_mode(dpin_t pin, pin_mode_t pm);
 
 // write state to digital pin
-void io_digital_write(port_t port, uint8_t pin, pin_state_t ps);
+void digital_write(dpin_t pin, pin_state_t ps);
 
 // read state from digital pin
-pin_state_t io_digital_read(port_t port, uint8_t pin);
+pin_state_t digital_read(dpin_t pin);
 
-void io_analog_init(uint8_t pin);
+void set_analog_mode(apin_t pin, pin_mode_t pm);
 
-void io_analog_write(uint8_t pin, uint16_t);
-uint16_t io_analog_read(uint8_t pin);
+void analog_write(apin_t pin, analog_data out);
+
+analog_data analog_read(apin_t pin);
 
 #endif //RAND_IO_H
