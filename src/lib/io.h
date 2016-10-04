@@ -39,4 +39,6 @@ void analog_write(apin_t pin, aval_t out);
 
 aval_t analog_read(apin_t pin);
 
+uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout);
+
 #endif //RAND_IO_H
