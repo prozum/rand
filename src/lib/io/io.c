@@ -1,46 +1,55 @@
 #include <io.h>
-/*
+
 void set_pin_mode(dpin_t pin, pin_mode_t pm)
 {
+    uint8_t port_ = dports[pin];
+    uint8_t pin_  = pins[pin];
 
-    switch (port) {
-        case _PORTB:
-            DDRB |= (pins.portb_out[pin] * pm);
+    switch (port_) {
+        case PINB_:
+            DDRB |= (pin_ * pm);
             break;
-        case _PORTD:
-            DDRD |= (pins.portd_out[pin] * pm);
+        case PIND_:
+            DDRD |= (pin_ * pm);
             break;
         default:
             error++;
     }
 }
 
-void digital_write(port_t port, uint8_t pin, pin_state_t ps)
+void digital_write(dpin_t pin, pin_state_t ps)
 {
-    switch (port) {
-        case _PORTB:
-            PORTB |= ps;
+    uint8_t port_ = dports[pin];
+    uint8_t pin_  = pins[pin];
+
+    switch (port_) {
+        case PINB_:
+            PORTB |= (pin_ * ps);
             break;
-        case _PORTD:
-            PORTD |= ps;
+        case PIND_:
+            PORTD |= (pin_ * ps);
             break;
         default:
             error++;
     }
 }
 
-pin_state_t digital_read(port_t port, uint8_t pin)
+pin_state_t digital_read(dpin_t pin)
 {
-    switch (port) {
-        case _PORTB:
-            return (pin_state_t)((PINB & pins.portb_in[pin]));
-        case _PORTD:
-            return (pin_state_t)((PIND & pins.portd_in[pin]));
+    uint8_t port_ = dports[pin];
+    uint8_t pin_  = pins[pin];
+
+    switch (port_) {
+        case PINB_:
+            return (pin_state_t)(PINB & pin_);
+        case PIND_:
+            return (pin_state_t)(PIND & pin_);
         default:
             error++;
-            return LOW;
     }
 }
+
+/*
 
 void analog_init(uint8_t pin)
 {
@@ -60,4 +69,4 @@ uint16_t analog_read(uint8_t pin)
 {
 
 }
-*/
+ */

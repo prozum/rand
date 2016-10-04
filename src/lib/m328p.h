@@ -8,9 +8,26 @@
 #define BAUD 9600
 
 static uint8_t pins[] = {_BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3),_BV(PORTB4),
-                      _BV(PORTB5), _BV(PORTB6), _BV(PORTB7), _BV(PORTD0), _BV(PORTD1),
-                      _BV(PORTD2), _BV(PORTD3), _BV(PORTD4), _BV(PORTD5), _BV(PORTD6),
-                      _BV(PORTD7)};
+                         _BV(PORTB5), _BV(PORTB6), _BV(PORTB7), _BV(PORTD0), _BV(PORTD1),
+                         _BV(PORTD2), _BV(PORTD3), _BV(PORTD4), _BV(PORTD5), _BV(PORTD6),
+                         _BV(PORTD7)};
+
+typedef enum reg_e {
+    PINB_   = 0x03,
+    DDRB_   = 0x04,
+    PORTB_  = 0x05,
+
+    PINC_   = 0x06,
+    DDRC_   = 0x07,
+    PORTC_  = 0x08,
+
+    PIND_   = 0x09,
+    DDRD_   = 0x0A,
+    PORTD_  = 0x0D
+} reg_t;
+
+static uint8_t dports[] = {0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
+                           0x09, 0x09, 0x09, 0x09, 0x09, 0x09, 0x09};
 
 typedef enum dpin_e {
     P0,
