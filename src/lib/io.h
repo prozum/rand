@@ -21,6 +21,20 @@ typedef enum pin_mode_e {
     INPUT   = 1
 } pin_mode_t;
 
+
+const uint16_t port_to_input[] = {
+        NOT_A_PORT,
+        NOT_A_PORT,
+        (uint16_t) &PINB,
+        NOT_A_PORT,
+        NOT_A_PORT,
+        (uint16_t) &PINC,
+        NOT_A_PORT,
+        NOT_A_PORT,
+        (uint16_t) &PIND,
+};
+
+
 typedef enum dval_e {
     LOW     = 0,
     HIGH    = 1

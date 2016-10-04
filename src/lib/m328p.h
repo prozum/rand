@@ -8,18 +8,6 @@
 #define BAUD 9600
 #define NOT_A_PORT 0
 
-const uint16_t port_to_input[] = {
-        NOT_A_PORT,
-        NOT_A_PORT,
-        (uint16_t) &PINB,
-        NOT_A_PORT,
-        NOT_A_PORT,
-        (uint16_t) &PINC,
-        NOT_A_PORT,
-        NOT_A_PORT,
-        (uint16_t) &PIND,
-};
-
 // table to lookup a 328p, use a physical arduino pin to get the 328p pin value
 // for instance if you look up dpins[1] you get the CPU's value of the pin 1 on the uno
 // but PORTB1 and PORTD1 has the same values so we also need to know what port the pin is on (look at dports)
