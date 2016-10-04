@@ -18,7 +18,7 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm)
             DDRD |= (pin_ * pm);
             break;
         default:
-            error++;
+            LOG_ERROR(SENDER_IO, "Trying to set pin mode of invalid pin.");
     }
 }
 
@@ -41,7 +41,7 @@ void digital_write(dpin_t pin, dval_t ps)
             PORTD |= (pin_ * ps);
             break;
         default:
-            error++;
+            LOG_ERROR(SENDER_IO, "Trying to write to invalid pin.");
     }
 }
 
@@ -58,7 +58,7 @@ dval_t digital_read(dpin_t pin)
             // if the port is PORTD_ then return the pin's value in PORTD
             return (dval_t)(PIND & pin_);
         default:
-            error++;
+            LOG_ERROR(SENDER_IO, "Trying to read from invalid pin.");
     }
 }
 
