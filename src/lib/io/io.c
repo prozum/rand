@@ -2,14 +2,17 @@
 
 void set_pin_mode(dpin_t pin, pin_mode_t pm)
 {
+    // lookup the port value in dports
     uint8_t port_ = dports[pin];
-    uint8_t pin_  = pins[pin];
+
+    // loopup the pin value
+    uint8_t pin_  = dpins[pin];
 
     switch (port_) {
-        case PINB_:
+        case PORTB_:
             DDRB |= (pin_ * pm);
             break;
-        case PIND_:
+        case PORTD_:
             DDRD |= (pin_ * pm);
             break;
         default:
@@ -17,16 +20,20 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm)
     }
 }
 
-void digital_write(dpin_t pin, pin_state_t ps)
+void digital_write(dpin_t pin, dval_t ps)
 {
+    // lookup the port value based on a pin
     uint8_t port_ = dports[pin];
-    uint8_t pin_  = pins[pin];
 
+    // lookup the pin value based on a pin
+    uint8_t pin_  = dpins[pin];
+
+    // switch on the port looked up
     switch (port_) {
-        case PINB_:
+        case PORTB_: // if the
             PORTB |= (pin_ * ps);
             break;
-        case PIND_:
+        case PORTD_:
             PORTD |= (pin_ * ps);
             break;
         default:
@@ -34,16 +41,16 @@ void digital_write(dpin_t pin, pin_state_t ps)
     }
 }
 
-pin_state_t digital_read(dpin_t pin)
+dval_t digital_read(dpin_t pin)
 {
     uint8_t port_ = dports[pin];
-    uint8_t pin_  = pins[pin];
+    uint8_t pin_  = dpins[pin];
 
     switch (port_) {
-        case PINB_:
-            return (pin_state_t)(PINB & pin_);
-        case PIND_:
-            return (pin_state_t)(PIND & pin_);
+        case PORTB_:
+            return (dval_t)(PINB & pin_);
+        case PORTD_:
+            return (dval_t)(PIND & pin_);
         default:
             error++;
     }
