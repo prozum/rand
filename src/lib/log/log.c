@@ -1,6 +1,21 @@
-#include "log.h"
 #include <string.h>
 #include "io.h"
+#include "log.h"
+
+//Prefix defines:
+static const char* WARNING_PREFIX = "W: ";
+static const char* ERROR_PREFIX = "E: ";
+static const char* MSG_PREFIX = "M: ";
+
+typedef struct disabled_device_node {
+    log_sender blocked_device;
+    struct disabled_device *next;
+} disabled_device;
+
+//Head for the list of disable devices
+static disabled_device *head = NULL;
+//logging_level defines which class(es) of errors that should be logged
+static level logging_level = LOG_NONE;
 
 /**
  * Toggles logging for the system at the given level.
@@ -82,5 +97,6 @@ void disable_device(log_sender device) {
     }
 
     //Fill in the disable device on that spot
-    *itr = {.blocked_device = device, .next = NULL};
+    itr->blocked_device = device;
+    itr->next = NULL;
 }
