@@ -534,24 +534,6 @@ function(GENERATE_ARDUINO_FIRMWARE INPUT_NAME)
            setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
        endif()
     endif()
-
-    if(INPUT_SERIAL)
-        setup_serial_target(${INPUT_NAME} "${INPUT_SERIAL}" "${INPUT_PORT}")
-    else()
-       if(CMAKE_HOST_UNIX)
-           find_program(SCREEN screen)
-           if(NOT SCREEN)
-               message(FATAL_ERROR "Please install screen!" )
-           endif()
-           set(INPUT_SERIAL "screen")
-       else()
-           message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet!" )
-       endif()
-
-       if(INPUT_SERIAL)
-           setup_serial_target(${INPUT_NAME} "${INPUT_SERIAL}" "${INPUT_PORT}")
-       endif()
-    endif()
 endfunction()
 
 #=============================================================================#
@@ -660,10 +642,6 @@ function(GENERATE_ARDUINO_EXAMPLE INPUT_NAME)
 
     if(INPUT_PORT)
         setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
-    endif()
-
-    if(INPUT_SERIAL)
-        setup_serial_target(${INPUT_NAME} "${INPUT_SERIAL}" "${INPUT_PORT}")
     endif()
 endfunction()
 
@@ -1464,25 +1442,48 @@ endfunction()
 #=============================================================================#
 # [PRIVATE/INTERNAL]
 #
-# setup_serial_target(TARGET_NAME CMD)
+# setup_serial_targets()
 #
-#         TARGET_NAME - Target name
-#         CMD         - Serial terminal command
-#         SERIAL_PORT - Serial port
-#
-# Creates a target (${TARGET_NAME}-serial) for launching the serial termnial.
+# Creates serial targets.
 #
 #=============================================================================#
-function(setup_serial_target TARGET_NAME CMD SERIAL_PORT)
-    set(ARGUMENTS "-e" "'${CMD} ${SERIAL_PORT}'")
-    separate_arguments(ARGUMENTS)
+function(setup_serial_targets)
+
+    # Detect screen command
+    if(CMAKE_HOST_UNIX)
+        find_program(SCREEN screen)
+        if(NOT SCREEN)
+            message(FATAL_ERROR "Please install screen!" )
+        endif()
+    else()
+        message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet!" )
+    endif()
+
 
     # Detect terminal
     file(GLOB TERMINALS "/usr/bin/gnome-terminal" "/usr/bin/konsole" "/usr/bin/xterm" "/opt/X11/bin/xterm")
     list(GET TERMINALS 0 TERMINAL)
 
-    add_custom_target(${TARGET_NAME}-serial
-            COMMAND ${TERMINAL} ${ARGUMENTS})
+    # Detect port
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        file(GLOB SERIAL_PORTS /dev/ttyACM*)
+    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+        file(GLOB SERIAL_PORTS /dev/cu.usbmodem*)
+    else()
+        message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet." )
+    endif()
+
+    # Create targets
+    foreach(SERIAL_PORT ${SERIAL_PORTS})
+        # Setup arguments
+        set(ARGUMENTS "-e" "'sh -c \"${SCREEN} -r || ${SCREEN} ${SERIAL_PORT}\"'")
+        separate_arguments(ARGUMENTS)
+
+        get_filename_component(SERIAL_NAME ${SERIAL_PORT} NAME)
+
+        add_custom_target(serial-${SERIAL_NAME}
+                COMMAND ${TERMINAL} ${ARGUMENTS})
+    endforeach()
 endfunction()
 
 

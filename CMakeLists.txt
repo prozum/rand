@@ -16,6 +16,10 @@ include_directories(src/lib)
 
 add_subdirectory(src)
 
-if (SAMPLES)
+if(SAMPLES)
     add_subdirectory(samples)
+endif()
+
+if(SERIAL_TARGETS)
+    setup_serial_targets()
 endif()
