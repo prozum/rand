@@ -1448,7 +1448,6 @@ endfunction()
 #
 #=============================================================================#
 function(setup_serial_targets)
-
     # Detect screen command
     if(CMAKE_HOST_UNIX)
         find_program(SCREEN screen)
@@ -1459,12 +1458,11 @@ function(setup_serial_targets)
         message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet!" )
     endif()
 
-
-    # Detect terminal
+    # Detect terminal command
     file(GLOB TERMINALS "/usr/bin/gnome-terminal" "/usr/bin/konsole" "/usr/bin/xterm" "/opt/X11/bin/xterm")
     list(GET TERMINALS 0 TERMINAL)
 
-    # Detect port
+    # Detect serial port
     if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
         file(GLOB SERIAL_PORTS /dev/ttyACM*)
     elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
@@ -1473,14 +1471,13 @@ function(setup_serial_targets)
         message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet." )
     endif()
 
-    # Create targets
+    # Create serial targets
     foreach(SERIAL_PORT ${SERIAL_PORTS})
-        # Setup arguments
+        # Setup terminal arguments
         set(ARGUMENTS "-e" "'sh -c \"${SCREEN} -r || ${SCREEN} ${SERIAL_PORT}\"'")
         separate_arguments(ARGUMENTS)
 
         get_filename_component(SERIAL_NAME ${SERIAL_PORT} NAME)
-
         add_custom_target(serial-${SERIAL_NAME}
                 COMMAND ${TERMINAL} ${ARGUMENTS})
     endforeach()
