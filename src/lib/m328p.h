@@ -69,12 +69,14 @@ typedef enum apin_e {
 
 // physical rx port (serial receive)
 typedef enum rx_e {
-    RX0     = 0
+    RX0     = 0,
+    USB_RX  = 0xFF
 } rx_t;
 
 // physical rx port (serial send)
 typedef enum tx_e {
-    TX1     = 1
+    TX1     = 1,
+    USB_TX  = 0xFF
 } tx_t;
 
 // physical pwm ports
