@@ -1,11 +1,18 @@
 #ifndef RAND_M328P_H
 #define RAND_M328P_H
 
+#include <avr/pgmspace.h>
+
 // IO header defines for the atmega 328p
 // which is on the Arduino Uno
 
 #define F_CPU 16000000UL
 #define BAUD 9600
+
+const uint16_t PROGMEM port_to_input_PGM[] = {
+        (uint16_t) &PINB,
+        (uint16_t) &PIND,
+};
 
 // table to lookup a 328p, use a physical arduino pin to get the 328p pin value
 // for instance if you look up dpins[1] you get the CPU's value of the pin 1 on the uno
