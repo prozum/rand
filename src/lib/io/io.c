@@ -62,8 +62,46 @@ dval_t digital_read(dpin_t pin)
     }
 }
 
-/*
+uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
+{
+    uint8_t pin_ = dpins[pin];
+    uint8_t port_ = dports[pin];
+    uint8_t state_ = (state ? pin_ : 0);
+    uint16_t width = 0;
 
+    uint16_t loop_count = 0;
+    uint16_t loop_max = MS_TO_CLOCK_CYCLES(timeout) / 16; // maybe bitshift with 4 instead
+
+    while (((volatile uint8_t)port_to_input[port_]) & pin_ == state_)
+    {
+        if (loop_count++ == loop_max)
+        {
+            return 0;
+        }
+    }
+
+    while (((volatile uint8_t)port_to_input[port_]) & pin_ != state_)
+    {
+        if (loop_count++ == loop_max)
+        {
+            return 0;
+        }
+    }
+
+    while (((volatile uint8_t)port_to_input[port_]) & pin_ == state_)
+    {
+        if (loop_count++ == loop_max)
+        {
+            return 0;
+        }
+
+        width++;
+    }
+
+    return CLOCK_CYCLES_TO_MS(width * 21 + 16);
+}
+
+/*
 void analog_init(uint8_t pin)
 {
     ADMUX = pin;

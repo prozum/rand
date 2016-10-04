@@ -12,6 +12,10 @@
 #   include "m1280.h"
 #endif
 
+#define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
+#define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )
+#define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
+
 typedef enum pin_mode_e {
     OUTPUT  = 0,
     INPUT   = 1
