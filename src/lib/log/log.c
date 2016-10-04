@@ -8,7 +8,7 @@
 #define MSG_PREFIX "M: "
 
 //logging_level defines which class(es) of errors that should be logged
-level logging_level;
+level logging_level = LOG_NONE;
 
 /*Toggles logging at the given level - must be called during start-up of drone!*/
 void toggle_logging(level lvl) {
