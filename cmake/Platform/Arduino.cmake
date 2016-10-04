@@ -1474,14 +1474,16 @@ endfunction()
 #
 #=============================================================================#
 function(setup_serial_target TARGET_NAME CMD SERIAL_PORT)
-    file(GLOB TERMINALS "/usr/bin/gnome-terminal" "/usr/bin/konsole" "/usr/bin/xterm")
-    list(GET TERMINALS 0 TERMINAL)
-
     set(ARGUMENTS "-e" "'${CMD} ${SERIAL_PORT}'")
     separate_arguments(ARGUMENTS)
 
+    # Detect terminal
+    file(GLOB TERMINALS "/usr/bin/gnome-terminal" "/usr/bin/konsole" "/usr/bin/xterm" "/opt/X11/bin/xterm")
+    list(GET TERMINALS 0 TERMINAL)
+
     add_custom_target(${TARGET_NAME}-serial
-                      COMMAND ${TERMINAL} ${ARGUMENTS})
+            COMMAND ${TERMINAL} ${ARGUMENTS})
+
 endfunction()
 
 
