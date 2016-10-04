@@ -13,3 +13,6 @@ add_subdirectory(fc)
 # Sensor libraries
 add_subdirectory(ir)
 add_subdirectory(sonar)
+
+# Datafusion library
+add_subdirectory(datafusion)
