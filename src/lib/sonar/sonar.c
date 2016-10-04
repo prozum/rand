@@ -25,7 +25,7 @@ uint16_t read_sonar(dpin_t echoPin, dpin_t trigPin) {
     else if (duration < MIN_DELAY){ //Ensuring a minimum of 65ms between each measurement
         extraDelay = MIN_DELAY - duration;
         _delay_loop_2(extraDelay);
-        
+
     }
     return 0;
 }
