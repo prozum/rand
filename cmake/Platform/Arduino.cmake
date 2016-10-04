@@ -1474,14 +1474,22 @@ endfunction()
 #
 #=============================================================================#
 function(setup_serial_target TARGET_NAME CMD SERIAL_PORT)
-    file(GLOB TERMINALS "/usr/bin/gnome-terminal" "/usr/bin/konsole" "/usr/bin/xterm")
-    list(GET TERMINALS 0 TERMINAL)
-
     set(ARGUMENTS "-e" "'${CMD} ${SERIAL_PORT}'")
     separate_arguments(ARGUMENTS)
 
+    # Detect terminal
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        file(GLOB TERMINALS "/usr/bin/gnome-terminal" "/usr/bin/konsole" "/usr/bin/xterm")
+        list(GET TERMINALS 0 TERMINAL)
+    elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+        set(TERMINAL "open -b com.apple.terminal")
+    else()
+        message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet." )
+    endif()
+
     add_custom_target(${TARGET_NAME}-serial
-                      COMMAND ${TERMINAL} ${ARGUMENTS})
+            COMMAND ${TERMINAL} ${ARGUMENTS})
+
 endfunction()
 
 
