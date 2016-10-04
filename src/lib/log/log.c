@@ -7,10 +7,12 @@ static const char* WARNING_PREFIX = "W: ";
 static const char* ERROR_PREFIX = "E: ";
 static const char* MSG_PREFIX = "M: ";
 
-typedef struct disabled_device_node {
+typedef struct disabled_device_node disabled_device;
+
+struct disabled_device_node {
     log_sender blocked_device;
-    struct disabled_device *next;
-} disabled_device;
+    disabled_device *next;
+};
 
 //Head for the list of disable devices
 static disabled_device *head = NULL;
@@ -85,18 +87,19 @@ void LOG_ERROR_BYPASS(char *msg) {
 }
 
 void disable_device(log_sender device) {
-    //Run through list to find an available slot
-    disabled_device *itr = head;
+    disabled_device new_dev = {.blocked_device = device, .next = NULL};
 
-    while (itr != NULL) {
+    //Run through list to find an available slot
+    disabled_device *ptr = head;
+
+    while (ptr != NULL) {
         //return if the device is already in the list.
-        if(itr->blocked_device == device)
+        if(ptr->blocked_device == device)
             return;
 
-        itr = itr->next;
+        ptr = ptr->next;
     }
 
     //Fill in the disable device on that spot
-    itr->blocked_device = device;
-    itr->next = NULL;
+    *ptr = new_dev;
 }
