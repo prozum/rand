@@ -1,11 +1,18 @@
 #ifndef RAND_M328P_H
 #define RAND_M328P_H
 
+#include <avr/pgmspace.h>
+
 // IO header defines for the atmega 328p
 // which is on the Arduino Uno
 
 #define F_CPU 16000000UL
 #define BAUD 9600
+
+const uint16_t PROGMEM port_to_input_PGM[] = {
+        (uint16_t) &PINB,
+        (uint16_t) &PIND,
+};
 
 // table to lookup a 328p, use a physical arduino pin to get the 328p pin value
 // for instance if you look up dpins[1] you get the CPU's value of the pin 1 on the uno
@@ -69,12 +76,14 @@ typedef enum apin_e {
 
 // physical rx port (serial receive)
 typedef enum rx_e {
-    RX0     = 0
+    RX0     = 0,
+    USB_RX  = 0xFF
 } rx_t;
 
 // physical rx port (serial send)
 typedef enum tx_e {
-    TX1     = 1
+    TX1     = 1,
+    USB_TX  = 0xFF
 } tx_t;
 
 // physical pwm ports
