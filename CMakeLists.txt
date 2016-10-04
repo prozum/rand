@@ -4,10 +4,18 @@ cmake_minimum_required(VERSION 2.8)
 
 project(rand C CXX)
 
+# Options
+option(SAMPLES "Samples" ON)
+option(SERIAL_TARGETS "Serial Targets" ON)
+option(SIZE_TARGETS "Size Targets" OFF)
+
 #print_board_list()
 #print_programmer_list()
 
 include_directories(src/lib)
 
 add_subdirectory(src)
-add_subdirectory(samples)
+
+if (SAMPLES)
+    add_subdirectory(samples)
+endif()

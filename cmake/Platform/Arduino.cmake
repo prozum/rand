@@ -1134,7 +1134,7 @@ function(setup_arduino_target TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLA
                                 -P ${ARDUINO_SIZE_SCRIPT}
                         COMMENT "Calculating image size"
                         VERBATIM)
-
+if (SIZE_TARGETS)
     # Create ${TARGET_NAME}-size target
     add_custom_target(${TARGET_NAME}-size
                         COMMAND ${CMAKE_COMMAND}
@@ -1144,7 +1144,7 @@ function(setup_arduino_target TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLA
                                 -P ${ARDUINO_SIZE_SCRIPT}
                         DEPENDS ${TARGET_NAME}
                         COMMENT "Calculating ${TARGET_NAME} image size")
-
+endif()
 endfunction()
 
 #=============================================================================#
@@ -1483,7 +1483,6 @@ function(setup_serial_target TARGET_NAME CMD SERIAL_PORT)
 
     add_custom_target(${TARGET_NAME}-serial
             COMMAND ${TERMINAL} ${ARGUMENTS})
-
 endfunction()
 
 
