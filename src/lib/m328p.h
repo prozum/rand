@@ -1,16 +1,22 @@
 #ifndef RAND_M328P_H
 #define RAND_M328P_H
 
-#include <avr/pgmspace.h>
-
 // IO header defines for the atmega 328p
 // which is on the Arduino Uno
 
 #define F_CPU 16000000UL
 #define BAUD 9600
+#define NOT_A_PORT 0
 
-const uint16_t PROGMEM port_to_input_PGM[] = {
+const uint16_t port_to_input[] = {
+        NOT_A_PORT,
+        NOT_A_PORT,
         (uint16_t) &PINB,
+        NOT_A_PORT,
+        NOT_A_PORT,
+        (uint16_t) &PINC,
+        NOT_A_PORT,
+        NOT_A_PORT,
         (uint16_t) &PIND,
 };
 
