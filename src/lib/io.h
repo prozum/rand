@@ -17,26 +17,26 @@ typedef enum pin_mode_e {
     INPUT   = 1
 } pin_mode_t;
 
-typedef enum pin_state_e {
+typedef enum dval_e {
     LOW     = 0,
     HIGH    = 1
-} pin_state_t;
+} dval_t;
 
-typedef uint16_t analog_data;
+typedef uint16_t aval_t;
 
 // sets the pin mode
 void set_pin_mode(dpin_t pin, pin_mode_t pm);
 
 // write state to digital pin
-void digital_write(dpin_t pin, pin_state_t ps);
+void digital_write(dpin_t pin, dval_t ps);
 
 // read state from digital pin
-pin_state_t digital_read(dpin_t pin);
+dval_t digital_read(dpin_t pin);
 
 void set_analog_mode(apin_t pin, pin_mode_t pm);
 
-void analog_write(apin_t pin, analog_data out);
+void analog_write(apin_t pin, aval_t out);
 
-analog_data analog_read(apin_t pin);
+aval_t analog_read(apin_t pin);
 
 #endif //RAND_IO_H

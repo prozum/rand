@@ -2,14 +2,19 @@
 
 void set_pin_mode(dpin_t pin, pin_mode_t pm)
 {
+    // lookup the port value in dports
     uint8_t port_ = dports[pin];
-    uint8_t pin_  = pins[pin];
+
+    // lookup the pin value
+    uint8_t pin_  = dpins[pin];
 
     switch (port_) {
-        case PINB_:
+        case PORTB_:
+            // if the port is PORTB_ then set the pin in DDRB to the pinmode
             DDRB |= (pin_ * pm);
             break;
-        case PIND_:
+        case PORTD_:
+            // if the port is PORTD_ then set the pin in DDRD to the pinmode
             DDRD |= (pin_ * pm);
             break;
         default:
@@ -17,16 +22,22 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm)
     }
 }
 
-void digital_write(dpin_t pin, pin_state_t ps)
+void digital_write(dpin_t pin, dval_t ps)
 {
+    // lookup the port value based on a pin
     uint8_t port_ = dports[pin];
-    uint8_t pin_  = pins[pin];
 
+    // lookup the pin value based on a pin
+    uint8_t pin_  = dpins[pin];
+
+    // switch on the port looked up
     switch (port_) {
-        case PINB_:
+        case PORTB_:
+            // if the port is PORTB_ then write ps to the pin in PORTB
             PORTB |= (pin_ * ps);
             break;
-        case PIND_:
+        case PORTD_:
+            // if the port is PORTD_ then write ps to the pin in PORTD
             PORTD |= (pin_ * ps);
             break;
         default:
@@ -34,16 +45,18 @@ void digital_write(dpin_t pin, pin_state_t ps)
     }
 }
 
-pin_state_t digital_read(dpin_t pin)
+dval_t digital_read(dpin_t pin)
 {
     uint8_t port_ = dports[pin];
-    uint8_t pin_  = pins[pin];
+    uint8_t pin_  = dpins[pin];
 
     switch (port_) {
-        case PINB_:
-            return (pin_state_t)(PINB & pin_);
-        case PIND_:
-            return (pin_state_t)(PIND & pin_);
+        case PORTB_:
+            // if the port is PORTB_ then return the pin's value in PORTB
+            return (dval_t)(PINB & pin_);
+        case PORTD_:
+            // if the port is PORTD_ then return the pin's value in PORTD
+            return (dval_t)(PIND & pin_);
         default:
             error++;
     }
