@@ -1,20 +1,19 @@
-#include <avr/io.h>
-#include <util/delay.h>
+#include "io.h"
  
 #define BLINK_DELAY_MS 1000
  
 int main (void)
 {
- /* set pin 5 of PORTB for output*/
- DDRB |= _BV(DDB5);
- 
+ /* Set pin 13 to output */
+ set_pin_mode(P13, OUTPUT);
+
  while(1) {
-  /* set pin 5 high to turn led on */
-  PORTB |= _BV(PORTB5);
+  /* Set pin 13 high to turn led on */
+  digital_write(P13, HIGH);
   _delay_ms(BLINK_DELAY_MS);
    
-  /* set pin 5 low to turn led off */
-  PORTB &= ~_BV(PORTB5);
+  /* Set pin 13 low to turn led off */
+  digital_write(P13, LOW);
   _delay_ms(BLINK_DELAY_MS);
  }
 }

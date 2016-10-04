@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdint.h>
-#include <log.h>
+//#include "log.h"
 
 #if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
 #   include "m328p.h"
@@ -20,20 +20,6 @@ typedef enum pin_mode_e {
     OUTPUT  = 0,
     INPUT   = 1
 } pin_mode_t;
-
-
-const uint16_t port_to_input[] = {
-        NOT_A_PORT,
-        NOT_A_PORT,
-        (uint16_t) &PINB,
-        NOT_A_PORT,
-        NOT_A_PORT,
-        (uint16_t) &PINC,
-        NOT_A_PORT,
-        NOT_A_PORT,
-        (uint16_t) &PIND,
-};
-
 
 typedef enum dval_e {
     LOW     = 0,

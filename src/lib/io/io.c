@@ -1,4 +1,4 @@
-#include <io.h>
+#include "io_priv.h"
 
 void set_pin_mode(dpin_t pin, pin_mode_t pm)
 {
@@ -17,8 +17,8 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm)
             // if the port is PORTD_ then set the pin in DDRD to the pinmode
             DDRD |= (pin_ * pm);
             break;
-        default:
-            LOG_ERROR(SENDER_IO, "Trying to set pin mode of invalid pin.");
+        //default:
+        //    LOG_ERROR(SENDER_IO, "Trying to set pin mode of invalid pin.");
     }
 }
 
@@ -40,8 +40,8 @@ void digital_write(dpin_t pin, dval_t ps)
             // if the port is PORTD_ then write ps to the pin in PORTD
             PORTD |= (pin_ * ps);
             break;
-        default:
-            LOG_ERROR(SENDER_IO, "Trying to write to invalid pin.");
+        //default:
+        //    LOG_ERROR(SENDER_IO, "Trying to write to invalid pin.");
     }
 }
 
@@ -57,10 +57,11 @@ dval_t digital_read(dpin_t pin)
         case PORTD_:
             // if the port is PORTD_ then return the pin's value in PORTD
             return (dval_t)(PIND & pin_);
-        default:
-            LOG_ERROR(SENDER_IO, "Trying to read from invalid pin.");
+        //default:
+        //    LOG_ERROR(SENDER_IO, "Trying to read from invalid pin.");
     }
 }
+
 
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
@@ -97,6 +98,7 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 
         width++;
     }
+
 
     return CLOCK_CYCLES_TO_MS(width * 21 + 16);
 }

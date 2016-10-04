@@ -1,7 +1,3 @@
-//
-// Created by esben on 04/10/16.
-//
-
 #define trigPin 2
 #define echoPin 6
 
