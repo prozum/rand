@@ -4,7 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdint.h>
-//#include "log.h"
+#include <log.h>
 
 #if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
 #   include "m328p.h"
@@ -17,8 +17,8 @@
 #define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
 
 typedef enum pin_mode_e {
-    OUTPUT  = 0,
-    INPUT   = 1
+    INPUT    = 0,
+    OUTPUT   = 1
 } pin_mode_t;
 
 typedef enum dval_e {

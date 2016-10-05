@@ -11,10 +11,10 @@
 // table to lookup a 328p, use a physical arduino pin to get the 328p pin value
 // for instance if you look up dpins[1] you get the CPU's value of the pin 1 on the uno
 // but PORTB1 and PORTD1 has the same values so we also need to know what port the pin is on (look at dports)
-static uint8_t dpins[] = {_BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3),_BV(PORTB4),
-                         _BV(PORTB5), _BV(PORTB6), _BV(PORTB7), _BV(PORTD0), _BV(PORTD1),
-                         _BV(PORTD2), _BV(PORTD3), _BV(PORTD4), _BV(PORTD5), _BV(PORTD6),
-                         _BV(PORTD7)};
+static uint8_t dpins[] = {_BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3),
+                          _BV(PORTD4), _BV(PORTD5), _BV(PORTD6), _BV(PORTD7),
+                          _BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3),
+                          _BV(PORTB4), _BV(PORTB5)};
 
 // values of the different atmega 328p registers
 // PINx is an input register
@@ -37,8 +37,8 @@ typedef enum reg_e {
 // table to lookup a 328p, use a physical arduino pin to get the 328p port value
 // for instance if you look up dports[1] you get the CPU's value of PORTB
 // PORTB is the port that contains pin 1 on the arduino
-static uint8_t dports[] = {PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_,
-                           PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_};
+static uint8_t dports[] = {PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_,
+                           PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_};
 
 // physical digital pin values on the arduino uno
 typedef enum dpin_e {
