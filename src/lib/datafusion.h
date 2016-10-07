@@ -2,17 +2,20 @@
 #include "io.h"
 #include "sonar.h"
 
-typedef struct sensor_data_s
+typedef struct raw_sensor_data_s
 {
     uint16_t current_sonar;
     uint16_t current_laser;
     uint16_t current_ir;
-} sensor_data_t;
+} raw_sensor_data_t;
 
-sensor_data_t sensor_data_struct;
+typedef struct fused_sensor_data_s
+{
 
-uint16_t get_data_sonar (dpin_t pin, dval_t state);
+} fused_sensor_data_t;
 
-uint16_t get_data_laser ();
+static raw_sensor_data_t raw_sensor_data;
 
-uint16_t get_data_ir ();
+void datafusion_feed (raw_sensor_data_t raw);
+
+raw_sensor_data_t get_fused_data (fused_sensor_data_t);
