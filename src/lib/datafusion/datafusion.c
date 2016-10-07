@@ -1,16 +1,12 @@
 #include <datafusion.h>
 
-uint16_t get_data_sonar (dpin_t pin, dval_t state)
+void datafusion_feed (raw_sensor_data_t raw)
 {
-    sensor_data_struct.current_sonar = pulseSonar(pin, state);
+    raw_sensor_data = raw;
 }
 
-uint16_t get_data_laser ()
-{
-
-}
-
-uint16_t get_data_ir ()
+raw_sensor_data_t get_fused_data (fused_sensor_data_t fused)
 {
 
 }
+
