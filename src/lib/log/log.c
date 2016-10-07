@@ -29,7 +29,7 @@ void toggle_logging(level lvl) {
     strcpy(init_msg, MAJOR_VERSION);
     strcat(init_msg, ", version: ");
     strcat(init_msg, PROJECT_NAME);
-    serial_write_string(USB_TX, (sval_t *) init_msg);
+    serial_write_string(USB_TX, init_msg);
 
     logging_level = lvl;
 }
@@ -55,7 +55,7 @@ void LOG(log_sender sender, char *msg) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
-        serial_write_string(USB_TX, (sval_t *)strcat(cpy, MSG_PREFIX));
+        serial_write_string(USB_TX, strcat(cpy, MSG_PREFIX));
     }
 }
 
@@ -65,7 +65,7 @@ void LOG_WARNING(log_sender sender, char *msg) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
-        serial_write_string(USB_TX, (sval_t * )strcat(cpy, WARNING_PREFIX));
+        serial_write_string(USB_TX, strcat(cpy, WARNING_PREFIX));
     }
 }
 
@@ -75,7 +75,7 @@ void LOG_ERROR(log_sender sender, char *msg) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
-        serial_write_string(USB_TX, (sval_t *) strcat(cpy, ERROR_PREFIX));
+        serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
     }
 }
 
@@ -83,7 +83,7 @@ void LOG_ERROR_BYPASS(char *msg) {
     char cpy[strlen(msg) + 3];
     strcpy(cpy, msg);
 
-    serial_write_string(USB_TX, (sval_t *) strcat(cpy, ERROR_PREFIX));
+    serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
 }
 
 void disable_device(log_sender device) {

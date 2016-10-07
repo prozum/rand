@@ -8,6 +8,8 @@
 #define BAUD 9600
 #define NOT_A_PORT 0
 
+#include <util/setbaud.h>
+
 // table to lookup a 328p, use a physical arduino pin to get the 328p pin value
 // for instance if you look up dpins[1] you get the CPU's value of the pin 1 on the uno
 // but PORTB1 and PORTD1 has the same values so we also need to know what port the pin is on (look at dports)
@@ -88,5 +90,9 @@ typedef enum pwm_e {
     PWM10   = 10,
     PWM11   = 11
 } pwm_t;
+
+typedef enum serial_e{
+    SERIAL0 = 0
+}serial_t;
 
 #endif //RAND_M328P_H

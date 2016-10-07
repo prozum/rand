@@ -4,6 +4,7 @@
 #include <avr/io.h>
 #include <util/delay.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <log.h>
 
 #if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
@@ -50,7 +51,13 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout);
 // Write to serial pin
 void serial_write_byte(tx_t pin, sval_t out);
 
-void serial_write_string(tx_t pin, sval_t *out);
+void serial_write_string(tx_t pin, char *out);
+
+void uart_init();
+
+void uart_putchar(char c/*, FILE *stream*/);
+
+char uart_getchar(/*FILE *stream*/);
 
 sval_t serial_read(rx_t pin);
 
