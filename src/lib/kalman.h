@@ -16,14 +16,10 @@ typedef struct {
 
 } kalman_state;
 
-void kalman_init (kalman_state state, const uint8_t size);
-void kalman_setA (kalman_state state, const double *values);
-void kalman_setB (kalman_state state, const double *values);
-void kalman_setC (kalman_state state, const double *values);
-void kalman_setR (kalman_state state, const double *values);
-void kalman_update(kalman_state* state, double measurement);
-
-kalman_state IR_kalman;
-kalman_state dist_kalman;
-kalman_state fc_kalman;
+void kalman_init (kalman_state *state, const uint8_t size);
+void kalman_setA (kalman_state *state, const double *values);
+void kalman_setB (kalman_state *state, const double *values);
+void kalman_setC (kalman_state *state, const double *values);
+void kalman_setR (kalman_state *state, const double *values);
+void kalman_filter (kalman_state* state, double measurement);
 
