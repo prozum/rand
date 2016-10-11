@@ -3,11 +3,12 @@
 
 typedef struct {
     const uint8_t size;
+    log_sender source_components;
 
-    const double *A;
-    const double *B;
-    const double *C;
-    const double *R;
+    double *A; //Weight of previous measurement in next estimate
+    const double *B; //Weight of control-input in next estimate
+    const double *C; //Noise scale constant
+    const double *R; //variance of sensor, i.e. how much a measurement tends to differ from the actual
 
     double u_k; //Control signal
     double z_k; //Current observation
@@ -16,14 +17,10 @@ typedef struct {
 
 } kalman_state;
 
-void kalman_init (kalman_state state, const uint8_t size);
-void kalman_setA (kalman_state state, const double *values);
-void kalman_setB (kalman_state state, const double *values);
-void kalman_setC (kalman_state state, const double *values);
-void kalman_setR (kalman_state state, const double *values);
-void kalman_update(kalman_state* state, double measurement);
-
-kalman_state IR_kalman;
-kalman_state dist_kalman;
-kalman_state fc_kalman;
+void kalman_init (kalman_state *state, const uint8_t size, log_sender component);
+void kalman_setA (kalman_state *state, const double *values);
+void kalman_setB (kalman_state *state, const double *values);
+void kalman_setC (kalman_state *state, const double *values);
+void kalman_setR (kalman_state *state, const double *values);
+void kalman_filter (kalman_state* state, double measurement);
 

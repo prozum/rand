@@ -354,6 +354,12 @@ function(PRINT_BOARD_SETTINGS ARDUINO_BOARD)
     endif()
 endfunction()
 
+function(GENERATE_TEST INPUT_NAME)
+    message(STATUS "Generating ${INPUT_NAME}")
+
+
+endfunction()
+
 #=============================================================================#
 # [PUBLIC/USER]
 # see documentation at top
@@ -1112,17 +1118,18 @@ function(setup_arduino_target TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLA
                                 -P ${ARDUINO_SIZE_SCRIPT}
                         COMMENT "Calculating image size"
                         VERBATIM)
-if (SIZE_TARGETS)
+
     # Create ${TARGET_NAME}-size target
-    add_custom_target(${TARGET_NAME}-size
-                        COMMAND ${CMAKE_COMMAND}
-                                -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
-                                -DMCU=${${BOARD_ID}.build.mcu}
-                                -DEEPROM_IMAGE=${TARGET_PATH}.eep
-                                -P ${ARDUINO_SIZE_SCRIPT}
-                        DEPENDS ${TARGET_NAME}
-                        COMMENT "Calculating ${TARGET_NAME} image size")
-endif()
+    if(SIZE_TARGETS)
+        add_custom_target(${TARGET_NAME}-size
+                            COMMAND ${CMAKE_COMMAND}
+                                    -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
+                                    -DMCU=${${BOARD_ID}.build.mcu}
+                                    -DEEPROM_IMAGE=${TARGET_PATH}.eep
+                                    -P ${ARDUINO_SIZE_SCRIPT}
+                            DEPENDS ${TARGET_NAME}
+                            COMMENT "Calculating ${TARGET_NAME} image size")
+    endif()
 endfunction()
 
 #=============================================================================#
