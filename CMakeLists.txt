@@ -2,6 +2,8 @@ set(CMAKE_TOOLCHAIN_FILE cmake/ArduinoToolchain.cmake)
 
 cmake_minimum_required(VERSION 2.8)
 
+set(ARDUINO_C_FLAGS "-g -Os -ffunction-sections -fdata-sections")
+
 project(rand C CXX)
 
 # Options
