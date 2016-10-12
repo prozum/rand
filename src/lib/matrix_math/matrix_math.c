@@ -95,3 +95,29 @@ double* sub_vec_vec(double vec1[], double vec2[], uint8_t size){
 
     return res;
 }
+
+double** inv_mat(double** ma1){
+    //Only functions with a simple 2x2 matrix
+    int i, j;
+    double det;
+
+    det = ma1[0][0]*ma1[1][1]-ma1[0][1]*ma1[1][0];
+
+    double** in_mat = (double **) malloc(2 * sizeof(double*));
+
+    for (i = 0; i < 2; ++i) {
+        in_mat[i] = (double *) malloc(2 * sizeof(double));
+    }
+
+    for (i = 0; i < 2; ++i) {
+        for (j = 0; j < 2; ++j) {
+            in_mat[i][j] = ma1[i][j]/det;
+            if(j != i)
+                in_mat[i][j] = -in_mat[i][j];
+        }
+    }
+    double temp = in_mat[0][0];
+    in_mat[0][0] = in_mat[1][1];
+    in_mat[1][1] = temp;
+    return in_mat;
+}
