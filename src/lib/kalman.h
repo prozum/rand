@@ -5,7 +5,7 @@ typedef struct kalman_state_t {
     uint8_t size;
     log_sender source_components;
 
-    double *A; //Weight of previous measurement in next estimate
+    double *A; //How much we assume the next measurement differs from the previous one
     double *B; //Weight of control-input in next estimate
     double *C; //Noise scale constant
     double *R; //variance of sensor, i.e. how much a measurement tends to differ from the actual

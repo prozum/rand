@@ -9,6 +9,7 @@
 #define NOT_A_PORT 0
 
 #include <util/setbaud.h>
+#include <stdint.h>
 
 // table to lookup a 328p, use a physical arduino pin to get the 328p pin value
 // for instance if you look up dpins[1] you get the CPU's value of the pin 1 on the uno
