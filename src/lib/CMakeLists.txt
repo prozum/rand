@@ -16,3 +16,6 @@ add_subdirectory(sonar)
 
 # Datafusion library
 add_subdirectory(datafusion)
+
+# Kalman
+add_subdirectory(kalman)
