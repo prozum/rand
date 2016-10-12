@@ -6,6 +6,9 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm)
     if (pm != OUTPUT && pm != INPUT) {
         LOG_ERROR_BYPASS("Invalid pin mode used in set_pin_mode");
         return;
+    } else if (pin > MAXIMUM_PIN) {
+        LOG_ERROR_BYPASS("Non-existing pin in set_pin_mode");
+        return;
     }
 
     // lookup the port value in dports
@@ -18,7 +21,7 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm)
         case PORTB_:
             // (DDRx & ~pin_) cancels out the pin mode, so it's 0
             // | pin_ then sets the pin mode to 0 or 1 according to it's value
-            DDRB = (DDRB & ~pin_) |  (pin_ * pm);
+            DDRB = (DDRB & ~pin_) | (pin_ * pm);
             break;
         case PORTD_:
             DDRD = (DDRD & ~pin_) | (pin_ * pm);
@@ -32,6 +35,9 @@ void digital_write(dpin_t pin, dval_t ps)
 {
     if (ps != HIGH && ps != LOW) {
         LOG_ERROR_BYPASS("Invalid digital value used in digital_write");
+        return;
+    } else if (pin > MAXIMUM_PIN) {
+        LOG_ERROR_BYPASS("Non-existing pin in digital_write");
         return;
     }
 
@@ -55,6 +61,11 @@ void digital_write(dpin_t pin, dval_t ps)
 
 dval_t digital_read(dpin_t pin)
 {
+    if (pin > MAXIMUM_PIN) {
+        LOG_ERROR_BYPASS("Non-existing pin in digital_read");
+        return LOW;
+    }
+
     uint8_t port_ = dports[pin];
     uint8_t pin_  = dpins[pin];
 

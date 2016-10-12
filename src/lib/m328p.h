@@ -60,6 +60,8 @@ typedef enum dpin_e {
     P13
 } dpin_t;
 
+#define MAXIMUM_PIN P13
+
 // physical analog pin values on the arduino uno
 typedef enum apin_e {
     A0,
