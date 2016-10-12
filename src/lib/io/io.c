@@ -1,4 +1,5 @@
 #include "io_priv.h"
+#include <stdlib.h>
 #include <string.h>
 
 void set_pin_mode(dpin_t pin, pin_mode_t pm)
@@ -93,11 +94,9 @@ void uart_init() {
     UCSR0B = _BV(RXEN0) | _BV(TXEN0);   /* Enable RX and TX */
 }
 
+
 void uart_putchar(char c/*, FILE *stream*/) {
-    /*if (c == '\n') {
-        uart_putchar('\r', stream);
-    }*/
-    loop_until_bit_is_set(UCSR0A, UDRE0); /* Wait until data register empty. */
+    loop_until_bit_is_set(UCSR0A, UDRE0); // wait while register is free
     UDR0 = c;
 }
 
@@ -108,14 +107,21 @@ char uart_getchar(/*FILE *stream*/) {
 
 void serial_write_string(tx_t pin, char *out){
     int i;
-    for(i = 0; i<strlen(out);i++) {
+    for(i = 0; i < strlen(out)-1;i++) {
         uart_putchar(out[i]);
     }
+
 }
 
+char* serial_read_string(tx_t pin, int len ) {
+    char* str = malloc(sizeof(char)*(len+1));
 
-void serial_write_byte(tx_t pin, sval_t out){
-
+    int i;
+    for(i=0;i<len;i++){
+        str[i] = uart_getchar();
+    }
+    str[i+1] = '\0';
+    return str;
 }
 
 /*

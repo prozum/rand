@@ -48,17 +48,26 @@ aval_t analog_read(apin_t pin);
 
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout);
 
-// Write to serial pin
-void serial_write_byte(tx_t pin, sval_t out);
-
+/// Writes a given string over serial connection
+/// \param pin the serial pin to read from **Currently not used**
+/// \param out the string to be written. **Should end with '\0'**
 void serial_write_string(tx_t pin, char *out);
 
+/// reads the next n amount of characters from the a serial connection and returns them as a string
+/// \param pin the serial pin to read from **Currently not used**
+/// \param len The amount of characters to read
+/// \return the string representation of the read characters
+char* serial_read_string(tx_t pin, int len );
+
+/// initializes the avr uart for serial communication.
 void uart_init();
 
+/// Writes a character to the avr processor's uart.
+/// \param c The character to be written
 void uart_putchar(char c/*, FILE *stream*/);
 
+/// Returns the next character read from the avr processor's uart.
+/// \return The character read.
 char uart_getchar(/*FILE *stream*/);
-
-sval_t serial_read(rx_t pin);
 
 #endif //RAND_IO_H
