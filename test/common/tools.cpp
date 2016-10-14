@@ -22,3 +22,11 @@ avr_ioport_state_t Tools::avr_get_state(avr_t *avr, char port) {
 
     return state;
 }
+
+void Tools::avr_set_state(avr_t *avr, char port, int reg, int mask, int v) {
+    avr_ioport_external_t ext;
+    ext.name = reg;
+    ext.value = v;
+    ext.mask = mask;
+    avr_ioctl(avr, AVR_IOCTL_IOPORT_SET_EXTERNAL(port), &ext);
+}
