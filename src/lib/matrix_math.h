@@ -1,12 +1,11 @@
-//
-// Created by morell on 10/7/16.
-//
-
 #ifndef RAND_MATRIX_MATH_H
 #define RAND_MATRIX_MATH_H
 
+#include <stdint.h>
+#include <stdlib.h>
+
 double** mult_mat_mat(double **m1, double **m2, uint8_t mat_size);
-double** mult_mat_vec(double **m, double v[], uint8_t rows, uint8_t cols);
+double* mult_mat_vec(double **m, double v[], uint8_t rows, uint8_t cols);
 double** trans_matrix(double **m1, uint8_t rows, uint8_t cols);
 double** add_mat_mat(double** m1, double** m2, uint8_t size);
 double** sub_mat_mat(double** m1, double** m2, uint8_t size);

@@ -5,7 +5,8 @@
 #include <util/delay.h>
 #include <stdint.h>
 #include <stdio.h>
-#include <log.h>
+
+#include "log.h"
 
 #if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
 #   include "m328p.h"

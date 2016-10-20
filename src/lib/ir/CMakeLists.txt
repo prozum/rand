@@ -1,4 +1,4 @@
-generate_arduino_library(ir
+generate_avr_library(ir
     	BOARD uno
 		SRCS ir.c
 		LIBS io)

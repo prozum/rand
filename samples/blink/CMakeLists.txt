@@ -1,5 +1,5 @@
-generate_arduino_firmware(blink-sample
+generate_avr_firmware(blink-sample
 		BOARD uno
-		LIBS io
+		LIBS io log
 		SRCS main.c)
 

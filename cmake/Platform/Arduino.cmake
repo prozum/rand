@@ -354,6 +354,9 @@ function(PRINT_BOARD_SETTINGS ARDUINO_BOARD)
     endif()
 endfunction()
 
+# [PUBLIC/USER]
+#
+# Generate test (TODO)
 function(GENERATE_TEST INPUT_NAME)
     message(STATUS "Generating ${INPUT_NAME}")
 
@@ -415,7 +418,6 @@ endfunction()
 # see documentation at top
 #=============================================================================#
 function(GENERATE_AVR_LIBRARY INPUT_NAME)
-    message(STATUS "Generating ${INPUT_NAME}")
     parse_generator_arguments(${INPUT_NAME} INPUT
                               "NO_AUTOLIBS;MANUAL"                  # Options
                               "BOARD"                               # One Value Keywords
@@ -428,28 +430,13 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
     
     required_variables(VARS INPUT_SRCS INPUT_BOARD MSG "must define for target ${INPUT_NAME}")
    
-    if(INPUT_HDRS)
-        set( INPUT_HDRS "SRCS ${INPUT_HDRS}" )
-    endif()
-    if(INPUT_LIBS)
-        set( INPUT_LIBS "LIBS ${INPUT_LIBS}" )
-    endif()
-
-    if(INPUT_HDRS)
-        list(INSERT INPUT_HDRS 0 "HDRS")
-    endif()
-    if(INPUT_LIBS)
-        list(INSERT INPUT_LIBS 0 "LIBS")
-    endif()
-
-
-    generate_arduino_library( ${INPUT_NAME} 
+    generate_arduino_library( ${INPUT_NAME}
         NO_AUTOLIBS
         MANUAL
         BOARD ${INPUT_BOARD}
         SRCS ${INPUT_SRCS}
-        ${INPUT_HDRS}
-        ${INPUT_LIBS} )
+        HDRS ${INPUT_HDRS}
+        LIBS ${INPUT_LIBS} )
     
 endfunction()
 

@@ -124,7 +124,6 @@ char* serial_read_string(tx_t pin, int len ) {
     return str;
 }
 
-/*
 
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {

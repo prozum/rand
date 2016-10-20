@@ -1,6 +1,3 @@
-//
-// Created by Lee on 12/10/2016.
-//
 #ifndef RAND_SINGLE_KALMAN_H
 #define RAND_SINGLE_KALMAN_H
 

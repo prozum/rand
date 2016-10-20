@@ -106,31 +106,31 @@ void kalman_predict (kalman_state* state, double measurement)
     //state->z_k = add_vec_vec(mult_mat_vec(state->C, state->x_k), state->v_k);
 
     //x_k = A*x_k + B*u_k
-    state->x_k = add_vec_vec(mult_mat_vec(state->A, state->x_k), mult_mat_vec(state->B, state->u_k));
+    /*state->x_k = add_vec_vec(mult_mat_vec(state->A, state->x_k), mult_mat_vec(state->B, state->u_k)); */
     //P_k = A * P_(k-1) * A^T
-    state->P_k = add_mat_mat(mult_mat_mat(mult_mat_mat(state->A, state->P_k, state->size),
-                                          mat_T(state->A), state->size));
+    /*state->P_k = add_mat_mat(mult_mat_mat(mult_mat_mat(state->A, state->P_k, state->size),
+                                          mat_T(state->A), state->size));*/
 }
 
 void kalman_update(kalman_state* state, double measurement)
 {
     //C^T
-    double *C_trans = mat_T(state->C);
+    /*double *C_trans = mat_T(state->C);*/
 
     //G_k = P_k * C^T * (C * P_k * C^T + R)^-1
-    state->G_k = mult_mat_mat(
+    /*state->G_k = mult_mat_mat(
             mult_mat_mat(state->P_k, C_trans, state->size),
                 mat_inv(add_mat_mat(
                         mult_mat_mat(state->C, mult_mat_mat(state->P_k, C_trans, state->size),
                         state->R), state->size)),
-            state->size);
+            state->size);*/
 
     //x_k = x_k + G_k (z_k - C * x_k)
-    state->x_k = add_vec_vec(state->x_k, mult_mat_vec(state->G_k,
-                                                      sub_vec_vec(state->z_k, mult_mat_vec(state->C, state->x_k))));
+    /*state->x_k = add_vec_vec(state->x_k, mult_mat_vec(state->G_k,
+                                                      sub_vec_vec(state->z_k, mult_mat_vec(state->C, state->x_k))));*/
 
     //P_k = (I - G_k * C) * P_k
-    state->P_k = mult_mat_mat(sub_mat_mat(I, mult_mat_mat(state->G_k, state->C)), state->P_k);
+    /*state->P_k = mult_mat_mat(sub_mat_mat(I, mult_mat_mat(state->G_k, state->C)), state->P_k);*/
 
 
 }
