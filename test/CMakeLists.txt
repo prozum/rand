@@ -10,6 +10,7 @@ pkg_search_module(CPPUNIT cppunit)
 set(CMAKE_CXX_COMPILER gcc)
 set(CMAKE_CXX_FLAGS "-lcppunit")
 
+include_directories(../src/lib/ ../src/lib/io)
 include_directories(simavr simavr/avr)
 include_directories(common)
 

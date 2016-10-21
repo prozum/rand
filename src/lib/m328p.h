@@ -4,12 +4,14 @@
 // IO header defines for the atmega 328p
 // which is on the Arduino Uno
 
+#include <stdint.h>
+
+#if !MOCK
 #define F_CPU 16000000UL
 #define BAUD 9600
 #define NOT_A_PORT 0
 
 #include <util/setbaud.h>
-#include <stdint.h>
 
 // table to lookup a 328p, use a physical arduino pin to get the 328p pin value
 // for instance if you look up dpins[1] you get the CPU's value of the pin 1 on the uno
@@ -18,6 +20,8 @@ static uint8_t dpins[] = {_BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3),
                           _BV(PORTD4), _BV(PORTD5), _BV(PORTD6), _BV(PORTD7),
                           _BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3),
                           _BV(PORTB4), _BV(PORTB5)};
+
+#endif //MOCK
 
 // values of the different atmega 328p registers
 // PINx is an input register
