@@ -1,7 +1,3 @@
-//
-// Created by Lee on 12/10/2016.
-//
-
 #include "single_kalman.h"
 
 void kalman_init (kalman_state *state, double _a, double _r, log_sender component)

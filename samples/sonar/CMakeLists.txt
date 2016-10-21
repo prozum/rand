@@ -1,5 +1,5 @@
-generate_arduino_firmware(sonar-sample
+generate_avr_firmware(sonar-sample
 		BOARD uno
-		LIBS sonar
+		LIBS io sonar
 		SRCS main.c)
 

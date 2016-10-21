@@ -115,6 +115,17 @@ void serial_write_string(tx_t pin, char *out){
 
 }
 
+char* serial_read_string(tx_t pin, int len ) {
+    char* str = malloc(sizeof(char)*(len+1));
+
+    int i;
+    for(i=0;i<len;i++){
+        str[i] = uart_getchar();
+    }
+    str[i+1] = '\0';
+    return str;
+}
+
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
     uint8_t pin_ = dpins[pin];
@@ -156,16 +167,36 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 }
 
 #else
+
+void set_pin_mode(dpin_t pin, pin_mode_t pm) { }
+
+dval_t digital_read_val;
+
 dval_t digital_read(dpin_t pin)
 {
-    if (pin%2) {
-        return (dpin_t)1;
-    } else {
-        return (dpin_t)0;
-    }
+    return digital_read_val;
 }
 
+char uart_val;
+
 char uart_getchar() {
-    return 'a';
+    return uart_val;
 }
+
+uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout) { }
+
+void digital_write(dpin_t pin, dval_t ps) { }
+
+void uart_init() { }
+
+void uart_putchar(char c) { }
+
+void serial_write_string(tx_t pin, char *out) { }
+
+char *serial_string_val;
+
+char* serial_read_string(tx_t pin, int len ) {
+    return serial_string_val;
+}
+
 #endif

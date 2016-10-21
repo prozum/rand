@@ -1,4 +1,4 @@
-generate_arduino_library(datafusion
+generate_avr_library(datafusion
     	BOARD uno
 		SRCS datafusion.c
 		LIBS io)
