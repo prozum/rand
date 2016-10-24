@@ -357,10 +357,52 @@ endfunction()
 # [PUBLIC/USER]
 #
 # Generate test (TODO)
-function(GENERATE_TEST INPUT_NAME)
-    message(STATUS "Generating ${INPUT_NAME}")
+function(GENERATE_TEST_FIRMWARE INPUT_NAME CFILE)
+    message(STATUS "Generating test-firmware-${INPUT_NAME}")
 
+    #add_executable(${TARGET_NAME} ${ALL_SRCS})
+    #set_target_properties(${TARGET_NAME} PROPERTIES SUFFIX ".elf")
 
+    #get_arduino_flags(ARDUINO_COMPILE_FLAGS ARDUINO_LINK_FLAGS  ${BOARD_ID} ${MANUAL})
+
+    #set_target_properties(${TARGET_NAME} PROPERTIES
+    #        COMPILE_FLAGS "${ARDUINO_COMPILE_FLAGS} ${COMPILE_FLAGS}"
+    #        LINK_FLAGS "${ARDUINO_LINK_FLAGS} ${LINK_FLAGS}")
+    #target_link_libraries(${TARGET_NAME} ${ALL_LIBS} "-lc -lm")
+
+    #if(NOT EXECUTABLE_OUTPUT_PATH)
+    #    set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+    #endif()
+
+    set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${INPUT_NAME})
+    add_custom_command(OUTPUT ${INPUT_NAME}-elf POST_BUILD
+            COMMAND ${CMAKE_C_COMPILER}
+            ARGS     ${CMAKE_C_FLAGS}
+            ${CFILE}
+            ${TARGET_PATH}.elf
+            COMMENT "Compiling elf"
+            VERBATIM)
+
+    add_custom_command(OUTPUT ${INPUT_NAME}-eep POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY}
+            ARGS     ${ARDUINO_OBJCOPY_EEP_FLAGS}
+            ${TARGET_PATH}.elf
+            ${TARGET_PATH}.eep
+            COMMENT "Generating EEP image"
+            VERBATIM)
+
+    # Convert firmware image to ASCII HEX format
+    add_custom_command(OUTPUT ${INPUT_NAME}-hex POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY}
+            ARGS    ${ARDUINO_OBJCOPY_HEX_FLAGS}
+            ${TARGET_PATH}.elf
+            ${TARGET_PATH}.hex
+            COMMENT "Generating HEX image"
+            VERBATIM)
+
+    string(TOUPPER ${INPUT_NAME} INPUT_NAME)
+    string(REPLACE "-" "_" INPUT_NAME ${INPUT_NAME})
+    set(TEST_FIRMWARE_${INPUT_NAME} ${TARGET_PATH}.hex PARENT_SCOPE)
 endfunction()
 
 #=============================================================================#
