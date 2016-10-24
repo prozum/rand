@@ -1,6 +1,8 @@
-#include "io_priv.h"
+#include "../io_priv.h"
 #include <stdlib.h>
 #include <string.h>
+
+#if !MOCK
 
 void set_pin_mode(dpin_t pin, pin_mode_t pm)
 {
@@ -124,7 +126,6 @@ char* serial_read_string(tx_t pin, int len ) {
     return str;
 }
 
-
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
     uint8_t pin_ = dpins[pin];
@@ -165,23 +166,37 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
     return CLOCK_CYCLES_TO_MS(width * 21 + 16);
 }
 
-/*
-void analog_init(uint8_t pin)
+#else
+
+void set_pin_mode(dpin_t pin, pin_mode_t pm) { }
+
+dval_t digital_read_val;
+
+dval_t digital_read(dpin_t pin)
 {
-    ADMUX = pin;
-    ADMUX |= (1 << REFS0);
-
-    ADCSRA |= (1 << ADATE);
-
-    ADCSRB = 0;
-
-    ADCSRA |= (1 << ADEN);
-
-    ADCSRA |= (1 << ADSC);
+    return digital_read_val;
 }
 
-uint16_t analog_read(uint8_t pin)
-{
+char uart_val;
 
+char uart_getchar() {
+    return uart_val;
 }
- */
+
+uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout) { }
+
+void digital_write(dpin_t pin, dval_t ps) { }
+
+void uart_init() { }
+
+void uart_putchar(char c) { }
+
+void serial_write_string(tx_t pin, char *out) { }
+
+char *serial_string_val;
+
+char* serial_read_string(tx_t pin, int len ) {
+    return serial_string_val;
+}
+
+#endif

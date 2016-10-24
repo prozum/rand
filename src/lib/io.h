@@ -1,22 +1,26 @@
 #ifndef RAND_IO_H
 #define RAND_IO_H
 
-#include <avr/io.h>
-#include <util/delay.h>
 #include <stdint.h>
 #include <stdio.h>
 
+#if !MOCK
+
+#include <avr/io.h>
+#include <util/delay.h>
 #include "log.h"
+
+#define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
+#define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )
+#define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
+
+#endif
 
 #if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
 #   include "m328p.h"
 #elif defined (__AVR_ATmega1280__)
 #   include "m1280.h"
 #endif
-
-#define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
-#define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )
-#define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
 
 typedef enum pin_mode_e {
     INPUT    = 0,
