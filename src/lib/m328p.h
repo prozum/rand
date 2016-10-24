@@ -5,9 +5,12 @@
 // which is on the Arduino Uno
 
 #include <stdint.h>
-
 #if !MOCK
+
+#ifndef F_CPU
 #define F_CPU 16000000UL
+#endif
+
 #define BAUD 9600
 #define NOT_A_PORT 0
 
