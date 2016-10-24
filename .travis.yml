@@ -2,7 +2,7 @@ language: c
 dist: trusty
 
 before_install:
-  - sudo apt-get -qq install gcc-avr gdb-avr avrdude arduino libcppunit-1.13-0v5 libcunit1-dev
+  - sudo apt-get -qq install gcc-avr gdb-avr avrdude arduino libcppunit-1.13 libcunit1-dev
 
 install:
   - mkdir build && cd build
