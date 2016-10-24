@@ -1,2 +1,0 @@
-add_library(simavravr avr_mcu_section.h)
-set_target_properties(simavravr PROPERTIES LINKER_LANGUAGE CXX)
