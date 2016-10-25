@@ -1,3 +1,4 @@
-find_package(PkgConfig)
-pkg_search_module(CPPUNIT cppunit)
-add_subdirectory(io)
+load_test_firmware_defines()
+
+add_executable(tests main.cpp io/io_test.cpp)
+target_link_libraries(tests common ${CPPUNIT_LIBRARIES})

@@ -2,9 +2,9 @@
 #include "io_test.h"
 
 void IOTest::SetPinMode_Pin0SetIN_ExpectIN() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN0_INPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
@@ -13,9 +13,9 @@ void IOTest::SetPinMode_Pin0SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin7SetIN_ExpectIN() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN7_INPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
@@ -24,9 +24,9 @@ void IOTest::SetPinMode_Pin7SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin8SetIN_ExpectIN() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN8_INPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
@@ -35,9 +35,9 @@ void IOTest::SetPinMode_Pin8SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin13SetIN_ExpectIN() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN13_INPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
@@ -46,9 +46,9 @@ void IOTest::SetPinMode_Pin13SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin0SetOUT_ExpectOUT() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN0_OUTPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
@@ -57,9 +57,9 @@ void IOTest::SetPinMode_Pin0SetOUT_ExpectOUT() {
 }
 
 void IOTest::SetPinMode_Pin7SetOUT_ExpectOUT() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN7_OUTPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
@@ -68,9 +68,9 @@ void IOTest::SetPinMode_Pin7SetOUT_ExpectOUT() {
 }
 
 void IOTest::SetPinMode_Pin8SetOUT_ExpectOUT() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN8_OUTPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
@@ -79,9 +79,9 @@ void IOTest::SetPinMode_Pin8SetOUT_ExpectOUT() {
 }
 
 void IOTest::SetPinMode_Pin13SetOUT_ExpectOUT() {
-    char *fname = "";
+    char const *fname = TEST_FW_PIN13_OUTPUT;
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
@@ -90,9 +90,9 @@ void IOTest::SetPinMode_Pin13SetOUT_ExpectOUT() {
 }
 
 void SetPinMode_Pin13SetHigherThan1_ExpectNoChange() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
@@ -101,9 +101,9 @@ void SetPinMode_Pin13SetHigherThan1_ExpectNoChange() {
 }
 
 void IOTest::WritePin_Pin0WriteLOW_ExpectLOW() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', DDRD_, PIN0, OUTPUT);
 
@@ -113,9 +113,9 @@ void IOTest::WritePin_Pin0WriteLOW_ExpectLOW() {
 }
 
 void IOTest::WritePin_Pin7WriteLOW_ExpectLOW() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', DDRD_, PIN7, OUTPUT);
 
@@ -125,9 +125,9 @@ void IOTest::WritePin_Pin7WriteLOW_ExpectLOW() {
 }
 
 void IOTest::WritePin_Pin8WriteLOW_ExpectLOW() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', DDRB_, PIN0, OUTPUT);
 
@@ -137,9 +137,9 @@ void IOTest::WritePin_Pin8WriteLOW_ExpectLOW() {
 }
 
 void IOTest::WritePin_Pin13WriteLOW_ExpectLOW() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', DDRB_, PIN5, OUTPUT);
 
@@ -149,9 +149,9 @@ void IOTest::WritePin_Pin13WriteLOW_ExpectLOW() {
 }
 
 void IOTest::WritePin_Pin0WriteHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', DDRD_, PIN0, OUTPUT);
 
@@ -161,9 +161,9 @@ void IOTest::WritePin_Pin0WriteHIGH_ExpectHIGH() {
 }
 
 void IOTest::WritePin_Pin7WriteHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', DDRD_, PIN7, OUTPUT);
 
@@ -173,9 +173,9 @@ void IOTest::WritePin_Pin7WriteHIGH_ExpectHIGH() {
 }
 
 void IOTest::WritePin_Pin8WriteHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', DDRB_, PIN0, OUTPUT);
 
@@ -185,9 +185,9 @@ void IOTest::WritePin_Pin8WriteHIGH_ExpectHIGH() {
 }
 
 void IOTest::WritePin_Pin13WriteHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', DDRB_, PIN5, OUTPUT);
 
@@ -197,9 +197,9 @@ void IOTest::WritePin_Pin13WriteHIGH_ExpectHIGH() {
 }
 
 void WritePin_Pin13WriteHigherThan1_ExpectNoChange() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', DDRB_, PIN5, OUTPUT);
 
@@ -209,9 +209,9 @@ void WritePin_Pin13WriteHigherThan1_ExpectNoChange() {
 }
 
 void IOTest::ReadPin_Pin0ReadLOW_ExpectLOW() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', PORTD_, PIN0, LOW);
 
@@ -221,9 +221,9 @@ void IOTest::ReadPin_Pin0ReadLOW_ExpectLOW() {
 }
 
 void IOTest::ReadPin_Pin7ReadLOW_ExpectLOW() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', PORTD_, PIN7, LOW);
 
@@ -233,9 +233,9 @@ void IOTest::ReadPin_Pin7ReadLOW_ExpectLOW() {
 }
 
 void IOTest::ReadPin_Pin8ReadLOW_ExpectLOW() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', PORTB_, PIN0, LOW);
 
@@ -245,9 +245,9 @@ void IOTest::ReadPin_Pin8ReadLOW_ExpectLOW() {
 }
 
 void IOTest::ReadPin_Pin13ReadLOW_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', PORTB_, PIN5, LOW);
 
@@ -257,9 +257,9 @@ void IOTest::ReadPin_Pin13ReadLOW_ExpectHIGH() {
 }
 
 void IOTest::ReadPin_Pin0ReadHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', PORTD_, PIN0, LOW);
 
@@ -269,9 +269,9 @@ void IOTest::ReadPin_Pin0ReadHIGH_ExpectHIGH() {
 }
 
 void IOTest::ReadPin_Pin7ReadHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'D', PORTD_, PIN7, LOW);
 
@@ -281,9 +281,9 @@ void IOTest::ReadPin_Pin7ReadHIGH_ExpectHIGH() {
 }
 
 void IOTest::ReadPin_Pin8ReadHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', PORTB_, PIN0, LOW);
 
@@ -293,9 +293,9 @@ void IOTest::ReadPin_Pin8ReadHIGH_ExpectHIGH() {
 }
 
 void IOTest::ReadPin_Pin13ReadHIGH_ExpectHIGH() {
-    char *fname = "";
+    char const *fname = "";
 
-    avr_t *avr = Tools::avr_init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
     Tools::avr_set_state(avr, 'B', PORTB_, PIN5, LOW);
 

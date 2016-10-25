@@ -355,12 +355,85 @@ function(PRINT_BOARD_SETTINGS ARDUINO_BOARD)
 endfunction()
 
 # [PUBLIC/USER]
+# The arguments are as follows:
 #
-# Generate test (TODO)
-function(GENERATE_TEST INPUT_NAME)
-    message(STATUS "Generating ${INPUT_NAME}")
+#      input_name    # The name of the test firmware (Will be prefixed with "test-fw-")   [REQUIRED]
+#      cfile         # The c firmware file                                                [REQUIRED]
+#
+function(GENERATE_TEST_FIRMWARE INPUT_NAME CFILE)
+    message(STATUS "Generating test-fw-${INPUT_NAME}")
 
+    #add_executable(${TARGET_NAME} ${ALL_SRCS})
+    #set_target_properties(${TARGET_NAME} PROPERTIES SUFFIX ".elf")
 
+    #get_arduino_flags(ARDUINO_COMPILE_FLAGS ARDUINO_LINK_FLAGS  ${BOARD_ID} ${MANUAL})
+
+    #set_target_properties(${TARGET_NAME} PROPERTIES
+    #        COMPILE_FLAGS "${ARDUINO_COMPILE_FLAGS} ${COMPILE_FLAGS}"
+    #        LINK_FLAGS "${ARDUINO_LINK_FLAGS} ${LINK_FLAGS}")
+    #target_link_libraries(${TARGET_NAME} ${ALL_LIBS} "-lc -lm")
+
+    #if(NOT EXECUTABLE_OUTPUT_PATH)
+    #    set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
+    #endif()
+
+    set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${INPUT_NAME})
+    add_custom_command(OUTPUT ${INPUT_NAME}-elf POST_BUILD
+            COMMAND ${CMAKE_C_COMPILER}
+            ARGS     ${CMAKE_C_FLAGS}
+            ${CFILE}
+            ${TARGET_PATH}.elf
+            COMMENT "Compiling elf"
+            VERBATIM)
+
+    add_custom_command(OUTPUT ${INPUT_NAME}-eep POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY}
+            ARGS     ${ARDUINO_OBJCOPY_EEP_FLAGS}
+            ${TARGET_PATH}.elf
+            ${TARGET_PATH}.eep
+            COMMENT "Generating EEP image"
+            VERBATIM)
+
+    # Convert firmware image to ASCII HEX format
+    add_custom_command(OUTPUT ${INPUT_NAME}-hex POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY}
+            ARGS    ${ARDUINO_OBJCOPY_HEX_FLAGS}
+            ${TARGET_PATH}.elf
+            ${TARGET_PATH}.hex
+            COMMENT "Generating HEX image"
+            VERBATIM)
+
+    string(TOUPPER ${INPUT_NAME} INPUT_NAME)
+    string(REPLACE "-" "_" INPUT_NAME ${INPUT_NAME})
+
+    # Save define and path to global variable
+    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+
+    list(APPEND DEFINES TEST_FW_${INPUT_NAME})
+    list(APPEND PATHS ${TARGET_PATH}.hex)
+
+    set_property(GLOBAL PROPERTY TEST_FIRMWARE_DEFINES ${DEFINES})
+    set_property(GLOBAL PROPERTY TEST_FIRMWARE_PATHS ${PATHS})
+endfunction()
+
+# [PUBLIC/USER]
+#
+# load_test_firmware_defines()
+#
+# Loads c defines for use in tests.
+#
+function(LOAD_TEST_FIRMWARE_DEFINES)
+    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+
+    list(LENGTH DEFINES LENGTH)
+    math(EXPR LENGTH "${LENGTH} - 1" )
+    foreach(ITER RANGE ${LENGTH})
+        list(GET DEFINES ${ITER} DEFINE)
+        list(GET PATHS ${ITER} PATH)
+        add_definitions(-D${DEFINE}=\"${PATH}\")
+    endforeach()
 endfunction()
 
 #=============================================================================#
@@ -1446,7 +1519,7 @@ function(setup_serial_targets)
     if(CMAKE_HOST_UNIX)
         find_program(SCREEN screen)
         if(NOT SCREEN)
-            message(FATAL_ERROR "Please install screen!" )
+            message(FATAL_ERROR "Please install screen" )
         endif()
     else()
         message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet!" )

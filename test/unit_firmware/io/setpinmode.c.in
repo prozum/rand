@@ -1,0 +1,6 @@
+#include "io.h"
+
+int main (void)
+{
+    set_pin_mode(@PIN@, @PIN_MODE@);
+}

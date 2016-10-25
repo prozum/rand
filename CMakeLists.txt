@@ -8,6 +8,7 @@ project(rand)
 
 # Options
 option(SAMPLES "Samples" ON)
+option(TESTS "Tests" ON)
 option(SERIAL_TARGETS "Serial Targets" ON)
 option(SIZE_TARGETS "Size Targets" OFF)
 
@@ -24,4 +25,8 @@ endif()
 
 if(SERIAL_TARGETS)
     setup_serial_targets()
+endif()
+
+if(TESTS)
+    add_subdirectory(test)
 endif()

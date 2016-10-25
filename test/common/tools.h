@@ -42,7 +42,7 @@ enum {
 class Tools
 {
 public:
-    static avr_t *avr_init(char *fname, uint32_t freq);
+    static avr_t *init(char const *fname, uint32_t freq);
     static void avr_step(avr_t *avr, uint32_t steps);
     static avr_ioport_state_t avr_get_state(avr_t *avr, char port);
     static void avr_set_state(avr_t *avr, char port, int reg, int mask, int v);
