@@ -1,8 +1,10 @@
 #include "tools.h"
 
-avr_t* Tools::init(char const *fname, uint32_t freq) {
+avr_t* Tools::init(const char *fname, uint32_t freq) {
     avr_t *avr = NULL;
     elf_firmware_t f;
+
+    elf_read_firmware(fname, &f);
 
     avr_init(avr);
     avr_load_firmware(avr, &f);
