@@ -355,10 +355,13 @@ function(PRINT_BOARD_SETTINGS ARDUINO_BOARD)
 endfunction()
 
 # [PUBLIC/USER]
+# The arguments are as follows:
 #
-# Generate test (TODO)
+#      input_name    # The name of the test firmware (Will be prefixed with "test-fw-")   [REQUIRED]
+#      cfile         # The c firmware file                                                [REQUIRED]
+#
 function(GENERATE_TEST_FIRMWARE INPUT_NAME CFILE)
-    message(STATUS "Generating test-firmware-${INPUT_NAME}")
+    message(STATUS "Generating test-fw-${INPUT_NAME}")
 
     #add_executable(${TARGET_NAME} ${ALL_SRCS})
     #set_target_properties(${TARGET_NAME} PROPERTIES SUFFIX ".elf")
@@ -402,7 +405,35 @@ function(GENERATE_TEST_FIRMWARE INPUT_NAME CFILE)
 
     string(TOUPPER ${INPUT_NAME} INPUT_NAME)
     string(REPLACE "-" "_" INPUT_NAME ${INPUT_NAME})
-    set(TEST_FIRMWARE_${INPUT_NAME} ${TARGET_PATH}.hex PARENT_SCOPE)
+
+    # Save define and path to global variable
+    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+
+    list(APPEND DEFINES TEST_FW_${INPUT_NAME})
+    list(APPEND PATHS ${TARGET_PATH}.hex)
+
+    set_property(GLOBAL PROPERTY TEST_FIRMWARE_DEFINES ${DEFINES})
+    set_property(GLOBAL PROPERTY TEST_FIRMWARE_PATHS ${PATHS})
+endfunction()
+
+# [PUBLIC/USER]
+#
+# load_test_firmware_defines()
+#
+# Loads c defines for use in tests.
+#
+function(LOAD_TEST_FIRMWARE_DEFINES)
+    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+
+    list(LENGTH DEFINES LENGTH)
+    math(EXPR LENGTH "${LENGTH} - 1" )
+    foreach(ITER RANGE ${LENGTH})
+        list(GET DEFINES ${ITER} DEFINE)
+        list(GET PATHS ${ITER} PATH)
+        add_definitions(-D${DEFINE}=\"${PATH}\")
+    endforeach()
 endfunction()
 
 #=============================================================================#

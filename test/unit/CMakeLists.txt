@@ -1,3 +1,2 @@
-find_package(PkgConfig)
-pkg_search_module(CPPUNIT cppunit)
+load_test_firmware_defines()
 add_subdirectory(io)
