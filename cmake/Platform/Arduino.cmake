@@ -608,7 +608,6 @@ endfunction()
 #=============================================================================#
 function(GENERATE_AVR_FIRMWARE INPUT_NAME)
     # TODO: This is not optimal!!!!
-    message(STATUS "Generating ${INPUT_NAME}")
     parse_generator_arguments(${INPUT_NAME} INPUT
                               "NO_AUTOLIBS;MANUAL"            # Options
                               "BOARD;PORT;PROGRAMMER"  # One Value Keywords
