@@ -28,5 +28,5 @@ if(SERIAL_TARGETS)
 endif()
 
 if(TESTS)
-    add_subdirectory(test)
+    add_subdirectory(test_firmware)
 endif()
