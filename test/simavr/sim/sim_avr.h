@@ -28,6 +28,7 @@ extern "C" {
 
 #include "sim_irq.h"
 #include "sim_interrupts.h"
+#include "sim_cmds.h"
 #include "sim_cycle_timers.h"
 
 typedef uint32_t avr_flashaddr_t;
@@ -135,6 +136,10 @@ struct avr_trace_data_t {
 typedef void (*avr_run_t)(
 		struct avr_t * avr);
 
+#define AVR_FUSE_LOW	0
+#define AVR_FUSE_HIGH	1
+#define AVR_FUSE_EXT	2
+
 /*
  * Main AVR instance. Some of these fields are set by the AVR "Core" definition files
  * the rest is runtime data (as little as possible)
@@ -147,7 +152,8 @@ typedef struct avr_t {
 	uint32_t	e2end;
 	uint8_t		vector_size;
 	uint8_t		signature[3];
-	uint8_t		fuse[4];
+	uint8_t		fuse[6];
+	uint8_t		lockbits;
 	avr_io_addr_t	rampz;	// optional, only for ELPM/SPM on >64Kb cores
 	avr_io_addr_t	eind;	// optional, only for EIJMP/EICALL on >64Kb cores
 	uint8_t		address_size;	// 2, or 3 for cores >128KB in flash
@@ -285,6 +291,8 @@ typedef struct avr_t {
 	// queue of io modules
 	struct avr_io_t *io_port;
 
+	// Builtin and user-defined commands
+	avr_cmd_table_t commands;
 	// cycle timers tracking & delivery
 	avr_cycle_timer_pool_t	cycle_timers;
 	// interrupt vectors and delivery fifo
