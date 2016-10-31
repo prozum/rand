@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-double** mult_mat_mat(double **m1, double **m2, uint8_t mat_size);
+double** mult_mat_mat(double **m1, double **m2, uint8_t ma1_rows, uint8_t ma1_columns, uint8_t ma2_rows, uint8_t ma2_columns);
 double* mult_mat_vec(double **m, double v[], uint8_t rows, uint8_t cols);
 double** trans_matrix(double **m1, uint8_t rows, uint8_t cols);
 double** add_mat_mat(double** m1, double** m2, uint8_t size);
