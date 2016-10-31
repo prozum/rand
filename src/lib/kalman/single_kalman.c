@@ -1,6 +1,6 @@
 #include "single_kalman.h"
 
-void kalman_init (kalman_state *state, double _a, double _r, log_sender component)
+void single_kalman_init (kalman_state *state, double _a, double _r, log_sender component)
 {
     state->a = _a;
     state->r = _r;

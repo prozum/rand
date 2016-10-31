@@ -29,4 +29,5 @@ endif()
 
 if(TESTS)
     add_subdirectory(test_firmware)
+    add_subdirectory(test)
 endif()
