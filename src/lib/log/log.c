@@ -34,7 +34,7 @@ void toggle_logging(level lvl) {
     logging_level = lvl;
 }
 
-int senderIgnored(log_sender sender) {
+uint8_t sender_ignored(log_sender sender) {
     disabled_device *itr = head;
 
     while(itr != NULL) {
@@ -50,8 +50,8 @@ int senderIgnored(log_sender sender) {
 }
 
 /*Logs a message directly to serial output*/
-void LOG(log_sender sender, char *msg) {
-    if(!senderIgnored(sender) && logging_level == LOG_ALL) {
+void LOG(log_sender sender, const char *msg) {
+    if(!sender_ignored(sender) && logging_level == LOG_ALL) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
@@ -60,8 +60,8 @@ void LOG(log_sender sender, char *msg) {
 }
 
 /*Logs a warning directly to serial output*/
-void LOG_WARNING(log_sender sender, char *msg) {
-    if(!senderIgnored(sender) && logging_level > LOG_ONLY_ERRORS) {
+void LOG_WARNING(log_sender sender, const char *msg) {
+    if(!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
@@ -70,8 +70,8 @@ void LOG_WARNING(log_sender sender, char *msg) {
 }
 
 /*Logs an error directly to serial output.*/
-void LOG_ERROR(log_sender sender, char *msg) {
-    if(!senderIgnored(sender) && logging_level >= LOG_ONLY_ERRORS) {
+void LOG_ERROR(log_sender sender, const char *msg) {
+    if(!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
@@ -79,7 +79,7 @@ void LOG_ERROR(log_sender sender, char *msg) {
     }
 }
 
-void LOG_ERROR_BYPASS(char *msg) {
+void LOG_ERROR_BYPASS(const char *msg) {
     char cpy[strlen(msg) + 3];
     strcpy(cpy, msg);
 
@@ -102,4 +102,16 @@ void disable_device(log_sender device) {
 
     //Fill in the disable device on that spot
     *ptr = new_dev;
+}
+
+uint8_t count_disabled_devices() {
+    uint8_t devices = 0;
+    disabled_device *ptr = head;
+
+    while (ptr != NULL) {
+        devices++;
+        ptr = ptr->next;
+    }
+
+    return devices;
 }

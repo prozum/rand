@@ -11,6 +11,7 @@ int main(void)
     {
         digital_write(13, HIGH);
 
+        pulse_sonar();
         uint16_t duration = read_sonar(ECHO_PIN, TRIG_PIN);
 
         //_delay_loop_2(duration/100);

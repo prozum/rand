@@ -19,6 +19,5 @@ add_subdirectory(datafusion)
 
 # Kalman library
 add_subdirectory(kalman)
-add_subdirectory(single_kalman)
 
 add_subdirectory(matrix_math)

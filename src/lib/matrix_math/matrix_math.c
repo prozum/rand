@@ -1,7 +1,7 @@
 #include "matrix_math.h"
 
 
-double** mult_mat_mat(double **ma1, double **ma2, uint8_t mat_size) {
+/*double** mult_mat_mat(double **ma1, double **ma2, uint8_t mat_size) {
     //Needs size checking
     uint8_t i, j, k;
 
@@ -17,6 +17,38 @@ double** mult_mat_mat(double **ma1, double **ma2, uint8_t mat_size) {
         }
     }
     return res;
+}*/
+
+double** mult_mat_mat(double **ma1, double **ma2, uint8_t ma1_rows, uint8_t ma1_columns, uint8_t ma2_rows, uint8_t ma2_columns) {
+    int i = 0, j = 0, k = 0;
+
+    if(ma1_columns != ma2_rows){
+        //Error write to log
+        return NULL;
+    }
+
+    double res[ma1_rows][ma2_columns]; //Necessary because of weird bug with pres overriding values in ma1 when allocated.
+
+    for (i = 0; i < ma1_rows; ++i) {
+        for (j = 0; j < ma2_columns; ++j) {
+            res[i][j] = 0;
+            for (k = 0; k < ma1_columns; ++k) {
+                res[i][j] += ma1[i][k] * ma2[k][j];
+            }
+        }
+    }
+
+    double** pres = malloc(ma2_columns * sizeof(double*));
+    for (i = 0; i < ma2_columns; ++i) {
+        pres[i] = (double *) malloc(ma1_rows * sizeof(double));
+    }
+
+    for (i = 0; i < ma1_rows; ++i) {
+        for (j = 0; j < ma2_columns; ++j) {
+            pres[i][j] = res[i][j];
+        }
+    }
+    return pres;
 }
 
 double** trans_matrix(double **ma1, uint8_t rows, uint8_t cols){

@@ -5,11 +5,12 @@
 #include "io.h"
 #include "single_kalman.h"
 
-// trigger sonar from D0
-// sonar echoes are in D7, D8, D12 and D13
+#define SONAR_TRIGGER_PIN 1
+#define SONAR_ECHO_PIN 2
 
-void sonar_init(dpin_t echoPin, dpin_t trigPin);
-double read_sonar(dpin_t echopin, dpin_t trigpin);
+void sonar_init();
+void pulse_sonar();
+double read_sonar();
 
 #endif //RAND_SONAR_H
 

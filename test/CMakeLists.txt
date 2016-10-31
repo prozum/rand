@@ -22,6 +22,7 @@ endforeach()
 
 # Includes
 include_directories(common simavr simavr/cores simavr/sim simavr/sim/avr)
+include_directories(common /usr/local/include/)
 
 add_subdirectory(simavr)
 add_subdirectory(common)
