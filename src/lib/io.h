@@ -14,7 +14,7 @@
 #define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )
 #define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
 
-#endif
+#endif //MOCK
 
 #if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
 #   include "m328p.h"
@@ -74,5 +74,10 @@ void uart_putchar(char c/*, FILE *stream*/);
 /// Returns the next character read from the avr processor's uart.
 /// \return The character read.
 char uart_getchar(/*FILE *stream*/);
+
+#if MOCK
+char *get_write_buffer();
+void clear_write_buffer();
+#endif //MOCK
 
 #endif //RAND_IO_H

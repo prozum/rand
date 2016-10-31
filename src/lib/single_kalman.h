@@ -21,6 +21,8 @@ typedef struct kalman_state_t {
 
 void kalman_init (kalman_state *state, double _a, double _r, log_sender component);
 double single_kalman_run (kalman_state *state, double z_k);
+//void kalman_calibrate(kalman_state *state);
+
 
 #endif //RAND_SINGLE_KALMAN_H
 

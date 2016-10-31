@@ -191,7 +191,22 @@ void uart_init() { }
 
 void uart_putchar(char c) { }
 
-void serial_write_string(tx_t pin, char *out) { }
+char *write_buffer;
+void serial_write_string(tx_t pin, char *out) {
+    if(write_buffer) {
+        free(write_buffer);
+    }
+    write_buffer = malloc(strlen(out) * sizeof(char));
+    strcpy(write_buffer, out);
+}
+char *get_write_buffer() {
+    return write_buffer;
+}
+void clear_write_buffer() {
+    if(write_buffer) {
+        free(write_buffer);
+    }
+}
 
 char *serial_string_val;
 

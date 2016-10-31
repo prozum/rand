@@ -9,7 +9,8 @@ int main ()
 
     initialize_sensors();
 
-    double sonar_1 = read_sonar(6, 2);
+    pulse_sonar();
+    double sonar_1 = read_sonar();
 
     snprintf(buffer, 65, "%lf", sonar_1);
 
@@ -21,6 +22,6 @@ int main ()
 
 void initialize_sensors ()
 {
-    sonar_init(6, 2);
+    sonar_init();
 }
 
