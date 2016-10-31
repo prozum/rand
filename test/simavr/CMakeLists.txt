@@ -6,6 +6,7 @@ if (NOT LIBELF_FOUND)
 endif()
 
 include_directories(${LIBELF_INCLUDE_DIRS})
+include_directories(/usr/local/include/)
 include_directories(avr)
 
 file(GLOB SRCS
