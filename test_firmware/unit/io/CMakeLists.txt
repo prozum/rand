@@ -1,29 +1,24 @@
-generate_arduino_firmware(setpinmodeinput
-		BOARD uno
-		LIBS io
-		SRCS setpinmodeinput.c)
+set(PIN_IDS 0 7 8 13)
 
-generate_arduino_firmware(setpinmodeoutput
-		BOARD uno
-		LIBS io
-		SRCS setpinmodeoutput.c)
+foreach(PIN_ID ${PIN_IDS})
+	# INPUT/OUTPUT tests
+	foreach(PIN_MODE INPUT;OUTPUT)
+		configure_file(setpinmode.c.in setpinmode.c)
+ 		generate_test_firmware(pin${PIN_ID}-pinmode-${PIN_MODE}
+				               BOARD uno
+				               SRCS setpinmode.c)
+	endforeach()
 
-generate_arduino_firmware(digitalwritelow
-		BOARD uno
-		LIBS io
-		SRCS digitalwritelow.c)
+	# HIGH/LOW tests
+	foreach(PIN_VAL HIGH;LOW)
+		configure_file(digitalread.c.in digitalread.c)
+		generate_test_firmware(pin${PIN_ID}-dread-${PIN_VAL}
+				               BOARD uno
+							   SRCS digitalread.c)
 
-generate_arduino_firmware(digitawritehigh
-		BOARD uno
-		LIBS io
-		SRCS digitalwritehigh.c)
-
-generate_arduino_firmware(digitalreadlow
-		BOARD uno
-		LIBS io
-		SRCS digitalreadlow.c)
-
-generate_arduino_firmware(digitalreadhigh
-		BOARD uno
-		LIBS io
-		SRCS digitalreadhigh.c)
+		configure_file(digitalwrite.c.in digitalwrite.c)
+		generate_test_firmware(pin${PIN_ID}-dwrite-${PIN_VAL}
+							   BOARD uno
+							   SRCS digitalwrite.c)
+	endforeach()
+endforeach()

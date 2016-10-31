@@ -1,0 +1,8 @@
+#include "io.h"
+
+#include <assert.h>
+
+int main()
+{
+    assert(digital_read(@PIN@) == @PIN_VAL@);
+}

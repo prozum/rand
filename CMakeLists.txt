@@ -1,6 +1,7 @@
 set(CMAKE_TOOLCHAIN_FILE cmake/ArduinoToolchain.cmake)
 
 cmake_minimum_required(VERSION 2.8)
+include(ExternalProject)
 
 set(ARDUINO_C_FLAGS "-g -Os -ffunction-sections -fdata-sections")
 
@@ -29,5 +30,12 @@ endif()
 
 if(TESTS)
     add_subdirectory(test_firmware)
-    add_subdirectory(test)
+
+    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+
+    externalproject_add(tests
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
+            CMAKE_CACHE_DEFAULT_ARGS -DTEST_FIRMWARE_DEFINES:STRING=${DEFINES} -DTEST_FIRMWARE_PATHS:STRING=\"${PATHS}\"
+            INSTALL_COMMAND "")
 endif()

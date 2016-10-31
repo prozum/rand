@@ -358,29 +358,25 @@ endfunction()
 # The arguments are as follows:
 #
 #      input_name    # The name of the test firmware (Will be prefixed with "test-fw-")   [REQUIRED]
-#      cfile         # The c firmware file                                                [REQUIRED]
 #
-function(GENERATE_TEST_FIRMWARE INPUT_NAME CFILE)
+function(GENERATE_TEST_FIRMWARE INPUT_NAME)
+    string(TOLOWER ${INPUT_NAME} INPUT_NAME)
     message(STATUS "Generating test-fw-${INPUT_NAME}")
 
-    #add_executable(${TARGET_NAME} ${ALL_SRCS})
-    #set_target_properties(${TARGET_NAME} PROPERTIES SUFFIX ".elf")
+    parse_generator_arguments(${INPUT_NAME} INPUT
+                      "NO_AUTOLIBS;MANUAL"            # Options
+                      "BOARD;PROGRAMMER"              # One Value Keywords
+                      "SERIAL;SRCS;HDRS;LIBS;AFLAGS"  # Multi Value Keywords
+                      ${ARGN})
 
-    #get_arduino_flags(ARDUINO_COMPILE_FLAGS ARDUINO_LINK_FLAGS  ${BOARD_ID} ${MANUAL})
 
-    #set_target_properties(${TARGET_NAME} PROPERTIES
-    #        COMPILE_FLAGS "${ARDUINO_COMPILE_FLAGS} ${COMPILE_FLAGS}"
-    #        LINK_FLAGS "${ARDUINO_LINK_FLAGS} ${LINK_FLAGS}")
-    #target_link_libraries(${TARGET_NAME} ${ALL_LIBS} "-lc -lm")
-
-    #if(NOT EXECUTABLE_OUTPUT_PATH)
-    #    set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR})
-    #endif()
+    get_arduino_flags(ARDUINO_COMPILE_FLAGS ARDUINO_LINK_FLAGS ${INPUT_BOARD} TRUE)
+    set(FW_FLAGS "${ARDUINO_COMPILE_FLAGS} ${COMPILE_FLAGS} ${ARDUINO_LINK_FLAGS} ${LINK_FLAGS} ${ALL_LIBS} -lc -lm")
 
     set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${INPUT_NAME})
     add_custom_command(OUTPUT ${INPUT_NAME}-elf POST_BUILD
             COMMAND ${CMAKE_C_COMPILER}
-            ARGS     ${CMAKE_C_FLAGS}
+            ARGS     ${CMAKE_C_FLAGS} ${FW_FLAGS}
             ${CFILE}
             ${TARGET_PATH}.elf
             COMMENT "Compiling elf"
@@ -415,25 +411,6 @@ function(GENERATE_TEST_FIRMWARE INPUT_NAME CFILE)
 
     set_property(GLOBAL PROPERTY TEST_FIRMWARE_DEFINES ${DEFINES})
     set_property(GLOBAL PROPERTY TEST_FIRMWARE_PATHS ${PATHS})
-endfunction()
-
-# [PUBLIC/USER]
-#
-# load_test_firmware_defines()
-#
-# Loads c defines for use in tests.
-#
-function(LOAD_TEST_FIRMWARE_DEFINES)
-    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
-    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
-
-    list(LENGTH DEFINES LENGTH)
-    math(EXPR LENGTH "${LENGTH} - 1" )
-    foreach(ITER RANGE ${LENGTH})
-        list(GET DEFINES ${ITER} DEFINE)
-        list(GET PATHS ${ITER} PATH)
-        add_definitions(-D${DEFINE}=\"${PATH}\")
-    endforeach()
 endfunction()
 
 #=============================================================================#

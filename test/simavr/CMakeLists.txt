@@ -1,5 +1,17 @@
+add_subdirectory(cores)
+
+find_package(LibElf REQUIRED)
+if (NOT LIBELF_FOUND)
+    message(FATAL_ERROR "Please install libelf")
+endif()
+
+include_directories(${LIBELF_INCLUDE_DIRS})
 include_directories(avr)
-add_library(simavr avr_adc.h avr_bitbang.h avr_eeprom.h avr_extint.h
-            avr_flash.h avr_ioport.h avr_uart.h sim_avr.h sim_io.h
-            sim_elf.h sim_irq.h sim_regbit.h avr/avr_mcu_section.h libsimavr.a)
-set_target_properties(simavr PROPERTIES LINKER_LANGUAGE C)
+
+file(GLOB SRCS
+        "sim/*.c"
+        "sim/*.h")
+
+add_library(simavr ${SRCS})
+target_link_libraries(simavr simavr-cores ${LIBELF_LIBRARIES})
+#set_target_properties(simavr PROPERTIES LINKER_LANGUAGE C)

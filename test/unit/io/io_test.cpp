@@ -2,7 +2,7 @@
 #include "io_test.h"
 
 void IOTest::SetPinMode_Pin0SetIN_ExpectIN() {
-    char const *fname = TEST_FW_PIN0_INPUT;
+    char const *fname = TEST_FW_PIN0_PINMODE_INPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
@@ -13,7 +13,7 @@ void IOTest::SetPinMode_Pin0SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin7SetIN_ExpectIN() {
-    char const *fname = TEST_FW_PIN7_INPUT;
+    char const *fname = TEST_FW_PIN7_PINMODE_INPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
@@ -24,7 +24,7 @@ void IOTest::SetPinMode_Pin7SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin8SetIN_ExpectIN() {
-    char const *fname = TEST_FW_PIN8_INPUT;
+    char const *fname = TEST_FW_PIN8_PINMODE_INPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
@@ -35,7 +35,7 @@ void IOTest::SetPinMode_Pin8SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin13SetIN_ExpectIN() {
-    char const *fname = TEST_FW_PIN13_INPUT;
+    char const *fname = TEST_FW_PIN13_PINMODE_INPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
@@ -46,7 +46,7 @@ void IOTest::SetPinMode_Pin13SetIN_ExpectIN() {
 }
 
 void IOTest::SetPinMode_Pin0SetOUT_ExpectOUT() {
-    char const *fname = TEST_FW_PIN0_OUTPUT;
+    char const *fname = TEST_FW_PIN0_PINMODE_OUTPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
@@ -57,7 +57,7 @@ void IOTest::SetPinMode_Pin0SetOUT_ExpectOUT() {
 }
 
 void IOTest::SetPinMode_Pin7SetOUT_ExpectOUT() {
-    char const *fname = TEST_FW_PIN7_OUTPUT;
+    char const *fname = TEST_FW_PIN7_PINMODE_OUTPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
@@ -68,7 +68,7 @@ void IOTest::SetPinMode_Pin7SetOUT_ExpectOUT() {
 }
 
 void IOTest::SetPinMode_Pin8SetOUT_ExpectOUT() {
-    char const *fname = TEST_FW_PIN8_OUTPUT;
+    char const *fname = TEST_FW_PIN8_PINMODE_OUTPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
@@ -79,7 +79,7 @@ void IOTest::SetPinMode_Pin8SetOUT_ExpectOUT() {
 }
 
 void IOTest::SetPinMode_Pin13SetOUT_ExpectOUT() {
-    char const *fname = TEST_FW_PIN13_OUTPUT;
+    char const *fname = TEST_FW_PIN13_PINMODE_OUTPUT;
 
     avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
