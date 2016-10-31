@@ -14,4 +14,3 @@ file(GLOB SRCS
 add_library(simavr ${SRCS})
 set_property(TARGET simavr PROPERTY C_STANDARD 11)
 target_link_libraries(simavr simavr-cores ${LIBELF_LIBRARIES})
-#set_target_properties(simavr PROPERTIES LINKER_LANGUAGE C)
