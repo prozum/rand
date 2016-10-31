@@ -1,3 +1,3 @@
-generate_arduino_library(gdb
+generate_avr_library(gdb
     	BOARD uno
 		SRCS gdb.c)

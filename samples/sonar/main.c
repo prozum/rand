@@ -13,7 +13,7 @@ int main(void)
 
         uint16_t duration = read_sonar(ECHO_PIN, TRIG_PIN);
 
-        _delay_loop_2(duration/100);
+        //_delay_loop_2(duration/100);
 
         digital_write(13, LOW);
 

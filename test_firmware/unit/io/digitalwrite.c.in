@@ -6,6 +6,6 @@ int main()
 {
     while (1)
     {
-        digital_write(@PIN@, @PIN_VAL@);
+        digital_write(@PIN_ID@, @PIN_VAL@);
     }
 }

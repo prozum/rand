@@ -4,5 +4,5 @@
 
 int main()
 {
-    assert(digital_read(@PIN@) == @PIN_VAL@);
+    assert(digital_read(@PIN_ID@) == @PIN_VAL@);
 }
