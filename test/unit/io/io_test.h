@@ -23,7 +23,11 @@
 #define LOW 0
 #define HIGH 1
 
-class IOTest : public CppUnit::TestCase {
+
+class IOTest : public CppUnit::TestFixture {
+    CPPUNIT_TEST_SUITE(IOTest);
+    CPPUNIT_TEST_SUITE_END();
+
 public:
     void SetPinMode_Pin0SetIN_ExpectIN();
     void SetPinMode_Pin7SetIN_ExpectIN();

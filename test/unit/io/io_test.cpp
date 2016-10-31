@@ -1,6 +1,8 @@
 #include <sim_avr.h>
 #include "io_test.h"
 
+CPPUNIT_TEST_SUITE_REGISTRATION( IOTest );
+
 void IOTest::SetPinMode_Pin0SetIN_ExpectIN() {
     char const *fname = TEST_FW_PIN0_PINMODE_INPUT;
 
