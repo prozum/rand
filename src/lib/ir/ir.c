@@ -1,6 +1,7 @@
 #include <single_kalman.h>
 #include "ir.h"
 #include "io.h"
+#include <math.h>
 
 //The IR is placed on an 8-bit pin
 #define IR_MAX_INPUT 255
@@ -19,4 +20,12 @@ float read_top_IR() {
 
 float read_bottom_IR() {
 
+}
+
+float IR_top_to_meters() {
+    return 7881.82 * pow(IR_top_state.x_k, -1.086);
+}
+
+float IR_bottom_to_meters() {
+    return 7881.82 * pow(IR_bottom_state.x_k, -1.086);
 }

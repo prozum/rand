@@ -4,20 +4,17 @@
 
 #define SONAR_TIMEOUT 22000 //Just short of 4 meters
 #define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
-#define MIN_DELAY 65
 
-kalman_state sonar_state;
+float newest_reading;
 
 void sonar_init ()
 {
-    kalman_init(&sonar_state, 1, 1, SENDER_SONAR); //<-- 1, 1 should be changed when actual values are found.
+    //Setup pins of the sonar.
+    set_pin_mode(SONAR_TRIGGER_PIN, OUTPUT);
+    set_pin_mode(SONAR_ECHO_PIN, INPUT);
 }
 
 void pulse_sonar() {
-    //Setup and pulsing the trigger pin. Might be done in pulse_in tho
-    set_pin_mode(SONAR_TRIGGER_PIN, OUTPUT);
-    set_pin_mode(SONAR_ECHO_PIN, INPUT);
-
     //Send a pulse on the trigger pin.
     digital_write(SONAR_TRIGGER_PIN, LOW);
     _delay_ms(2);
@@ -26,17 +23,24 @@ void pulse_sonar() {
     digital_write(SONAR_TRIGGER_PIN, LOW);
 }
 
-double read_sonar()
+float read_sonar()
 {
-    uint16_t duration = pulse_in(SONAR_ECHO_PIN, HIGH, SONAR_TIMEOUT);
-    uint8_t extraDelay = 0;
+    pulse_sonar();
 
-    if (duration >= MIN_OUTPUT && duration <= SONAR_TIMEOUT)
-        return single_kalman_run(&sonar_state, duration);
-    else if (duration < MIN_DELAY){ //Ensuring a minimum of 65ms between each measurement
-        extraDelay = MIN_DELAY - duration;
-        _delay_loop_2(extraDelay);
+    uint16_t duration = pulse_in(SONAR_ECHO_PIN, HIGH, SONAR_TIMEOUT);
+
+    if (duration >= MIN_OUTPUT && duration <= SONAR_TIMEOUT) {
+        newest_reading = duration;
+        sonar_valid_reading = 1;
+    }
+    else {
+        LOG_WARNING(SENDER_SONAR, "The sonar received faulty value.");
+        sonar_valid_reading = 0;
     }
 
-    return sonar_state.x_k;
+    return newest_reading;
+}
+
+float sonar_to_meters() {
+    return 0.01979 * newest_reading + 0.23361;
 }

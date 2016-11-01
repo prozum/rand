@@ -2,14 +2,14 @@
 #include <stdlib.h>
 #include "matrix_math.h"
 
-void check_for_null_matrix(kalman_state *state) {
+void check_for_null_matrix(kalman_state_matrix *state) {
     if(!state->A || !state->B || !state->C || !state->R || !state->G_k || !state->P_k)
         LOG_ERROR(state->source_components, "Kalman-state failed to allocate space for a matrix.");
 
     //It's quite bad, if the matrices are not malloc'ed - do we need some sort of abort flight function?
 }
 
-void kalman_init (kalman_state *state, uint8_t size, log_sender component)
+void kalman_init (kalman_state_matrix *state, uint8_t size, log_sender component)
 {
     //The matrix needs to have size rows and size columns, thus size * size must be malloc'ed
     uint8_t tot_size = size * size;
@@ -34,7 +34,7 @@ void kalman_init (kalman_state *state, uint8_t size, log_sender component)
     check_for_null_matrix(state);
 }
 
-void kalman_destroy(kalman_state *state) {
+void kalman_destroy(kalman_state_matrix *state) {
     free(state->A);
     free(state->B);
     free(state->C);
@@ -49,7 +49,7 @@ void kalman_destroy(kalman_state *state) {
     free(state);
 }
 
-void kalman_setA (kalman_state *state, const double *values)
+void kalman_setA (kalman_state_matrix *state, const double *values)
 {
     uint8_t tot_size = state->size * state->size;
 
@@ -62,7 +62,7 @@ void kalman_setA (kalman_state *state, const double *values)
     }
 }
 
-void kalman_setB (kalman_state *state, const double *values)
+void kalman_setB (kalman_state_matrix *state, const double *values)
 {
     uint8_t tot_size = state->size * state->size;
 
@@ -75,7 +75,7 @@ void kalman_setB (kalman_state *state, const double *values)
     }
 }
 
-void kalman_setC (kalman_state *state, const double *values)
+void kalman_setC (kalman_state_matrix *state, const double *values)
 {
     uint8_t tot_size = state->size * state->size;
 
@@ -88,7 +88,7 @@ void kalman_setC (kalman_state *state, const double *values)
     }
 }
 
-void kalman_setR (kalman_state *state, const double *values)
+void kalman_setR (kalman_state_matrix *state, const double *values)
 {
     uint8_t tot_size = state->size * state->size;
 
@@ -101,7 +101,7 @@ void kalman_setR (kalman_state *state, const double *values)
     }
 }
 
-void kalman_predict (kalman_state* state, double measurement)
+void kalman_predict (kalman_state_matrix* state, double measurement)
 {
     //state->z_k = add_vec_vec(mult_mat_vec(state->C, state->x_k), state->v_k);
 
@@ -112,7 +112,7 @@ void kalman_predict (kalman_state* state, double measurement)
                                           mat_T(state->A), state->size));*/
 }
 
-void kalman_update(kalman_state* state, double measurement)
+void kalman_update(kalman_state_matrix* state, double measurement)
 {
     //C^T
     /*double *C_trans = mat_T(state->C);*/
@@ -135,6 +135,6 @@ void kalman_update(kalman_state* state, double measurement)
 
 }
 
-void kalman_filter(kalman_state *state, double measurement) {
+void kalman_filter(kalman_state_matrix *state, double measurement) {
 
 }

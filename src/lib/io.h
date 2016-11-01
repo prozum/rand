@@ -78,6 +78,7 @@ char uart_getchar(/*FILE *stream*/);
 #if MOCK
 char *get_write_buffer();
 void clear_write_buffer();
+dval_t get_digital_buffer(dpin_t pin, uint8_t index);
 #endif //MOCK
 
 #endif //RAND_IO_H

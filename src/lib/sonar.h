@@ -8,9 +8,11 @@
 #define SONAR_TRIGGER_PIN 1
 #define SONAR_ECHO_PIN 2
 
+char sonar_valid_reading = 0;
+
 void sonar_init();
-void pulse_sonar();
-double read_sonar();
+float read_sonar();
+float sonar_to_meters();
 
 #endif //RAND_SONAR_H
 

@@ -2,7 +2,7 @@
 #include "io.h"
 #include "log.h"
 
-typedef struct kalman_state_t {
+typedef struct kalman_matrix_state_t {
     uint8_t size;
     log_sender source_components;
 
@@ -19,14 +19,14 @@ typedef struct kalman_state_t {
 
     double *x_k; //State variable
 
-} kalman_state;
+} kalman_state_matrix;
 
-void kalman_init (kalman_state *state, const uint8_t size, log_sender component);
-void kalman_destroy(kalman_state *state);
+void kalman_init (kalman_state_matrix *state, const uint8_t size, log_sender component);
+void kalman_destroy(kalman_state_matrix *state);
 
-void kalman_setA (kalman_state *state, const double *values);
-void kalman_setB (kalman_state *state, const double *values);
-void kalman_setC (kalman_state *state, const double *values);
-void kalman_setR (kalman_state *state, const double *values);
-void kalman_filter (kalman_state* state, double measurement);
+void kalman_setA (kalman_state_matrix *state, const double *values);
+void kalman_setB (kalman_state_matrix *state, const double *values);
+void kalman_setC (kalman_state_matrix *state, const double *values);
+void kalman_setR (kalman_state_matrix *state, const double *values);
+void kalman_filter (kalman_state_matrix *state, double measurement);
 

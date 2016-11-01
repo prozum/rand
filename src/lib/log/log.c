@@ -24,16 +24,23 @@ static level logging_level = LOG_NONE;
  * @param lvl which classes of errors to log (may be LOG_ONLY_ERRORS, LOG_DEBUG, LOG_ALL, LOG_NONE)
  */
 void toggle_logging(level lvl) {
-    //Write project-name and version to buffer
+    //Produce a message with version and project-name
     char init_msg[30];
     strcpy(init_msg, MAJOR_VERSION);
     strcat(init_msg, ", version: ");
     strcat(init_msg, PROJECT_NAME);
-    serial_write_string(USB_TX, init_msg);
 
+    //Set logging lvl
     logging_level = lvl;
+    //Write the init-message to log (only goes through if logging_level is set to ALL).
+    LOG(SENDER_BOARD, init_msg);
 }
 
+/**
+ * Checks wether the given sender has been ignored.
+ * @param sender
+ * @return 0 if the sender has not been ignored, 1 if it has.
+ */
 uint8_t sender_ignored(log_sender sender) {
     disabled_device *itr = head;
 
@@ -49,7 +56,11 @@ uint8_t sender_ignored(log_sender sender) {
     return 0;
 }
 
-/*Logs a message directly to serial output*/
+/**
+ * Logs a standard message
+ * @param sender is the module to log from
+ * @param msg is the message to log.
+ */
 void LOG(log_sender sender, const char *msg) {
     if(!sender_ignored(sender) && logging_level == LOG_ALL) {
         char cpy[strlen(msg) + 3];
@@ -59,7 +70,11 @@ void LOG(log_sender sender, const char *msg) {
     }
 }
 
-/*Logs a warning directly to serial output*/
+/**
+ * Logs a warning
+ * @param sender is the module to log from
+ * @param msg  is the warning to log
+ */
 void LOG_WARNING(log_sender sender, const char *msg) {
     if(!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
@@ -69,7 +84,11 @@ void LOG_WARNING(log_sender sender, const char *msg) {
     }
 }
 
-/*Logs an error directly to serial output.*/
+/**
+ * Logs an error
+ * @param sender is the module to log from
+ * @param msg is the error to log
+ */
 void LOG_ERROR(log_sender sender, const char *msg) {
     if(!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
@@ -79,6 +98,10 @@ void LOG_ERROR(log_sender sender, const char *msg) {
     }
 }
 
+/**
+ * Bypasses all filters an logs a serious error.
+ * @param msg is the error to log.
+ */
 void LOG_ERROR_BYPASS(const char *msg) {
     char cpy[strlen(msg) + 3];
     strcpy(cpy, msg);
@@ -86,6 +109,10 @@ void LOG_ERROR_BYPASS(const char *msg) {
     serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
 }
 
+/**
+ * Disables a module, blocking all future logs
+ * @param device to disable.
+ */
 void disable_device(log_sender device) {
     disabled_device new_dev = {.blocked_device = device, .next = NULL};
 
@@ -104,6 +131,7 @@ void disable_device(log_sender device) {
     *ptr = new_dev;
 }
 
+#if MOCK
 uint8_t count_disabled_devices() {
     uint8_t devices = 0;
     disabled_device *ptr = head;
@@ -115,3 +143,4 @@ uint8_t count_disabled_devices() {
 
     return devices;
 }
+#endif //MOCK

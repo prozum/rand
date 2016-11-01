@@ -7,5 +7,7 @@
 void IR_init();
 float read_top_IR();
 float read_bottom_IR();
+float IR_top_to_meters();
+float IR_bottom_to_meters();
 
 #endif //RAND_IR_H
