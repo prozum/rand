@@ -32,8 +32,8 @@ if(TESTS)
     get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
     get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
 
-    #add_custom_target(test_test DEPENDS build/test_firmware/unit/io/pin0-pinmode-input.hex)
-    #    message("PATHS: ${PATHS}")
+    #message("PATHS: ${PATHS}")
+    #message("DEFINES: ${DEFINES}")
 
     externalproject_add(tests
             SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
