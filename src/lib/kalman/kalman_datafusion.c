@@ -1,6 +1,6 @@
 #include "kalman_datafusion.h"
 #include <stdlib.h>
-#include "matrix_math.h"
+#include "matrix_math/matrix_math.h"
 
 void check_for_null_matrix(kalman_state_matrix *state) {
     if(!state->A || !state->B || !state->C || !state->R || !state->G_k || !state->P_k)

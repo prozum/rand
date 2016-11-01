@@ -6,6 +6,7 @@
 #define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
 
 float newest_reading;
+char sonar_valid_reading = 0;
 
 void sonar_init ()
 {

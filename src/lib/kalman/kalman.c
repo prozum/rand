@@ -44,6 +44,7 @@ double kalman_run(kalman_state *state, double z_k)
 
 void kalman_calibrate(kalman_state *initial_state, double z_0)
 {
+    int calibration_done = 0;
     while (!calibration_done)
     {
         single_kalman_run(initial_state, z_0);
