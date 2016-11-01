@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "io.h"
-#include "log.h"
+#include "io/io.h"
+#include "log/log.h"
 
 typedef struct kalman_state_t {
     uint8_t size;

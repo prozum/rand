@@ -5,7 +5,7 @@ foreach(PIN_ID ${PIN_IDS})
 	foreach(PIN_MODE INPUT;OUTPUT)
 		configure_file(setpinmode.c.in pin${PIN_ID}-pinmode-${PIN_MODE}.c)
  		generate_avr_firmware(pin${PIN_ID}-pinmode-${PIN_MODE}
-				               TEST MOCK
+				               TEST
 				               BOARD uno
 				               LIBS io
 				               SRCS pin${PIN_ID}-pinmode-${PIN_MODE})
@@ -15,14 +15,14 @@ foreach(PIN_ID ${PIN_IDS})
 	foreach(PIN_VAL HIGH;LOW)
 		configure_file(digitalread.c.in pin${PIN_ID}-dread-${PIN_VAL}.c)
 		generate_avr_firmware(pin${PIN_ID}-dread-${PIN_VAL}
-							   TEST MOCK
+							   TEST
 				               BOARD uno
 				               LIBS io
 							   SRCS pin${PIN_ID}-dread-${PIN_VAL}.c)
 
 		configure_file(digitalwrite.c.in pin${PIN_ID}-dwrite-${PIN_VAL}.c)
 		generate_avr_firmware(pin${PIN_ID}-dwrite-${PIN_VAL}
-				               TEST MOCK
+				               TEST
 							   BOARD uno
 				               LIBS io
 							   SRCS pin${PIN_ID}-dwrite-${PIN_VAL}.c)

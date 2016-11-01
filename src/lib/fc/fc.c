@@ -1,4 +1,4 @@
-#include "fc.h"
+#include "fc/fc.h"
 
 /* private interface */
 static void set_yaw(uint16_t d)

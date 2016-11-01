@@ -1,6 +1,7 @@
-#include "io.h"
+#include "io/io.h"
 
-#if !MOCK
+//#if !MOCK
+#define NOT_A_PORT 0
 
 const uint16_t port_to_input[] = {
         NOT_A_PORT,
@@ -14,4 +15,4 @@ const uint16_t port_to_input[] = {
         (uint16_t) &PIND,
 };
 
-#endif
+//#endif

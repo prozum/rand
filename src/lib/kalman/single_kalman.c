@@ -1,4 +1,4 @@
-#include "single_kalman.h"
+#include "kalman/kalman.h"
 
 void single_kalman_init (kalman_state *state, double _a, double _r, log_sender component)
 {

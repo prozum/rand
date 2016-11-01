@@ -1,6 +1,4 @@
-#include "io.h"
-
-#define PIN 0
+#include "io/io.h"
 
 int main()
 {
