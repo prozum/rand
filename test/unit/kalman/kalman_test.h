@@ -11,5 +11,5 @@
 class kalman_test : public CppUnit::TestCase
 {
 public:
-    void SingleKalmanInit_NullAsStateValidParams_ExpectInvalidState ();
+    void KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog ();
 };

@@ -9,5 +9,6 @@ float read_top_IR();
 float read_bottom_IR();
 float IR_top_to_meters();
 float IR_bottom_to_meters();
+void IR_callibrate(float z_0);
 
 #endif //RAND_IR_H

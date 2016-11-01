@@ -162,6 +162,15 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
         width++;
     }
 
-
     return CLOCK_CYCLES_TO_MS(width * 21 + 16);
+}
+
+void analog_write(apin_t pin, aval_t out)
+{
+
+}
+
+aval_t analog_read(apin_t pin)
+{
+
 }

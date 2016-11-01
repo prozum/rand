@@ -21,12 +21,12 @@ typedef struct kalman_matrix_state_t {
 
 } kalman_state_matrix;
 
-void kalman_init (kalman_state_matrix *state, const uint8_t size, log_sender component);
-void kalman_destroy(kalman_state_matrix *state);
+void kalman_datafusion_init (kalman_state_matrix *state, const uint8_t size, log_sender component);
+void kalman_datafusion_destroy(kalman_state_matrix *state);
 
-void kalman_setA (kalman_state_matrix *state, const double *values);
-void kalman_setB (kalman_state_matrix *state, const double *values);
-void kalman_setC (kalman_state_matrix *state, const double *values);
-void kalman_setR (kalman_state_matrix *state, const double *values);
-void kalman_filter (kalman_state_matrix *state, double measurement);
+void kalman_datafusion_setA (kalman_state_matrix *state, const double *values);
+void kalman_datafusion_setB (kalman_state_matrix *state, const double *values);
+void kalman_datafusion_setC (kalman_state_matrix *state, const double *values);
+void kalman_datafusion_setR (kalman_state_matrix *state, const double *values);
+void kalman_datafusion_filter (kalman_state_matrix *state, double measurement);
 
