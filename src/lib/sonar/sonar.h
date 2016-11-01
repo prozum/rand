@@ -3,7 +3,7 @@
 
 #include <avr/io.h>
 #include "io/io.h"
-#include "kalman/kalman.h"
+#include "kalman/kalman_datafusion.h"
 
 #define SONAR_TRIGGER_PIN 1
 #define SONAR_ECHO_PIN 2

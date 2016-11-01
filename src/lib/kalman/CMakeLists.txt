@@ -1,4 +1,4 @@
 generate_avr_library(kalman
         BOARD uno
-        SRCS kalman.c single_kalman.c
+        SRCS kalman_datafusion.c kalman.c
         LIBS io)
