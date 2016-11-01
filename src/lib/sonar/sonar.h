@@ -8,7 +8,7 @@
 #define SONAR_TRIGGER_PIN 1
 #define SONAR_ECHO_PIN 2
 
-char sonar_valid_reading = 0;
+extern char sonar_valid_reading;
 
 void sonar_init();
 float read_sonar();
