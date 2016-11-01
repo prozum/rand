@@ -2,6 +2,12 @@
 
 void single_kalman_init (kalman_state *state, double _a, double _r, log_sender component)
 {
+    if (!state) {
+        LOG_ERROR(component, "State pointer set to null");
+
+        return;
+    }
+
     state->a = _a;
     state->r = _r;
 
@@ -34,4 +40,17 @@ double single_kalman_run (kalman_state *state, double z_k)
     state->p_k = (1 - state->g_k) * state->p_k;
 
     return state->x_k;
+}
+
+void kalman_calibrate(kalman_state *initial_state, double z_0)
+{
+    while (!calibration_done)
+    {
+        single_kalman_run(initial_state, z_0);
+
+        double diff = initial_state->x_k - z_0;
+
+        if(diff <= initial_state->r)
+            calibration_done = 1;
+    }
 }

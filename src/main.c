@@ -15,7 +15,7 @@ int main ()
 
     serial_write_string(SERIAL0, buffer);
 
-    // ends the program
+    // Schedular cyclic-executive
     while(1);
 }
 
