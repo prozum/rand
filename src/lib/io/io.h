@@ -8,7 +8,7 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include "log.h"
+#include "log/log.h"
 
 #define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
 #define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )

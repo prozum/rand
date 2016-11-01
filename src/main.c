@@ -1,5 +1,5 @@
-#include "io.h"
-#include "sonar.h"
+#include "io/io.h"
+#include "sonar/sonar.h"
 
 void initialize_sensors();
 

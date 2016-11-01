@@ -12,7 +12,6 @@
 #endif
 
 #define BAUD 9600
-#define NOT_A_PORT 0
 
 #include <util/setbaud.h>
 

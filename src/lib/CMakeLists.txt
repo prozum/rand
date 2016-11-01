@@ -12,9 +12,9 @@ add_subdirectory(fc)
 
 # Sensor libraries
 add_subdirectory(ir)
-add_subdirectory(sonar)
+#add_subdirectory(sonar)
 
 # Kalman library
-add_subdirectory(kalman)
+#add_subdirectory(kalman)
 
 add_subdirectory(matrix_math)

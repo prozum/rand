@@ -1,4 +1,4 @@
-#include "matrix_math.h"
+#include "matrix_math/matrix_math.h"
 
 
 /*double** mult_mat_mat(double **ma1, double **ma2, uint8_t mat_size) {

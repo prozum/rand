@@ -1,7 +1,7 @@
 #include <malloc.h>
 #include "log_test.h"
-#include "log.h"
-#include "io.h"
+#include "log/log.h"
+#include "io/io.h"
 #include <string>
 
 using namespace std;

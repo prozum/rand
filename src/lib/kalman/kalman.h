@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "io.h"
-#include "log.h"
+#include "io/io.h"
+#include "log/log.h"
 
 typedef struct kalman_matrix_state_t {
     uint8_t size;
@@ -20,6 +20,10 @@ typedef struct kalman_matrix_state_t {
     double *x_k; //State variable
 
 } kalman_state_matrix;
+
+typedef struct kalman_state_s {
+    double x_k;
+} kalman_state;
 
 void kalman_init (kalman_state_matrix *state, const uint8_t size, log_sender component);
 void kalman_destroy(kalman_state_matrix *state);

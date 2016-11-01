@@ -425,9 +425,9 @@ endfunction()
 function(GENERATE_AVR_LIBRARY INPUT_NAME)
     message(STATUS "Generating ${INPUT_NAME}")
     parse_generator_arguments(${INPUT_NAME} INPUT
-                              "MANUAL;MOCK"                # Options
-                              "BOARD"                               # One Value Keywords
-                              "SRCS;HDRS;LIBS"                      # Multi Value Keywords
+                              ""                # Options
+                              "BOARD"           # One Value Keywords
+                              "SRCS;HDRS;LIBS"  # Multi Value Keywords
                               ${ARGN})
 
     if(NOT INPUT_BOARD)
@@ -461,12 +461,18 @@ endfunction()
 #=============================================================================#
 function(GENERATE_AVR_FIRMWARE INPUT_NAME)
     string(TOLOWER ${INPUT_NAME} INPUT_NAME)
-    message(STATUS "Generating ${INPUT_NAME}")
     parse_generator_arguments(${INPUT_NAME} INPUT
-                              "TEST;MOCK"             # Options
+                              "TEST"                                  # Options
                               "BOARD;PORT;SKETCH;PROGRAMMER"          # One Value Keywords
                               "SERIAL;SRCS;HDRS;LIBS;ARDLIBS;AFLAGS"  # Multi Value Keywords
                               ${ARGN})
+
+    # Set name for test firmware
+    if (INPUT_TEST)
+        set(INPUT_NAME "test-fw-${INPUT_NAME}")
+    endif()
+
+    message(STATUS "Generating ${INPUT_NAME}")
 
     if(NOT INPUT_BOARD)
         set(INPUT_BOARD ${ARDUINO_DEFAULT_BOARD})
@@ -694,7 +700,7 @@ function(get_arduino_flags COMPILE_FLAGS_VAR LINK_FLAGS_VAR BOARD_ID)
         if(DEFINED ${BOARD_ID}.build.pid)
             set(COMPILE_FLAGS "${COMPILE_FLAGS} -DUSB_PID=${${BOARD_ID}.build.pid}")
         endif()
-        if (NOT MOCK)
+        if (MOCK)
             set(COMPILE_FLAGS "${COMPILE_FLAGS} -DMOCK")
         endif()
         set(LINK_FLAGS "-mmcu=${${BOARD_ID}.build.mcu}")
