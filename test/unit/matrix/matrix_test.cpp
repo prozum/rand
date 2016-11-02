@@ -3,7 +3,7 @@
 
 using namespace CppUnit;
 
-static TestSuite *MatrixTest::suite() {
+TestSuite *MatrixTest::suite() {
     TestSuite *suite = new TestSuite("MatrixTest");
     //Add this function because it doesn't fall into the other categories.
     suite->addTest(new TestCaller<MatrixTest>(
@@ -19,7 +19,7 @@ static TestSuite *MatrixTest::suite() {
     return suite;
 }
 
-static TestSuite *MatrixTest::transTests() {
+TestSuite *MatrixTest::transTests() {
     TestSuite *tTests = new TestSuite("trans");
 
     tTests->addTest(new TestCaller(
@@ -32,7 +32,7 @@ static TestSuite *MatrixTest::transTests() {
     return tTests;
 }
 
-static TestSuite *MatrixTest::multTests() {
+TestSuite *MatrixTest::multTests() {
     TestSuite *mTests = new TestSuite("mult");
 
     mTests->addTest(new TestCaller(
@@ -48,7 +48,7 @@ static TestSuite *MatrixTest::multTests() {
     return mTests;
 }
 
-static TestSuite *MatrixTest::addTests() {
+TestSuite *MatrixTest::addTests() {
     TestSuite *aTests = new TestSuite("add");
 
     aTests->addTest(new TestCaller(
@@ -68,7 +68,7 @@ static TestSuite *MatrixTest::addTests() {
     return aTests;
 }
 
-static TestSuite *MatrixTest::subTests() {
+TestSuite *MatrixTest::subTests() {
     TestSuite *sTests = new TestSuite("sub");
 
     sTests->addTest(new TestCaller(
@@ -88,7 +88,7 @@ static TestSuite *MatrixTest::subTests() {
     return sTests;
 }
 
-static TestSuite *MatrixTest::invTests() {
+TestSuite *MatrixTest::invTests() {
     TestSuite *iTests = new TestSuite("inv");
 
     iTests->addTest(new TestCaller(
