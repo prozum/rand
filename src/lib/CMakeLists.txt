@@ -1,8 +1,5 @@
-# I/O board library
-add_subdirectory(io)
-
-# Logging framework library
-add_subdirectory(log)
+# Core (I/O,Log) library
+add_subdirectory(core)
 
 # gdb library
 add_subdirectory(gdb)

@@ -1,5 +1,5 @@
-#include "io/io.h"
-#include "log/log.h"
+#include "core/io.h"
+#include "core/log.h"
 
 #include <stdlib.h>
 #include <string.h>

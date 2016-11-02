@@ -90,7 +90,7 @@ avr_ioport_write(
 }
 
 /*
- * This is a reasonably new behaviour for the io-ports. Writing 1's to the PIN register
+ * This is a reasonably new behaviour for the core-ports. Writing 1's to the PIN register
  * toggles the PORT equivalent bit (regardless of direction
  */
 static void

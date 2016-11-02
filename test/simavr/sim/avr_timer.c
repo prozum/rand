@@ -308,8 +308,8 @@ avr_timer_configure(
 			printf("%s-%c clock %d top %d OCR%c %d\n", __FUNCTION__, p->name, clock, top, 'A'+compi, ocr);
 
 		if (ocr && ocr <= top) {
-			p->comp[compi].comp_cycles = frequency / fc; // avr_hz_to_cycles(p->io.avr, fa);
-//			AVR_LOG(p->io.avr, LOG_TRACE,
+			p->comp[compi].comp_cycles = frequency / fc; // avr_hz_to_cycles(p->core.avr, fa);
+//			AVR_LOG(p->core.avr, LOG_TRACE,
 			if (p->trace & (avr_timer_trace_compa << compi)) printf(
 					"TIMER: %s-%c %c %.2fHz = %d cycles\n",
 					__FUNCTION__, p->name,

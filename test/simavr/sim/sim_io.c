@@ -177,7 +177,7 @@ avr_iomem_getirq(
 	avr_io_addr_t a = AVR_DATA_TO_IO(addr);
 	if (avr->io[a].irq == NULL) {
 		/*
-		 * Prepare an array of names for the io IRQs. Ideally we'd love to have
+		 * Prepare an array of names for the core IRQs. Ideally we'd love to have
 		 * a proper name for these, but it's not possible at this time.
 		 */
 		char names[9 * 20];
@@ -185,9 +185,9 @@ avr_iomem_getirq(
 		const char * namep[9];
 		for (int ni = 0; ni < 9; ni++) {
 			if (ni < 8)
-				sprintf(d, "=avr.io%04x.%d", addr, ni);
+				sprintf(d, "=avr.core%04x.%d", addr, ni);
 			else
-				sprintf(d, "8=avr.io%04x.all", addr);
+				sprintf(d, "8=avr.core%04x.all", addr);
 			namep[ni] = d;
 			d += strlen(d) + 1;
 		}
@@ -200,7 +200,7 @@ avr_iomem_getirq(
 	if (name) {
 		int l = strlen(name);
 		char n[l + 10];
-		sprintf(n, "avr.io.%s", name);
+		sprintf(n, "avr.core.%s", name);
 		free((void*)avr->io[a].irq[index].name);
 		avr->io[a].irq[index].name = strdup(n);
 	}
@@ -226,7 +226,7 @@ avr_io_setirqs(
 			char buf[64];
 			for (int i = 0; i < count; i++) {
 				/*
-				 * this bit takes the io module 'kind' ("port")
+				 * this bit takes the core module 'kind' ("port")
 				 * the IRQ name ("=0") and the last character of the ioctl ('p','o','r','A')
 				 * to create a full name "=porta.0"
 				 */
@@ -238,7 +238,7 @@ avr_io_setirqs(
 				while (!isalpha(*kind))
 					*dst++ = *kind++;
 				// add avr name
-//				strcpy(dst, io->avr->mmcu);
+//				strcpy(dst, core->avr->mmcu);
 				strcpy(dst, "avr");
 				dst += strlen(dst);
 				*dst ++ = '.';

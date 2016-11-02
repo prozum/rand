@@ -327,7 +327,7 @@ const char * avr_regname(uint8_t reg)
 		if (reg < 32)
 			sprintf(tt, "r%d", reg);
 		else
-			sprintf(tt, "io:%02x", reg);
+			sprintf(tt, "core:%02x", reg);
 		reg_names[reg] = strdup(tt);
 	}
 	return reg_names[reg];

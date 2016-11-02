@@ -38,7 +38,7 @@ extern "C" {
  * not always defined in the same place on real AVR cores
  */
 /*
- * set/get/clear io register bits in one operation
+ * set/get/clear core register bits in one operation
  */
 static inline uint8_t avr_regbit_set(avr_t * avr, avr_regbit_t rb)
 {
