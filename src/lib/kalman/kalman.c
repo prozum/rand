@@ -1,6 +1,6 @@
 #include "kalman/kalman.h"
 
-void single_kalman_init (kalman_state *state, double _a, double _r, log_sender component)
+void kalman_init(kalman_state *state, double _a, double _r, log_sender component)
 {
     if (!state) {
         LOG_ERROR(component, "State pointer set to null");
@@ -19,7 +19,7 @@ void single_kalman_init (kalman_state *state, double _a, double _r, log_sender c
     state->source_components = component;
 }
 
-double single_kalman_run (kalman_state *state, double z_k)
+double kalman_run(kalman_state *state, double z_k)
 {
     // the x_k and p_k we use in the calculations are those of the previous calculation
     // so we calculate a new x_k and p_k based on the previous values

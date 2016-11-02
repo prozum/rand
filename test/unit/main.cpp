@@ -1,12 +1,19 @@
 #include <cppunit/ui/text/TestRunner.h>
 
 #include "io/io_test.h"
+#include "kalman/kalman_test.h"
+#include "log/log_test.h"
+#include "matrix/matrix_test.h"
+#include "sonar/sonar_test.h"
 
 int main(int argc, char **argv) {
     CppUnit::TextUi::TestRunner runner;
 
-    CppUnit::Test *suite = CppUnit::TestFactoryRegistry::getRegistry().makeTest();
-    runner.addTest(suite);
+    runner.addTest(SonarTest::suite());
+    runner.addTest(IOTest::suite());
+    runner.addTest(KalmanTest::suite());
+    runner.addTest(LogTest::suite());
+    runner.addTest(MatrixTest::suite());
 
     runner.setOutputter( new CppUnit::CompilerOutputter( &runner.result(),
                                                          std::cerr ) );

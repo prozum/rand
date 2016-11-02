@@ -8,8 +8,10 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
-class kalman_test : public CppUnit::TestCase
+class KalmanTest : public CppUnit::TestCase
 {
 public:
-    void SingleKalmanInit_NullAsStateValidParams_ExpectInvalidState ();
+    static CppUnit::TestSuite *suite();
+
+    void KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog ();
 };
