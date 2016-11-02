@@ -412,7 +412,7 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
             COMMAND "${AVR_C_COMPILER}" ${COMPILE_FLAGS} ${ALL_SRCS} "-o" "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_AVR_NAME}.a"
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
     foreach(LIB ${INPUT_LIBS})
-        #add_dependencies(${TARGET_AVR_NAME} "${LIB}-avr")
+        add_dependencies(${TARGET_AVR_NAME} "${LIB}-avr")
     endforeach()
 
     # Mock lib

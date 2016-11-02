@@ -1,6 +1,6 @@
 #include "sonar/sonar.h"
 #include <util/delay.h>
-#include "io/io.h"
+#include "core/io.h"
 
 #define SONAR_TIMEOUT 22000 //Just short of 4 meters
 #define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar

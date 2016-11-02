@@ -10,7 +10,7 @@ extern const uint16_t port_to_input[];
 
 #include <avr/io.h>
 #include <util/delay.h>
-#include "log/log.h"
+#include "core/log.h"
 
 #define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
 #define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )

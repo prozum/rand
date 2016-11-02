@@ -2,7 +2,7 @@
 #define RAND_SONAR_H
 
 #include <avr/io.h>
-#include "io/io.h"
+#include "core/io.h"
 #include "kalman/kalman_datafusion.h"
 
 #define SONAR_TRIGGER_PIN 1
