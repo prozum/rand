@@ -3,43 +3,8 @@
 #include "io/io.h"
 
 using namespace std;
-using namespace CppUnit;
 
-static Test *SonarTest::suite() {
-    //Instantiate test suite
-    TestSuite *suiteOfTests = new TestSuite("SonarTest");
-
-    //Add all test methods.
-    suiteOfTests->addTest((new TestCaller<SonarTest>(
-            "sonarInit_expectTriggerOutAndEchoIn", &SonarTest::sonarInit_expectTriggerOutAndEchoIn));
-
-    suiteOfTests->addTest(new TestCaller<SonarTest>(
-            "pulseSonar_expectBuffer010", &SonarTest::pulseSonar_expectBuffer010));
-
-    suiteOfTests->addTest(new TestCaller<SonarTest>(
-            "readSonar_inRange_expectValidByteOne", &SonarTest::readSonar_inRange_expectValidByteOne));
-
-    suiteOfTests->addTest(new TestCaller<SonarTest>(
-            "readSonar_outOfRange_expectValidByteZero", &SonarTest::readSonar_outOfRange_expectValidByteZero));
-
-    suiteOfTests->addTest(new TestCaller<SonarTest>(
-            "readSonar_tooClose_expectValidByteZero", &SonarTest::readSonar_tooClose_expectValidByteZero));
-
-    suiteOfTests->addTest(new TestCaller<SonarTest>(
-            "sonarToMeters_110_expect2.41", &SonarTest::sonarToMeters_110_expect2dot41
-    ));
-
-    suiteOfTests->addTest(new TestCaller<SonarTest>(
-            "sonarToMeters_8000_expect158.57", &SonarTest::sonarToMeters_8000_expect158dot57
-    ));
-
-    suiteOfTests->addTest(new TestCaller<SonarTest>(
-            "sonarToMeters_22000_expect453.68", &SonarTest::sonarToMeters_22000_expect453dot68
-    ));
-
-    //And return the suite
-    return suiteOfTests;
-}
+CPPUNIT_TEST_SUITE_REGISTRATION(SonarTest);
 
 void SonarTest::pulseSonar_expectBuffer010() {
     sonar_init();

@@ -10,8 +10,11 @@
 
 class KalmanTest : public CppUnit::TestCase
 {
+    CPPUNIT_TEST_SUITE(KalmanTest);
+        CPPUNIT_TEST(KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog);
+    CPPUNIT_TEST_SUITE_END();
+
 public:
-    static CppUnit::TestSuite *suite();
 
     void KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog ();
 };
