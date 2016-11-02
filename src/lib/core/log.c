@@ -1,6 +1,6 @@
 #include <string.h>
-#include "io/io.h"
-#include "log/log.h"
+#include "core/io.h"
+#include "core/log.h"
 
 //Prefix defines:
 static const char* WARNING_PREFIX = "W: ";

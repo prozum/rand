@@ -1,6 +1,6 @@
 #include <stdint.h>
-#include "io/io.h"
-#include "log/log.h"
+#include "core/io.h"
+#include "core/log.h"
 
 typedef struct kalman_matrix_state_t {
     uint8_t size;

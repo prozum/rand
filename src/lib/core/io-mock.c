@@ -93,10 +93,6 @@ dval_t get_digital_buffer(dpin_t pin) {
     return -1;
 }
 
-void uart_init() { }
-
-void uart_putchar(char c) { }
-
 //A two-dimensional array for storing char-pointers (i.e. strings)
 char *serial_buffer[SERIAL_PINS][SERIAL_BUFFER_SIZE];
 uint8_t serial_buf_cnt[SERIAL_BUFFER_SIZE];
@@ -111,13 +107,13 @@ void serial_write_string(tx_t pin, char *out) {
     uint8_t index = serial_buf_cnt[pin];
 
     //Checks if a string has been allocated on the buffer slot and clears it in that case
-    if(write_buffer[pin][index]) {
-        free(write_buffer[pin][index]);
+    if(serial_buffer[pin][index]) {
+        free(serial_buffer[pin][index]);
     }
 
     //Allocates place for a new string and copies it to the buffer
-    write_buffer[pin][index] = malloc(strlen(out) * sizeof(char));
-    strcpy(write_buffer, out);
+    serial_buffer[pin][index] = malloc(strlen(out) * sizeof(char));
+    strcpy(serial_buffer[pin][index], out);
 }
 
 /**
@@ -136,7 +132,7 @@ char *get_write_buffer(tx_t pin) {
         prev = serial_buf_cnt[pin] - 1;
     }
 
-    return digital_buffer[pin][prev];
+    return serial_buffer[pin][prev];
 }
 
 /**
@@ -144,8 +140,9 @@ char *get_write_buffer(tx_t pin) {
  * @param pin
  */
 void clear_write_buffer(tx_t pin) {
+    int i = 0;
     //Run through the whole buffer
-    for (int i = 0; i < SERIAL_BUFFER_SIZE; ++i) {
+    for (i; i < SERIAL_BUFFER_SIZE; ++i) {
         //Clear deallocate the string if it was allocated.
         if(serial_buffer[pin][i]) {
             free(serial_buffer[pin][i]);
@@ -161,14 +158,15 @@ void clear_write_buffer(tx_t pin) {
  * @return a string from what was filled in the buffer
  */
 char* serial_read_string(tx_t pin, int len ) {
-    char serial_string_val = malloc(len * sizeof(char));
+    char *serial_string_val = malloc(len * sizeof(char));
 
     //declare integers for index of 2nd and 3rd dimension of the array
     uint8_t index = 0;
     uint8_t it_index = 0;
 
     //Emulate a continous buffer by copying from the things that have been written via serial
-    for (int i = 0; i < len; ++i) {
+    int i = 0;
+    for (i; i < len; ++i) {
         //if the char at hand is the string terminator (\0) move on to the next string in the buffer.
         if(serial_buffer[pin][index][it_index] == '\0') {
             index = (index + 1) % SERIAL_BUFFER_SIZE;
@@ -180,74 +178,6 @@ char* serial_read_string(tx_t pin, int len ) {
     }
 
     return serial_string_val;
-}
-
-void uart_putchar(char c/*, FILE *stream*/) {
-    loop_until_bit_is_set(UCSR0A, UDRE0); // wait while register is free
-    UDR0 = c;
-}
-
-char uart_getchar(/*FILE *stream*/) {
-    loop_until_bit_is_set(UCSR0A, RXC0); /* Wait until data exists. */
-    return UDR0;
-}
-
-void serial_write_string(tx_t pin, char *out){
-    int i;
-    for(i = 0; i < strlen(out)-1;i++) {
-        uart_putchar(out[i]);
-    }
-
-}
-
-char* serial_read_string(tx_t pin, int len ) {
-    char* str = malloc(sizeof(char)*(len+1));
-
-    int i;
-    for(i=0;i<len;i++){
-        str[i] = uart_getchar();
-    }
-    str[i+1] = '\0';
-    return str;
-}
-
-uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
-{
-    uint8_t pin_ = dpins[pin];
-    uint8_t port_ = dports[pin];
-    uint8_t state_ = (state ? pin_ : 0);
-    uint16_t width = 0;
-
-    uint16_t loop_count = 0;
-    uint16_t loop_max = MS_TO_CLOCK_CYCLES(timeout) / 16; // maybe bitshift with 4 instead
-
-    while (((volatile uint8_t)port_to_input[port_]) & pin_ == state_)
-    {
-        if (loop_count++ == loop_max)
-        {
-            return 0;
-        }
-    }
-
-    while (((volatile uint8_t)port_to_input[port_]) & pin_ != state_)
-    {
-        if (loop_count++ == loop_max)
-        {
-            return 0;
-        }
-    }
-
-    while (((volatile uint8_t)port_to_input[port_]) & pin_ == state_)
-    {
-        if (loop_count++ == loop_max)
-        {
-            return 0;
-        }
-
-        width++;
-    }
-
-    return CLOCK_CYCLES_TO_MS(width * 21 + 16);
 }
 
 void analog_write(apin_t pin, aval_t out)

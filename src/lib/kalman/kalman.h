@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "log/log.h"
+#include "core/log.h"
 
 typedef struct kalman_state_t {
     log_sender source_components;
