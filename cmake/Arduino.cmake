@@ -226,49 +226,21 @@
 # Print the detected Arduino board settings.
 #
 #=============================================================================#
-# register_hardware_platform(HARDWARE_PLATFORM_PATH)
-#=============================================================================#
-#
-#        HARDWARE_PLATFORM_PATH - Hardware platform path
-#
-# Registers a Hardware Platform path.
-# See: http://code.google.com/p/arduino/wiki/Platforms
-#
-# This enables you to register new types of hardware platforms such as the
-# Sagnuino, without having to copy the files into your Arduion SDK.
-#
-# A Hardware Platform is a directory containing the following:
-#
-#        HARDWARE_PLATFORM_PATH/
-#            |-- bootloaders/
-#            |-- cores/
-#            |-- variants/
-#            |-- boards.txt
-#            `-- programmers.txt
-#            
-#  The board.txt describes the target boards and bootloaders. While
-#  programmers.txt the programmer defintions.
-#
-#  A good example of a Hardware Platform is in the Arduino SDK:
-#
-#        ${ARDUINO_SDK_PATH}/hardware/arduino/
-#
-#=============================================================================#
 # Configuration Options
 #=============================================================================#
 #
 # ARDUINO_SDK_PATH            - Arduino SDK Path
-# ARDUINO_AVRDUDE_PROGRAM     - Full path to avrdude programmer
-# ARDUINO_AVRDUDE_CONFIG_PATH - Full path to avrdude configuration file
+# AVR_AVRDUDE_PROGRAM     - Full path to avrdude programmer
+# AVR_AVRDUDE_CONFIG_PATH - Full path to avrdude configuration file
 #
-# ARDUINO_C_FLAGS             - C compiler flags
-# ARDUINO_CXX_FLAGS           - C++ compiler flags
-# ARDUINO_LINKER_FLAGS        - Linker flags
+# AVR_C_FLAGS             - C compiler flags
+# AVR_CXX_FLAGS           - C++ compiler flags
+# AVR_LINKER_FLAGS        - Linker flags
 #
-# ARDUINO_DEFAULT_BOARD      - Default Arduino Board ID when not specified.
-# ARDUINO_DEFAULT_PORT       - Default Arduino port when not specified.
-# ARDUINO_DEFAULT_SERIAL     - Default Arduino Serial command when not specified.
-# ARDUINO_DEFAULT_PROGRAMMER - Default Arduino Programmer ID when not specified.
+# AVR_DEFAULT_BOARD      - Default AVR Board ID when not specified.
+# AVR_DEFAULT_PORT       - Default AVR port when not specified.
+# AVR_DEFAULT_SERIAL     - Default AVR Serial command when not specified.
+# AVR_DEFAULT_PROGRAMMER - Default AVR Programmer ID when not specified.
 #
 #
 # ARDUINO_FOUND       - Set to True when the Arduino SDK is detected and configured.
@@ -418,7 +390,7 @@ endfunction()
 function(GENERATE_AVR_LIBRARY INPUT_NAME)
     message(STATUS "Generating ${INPUT_NAME}")
     parse_generator_arguments(${INPUT_NAME} INPUT
-                              ""                # Options
+                              "MOCK"                # Options
                               "BOARD"           # One Value Keywords
                               "SRCS;HDRS;LIBS"  # Multi Value Keywords
                               ${ARGN})
@@ -434,14 +406,29 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
     get_avr_flags(COMPILE_FLAGS ${INPUT_BOARD} "${INPUT_LIBS}")
 
     # Avr lib
-    add_custom_target(${INPUT_NAME})
-    add_custom_command(TARGET ${INPUT_NAME}
-            COMMAND "${AVR_C_COMPILER}" ${COMPILE_FLAGS} ${ALL_SRCS}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    set(TARGET_AVR_NAME "${INPUT_NAME}-avr")
+    add_custom_target("${TARGET_AVR_NAME}")
+    add_custom_command(TARGET ${TARGET_AVR_NAME}
+            COMMAND "${AVR_C_COMPILER}" ${COMPILE_FLAGS} ${ALL_SRCS} "-o" "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_AVR_NAME}.a"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    foreach(LIB ${INPUT_LIBS})
+        #add_dependencies(${TARGET_AVR_NAME} "${LIB}-avr")
+    endforeach()
 
-
-    # Generate Native lib
-    #add_custom_target(${INPUT_NAME}-native)
+    # Mock lib
+    if (INPUT_MOCK)
+         add_library("${INPUT_NAME}" ${ALL_SRCS})
+         if("${INPUT_BOARD}" STREQUAL "uno")
+             add_definitions(-D__AVR_ATmega328P__)
+         elseif(${INPUT_BOARD} STREQUAL "mega")
+             add_definitions(-D__AVR_ATmega1280__)
+         else()
+             message(FATAL_ERROR "Board '${INPUT_BOARD}' not supported!")
+         endif()
+         add_definitions(-DMOCK)
+         target_link_libraries(${INPUT_NAME} "${INPUT_LIBS}")
+         get_target_property(BLA "${INPUT_NAME}" STATIC_LIBRARY)
+    endif()
 
 endfunction()
 
@@ -507,6 +494,19 @@ function(GENERATE_AVR_FIRMWARE INPUT_NAME)
     endif()
 
 
+endfunction()
+
+function(LOAD_TEST_FIRMWARE_DEFINES)
+    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+
+    list(LENGTH DEFINES LENGTH)
+    math(EXPR LENGTH "${LENGTH} - 1" )
+    foreach(ITER RANGE ${LENGTH})
+        list(GET DEFINES ${ITER} DEFINE)
+        list(GET PATHS ${ITER} PATH)
+        add_definitions(-D${DEFINE}=\"${PATH}\")
+    endforeach()
 endfunction()
 
 #=============================================================================#
@@ -654,7 +654,7 @@ endfunction()
 #=============================================================================#
 # [PRIVATE/INTERNAL]
 #
-# get_arduino_flags(COMPILE_FLAGS LINK_FLAGS BOARD_ID MANUAL)
+# get_avr_flags(COMPILE_FLAGS LINK_FLAGS BOARD_ID MANUAL)
 #
 #       COMPILE_FLAGS_VAR -Variable holding compiler flags
 #       LINK_FLAGS_VAR - Variable holding linker flags
@@ -668,6 +668,7 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS)
    
     set(BOARD_CORE ${${BOARD_ID}.build.core})
 
+    # Get Arduino version information
     if(ARDUINO_SDK_VERSION MATCHES "([0-9]+)[.]([0-9]+)")
         string(REPLACE "." "" ARDUINO_VERSION_DEFINE "${ARDUINO_SDK_VERSION}") # Normalize version (remove all periods)
         set(ARDUINO_VERSION_DEFINE "")
@@ -683,45 +684,64 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS)
         message("Invalid Arduino SDK Version (${ARDUINO_SDK_VERSION})")
     endif()
 
-    # output
-    set(COMPILE_FLAGS "-DF_CPU=${${BOARD_ID}.build.f_cpu} -DARDUINO=${ARDUINO_VERSION_DEFINE} -mmcu=${${BOARD_ID}.build.mcu}")
+    # AVR flags
+    list(APPEND COMPILE_FLAGS "-DF_CPU=${${BOARD_ID}.build.f_cpu} -DARDUINO=${ARDUINO_VERSION_DEFINE} -mmcu=${${BOARD_ID}.build.mcu}")
     if(DEFINED ${BOARD_ID}.build.vid)
-        set(COMPILE_FLAGS "${COMPILE_FLAGS} -DUSB_VID=${${BOARD_ID}.build.vid}")
+        list(APPEND COMPILE_FLAGS "-DUSB_VID=${${BOARD_ID}.build.vid}")
     endif()
     if(DEFINED ${BOARD_ID}.build.pid)
-        set(COMPILE_FLAGS "${COMPILE_FLAGS} -DUSB_PID=${${BOARD_ID}.build.pid}")
+        list(APPEND COMPILE_FLAGS "-DUSB_PID=${${BOARD_ID}.build.pid}")
     endif()
-    set(LINK_FLAGS "-mmcu=${${BOARD_ID}.build.mcu}")
+    list(APPEND COMPILE_FLAGS "-mmcu=${${BOARD_ID}.build.mcu}")
     if(ARDUINO_SDK_VERSION VERSION_GREATER 1.0 OR ARDUINO_SDK_VERSION VERSION_EQUAL 1.0)
         set(PIN_HEADER ${${${BOARD_ID}.build.variant}.path})
         if(PIN_HEADER)
-            set(COMPILE_FLAGS "${COMPILE_FLAGS} -I\"${PIN_HEADER}\"")
+            list(APPEND COMPILE_FLAGS "-I\"${PIN_HEADER}\"")
         endif()
     endif()
 
     # C include args
-    get_property(INC_DIRS DIRECTORY PROPERTY AVR_INCLUDE_DIRECTORIES)
+    get_property(INC_DIRS GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES)
     foreach(INC_DIR ${INC_DIRS})
-        list(APPEND C_INC_FLAGS "-I${INC_DIR}")
+        list(APPEND COMPILE_FLAGS "-I\"${INC_DIR}\"")
     endforeach()
 
     # C link arg
     list(APPEND ALL_LIBS ${INPUT_LIBS} "c" "m")
     foreach(LIB ${ALL_LIBS})
-        list(APPEND C_LINK_FLAGS "-l${LIB}")
+        list(APPEND COMPILE_FLAGS "-l${LIB}")
     endforeach()
 
-    # output
-    set(${COMPILE_FLAGS_VAR} "${COMPILE_FLAGS} ${LINK_FLAGS} ${C_INC_FLAGS} ${C_LINK_FLAGS}" PARENT_SCOPE)
+    # Build type flags
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_DEBUG}")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_RELEASE}")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_RELWITHDEBINFO}")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_MINSIZEREL}")
+    else() # None
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS}")
+        message("${AVR_C_FLAGS}")
+    endif()
+
+    # Output
+    separate_arguments(COMPILE_FLAGS)
+    set(${COMPILE_FLAGS_VAR} "${COMPILE_FLAGS}" PARENT_SCOPE)
 
 endfunction()
 
 function(AVR_INCLUDE_DIRECTORIES)
     get_property(INC_DIRS DIRECTORY PROPERTY AVR_INCLUDE_DIRECTORIES)
 
-    foreach(ITER RANGE ${ARGC})
-        list(APPEND INC_DIRS "${ARGV${ITER}}")
+    math(EXPR LENGTH "${ARGC} - 1" )
+    foreach(ITER RANGE ${LENGTH})
+        set(FULL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV${ITER}}")
+        list(APPEND INC_DIRS "${FULL_PATH}")
     endforeach()
+
+    set_property(GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES ${INC_DIRS})
 endfunction()
 
 #=============================================================================#
@@ -1677,21 +1697,21 @@ set(AVR_CXX_COMPILER avr-g++)
 #                              C Flags                                        
 #=============================================================================#
 set(AVR_C_FLAGS "-mcall-prologues -ffunction-sections -fdata-sections")
-set(AVR_C_FLAGS                "-g -Os       ${AVR_C_FLAGS}"    CACHE STRING "")
-set(AVR_C_FLAGS_DEBUG          "-g           ${AVR_C_FLAGS}"    CACHE STRING "")
-set(AVR_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG ${AVR_C_FLAGS}"    CACHE STRING "")
-set(AVR_C_FLAGS_RELEASE        "-Os -DNDEBUG -w ${AVR_C_FLAGS}" CACHE STRING "")
-set(AVR_C_FLAGS_RELWITHDEBINFO "-Os -g       -w ${AVR_C_FLAGS}" CACHE STRING "")
+set(AVR_C_FLAGS                "${AVR_C_FLAGS} -g -Os"          CACHE STRING "")
+set(AVR_C_FLAGS_DEBUG          "${AVR_C_FLAGS} -g"              CACHE STRING "")
+set(AVR_C_FLAGS_MINSIZEREL     "${AVR_C_FLAGS} -Os -DNDEBUG"    CACHE STRING "")
+set(AVR_C_FLAGS_RELEASE        "${AVR_C_FLAGS} -Os -DNDEBUG -w" CACHE STRING "")
+set(AVR_C_FLAGS_RELWITHDEBINFO "${AVR_C_FLAGS} -Os -g -w"       CACHE STRING "")
 
 #=============================================================================#
 #                             C++ Flags                                       
 #=============================================================================#
 set(AVR_CXX_FLAGS "${AVR_C_FLAGS} -fno-exceptions")
-set(AVR_CXX_FLAGS                "-g -Os       ${AVR_CXX_FLAGS}" CACHE STRING "")
-set(AVR_CXX_FLAGS_DEBUG          "-g           ${AVR_CXX_FLAGS}" CACHE STRING "")
-set(AVR_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG ${AVR_CXX_FLAGS}" CACHE STRING "")
-set(AVR_CXX_FLAGS_RELEASE        "-Os -DNDEBUG ${AVR_CXX_FLAGS}" CACHE STRING "")
-set(AVR_CXX_FLAGS_RELWITHDEBINFO "-Os -g       ${AVR_CXX_FLAGS}" CACHE STRING "")
+set(AVR_CXX_FLAGS                "${AVR_CXX_FLAGS} -g -Os"       CACHE STRING "")
+set(AVR_CXX_FLAGS_DEBUG          "${AVR_CXX_FLAGS} -g"           CACHE STRING "")
+set(AVR_CXX_FLAGS_MINSIZEREL     "${AVR_CXX_FLAGS} -Os -DNDEBUG" CACHE STRING "")
+set(AVR_CXX_FLAGS_RELEASE        "${AVR_CXX_FLAGS} -Os -DNDEBUG" CACHE STRING "")
+set(AVR_CXX_FLAGS_RELWITHDEBINFO "${AVR_CXX_FLAGS} -Os -g"       CACHE STRING "")
 
 #=============================================================================#
 #                       Executable Linker Flags                               #
@@ -1723,10 +1743,10 @@ set(AVR_MODULE_LINKER_FLAGS_RELWITHDEBINFO "${AVR_LINKER_FLAGS}" CACHE STRING ""
 #=============================================================================#
 #                         Arduino Settings                                    
 #=============================================================================#
-set(AVR_OBJCOPY_EEP_FLAGS -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load
+set(ARDUINO_OBJCOPY_EEP_FLAGS -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load
     --no-change-warnings --change-section-lma .eeprom=0   CACHE STRING "")
-set(AVR_OBJCOPY_HEX_FLAGS -O ihex -R .eeprom          CACHE STRING "")
-set(AVR_AVRDUDE_FLAGS -V                              CACHE STRING "")
+set(ARDUINO_OBJCOPY_HEX_FLAGS -O ihex -R .eeprom          CACHE STRING "")
+set(ARDUINO_AVRDUDE_FLAGS -V                              CACHE STRING "")
 
 #=============================================================================#
 #                          Initialization                                     

@@ -6,6 +6,8 @@
 
 #if !MOCK
 
+extern const uint16_t port_to_input[];
+
 #include <avr/io.h>
 #include <util/delay.h>
 #include "log/log.h"
