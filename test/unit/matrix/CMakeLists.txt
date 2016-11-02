@@ -1,1 +1,0 @@
-add_library(matrixtest matrix_test.cpp matrix_test.h)

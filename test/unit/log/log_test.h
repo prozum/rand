@@ -9,7 +9,15 @@
 #include <cppunit/TestResult.h>
 
 class LogTest : public CppUnit::TestCase {
+private:
+    static CppUnit::TestSuite *toggleLoggingTests();
+    static CppUnit::TestSuite *logTests();
+    static CppUnit::TestSuite *disableDeviceTests();
+    static CppUnit::TestSuite *senderIgnoredTests();
+
     public :
+    static CppUnit::TestSuite *suite();
+
     void ToggleLogging_ShowAllMessages_ExpectMessage();
     void ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages();
     void ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings();
@@ -24,7 +32,6 @@ class LogTest : public CppUnit::TestCase {
     void DisableDevice_LogWarningFromDisabled_ExpectNothing();
     void DisableDevice_LogErrorFromDisabled_ExpectNothing();
     void DisableDevice_LogErrorBypassFromDisabled_ExpectError();
-
     void DisableDevice_DisableSameTwice_ExpectOneOnList();
 
     void SenderIgnored_OnIgnoredList_ExpectOne();

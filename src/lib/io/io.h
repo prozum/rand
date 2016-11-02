@@ -76,9 +76,12 @@ void uart_putchar(char c/*, FILE *stream*/);
 char uart_getchar(/*FILE *stream*/);
 
 #if MOCK
-char *get_write_buffer();
-void clear_write_buffer();
+char *get_write_buffer(tx_t pin);
+char *get_write_buffer_index(tx_t pin, uint8_t index);
+void clear_write_buffer(tx_t pin);
 dval_t get_digital_buffer(dpin_t pin, uint8_t index);
+void set_pulse(dpin_t pin, uint16_t pulse);
+pin_mode_t get_pin_mode(dpin_t pin);
 #endif //MOCK
 
 #endif //RAND_IO_H

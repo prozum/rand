@@ -2,7 +2,21 @@
 //add kalman.h
 //add log.h
 
-void kalman_test::KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog()
+using namespace CppUnit;
+
+static TestSuite *KalmanTest::suite() {
+    TestSuite *suite = new TestSuite("KalmanTest");
+
+    //Add tests here:
+    suite->addTest(new TestCaller<KalmanTest>(
+            "KalmanInit_NullStateValidParams_ExpectInvalidState",
+            &KalmanTest::KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog
+    ));
+
+    return suite;
+}
+
+void KalmanTest::KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog()
 {
     kalman_state NullState = NULL;
     double a = 1, r = 10;

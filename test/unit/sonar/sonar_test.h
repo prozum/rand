@@ -10,10 +10,12 @@
 
 class SonarTest : public CppUnit::TestCase {
     public :
+    static CppUnit::Test *suite();
+
     void sonarInit_expectTriggerOutAndEchoIn();
     void pulseSonar_expectBuffer010();
 
-    void readSonar_inRange_expectRange110To22000();
+    void readSonar_inRange_expectValidByteOne();
     void readSonar_outOfRange_expectValidByteZero();
     void readSonar_tooClose_expectValidByteZero();
 

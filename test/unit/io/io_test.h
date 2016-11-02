@@ -25,10 +25,14 @@
 
 
 class IOTest : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(IOTest);
-    CPPUNIT_TEST_SUITE_END();
+private:
+    static CppUnit::TestSuite *setPinModeTests();
+    static CppUnit::TestSuite *writePinTests();
+    static CppUnit::TestSuite *readPinTests();
 
 public:
+    static CppUnit::Test *suite();
+
     void SetPinMode_Pin0SetIN_ExpectIN();
     void SetPinMode_Pin7SetIN_ExpectIN();
     void SetPinMode_Pin8SetIN_ExpectIN();
@@ -38,6 +42,7 @@ public:
     void SetPinMode_Pin8SetOUT_ExpectOUT();
     void SetPinMode_Pin13SetOUT_ExpectOUT();
     void SetPinMode_Pin13SetHigherThan1_ExpectNoChange();
+    void SetPinMode_Pin13SetLessThan0_ExpectNoChange();
 
     void WritePin_Pin0WriteLOW_ExpectLOW();
     void WritePin_Pin7WriteLOW_ExpectLOW();
@@ -48,11 +53,12 @@ public:
     void WritePin_Pin8WriteHIGH_ExpectHIGH();
     void WritePin_Pin13WriteHIGH_ExpectHIGH();
     void WritePin_Pin13WriteHigherThan1_ExpectNoChange();
+    void WritePin_Pin13WriteLessThan0_ExpectNoChange();
 
     void ReadPin_Pin0ReadLOW_ExpectLOW();
     void ReadPin_Pin7ReadLOW_ExpectLOW();
     void ReadPin_Pin8ReadLOW_ExpectLOW();
-    void ReadPin_Pin13ReadLOW_ExpectHIGH();
+    void ReadPin_Pin13ReadLOW_ExpectLOW();
     void ReadPin_Pin0ReadHIGH_ExpectHIGH();
     void ReadPin_Pin7ReadHIGH_ExpectHIGH();
     void ReadPin_Pin8ReadHIGH_ExpectHIGH();
