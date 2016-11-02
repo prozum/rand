@@ -4,7 +4,7 @@
 
 using namespace CppUnit;
 
-static TestSuite *KalmanTest::suite() {
+TestSuite *KalmanTest::suite() {
     TestSuite *suite = new TestSuite("KalmanTest");
 
     //Add tests here:

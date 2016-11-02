@@ -3,7 +3,7 @@
 
 using namespace CppUnit;
 
-static Test *IOTest::suite() {
+Test *IOTest::suite() {
     TestSuite *suite = new TestSuite("IoTest");
     suite->addTest(setPinModeTests());
     suite->addTest(writePinTests());
@@ -12,7 +12,7 @@ static Test *IOTest::suite() {
     return suite;
 }
 
-static TestSuite *IOTest::setPinModeTests() {
+TestSuite *IOTest::setPinModeTests() {
     //Set pin mode
     TestSuite *spSuite = new TestSuite("SetPinMode");
     spSuite->addTest(new TestCaller<IOTest>(
@@ -49,7 +49,7 @@ static TestSuite *IOTest::setPinModeTests() {
     return spSuite;
 }
 
-static TestSuite *IOTest::writePinTests() {
+TestSuite *IOTest::writePinTests() {
     TestSuite *wpSuite = new TestSuite("WritePin");
 
     wpSuite->addTest(new TestCaller<IOTest>(
@@ -84,7 +84,7 @@ static TestSuite *IOTest::writePinTests() {
     ));
 }
 
-static TestSuite *IOTest::readPinTests() {
+TestSuite *IOTest::readPinTests() {
     TestSuite *rpSuite = new TestSuite("ReadPin");
 
     rpSuite->addTest(new TestCaller<IOTest>(
@@ -222,7 +222,7 @@ void IOTest::SetPinMode_Pin13SetLessThan0_ExpectNoChange() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_ASSERTION_FAIL_MESSAGE(INVALID_DDR, CPPUNIT_ASSERT(state.drr != 0x00));
+    CPPUNIT_ASSERT_ASSERTION_FAIL_MESSAGE(INVALID_DDR, CPPUNIT_ASSERT(state.ddr != 0x00));
 }
 
 void IOTest::WritePin_Pin0WriteLOW_ExpectLOW() {
@@ -336,9 +336,9 @@ void IOTest::WritePin_Pin13WriteHigherThan1_ExpectNoChange() {
 void IOTest::WritePin_Pin13WriteLessThan0_ExpectNoChange() {
     char const *fname = "";
 
-    avr_t *avr = Tools:init(fname, F_CPU);
+    avr_t *avr = Tools::init(fname, F_CPU);
     Tools::avr_step(avr, STEPS);
-    Tools:avr_set_state(avr, 'B', DDRB_, PIN5, OUTPUT);
+    Tools::avr_set_state(avr, 'B', DDRB_, PIN5, OUTPUT);
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
