@@ -9,15 +9,32 @@
 #include <cppunit/TestResult.h>
 
 class MatrixTest : public CppUnit::TestCase {
-private:
-    static CppUnit::TestSuite *multTests();
-    static CppUnit::TestSuite *transTests();
-    static CppUnit::TestSuite *addTests();
-    static CppUnit::TestSuite *subTests();
-    static CppUnit::TestSuite *invTests();
+    CPPUNIT_TEST_SUITE(MatrixTest);
+        CPPUNIT_TEST(mult_mat_mat_ValidMatrix_ExpectCorrect);
+        CPPUNIT_TEST(mult_mat_mat_InvalidMatrix_ExpectError);
+        CPPUNIT_TEST(mult_mat_mat_DifferentSizes_ExpectCorrect);
+
+        CPPUNIT_TEST(trans_matrix_SquareMatrix_ExpectTransposed);
+        CPPUNIT_TEST(trans_matrix_NotSquareMatrix_ExpectTransposed);
+
+        CPPUNIT_TEST(add_mat_mat_ValidMatrix_ExpectCorrect);
+        CPPUNIT_TEST(add_mat_mat_InvalidMatrix_ExpectError);
+        CPPUNIT_TEST(sub_mat_mat_ValidMatrix_ExpectCorrect);
+        CPPUNIT_TEST(sub_mat_mat_InvalidMatrix_ExpectError);
+
+        CPPUNIT_TEST(ident_mat_ExpectCorrect);
+
+        CPPUNIT_TEST(add_vec_vec_ValidVectors_ExpectCorrect);
+        CPPUNIT_TEST(add_vec_vec_EmptyVector_ExpectError);
+
+        CPPUNIT_TEST(sub_vec_Vec_ValidVectors_ExpectCorrect);
+        CPPUNIT_TEST(sub_vec_vec_EmptyVectors_ExpectError);
+
+        CPPUNIT_TEST(inv_mat_ValidMatrix_ExpectCorrect);
+        CPPUNIT_TEST(inv_mat_InvalidMatrix_ExpectError);
+    CPPUNIT_TEST_SUITE_END();
 
 public:
-    static CppUnit::TestSuite *suite();
 
     void mult_mat_mat_ValidMatrix_ExpectCorrect();
     void mult_mat_mat_InvalidMatrix_ExpectError();
