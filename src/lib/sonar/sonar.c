@@ -1,6 +1,6 @@
 #include "sonar/sonar.h"
-#include <util/delay.h>
 #include "core/io.h"
+
 
 #define SONAR_TIMEOUT 22000 //Just short of 4 meters
 #define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
@@ -18,9 +18,13 @@ void sonar_init ()
 void pulse_sonar() {
     //Send a pulse on the trigger pin.
     digital_write(SONAR_TRIGGER_PIN, LOW);
+#if !MOCK
     _delay_ms(2);
+#endif
     digital_write(SONAR_TRIGGER_PIN, HIGH);
+#if !MOCK
     _delay_ms(2);
+#endif
     digital_write(SONAR_TRIGGER_PIN, LOW);
 }
 
@@ -42,6 +46,6 @@ float read_sonar()
     return newest_reading;
 }
 
-float sonar_to_meters() {
+float sonar_to_meters(float newest_reading) {
     return 0.01979 * newest_reading + 0.23361;
 }

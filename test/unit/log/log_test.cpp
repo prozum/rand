@@ -1,7 +1,7 @@
 #include <malloc.h>
 #include "log_test.h"
-#include "log/log.h"
-#include "io/io.h"
+#include "core/log.h"
+#include "core/io.h"
 #include <string>
 #include <stdint.h>
 

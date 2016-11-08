@@ -1,4 +1,4 @@
-set(PIN_IDS 0 7 8 13 -1)
+set(PIN_IDS 0 7 8 13)
 
 foreach(PIN_ID ${PIN_IDS})
 	# INPUT/OUTPUT tests
