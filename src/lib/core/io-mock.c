@@ -199,6 +199,10 @@ char* serial_read_string(tx_t pin, int len ) {
     return serial_string_val;
 }
 
+void serial_write_string(){
+    return;
+}
+
 
 aval_t analog_buffer[ANALOG_PINS][ANALOG_BUFFER_SIZE];
 uint8_t analog_buf_count[ANALOG_PINS];
@@ -216,12 +220,13 @@ void analog_write(apin_t pin, aval_t out)
 }
 
 /***
+ * (ØDELAGT!!!, fjernede argument)
  * Read a value from an analog pin. This function will return the latest value written by analog_write
  * to the specified pin.
  * @param pin to write to
  * @return the latest value written by analog_write to the specified pin.
  */
-aval_t analog_read(apin_t pin)
+uint16_t analog_read()
 {
     //Get the value from the buffer (when writing it is incremented before filling in the value)
     aval_t val = analog_buffer[pin][analog_buf_count[pin]];
@@ -235,5 +240,15 @@ aval_t analog_read(apin_t pin)
     }
 
     //Return the found value
-    return val;
+    return;
 }
+
+void analog_init(){
+    return;
+}
+
+void analog_read_setpin(apin_t pin){
+
+}
+
+

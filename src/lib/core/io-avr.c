@@ -111,14 +111,21 @@ void uart_init() {
 }
 
 
-void uart_putchar(char c/*, FILE *stream*/) {
-    loop_until_bit_is_set(UCSR0A, UDRE0); // wait while register is free
+void uart_putchar(char c) {
+    while (!( UCSR0A & (1<<UDRE0))); // wait while register is free
     UDR0 = c;
 }
 
-char uart_getchar(/*FILE *stream*/) {
-    loop_until_bit_is_set(UCSR0A, RXC0); /* Wait until data exists. */
+char uart_getchar() {
+    while(!(UCSR0A) & (1<<RXC0)); /* Wait until data exists. */
     return UDR0;
+}
+
+char uart_trygetchar() {
+    if (!( UCSR0A & (1<<UDRE0))) {  /* if unread data exists. */
+        return UDR0;
+    }
+    return NULL;
 }
 
 void serial_write_string(tx_t pin, char *out){
@@ -139,6 +146,41 @@ char* serial_read_string(tx_t pin, int len ) {
     str[i+1] = '\0';
     return str;
 }
+
+char* serial_read_string_nowait(tx_t pin, int len ) {
+    char *str = malloc(sizeof(char) * (len + 1));
+    str[0] = uart_trygetchar();
+    if (str[0] != '\0') {
+        int i;
+        for (i = 0; i < len; i++) {
+            str[i] = uart_getchar();
+        }
+        str[i+1] = '\0';
+        return str;
+    }
+    return NULL;
+}
+
+void adc_init(){
+    ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)); // set prescaler bits in ADCSRA(ADC control and status register A)
+
+    ADMUX |= (1<<REFS0); ADMUX &= ~(1<<REFS1); //Set mode: (Set reference voltage to 5V input)
+
+    ADCSRB &= ~((1<<ADTS2)|(1<<ADTS1)|(1<<ADTS0)); //set free running mode in control and status register B
+
+    ADCSRA |= (1<<ADATE);               //Enable auto trigger
+    ADCSRA |= (1<<ADEN);                //Enable ADC power supply
+    ADCSRA |= (1<<ADSC);                //Start first conversion(will run automatically from then on.
+}
+
+void analog_read_setpin(apin_t pin){
+    ADMUX = (ADMUX & 0xF0) | (pin & 0x0F);  //select ADC channel safely
+}
+uint16_t analog_read(){
+    return ADC;
+}
+
+/*
 
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
@@ -178,4 +220,4 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 
 
     return CLOCK_CYCLES_TO_MS(width * 21 + 16);
-}
+}*/

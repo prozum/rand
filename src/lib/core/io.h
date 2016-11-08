@@ -41,17 +41,22 @@ typedef uint8_t sval_t;
 // sets the pin mode
 void set_pin_mode(dpin_t pin, pin_mode_t pm);
 
+/// Initializes a pin to write pwm signals
+/// \param pin the pin to be initialized.
+void pwm_init(pwm_t pin);
+
 // write state to digital pin
 void digital_write(dpin_t pin, dval_t ps);
 
 // read state from digital pin
 dval_t digital_read(dpin_t pin);
 
-void set_analog_mode(apin_t pin, pin_mode_t pm);
+//void set_analog_mode(apin_t pin, pin_mode_t pm);
+void analog_read_setpin(apin_t pin);
 
-void analog_write(apin_t pin, aval_t out);
+//void analog_write(apin_t pin, aval_t out);
 
-aval_t analog_read(apin_t pin);
+aval_t analog_read();
 
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout);
 
@@ -66,6 +71,13 @@ void serial_write_string(tx_t pin, char *out);
 /// \return the string representation of the read characters
 char* serial_read_string(tx_t pin, int len );
 
+/// reads the next n amount of characters from the a serial connection and returns them as a string
+/// only reads if there is unread data in the uart.
+/// \param pin the serial pin to read from **Currently not used**
+/// \param len The amount of characters to read
+/// \return the string representation of the read characters or NULL if an empty string if no data is available
+char* serial_read_string_nowait(tx_t pin, int len );
+
 /// initializes the avr uart for serial communication.
 void uart_init();
 
@@ -76,6 +88,18 @@ void uart_putchar(char c/*, FILE *stream*/);
 /// Returns the next character read from the avr processor's uart.
 /// \return The character read.
 char uart_getchar(/*FILE *stream*/);
+
+/// Returns the next character read from the avr processor's uart only if there is unread data available.
+/// \return The character read or '\0' if no unread data is available
+char uart_trygetchar(/*FILE *stream*/);
+
+/// Sets the pulse width emitting from a pin
+/// \param pin The pin to write to
+/// \param width the width of the pwm pulse
+void pwn_write(pwm_t pin, uint16_t width);
+
+void adc_init();
+
 
 #if MOCK
 char *get_write_buffer(tx_t pin);

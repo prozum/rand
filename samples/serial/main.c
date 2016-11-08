@@ -1,6 +1,7 @@
-#include "io/io.h"
+#include "core/io.h"
 #include <stdlib.h>
 #include <string.h>
+
 void main() {
     uart_init();
     //stdout = &uart_output;
