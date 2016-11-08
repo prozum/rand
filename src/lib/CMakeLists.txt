@@ -14,4 +14,4 @@ add_subdirectory(sonar)
 # Kalman library
 add_subdirectory(kalman)
 
-add_subdirectory(matrix_math)
+add_subdirectory(matrix)
