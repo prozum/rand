@@ -347,7 +347,6 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
 
     # C flags
     get_avr_flags(COMPILE_FLAGS ${INPUT_BOARD} "${INPUT_LIBS}" True)
-        message("bla: ${COMPILE_FLAGS}")
 
     # Setup target
     set(TARGET_AVR_NAME "${INPUT_NAME}-avr")
@@ -486,8 +485,7 @@ endfunction()
 #
 #=============================================================================#
 function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
-    message("msg: ${FOR_LIBRARY}")
-   
+
     set(BOARD_CORE ${${BOARD_ID}.build.core})
 
     # Get Arduino version information
@@ -655,6 +653,7 @@ function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS L
         get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
         list(APPEND DEFINES ${TARGET_NAME})
         list(APPEND PATHS ${TARGET_PATH}.hex)
+
         set_property(GLOBAL PROPERTY TEST_FIRMWARE_DEFINES ${DEFINES})
         set_property(GLOBAL PROPERTY TEST_FIRMWARE_PATHS ${PATHS})
     endif()

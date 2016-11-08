@@ -1,16 +1,14 @@
 cmake_minimum_required(VERSION 2.8)
 include(cmake/Arduino.cmake)
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-project(rand)
+project(rand C CXX)
 
 # Options
 option(SAMPLES "Samples" OFF)
 option(TESTS "Tests" OFF)
 option(SERIAL_TARGETS "Serial Targets" OFF)
 option(SIZE_TARGETS "Size Targets" OFF)
-
-#print_board_list()
-#print_programmer_list()
 
 include_directories(src/lib)
 avr_include_directories(src/lib)
@@ -27,9 +25,10 @@ endif()
 
 if(TESTS)
     add_subdirectory(test_firmware)
+    add_subdirectory(test)
 
-    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
-    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+    #get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+    #get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
 
     #message("PATHS: ${PATHS}")
     #message("DEFINES: ${DEFINES}")

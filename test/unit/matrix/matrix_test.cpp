@@ -3,7 +3,7 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
 
-double **ma1, **ma2, **ma3, **ma4, vec1[3] = {1, 2, 1}, vecEmpty[];
+double **ma1, **ma2, **ma3, **ma4, vec1[3] = {1, 2, 1}, *vecEmpty;
 
 void Setup(){
     double mat1[3][3] = { {9.1,6.0,2.8}, {7.4,1.0,3.0}, {4.5,0.0,8.0} };

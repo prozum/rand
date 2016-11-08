@@ -1,6 +1,6 @@
 #include "sonar_test.h"
 #include "sonar/sonar.h"
-#include "io/io.h"
+#include "core/io.h"
 
 using namespace std;
 
@@ -11,9 +11,9 @@ void SonarTest::pulseSonar_expectBuffer010() {
     pulse_sonar();
 
     //The values in the buffer is stored in reverse order:
-    dval_t low2 = digital_read(SONAR_TRIGGER_PIN);
-    dval_t high = digital_read(SONAR_TRIGGER_PIN);
-    dval_t low1 = digital_read(SONAR_TRIGGER_PIN);
+    dval_t low2 = digital_read((dpin_t)SONAR_TRIGGER_PIN);
+    dval_t high = digital_read((dpin_t)SONAR_TRIGGER_PIN);
+    dval_t low1 = digital_read((dpin_t)SONAR_TRIGGER_PIN);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The first low pulse was not send correctly", LOW, low1);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The high pulse was not send correctly", HIGH, high);
@@ -21,62 +21,66 @@ void SonarTest::pulseSonar_expectBuffer010() {
 }
 
 void SonarTest::readSonar_inRange_expectValidByteOne() {
-    sonar_int();
-    uint16_t pulse_emulation = 16000;
-    set_pulse(SONAR_ECHO_PIN, pulse_emulation);
+    sonar_init();
 
-    uint16_t reading = read_sonar();
+    float pulse_emulation = 16000;
+    set_pulse((dpin_t)SONAR_ECHO_PIN, pulse_emulation);
+
+    float reading = read_sonar();
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar did not read a valid value.", pulse_emulation, reading);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The valid byte was not set correctly", 1, sonar_valid_reading);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The valid byte was not set correctly", 1, (int)sonar_valid_reading);
 }
 
 void SonarTest::readSonar_outOfRange_expectValidByteZero() {
     sonar_init();
     uint16_t pulse_emulation = 23000;
-    set_pulse(SONAR_ECHO_PIN, pulse_emulation);
+    set_pulse((dpin_t)SONAR_ECHO_PIN, pulse_emulation);
 
-    uint16_t reading = read_sonar();
+    float reading = read_sonar();
 
     CPPUNIT_ASSERT_ASSERTION_FAIL_MESSAGE("The sonar return the reading, eventhough it was out of range.",
                                     pulse_emulation == reading);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, sonar_valid_reading);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, (int)sonar_valid_reading);
 }
 
 void SonarTest::readSonar_tooClose_expectValidByteZero() {
     sonar_init();
     uint16_t pulse_emulation = 50;
-    set_pulse(SONAR_ECHO_PIN, pulse_emulation);
+    set_pulse((dpin_t)SONAR_ECHO_PIN, pulse_emulation);
 
-    uint16_t reading = read_sonar();
+    float reading = read_sonar();
 
     CPPUNIT_ASSERT_ASSERTION_FAIL_MESSAGE("The sonar return the reading, eventhough it was out of range.",
                                           pulse_emulation == reading);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, sonar_valid_reading);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, (int)sonar_valid_reading);
 }
 
 void SonarTest::sonarInit_expectTriggerOutAndEchoIn() {
     sonar_init();
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The echo pin was not setup correctly.", SONAR_ECHO_PIN, INPUT);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The trigger pin was not setup correctly.", SONAR_TRIGGER_PIN, OUTPUT);
+    auto mode_echo = get_pin_mode((dpin_t)SONAR_ECHO_PIN);
+    auto mode_trigger = get_pin_mode((dpin_t)SONAR_TRIGGER_PIN);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The echo pin was not setup correctly.", mode_echo, INPUT);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The trigger pin was not setup correctly.", mode_trigger, OUTPUT);
 }
 
 void SonarTest::sonarToMeters_110_expect2dot41() {
     float res = sonar_to_meters(110);
 
-    CPPUNIT_ASSERT_EQUAL(2.41, res);
+    CPPUNIT_ASSERT_EQUAL((float)2.41, res);
 }
 
 void SonarTest::sonarToMeters_8000_expect158dot57() {
     float res = sonar_to_meters(8000);
 
-    CPPUNIT_ASSERT_EQUAL(158.57, res);
+    CPPUNIT_ASSERT_EQUAL((float)58.57, res);
 }
 
 void SonarTest::sonarToMeters_22000_expect453dot68() {
     float res = sonar_to_meters(22000);
 
-    CPPUNIT_ASSERT_EQUAL(453.68, res);
+    CPPUNIT_ASSERT_EQUAL((float)453.68, res);
 }
 
