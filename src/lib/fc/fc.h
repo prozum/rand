@@ -3,6 +3,13 @@
 
 #include <stdint.h>
 
+struct acceleration_s { /* between 0-1 negative acceleration, between 1-2 positive acceleration */
+             // positive(1-2)/negative(0-1)
+    float x; // up/down
+    float y; // forward/backwards
+    float z; // left/right
+} acceleration_t;
+
 const uint16_t MIN_FC_DUTY = 1250;
 const uint16_t MID_FC_DUTY = 1500;
 const uint16_t MAX_FC_DUTY = 1750;
