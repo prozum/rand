@@ -24,6 +24,7 @@ static level logging_level = LOG_NONE;
  * @param lvl which classes of errors to log (may be LOG_ONLY_ERRORS, LOG_DEBUG, LOG_ALL, LOG_NONE)
  */
 void toggle_logging(level lvl) {
+#if DEBUG
     //Produce a message with version and project-name
     char init_msg[30];
     strcpy(init_msg, MAJOR_VERSION);
@@ -34,6 +35,7 @@ void toggle_logging(level lvl) {
     logging_level = lvl;
     //Write the init-message to log (only goes through if logging_level is set to ALL).
     LOG(SENDER_BOARD, init_msg);
+#endif
 }
 
 /**
@@ -62,12 +64,14 @@ uint8_t sender_ignored(log_sender sender) {
  * @param msg is the message to log.
  */
 void LOG(log_sender sender, const char *msg) {
+#if DEBUG
     if(!sender_ignored(sender) && logging_level == LOG_ALL) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
         serial_write_string(USB_TX, strcat(cpy, MSG_PREFIX));
     }
+#endif
 }
 
 /**
@@ -76,12 +80,14 @@ void LOG(log_sender sender, const char *msg) {
  * @param msg  is the warning to log
  */
 void LOG_WARNING(log_sender sender, const char *msg) {
+#if DEBUG
     if(!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
         serial_write_string(USB_TX, strcat(cpy, WARNING_PREFIX));
     }
+#endif
 }
 
 /**
@@ -90,12 +96,14 @@ void LOG_WARNING(log_sender sender, const char *msg) {
  * @param msg is the error to log
  */
 void LOG_ERROR(log_sender sender, const char *msg) {
+#if DEBUG
     if(!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
         serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
     }
+#endif
 }
 
 /**
@@ -103,10 +111,13 @@ void LOG_ERROR(log_sender sender, const char *msg) {
  * @param msg is the error to log.
  */
 void LOG_ERROR_BYPASS(const char *msg) {
+#if DEBUG
     char cpy[strlen(msg) + 3];
     strcpy(cpy, msg);
 
     serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
+#endif
+    //TODO: Add code for safely landing drone
 }
 
 /**
