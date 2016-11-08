@@ -19,8 +19,8 @@ void IR_callibrate(float z_0)
     read_top_IR();
     read_bottom_IR();
 
-    kalman_calibrate(&IR_top_state, 100); // the 100 is Z_0, needs to be changed
-    kalman_calibrate(&IR_bottom_state, 100); // the 100 is Z_0, needs to be changed
+    kalman_calibrate(&IR_top_state, 100); // the 100 is z, needs to be changed
+    kalman_calibrate(&IR_bottom_state, 100); // the 100 is z, needs to be changed
 }
 
 float read_top_IR() {
