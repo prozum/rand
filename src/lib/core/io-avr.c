@@ -124,7 +124,7 @@ char uart_trygetchar() {
     if (!( UCSR0A & (1<<UDRE0))) {  /* if unread data exists. */
         return UDR0;
     }
-    return NULL;
+    return (char)0;
 }
 
 void serial_write_string(tx_t pin, char *out){
