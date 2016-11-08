@@ -723,7 +723,6 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS)
         list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_MINSIZEREL}")
     else() # None
         list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS}")
-        message("${AVR_C_FLAGS}")
     endif()
 
     # Output
@@ -1696,22 +1695,22 @@ set(AVR_CXX_COMPILER avr-g++)
 #=============================================================================#
 #                              C Flags                                        
 #=============================================================================#
-set(AVR_C_FLAGS "-mcall-prologues -ffunction-sections -fdata-sections")
-set(AVR_C_FLAGS                "${AVR_C_FLAGS} -g -Os"          CACHE STRING "")
-set(AVR_C_FLAGS_DEBUG          "${AVR_C_FLAGS} -g"              CACHE STRING "")
-set(AVR_C_FLAGS_MINSIZEREL     "${AVR_C_FLAGS} -Os -DNDEBUG"    CACHE STRING "")
-set(AVR_C_FLAGS_RELEASE        "${AVR_C_FLAGS} -Os -DNDEBUG -w" CACHE STRING "")
-set(AVR_C_FLAGS_RELWITHDEBINFO "${AVR_C_FLAGS} -Os -g -w"       CACHE STRING "")
+set(AVR_C_FLAGS_COMMON "-mcall-prologues -ffunction-sections -fdata-sections")
+set(AVR_C_FLAGS                "${AVR_C_FLAGS_COMMON} -g -Os"          CACHE STRING "")
+set(AVR_C_FLAGS_DEBUG          "${AVR_C_FLAGS_COMMON} -g"              CACHE STRING "")
+set(AVR_C_FLAGS_MINSIZEREL     "${AVR_C_FLAGS_COMMON} -Os -DNDEBUG"    CACHE STRING "")
+set(AVR_C_FLAGS_RELEASE        "${AVR_C_FLAGS_COMMON} -Os -DNDEBUG -w" CACHE STRING "")
+set(AVR_C_FLAGS_RELWITHDEBINFO "${AVR_C_FLAGS_COMMON} -Os -g -w"       CACHE STRING "")
 
 #=============================================================================#
 #                             C++ Flags                                       
 #=============================================================================#
-set(AVR_CXX_FLAGS "${AVR_C_FLAGS} -fno-exceptions")
-set(AVR_CXX_FLAGS                "${AVR_CXX_FLAGS} -g -Os"       CACHE STRING "")
-set(AVR_CXX_FLAGS_DEBUG          "${AVR_CXX_FLAGS} -g"           CACHE STRING "")
-set(AVR_CXX_FLAGS_MINSIZEREL     "${AVR_CXX_FLAGS} -Os -DNDEBUG" CACHE STRING "")
-set(AVR_CXX_FLAGS_RELEASE        "${AVR_CXX_FLAGS} -Os -DNDEBUG" CACHE STRING "")
-set(AVR_CXX_FLAGS_RELWITHDEBINFO "${AVR_CXX_FLAGS} -Os -g"       CACHE STRING "")
+set(AVR_CXX_FLAGS_COMMON "${AVR_C_FLAGS_COMMON} -fno-exceptions")
+set(AVR_CXX_FLAGS                "${AVR_CXX_FLAGS_COMMON} -g -Os"       CACHE STRING "")
+set(AVR_CXX_FLAGS_DEBUG          "${AVR_CXX_FLAGS_COMMON} -g"           CACHE STRING "")
+set(AVR_CXX_FLAGS_MINSIZEREL     "${AVR_CXX_FLAGS_COMMON} -Os -DNDEBUG" CACHE STRING "")
+set(AVR_CXX_FLAGS_RELEASE        "${AVR_CXX_FLAGS_COMMON} -Os -DNDEBUG" CACHE STRING "")
+set(AVR_CXX_FLAGS_RELWITHDEBINFO "${AVR_CXX_FLAGS_COMMON} -Os -g"       CACHE STRING "")
 
 #=============================================================================#
 #                       Executable Linker Flags                               #
