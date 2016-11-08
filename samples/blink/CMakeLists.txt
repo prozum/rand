@@ -1,5 +1,5 @@
 generate_avr_firmware(blink-sample
 		BOARD uno
-		LIBS io log
+		LIBS core
 		SRCS main.c)
 

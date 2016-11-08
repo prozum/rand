@@ -7,7 +7,7 @@ foreach(PIN_ID ${PIN_IDS})
  		generate_avr_firmware(pin${PIN_ID}-pinmode-${PIN_MODE}
 				               TEST
 				               BOARD uno
-				               LIBS io
+				               LIBS core
 				               SRCS pin${PIN_ID}-pinmode-${PIN_MODE})
 	endforeach()
 
@@ -17,14 +17,14 @@ foreach(PIN_ID ${PIN_IDS})
 		generate_avr_firmware(pin${PIN_ID}-dread-${PIN_VAL}
 							   TEST
 				               BOARD uno
-				               LIBS io
+				               LIBS core
 							   SRCS pin${PIN_ID}-dread-${PIN_VAL}.c)
 
 		configure_file(digitalwrite.c.in pin${PIN_ID}-dwrite-${PIN_VAL}.c)
 		generate_avr_firmware(pin${PIN_ID}-dwrite-${PIN_VAL}
 				               TEST
 							   BOARD uno
-				               LIBS io
+				               LIBS core
 							   SRCS pin${PIN_ID}-dwrite-${PIN_VAL}.c)
 	endforeach()
 endforeach()
