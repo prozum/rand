@@ -12,7 +12,7 @@ foreach(PIN_ID ${PIN_IDS})
 	endforeach()
 
 	# HIGH/LOW tests
-	foreach(PIN_VAL HIGH;LOW;-1;)
+	foreach(PIN_VAL HIGH;LOW)
 		configure_file(digitalread.c.in pin${PIN_ID}-dread-${PIN_VAL}.c)
 		generate_avr_firmware(pin${PIN_ID}-dread-${PIN_VAL}
 							   TEST

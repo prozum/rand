@@ -9,9 +9,6 @@ option(TESTS "Tests" OFF)
 option(SERIAL_TARGETS "Serial Targets" OFF)
 option(SIZE_TARGETS "Size Targets" OFF)
 
-#print_board_list()
-#print_programmer_list()
-
 include_directories(src/lib)
 avr_include_directories(src/lib)
 
