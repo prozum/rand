@@ -16,6 +16,7 @@ typedef struct kalman_state_t {
     double p_k; //prediction error variable
 
     double x_k; //State variable
+    float u_k; // control signal
 
 } kalman_state;
 
