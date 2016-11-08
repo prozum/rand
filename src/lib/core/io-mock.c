@@ -199,11 +199,6 @@ char* serial_read_string(tx_t pin, int len ) {
     return serial_string_val;
 }
 
-void serial_write_string(){
-    return;
-}
-
-
 aval_t analog_buffer[ANALOG_PINS][ANALOG_BUFFER_SIZE];
 uint8_t analog_buf_count[ANALOG_PINS];
 /***
@@ -226,17 +221,18 @@ void analog_write(apin_t pin, aval_t out)
  * @param pin to write to
  * @return the latest value written by analog_write to the specified pin.
  */
+apin_t apin;
 uint16_t analog_read()
 {
     //Get the value from the buffer (when writing it is incremented before filling in the value)
-    aval_t val = analog_buffer[pin][analog_buf_count[pin]];
+    aval_t val = analog_buffer[apin][analog_buf_count[apin]];
 
     //Calculate the correct value of the counter (% does not work due to possible overflow)
-    if(analog_buf_count[pin] == 0) {
-        analog_buf_count[pin] = ANALOG_BUFFER_SIZE - 1;
+    if(analog_buf_count[apin] == 0) {
+        analog_buf_count[apin] = ANALOG_BUFFER_SIZE - 1;
     }
     else {
-        analog_buf_count[pin]--;
+        analog_buf_count[apin]--;
     }
 
     //Return the found value
@@ -248,7 +244,7 @@ void analog_init(){
 }
 
 void analog_read_setpin(apin_t pin){
-
+    apin = pin;
 }
 
 

@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <avr/io.h>
-
 #define NOT_A_PORT 0
 const uint16_t port_to_input[] = {
         NOT_A_PORT,
