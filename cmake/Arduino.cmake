@@ -326,63 +326,6 @@ function(PRINT_BOARD_SETTINGS ARDUINO_BOARD)
     endif()
 endfunction()
 
-# [PUBLIC/USER]
-# The arguments are as follows:
-#
-#      input_name    # The name of the test firmware (Will be prefixed with "test-fw-")   [REQUIRED]
-#
-##function(GENERATE_TEST_FIRMWARE INPUT_NAME)
-##    string(TOLOWER ${INPUT_NAME} INPUT_NAME)
-##    message(STATUS "Generating test-fw-${INPUT_NAME}")
-##
-##    parse_generator_arguments(${INPUT_NAME} INPUT
-##                      "AUTOLIBS;MANUAL;TEST;MOCK"     # Options
-##                      "BOARD;PROGRAMMER"              # One Value Keywords
-##                      "SERIAL;SRCS;HDRS;LIBS;AFLAGS"  # Multi Value Keywords
-##                      ${ARGN})
-##
-##    # Get compile and link flags
-##    get_arduino_flags(ARDUINO_COMPILE_FLAGS ARDUINO_LINK_FLAGS ${INPUT_BOARD} TRUE)
-##    set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${INPUT_NAME})
-##
-##    # C include args
-##    get_property(INC_DIRS DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
-##    foreach(INC_DIR ${INC_DIRS})
-##        list(APPEND C_INC_FLAGS "-I${INC_DIR}")
-##    endforeach()
-##
-##    # C link arg
-##    list(APPEND ALL_LIBS ${CORE_LIB} ${INPUT_LIBS} "c" "m")
-##    foreach(LIB ${ALL_LIBS})
-##        #list(APPEND C_LINK_FLAGS "-l${LIB}")
-##    endforeach()
-##
-##    # Compile elf
-##    set(ARGS ${CMAKE_C_FLAGS} ${ARDUINO_COMPILE_FLAGS} ${C_INC_FLAGS} ${C_LINK_FLAGS} ${INPUT_SRCS} -o ${TARGET_PATH}.elf)
-##    separate_arguments(ARGS)
-##    execute_process(COMMAND "${CMAKE_C_COMPILER}" ${ARGS}
-##                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-##
-##    # Copy and translate object files
-##    #execute_process(COMMAND "${CMAKE_OBJCOPY} ${ARDUINO_OBJCOPY_EEP_FLAGS} ${TARGET_PATH}.elf ${TARGET_PATH}.eep"
-##    #                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-##
-##    # Convert firmware image to ASCII HEX format
-##    #execute_process(COMMAND "${CMAKE_OBJCOPY} ${ARDUINO_OBJCOPY_HEX_FLAGS} ${TARGET_PATH}.eep ${TARGET_PATH}.hex"
-##    #                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-##
-##    string(TOUPPER ${INPUT_NAME} INPUT_NAME)
-##    string(REPLACE "-" "_" INPUT_NAME ${INPUT_NAME})
-##
-##    # Save define and path to global variable
-##    get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
-##    get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
-##    list(APPEND DEFINES TEST_FW_${INPUT_NAME})
-##    list(APPEND PATHS ${TARGET_PATH}.hex)
-##    set_property(GLOBAL PROPERTY TEST_FIRMWARE_DEFINES ${DEFINES})
-##    set_property(GLOBAL PROPERTY TEST_FIRMWARE_PATHS ${PATHS})
-##endfunction()
-
 #=============================================================================#
 # [PUBLIC/USER]
 # see documentation at top
@@ -403,17 +346,36 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
     set(ALL_SRCS ${INPUT_SRCS} ${INPUT_HDRS})
 
     # C flags
-    get_avr_flags(COMPILE_FLAGS ${INPUT_BOARD} "${INPUT_LIBS}")
+    get_avr_flags(COMPILE_FLAGS ${INPUT_BOARD} "${INPUT_LIBS}" True)
+        message("bla: ${COMPILE_FLAGS}")
 
-    # Avr lib
+    # Setup target
     set(TARGET_AVR_NAME "${INPUT_NAME}-avr")
     add_custom_target("${TARGET_AVR_NAME}")
-    add_custom_command(TARGET ${TARGET_AVR_NAME}
-            COMMAND "${AVR_C_COMPILER}" ${COMPILE_FLAGS} ${ALL_SRCS} "-o" "${CMAKE_CURRENT_SOURCE_DIR}/${TARGET_AVR_NAME}.a"
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+    # Add dependencies
     foreach(LIB ${INPUT_LIBS})
         add_dependencies(${TARGET_AVR_NAME} "${LIB}-avr")
     endforeach()
+
+    # Build object files
+    foreach(SRC ${ALL_SRCS})
+        add_custom_command(TARGET ${TARGET_AVR_NAME}
+                COMMAND ${AVR_C_COMPILER}
+                ARGS ${COMPILE_FLAGS} ${SRC} -c -o ${CMAKE_CURRENT_BINARY_DIR}/${SRC}.o
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                COMMENT "Compiling object file for ${SRC}")
+        list(APPEND OBJS "${CMAKE_CURRENT_BINARY_DIR}/${SRC}.o")
+    endforeach()
+
+    # Build static lib
+    set(AVR_AR_FLAGS "rcs" "-o" "${AVR_LIB_PATH}/lib${INPUT_NAME}.a")
+    add_custom_command(TARGET ${TARGET_AVR_NAME}
+            COMMAND ${AVR_AR}
+            ARGS    ${AVR_AR_FLAGS} ${OBJS}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            COMMENT "Create archive")
+
 
     # Mock lib
     if (INPUT_MOCK)
@@ -427,7 +389,6 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
          endif()
          add_definitions(-DMOCK)
          target_link_libraries(${INPUT_NAME} "${INPUT_LIBS}")
-         get_target_property(BLA "${INPUT_NAME}" STATIC_LIBRARY)
     endif()
 
 endfunction()
@@ -509,6 +470,196 @@ function(LOAD_TEST_FIRMWARE_DEFINES)
     endforeach()
 endfunction()
 
+
+
+#=============================================================================#
+# [PRIVATE/INTERNAL]
+#
+# get_avr_flags(COMPILE_FLAGS LINK_FLAGS BOARD_ID MANUAL)
+#
+#       COMPILE_FLAGS_VAR -Variable holding compiler flags
+#       BOARD_ID - The board id name
+#       LIBS - List of libraries to link
+#       FOR_LIBRARY - Get flags for library
+#
+# Configures the the build settings for the specified Arduino Board.
+#
+#=============================================================================#
+function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
+    message("msg: ${FOR_LIBRARY}")
+   
+    set(BOARD_CORE ${${BOARD_ID}.build.core})
+
+    # Get Arduino version information
+    if(ARDUINO_SDK_VERSION MATCHES "([0-9]+)[.]([0-9]+)")
+        string(REPLACE "." "" ARDUINO_VERSION_DEFINE "${ARDUINO_SDK_VERSION}") # Normalize version (remove all periods)
+        set(ARDUINO_VERSION_DEFINE "")
+        if(CMAKE_MATCH_1 GREATER 0)
+            set(ARDUINO_VERSION_DEFINE "${CMAKE_MATCH_1}")
+        endif()
+        if(CMAKE_MATCH_2 GREATER 10)
+            set(ARDUINO_VERSION_DEFINE "${ARDUINO_VERSION_DEFINE}${CMAKE_MATCH_2}")
+        else()
+            set(ARDUINO_VERSION_DEFINE "${ARDUINO_VERSION_DEFINE}0${CMAKE_MATCH_2}")
+        endif()
+    else()
+        message("Invalid Arduino SDK Version (${ARDUINO_SDK_VERSION})")
+    endif()
+
+    # AVR flags
+    list(APPEND COMPILE_FLAGS "-DF_CPU=${${BOARD_ID}.build.f_cpu} -DARDUINO=${ARDUINO_VERSION_DEFINE} -mmcu=${${BOARD_ID}.build.mcu}")
+    if(DEFINED ${BOARD_ID}.build.vid)
+        list(APPEND COMPILE_FLAGS "-DUSB_VID=${${BOARD_ID}.build.vid}")
+    endif()
+    if(DEFINED ${BOARD_ID}.build.pid)
+        list(APPEND COMPILE_FLAGS "-DUSB_PID=${${BOARD_ID}.build.pid}")
+    endif()
+    list(APPEND COMPILE_FLAGS "-mmcu=${${BOARD_ID}.build.mcu}")
+    if(ARDUINO_SDK_VERSION VERSION_GREATER 1.0 OR ARDUINO_SDK_VERSION VERSION_EQUAL 1.0)
+        set(PIN_HEADER ${${${BOARD_ID}.build.variant}.path})
+        if(PIN_HEADER)
+            list(APPEND COMPILE_FLAGS "-I\"${PIN_HEADER}\"")
+        endif()
+    endif()
+
+    # C include args
+    get_property(INC_DIRS GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES)
+    foreach(INC_DIR ${INC_DIRS})
+        list(APPEND COMPILE_FLAGS "-I${INC_DIR}")
+    endforeach()
+
+    # C link libraries
+    if (NOT FOR_LIBRARY)
+        list(APPEND COMPILE_FLAGS "-L${AVR_LIB_PATH}")
+        list(APPEND ALL_LIBS ${INPUT_LIBS} "c" "m")
+        foreach(LIB ${ALL_LIBS})
+            list(APPEND COMPILE_FLAGS "-l${LIB}")
+        endforeach()
+    endif()
+
+    # Build type flags
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_DEBUG}")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_RELEASE}")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_RELWITHDEBINFO}")
+    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_MINSIZEREL}")
+    else() # None
+        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS}")
+    endif()
+
+    # Output
+    separate_arguments(COMPILE_FLAGS)
+    set(${COMPILE_FLAGS_VAR} "${COMPILE_FLAGS}" PARENT_SCOPE)
+
+endfunction()
+
+function(AVR_INCLUDE_DIRECTORIES)
+    get_property(INC_DIRS DIRECTORY PROPERTY AVR_INCLUDE_DIRECTORIES)
+
+    math(EXPR LENGTH "${ARGC} - 1" )
+    foreach(ITER RANGE ${LENGTH})
+        set(FULL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV${ITER}}")
+        list(APPEND INC_DIRS "${FULL_PATH}")
+    endforeach()
+
+    set_property(GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES ${INC_DIRS})
+endfunction()
+
+#=============================================================================#
+# [PRIVATE/INTERNAL]
+#
+# setup_arduino_target(TARGET_NAME ALL_SRCS ALL_LIBS COMPILE_FLAGS LINK_FLAGS MANUAL)
+#
+#        TARGET_NAME - Target name
+#        BOARD_ID    - Arduino board ID
+#        ALL_SRCS    - All sources
+#        ALL_LIBS    - All libraries
+#        COMPILE_FLAGS - Compile flags
+#        LINK_FLAGS    - Linker flags
+#        MANUAL - (Advanced) Only use AVR Libc/Includes
+#
+# Creates an Arduino firmware target.
+#
+#=============================================================================#
+function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS LINK_FLAGS TEST_TARGET)
+
+    add_custom_target(${TARGET_NAME})
+
+    # Add lib dependencies
+    foreach(LIB ${ALL_LIBS})
+        add_dependencies(${TARGET_NAME} "${LIB}-avr")
+    endforeach()
+
+    get_avr_flags(COMPILE_FLAGS "${BOARD_ID}" "${ALL_LIBS}" False)
+
+    set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME})
+
+    # Compile elf
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+                        COMMAND ${AVR_C_COMPILER}
+                        ARGS     ${COMPILE_FLAGS}
+                        ${INPUT_SRCS}
+                        -o ${TARGET_PATH}.elf
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        COMMENT "Compiling elf"
+                        VERBATIM)
+
+    # Copy and translate object files
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+                        COMMAND ${AVR_OBJCOPY}
+                        ARGS     ${ARDUINO_OBJCOPY_EEP_FLAGS}
+                                 ${TARGET_PATH}.elf
+                                 ${TARGET_PATH}.eep
+                        COMMENT "Generating EEP image"
+                        VERBATIM)
+
+    # Convert firmware image to ASCII HEX format
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+                        COMMAND ${AVR_OBJCOPY}
+                        ARGS    ${ARDUINO_OBJCOPY_HEX_FLAGS}
+                                ${TARGET_PATH}.elf
+                                ${TARGET_PATH}.hex
+                        COMMENT "Generating HEX image"
+                        VERBATIM)
+
+    # Display target size
+    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
+                        COMMAND ${CMAKE_COMMAND}
+                        ARGS    -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
+                                -DMCU=${${BOARD_ID}.build.mcu}
+                                -DEEPROM_IMAGE=${TARGET_PATH}.eep
+                                -P ${ARDUINO_SIZE_SCRIPT}
+                        COMMENT "Calculating image size"
+                        VERBATIM)
+
+    # Create ${TARGET_NAME}-size target
+    if(SIZE_TARGETS)
+        add_custom_target(${TARGET_NAME}-size
+                            COMMAND ${CMAKE_COMMAND}
+                                    -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
+                                    -DMCU=${${BOARD_ID}.build.mcu}
+                                    -DEEPROM_IMAGE=${TARGET_PATH}.eep
+                                    -P ${ARDUINO_SIZE_SCRIPT}
+                            DEPENDS ${TARGET_NAME}
+                            COMMENT "Calculating ${TARGET_NAME} image size")
+    endif()
+
+    # Save define and path to global variable
+    if(TEST_TARGET)
+        string(TOUPPER ${TARGET_NAME} TARGET_NAME)
+        string(REPLACE "-" "_" TARGET_NAME ${TARGET_NAME})
+        get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+        get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
+        list(APPEND DEFINES ${TARGET_NAME})
+        list(APPEND PATHS ${TARGET_PATH}.hex)
+        set_property(GLOBAL PROPERTY TEST_FIRMWARE_DEFINES ${DEFINES})
+        set_property(GLOBAL PROPERTY TEST_FIRMWARE_PATHS ${PATHS})
+    endif()
+endfunction()
+
 #=============================================================================#
 # [PUBLIC/USER]
 # see documentation at top
@@ -585,7 +736,7 @@ function(REGISTER_HARDWARE_PLATFORM PLATFORM_PATH)
 endfunction()
 
 #=============================================================================#
-#                        Internal Functions                                   
+#                        Internal Functions
 #=============================================================================#
 
 #=============================================================================#
@@ -654,192 +805,6 @@ endfunction()
 #=============================================================================#
 # [PRIVATE/INTERNAL]
 #
-# get_avr_flags(COMPILE_FLAGS LINK_FLAGS BOARD_ID MANUAL)
-#
-#       COMPILE_FLAGS_VAR -Variable holding compiler flags
-#       LINK_FLAGS_VAR - Variable holding linker flags
-#       BOARD_ID - The board id name
-#       MANUAL - (Advanced) Only use AVR Libc/Includes
-#
-# Configures the the build settings for the specified Arduino Board.
-#
-#=============================================================================#
-function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS)
-   
-    set(BOARD_CORE ${${BOARD_ID}.build.core})
-
-    # Get Arduino version information
-    if(ARDUINO_SDK_VERSION MATCHES "([0-9]+)[.]([0-9]+)")
-        string(REPLACE "." "" ARDUINO_VERSION_DEFINE "${ARDUINO_SDK_VERSION}") # Normalize version (remove all periods)
-        set(ARDUINO_VERSION_DEFINE "")
-        if(CMAKE_MATCH_1 GREATER 0)
-            set(ARDUINO_VERSION_DEFINE "${CMAKE_MATCH_1}")
-        endif()
-        if(CMAKE_MATCH_2 GREATER 10)
-            set(ARDUINO_VERSION_DEFINE "${ARDUINO_VERSION_DEFINE}${CMAKE_MATCH_2}")
-        else()
-            set(ARDUINO_VERSION_DEFINE "${ARDUINO_VERSION_DEFINE}0${CMAKE_MATCH_2}")
-        endif()
-    else()
-        message("Invalid Arduino SDK Version (${ARDUINO_SDK_VERSION})")
-    endif()
-
-    # AVR flags
-    list(APPEND COMPILE_FLAGS "-DF_CPU=${${BOARD_ID}.build.f_cpu} -DARDUINO=${ARDUINO_VERSION_DEFINE} -mmcu=${${BOARD_ID}.build.mcu}")
-    if(DEFINED ${BOARD_ID}.build.vid)
-        list(APPEND COMPILE_FLAGS "-DUSB_VID=${${BOARD_ID}.build.vid}")
-    endif()
-    if(DEFINED ${BOARD_ID}.build.pid)
-        list(APPEND COMPILE_FLAGS "-DUSB_PID=${${BOARD_ID}.build.pid}")
-    endif()
-    list(APPEND COMPILE_FLAGS "-mmcu=${${BOARD_ID}.build.mcu}")
-    if(ARDUINO_SDK_VERSION VERSION_GREATER 1.0 OR ARDUINO_SDK_VERSION VERSION_EQUAL 1.0)
-        set(PIN_HEADER ${${${BOARD_ID}.build.variant}.path})
-        if(PIN_HEADER)
-            list(APPEND COMPILE_FLAGS "-I\"${PIN_HEADER}\"")
-        endif()
-    endif()
-
-    # C include args
-    get_property(INC_DIRS GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES)
-    foreach(INC_DIR ${INC_DIRS})
-        list(APPEND COMPILE_FLAGS "-I\"${INC_DIR}\"")
-    endforeach()
-
-    # C link arg
-    list(APPEND ALL_LIBS ${INPUT_LIBS} "c" "m")
-    foreach(LIB ${ALL_LIBS})
-        list(APPEND COMPILE_FLAGS "-l${LIB}")
-    endforeach()
-
-    # Build type flags
-    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_DEBUG}")
-    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
-        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_RELEASE}")
-    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
-        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_RELWITHDEBINFO}")
-    elseif("${CMAKE_BUILD_TYPE}" STREQUAL "MinSizeRel")
-        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS_MINSIZEREL}")
-    else() # None
-        list(APPEND COMPILE_FLAGS "${AVR_C_FLAGS}")
-    endif()
-
-    # Output
-    separate_arguments(COMPILE_FLAGS)
-    set(${COMPILE_FLAGS_VAR} "${COMPILE_FLAGS}" PARENT_SCOPE)
-
-endfunction()
-
-function(AVR_INCLUDE_DIRECTORIES)
-    get_property(INC_DIRS DIRECTORY PROPERTY AVR_INCLUDE_DIRECTORIES)
-
-    math(EXPR LENGTH "${ARGC} - 1" )
-    foreach(ITER RANGE ${LENGTH})
-        set(FULL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV${ITER}}")
-        list(APPEND INC_DIRS "${FULL_PATH}")
-    endforeach()
-
-    set_property(GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES ${INC_DIRS})
-endfunction()
-
-#=============================================================================#
-# [PRIVATE/INTERNAL]
-#
-# setup_arduino_target(TARGET_NAME ALL_SRCS ALL_LIBS COMPILE_FLAGS LINK_FLAGS MANUAL)
-#
-#        TARGET_NAME - Target name
-#        BOARD_ID    - Arduino board ID
-#        ALL_SRCS    - All sources
-#        ALL_LIBS    - All libraries
-#        COMPILE_FLAGS - Compile flags
-#        LINK_FLAGS    - Linker flags
-#        MANUAL - (Advanced) Only use AVR Libc/Includes
-#
-# Creates an Arduino firmware target.
-#
-#=============================================================================#
-function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS LINK_FLAGS TEST_TARGET)
-
-    add_custom_target(${TARGET_NAME})
-    set_target_properties(${TARGET_NAME} PROPERTIES SUFFIX ".elf")
-
-    get_avr_flags(COMPILE_FLAGS ${BOARD_ID} ${ALL_LIBS})
-
-
-    # C flags
-    #set(C_LINK_FLAGS "-lc -lm")
-    #foreach(LIB ${ALL_LIBS})
-    #    set(C_LINK_FLAGS "${C_LINK_FLAGS} -l${LIB}")
-    #endforeach()
-    #set(COMPILE_FLAGS ${ARDUINO_COMPILE_FLAGS} ${LINK_FLAGS} ${ARDUINO_LINK_FLAGS})
-
-    set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME})
-    # Compile elf
-    add_custom_command(OUTPUT ${INPUT_NAME}.elf POST_BUILD
-            COMMAND ${AVR_C_COMPILER}
-            ARGS     ${COMPILE_FLAGS}
-            ${INPUT_SRCS}
-            ${TARGET_PATH}.elf
-            COMMENT "Compiling elf"
-            VERBATIM)
-
-    # Copy and translate object files
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-                        COMMAND ${AVR_OBJCOPY}
-                        ARGS     ${ARDUINO_OBJCOPY_EEP_FLAGS}
-                                 ${TARGET_PATH}.elf
-                                 ${TARGET_PATH}.eep
-                        COMMENT "Generating EEP image"
-                        VERBATIM)
-
-    # Convert firmware image to ASCII HEX format
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-                        COMMAND ${AVR_OBJCOPY}
-                        ARGS    ${ARDUINO_OBJCOPY_HEX_FLAGS}
-                                ${TARGET_PATH}.elf
-                                ${TARGET_PATH}.hex
-                        COMMENT "Generating HEX image"
-                        VERBATIM)
-
-    # Display target size
-    add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
-                        COMMAND ${CMAKE_COMMAND}
-                        ARGS    -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
-                                -DMCU=${${BOARD_ID}.build.mcu}
-                                -DEEPROM_IMAGE=${TARGET_PATH}.eep
-                                -P ${ARDUINO_SIZE_SCRIPT}
-                        COMMENT "Calculating image size"
-                        VERBATIM)
-
-    # Create ${TARGET_NAME}-size target
-    if(SIZE_TARGETS)
-        add_custom_target(${TARGET_NAME}-size
-                            COMMAND ${CMAKE_COMMAND}
-                                    -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
-                                    -DMCU=${${BOARD_ID}.build.mcu}
-                                    -DEEPROM_IMAGE=${TARGET_PATH}.eep
-                                    -P ${ARDUINO_SIZE_SCRIPT}
-                            DEPENDS ${TARGET_NAME}
-                            COMMENT "Calculating ${TARGET_NAME} image size")
-    endif()
-
-    # Save define and path to global variable
-    if(TEST_TARGET)
-        string(TOUPPER ${TARGET_NAME} TARGET_NAME)
-        string(REPLACE "-" "_" TARGET_NAME ${TARGET_NAME})
-        get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
-        get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
-        list(APPEND DEFINES ${TARGET_NAME})
-        list(APPEND PATHS ${TARGET_PATH}.hex)
-        set_property(GLOBAL PROPERTY TEST_FIRMWARE_DEFINES ${DEFINES})
-        set_property(GLOBAL PROPERTY TEST_FIRMWARE_PATHS ${PATHS})
-    endif()
-endfunction()
-
-#=============================================================================#
-# [PRIVATE/INTERNAL]
-#
 # setup_arduino_upload(BOARD_ID TARGET_NAME PORT)
 #
 #        BOARD_ID    - Arduino board id
@@ -896,7 +861,7 @@ function(setup_arduino_bootloader_upload TARGET_NAME BOARD_ID PORT AVRDUDE_FLAGS
     list(APPEND AVRDUDE_ARGS "-Uflash:w:${TARGET_PATH}.hex")
     list(APPEND AVRDUDE_ARGS "-Ueeprom:w:${TARGET_PATH}.eep:i")
     add_custom_target(${UPLOAD_TARGET}
-                     ${ARDUINO_AVRDUDE_PROGRAM} 
+                     ${AVRDUDE_PROGRAM}
                      ${AVRDUDE_ARGS}
                      DEPENDS ${TARGET_NAME})
 
@@ -944,7 +909,7 @@ function(setup_arduino_programmer_burn TARGET_NAME BOARD_ID PROGRAMMER PORT AVRD
     list(APPEND AVRDUDE_ARGS "-Uflash:w:${TARGET_PATH}.hex")
 
     add_custom_target(${PROGRAMMER_TARGET}
-                     ${ARDUINO_AVRDUDE_PROGRAM} 
+                     ${AVRDUDE_PROGRAM}
                      ${AVRDUDE_ARGS}
                      DEPENDS ${TARGET_NAME})
 endfunction()
@@ -1010,8 +975,7 @@ function(setup_arduino_bootloader_burn TARGET_NAME BOARD_ID PROGRAMMER PORT AVRD
 
     # Create burn bootloader target
     add_custom_target(${BOOTLOADER_TARGET}
-                     ${ARDUINO_AVRDUDE_PROGRAM} 
-                        ${AVRDUDE_ARGS}
+                     ${AVRDUDE_PROGRAM} ${AVRDUDE_ARGS}
                      WORKING_DIRECTORY ${ARDUINO_BOOTLOADERS_PATH}/${${BOARD_ID}.bootloader.path}
                      DEPENDS ${TARGET_NAME})
 endfunction()
@@ -1035,6 +999,7 @@ function(setup_arduino_programmer_args BOARD_ID PROGRAMMER TARGET_NAME PORT AVRD
 
     if(NOT AVRDUDE_FLAGS)
         set(AVRDUDE_FLAGS ${ARDUINO_AVRDUDE_FLAGS})
+        message(FATAL_ERROR "This should not happen")
     endif()
 
     list(APPEND AVRDUDE_ARGS "-C${ARDUINO_AVRDUDE_CONFIG_PATH}")
@@ -1416,10 +1381,10 @@ function(SETUP_ARDUINO_SIZE_SCRIPT OUTPUT_VAR)
     set(ARDUINO_SIZE_SCRIPT_PATH ${CMAKE_BINARY_DIR}/CMakeFiles/FirmwareSize.cmake)
 
     file(WRITE ${ARDUINO_SIZE_SCRIPT_PATH} "
-        set(AVRSIZE_PROGRAM ${AVRSIZE_PROGRAM})
-        set(AVRSIZE_FLAGS -C --mcu=\${MCU})
+        set(AVR_SIZE_PROGRAM ${AVR_SIZE_PROGRAM})
+        set(AVR_SIZE_FLAGS -C --mcu=\${MCU})
 
-        execute_process(COMMAND \${AVRSIZE_PROGRAM} \${AVRSIZE_FLAGS} \${FIRMWARE_IMAGE} \${EEPROM_IMAGE}
+        execute_process(COMMAND \${AVR_SIZE_PROGRAM} \${AVR_SIZE_FLAGS} \${FIRMWARE_IMAGE} \${EEPROM_IMAGE}
                         OUTPUT_VARIABLE SIZE_OUTPUT)
 
 
@@ -1686,10 +1651,12 @@ endif()
 
 
 #=============================================================================#
-#                              Compilers
+#                              Cmd programs
 #=============================================================================#
-set(AVR_C_COMPILER   avr-gcc)
-set(AVR_CXX_COMPILER avr-g++)
+set(AVR_C_COMPILER   "avr-gcc")
+set(AVR_CXX_COMPILER "avr-g++")
+set(AVR_OBJCOPY      "avr-objcopy")
+set(AVR_AR           "avr-ar")
 
 
 #=============================================================================#
@@ -1740,12 +1707,14 @@ set(AVR_MODULE_LINKER_FLAGS_RELWITHDEBINFO "${AVR_LINKER_FLAGS}" CACHE STRING ""
 
 
 #=============================================================================#
-#                         Arduino Settings                                    
+#                         Avr flags Settings
 #=============================================================================#
-set(ARDUINO_OBJCOPY_EEP_FLAGS -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load
-    --no-change-warnings --change-section-lma .eeprom=0   CACHE STRING "")
-set(ARDUINO_OBJCOPY_HEX_FLAGS -O ihex -R .eeprom          CACHE STRING "")
-set(ARDUINO_AVRDUDE_FLAGS -V                              CACHE STRING "")
+set(AVR_OBJCOPY_EEP_FLAGS   "-O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load
+    --no-change-warnings --change-section-lma .eeprom=0"         CACHE STRING "")
+set(AVR_OBJCOPY_HEX_FLAGS   "-O ihex -R .eeprom"                 CACHE STRING "")
+set(AVRDUDE_FLAGS           "-V"                                 CACHE STRING "")
+set(AVR_LIB_PATH            "${CMAKE_BINARY_DIR}/lib/avr/"      CACHE STRING "")
+file(MAKE_DIRECTORY ${AVR_LIB_PATH})
 
 #=============================================================================#
 #                          Initialization                                     
@@ -1773,32 +1742,28 @@ if(NOT ARDUINO_FOUND AND ARDUINO_SDK_PATH)
         PATHS ${ARDUINO_SDK_PATH}
         DOC "Path to Arduino version file.")
 
-    find_program(ARDUINO_AVRDUDE_PROGRAM
+    find_program(AVRDUDE_PROGRAM
         NAMES avrdude
         PATHS ${ARDUINO_SDK_PATH}
         PATH_SUFFIXES hardware/tools hardware/tools/avr/bin
         NO_DEFAULT_PATH)
 
-    find_program(ARDUINO_AVRDUDE_PROGRAM
+    find_program(AVRDUDE_PROGRAM
         NAMES avrdude
         DOC "Path to avrdude programmer binary.")
 
-    find_program(AVRSIZE_PROGRAM
-        NAMES avr-size)
-
-    find_file(ARDUINO_AVRDUDE_CONFIG_PATH
+    find_file(AVRDUDE_CONFIG_PATH
         NAMES avrdude.conf
         PATHS ${ARDUINO_SDK_PATH} /etc/avrdude /etc
         PATH_SUFFIXES hardware/tools
                       hardware/tools/avr/etc
         DOC "Path to avrdude programmer configuration file.")
 
-    if(NOT AVR_OBJCOPY)
-        find_program(AVROBJCOPY_PROGRAM
+    find_program(AVR_OBJCOPY_PROGRAM
                      avr-objcopy)
-        set(ADDITIONAL_REQUIRED_VARS AVROBJCOPY_PROGRAM)
-        set(AVR_OBJCOPY ${AVROBJCOPY_PROGRAM})
-    endif(NOT AVR_OBJCOPY)
+
+    find_program(AVR_SIZE_PROGRAM
+            NAMES avr-size)
 
     set(ARDUINO_DEFAULT_BOARD uno  CACHE STRING "Default Arduino Board ID when not specified.")
     set(ARDUINO_DEFAULT_PORT       CACHE STRING "Default Arduino port when not specified.")
@@ -1814,11 +1779,11 @@ if(NOT ARDUINO_FOUND AND ARDUINO_SDK_PATH)
         ARDUINO_BOARDS_PATH
         ARDUINO_PROGRAMMERS_PATH
         ARDUINO_VERSION_PATH
-        ARDUINO_AVRDUDE_FLAGS
-        ARDUINO_AVRDUDE_PROGRAM
-        ARDUINO_AVRDUDE_CONFIG_PATH
-        AVRSIZE_PROGRAM
-        ${ADDITIONAL_REQUIRED_VARS}
+        AVRDUDE_PROGRAM
+        AVRDUDE_FLAGS
+        AVRDUDE_CONFIG_PATH
+        AVR_OBJCOPY_PROGRAM
+        AVR_SIZE_PROGRAM
         MSG "Invalid Arduino SDK path (${ARDUINO_SDK_PATH}).\n")
 
     detect_arduino_version(ARDUINO_SDK_VERSION)
@@ -1836,9 +1801,6 @@ if(NOT ARDUINO_FOUND AND ARDUINO_SDK_PATH)
     setup_arduino_size_script(ARDUINO_SIZE_SCRIPT)
     set(ARDUINO_SIZE_SCRIPT ${ARDUINO_SIZE_SCRIPT} CACHE INTERNAL "Arduino Size Script")
 
-    #print_board_list()
-    #print_programmer_list()
-
     set(ARDUINO_FOUND True CACHE INTERNAL "Arduino Found")
     mark_as_advanced(
         ARDUINO_CORES_PATH
@@ -1848,11 +1810,11 @@ if(NOT ARDUINO_FOUND AND ARDUINO_SDK_PATH)
         ARDUINO_BOARDS_PATH
         ARDUINO_PROGRAMMERS_PATH
         ARDUINO_VERSION_PATH
-        ARDUINO_AVRDUDE_FLAGS
-        ARDUINO_AVRDUDE_PROGRAM
         ARDUINO_AVRDUDE_CONFIG_PATH
-        ARDUINO_OBJCOPY_EEP_FLAGS
-        ARDUINO_OBJCOPY_HEX_FLAGS
-        AVRSIZE_PROGRAM)
+        AVRDUDE_FLAGS
+        AVRDUDE_PROGRAM
+        AVR_OBJCOPY_EEP_FLAGS
+        AVR_OBJCOPY_HEX_FLAGS
+        AVR_SIZE_PROGRAM)
 endif()
 
