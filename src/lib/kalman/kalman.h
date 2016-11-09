@@ -18,7 +18,7 @@ typedef struct kalman_state_t {
     double x_k; //State variable
     float u_k; // control signal
 
-} kalman_state;
+}   kalman_state;
 
 void kalman_init (kalman_state *state, double _a, double _r, log_sender component);
 void kalman_run(kalman_state *state, double z_k);

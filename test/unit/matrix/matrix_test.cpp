@@ -6,7 +6,7 @@ extern "C" {
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
 
-double **ma1, **ma2, **ma3, **ma4, vec1[3] = {1, 2, 1}, *vecEmpty;
+double **ma1, **ma2, **ma3, **ma4, **emptyMa, vec1[3] = {1, 2, 1}, vecEmpty[];
 
 void Setup(){
     double mat1[3][3] = { {9.1,6.0,2.8}, {7.4,1.0,3.0}, {4.5,0.0,8.0} };
@@ -14,9 +14,6 @@ void Setup(){
     double mat3[2][2] = { {32.1,8.3}, {0.72,43.7} };
     double mat4[3][2] = { {1, 2}, {3, 4}, {5, 6}};
 
-
-    //double mat2[3][3];
-    //double **ma1, **ma2, **ma3;
     int size = 3, row, col, i, j;
     double vec1[3] = {1, 2, 1};
     ma1 = (double **) malloc(size * sizeof(double*));
@@ -66,7 +63,7 @@ void Setup(){
 void MatrixTest::mult_mat_mat_ValidMatrix_ExpectCorrect() {
     Setup();
     double **resMat;
-    //double **resMat = mult_mat_mat(ma1, ma2);
+    //double **resMat = mult_mat_mat(ma1, ma2, 3, 3, 3, 3);
     double ResMulMat3x3[3][3] = { {52.7, 70.6, 88.5}, {32.4, 43.8, 55.2}, {60.5, 73.0, 85.5} };
 
     bool IsEqual = true;
@@ -81,8 +78,9 @@ void MatrixTest::mult_mat_mat_ValidMatrix_ExpectCorrect() {
 
 void MatrixTest::mult_mat_mat_InvalidMatrix_ExpectError() {
     Setup();
+    //Ikke sten sikker på hvordan jeg tjekker efter fejl her.
     double **resMat;
-    //double **resMat = mult_mat_mat(ma1, ma3);
+    //double **resMat = mult_mat_mat(ma1, ma3, 3, 3, 2, 2);
     double ResMulMat3x3[3][3] = { {52.7, 70.6, 88.5}, {32.4, 43.8, 55.2}, {60.5, 73.0, 85.5} };
 
     bool IsEqual = true;
@@ -98,12 +96,13 @@ void MatrixTest::mult_mat_mat_InvalidMatrix_ExpectError() {
 void MatrixTest::mult_mat_mat_DifferentSizes_ExpectCorrect() {
     Setup();
     double **resMat;
-    //resMat = mult_mat_mat(ma1, ma4);
+    //resMat = mult_mat_mat(ma1, ma4, 3, 3, 3, 2);
     double ResMulMat[3][2] = { {41.1, 59}, {25.4, 36.8}, {62.5, 81} };
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 2; ++j) {            if(ResMulMat[i][j] != resMat[i][j])
+        for (int j = 0; j < 2; ++j) {
+            if(ResMulMat3x3[i][j] != resMat[i][j])
                 IsEqual = false;
         }
     }
