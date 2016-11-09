@@ -8,8 +8,10 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
+extern "C" {
 #include "tools.h"
 #include "avr_mcu_section.h"
+}
 
 #define ATMEGA328p "atmega328p"
 #define F_CPU 16000000

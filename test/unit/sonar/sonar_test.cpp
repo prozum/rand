@@ -1,11 +1,13 @@
 #include "sonar_test.h"
-#include "sonar/sonar.h"
+
+extern "C" {
 #include "core/io.h"
+#include "sonar/sonar.h"
+}
 
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SonarTest);
-
 void SonarTest::pulseSonar_expectBuffer010() {
     sonar_init();
     pulse_sonar();
