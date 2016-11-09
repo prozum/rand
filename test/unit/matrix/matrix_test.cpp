@@ -1,5 +1,8 @@
 #include "matrix_test.h"
 #include <stdlib.h>
+extern "C" {
+#include "matrix/matrix.h"
+};
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
 

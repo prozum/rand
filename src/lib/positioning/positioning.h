@@ -5,6 +5,10 @@
 #ifndef RAND_POSITIONING_H
 #define RAND_POSITIONING_H
 
+#define MAX_NEGATIVE_ACCELERATION 0
+#define NO_ACCELERATION 1
+#define MAX_POSITIVE_ACCELERATION 2
+
 #include <stdint.h>
 #include "kalman.h"
 
