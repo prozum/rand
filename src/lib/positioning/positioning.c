@@ -45,13 +45,13 @@ void update_u_k ()
     /* if z is between 0 and 1, then we have a positive acceleration to the left
      * if z is between 1 and 2, then we have a positive acceleration to the right
      * if z is 1, then there is no acceleration */
-    if (u_k_update.z > 0 && u_k_update.z < 1) {
-        laser_right_state.u_k = -1 * u_k_update.z;
+    if (u_k_update.z > MAX_NEGATIVE_ACCELERATION && u_k_update.z < NO_ACCELERATION) {
+        laser_right_state.u_k = -1 * u_k_update.z; // -1 simply to negate u_k_update.z
         laser_left_state.u_k = u_k_update.z;
-    } else if (u_k_update.z > 1 && u_k_update.z < 2) {
+    } else if (u_k_update.z > NO_ACCELERATION && u_k_update.z < MAX_POSITIVE_ACCELERATION) {
         laser_right_state.u_k = u_k_update.z;
-        laser_left_state.u_k = -1 * u_k_update.z;
-    } else if (u_k_update.z == 1){
+        laser_left_state.u_k = -1 * u_k_update.z; // -1 simply to negate u_k_update.z
+    } else if (u_k_update.z == NO_ACCELERATION){
         laser_left_state.u_k = u_k_update.z;
         laser_right_state.u_k = u_k_update.z;
     }
@@ -59,23 +59,23 @@ void update_u_k ()
     /* if y is between 0 and 1, then we have a positive acceleration forward
      * if y is between 1 and 2, then we have a positive acceleration backwards
      * if y is 1, then there is no acceleration */
-    if (u_k_update.y > 0 && u_k_update.y < 1)
-        front_state.u_k = -1 * u_k_update.y;
-    else if (u_k_update.y > 1 && u_k_update.y < 2)
+    if (u_k_update.y > MAX_NEGATIVE_ACCELERATION && u_k_update.y < NO_ACCELERATION)
+        front_state.u_k = -1 * u_k_update.y; // -1 simply to negate u_k_update.y
+    else if (u_k_update.y > NO_ACCELERATION && u_k_update.y < MAX_POSITIVE_ACCELERATION)
         front_state.u_k = u_k_update.y;
-    else if (u_k_update.y == 1)
+    else if (u_k_update.y == NO_ACCELERATION)
         front_state.u_k = u_k_update.y;
 
     /* if x is between 0 and 1, then we have a positive acceleration upwards
      * if x is between 1 and 2, then we have a positive acceleration downwards
      * if x is 1, then there is no acceleration */
-    if (u_k_update.x > 0 && u_k_update.x < 2) {
-        ir_bottom.u_k = -1 * u_k_update.x;
+    if (u_k_update.x > MAX_NEGATIVE_ACCELERATION && u_k_update.x < NO_ACCELERATION) {
+        ir_bottom.u_k = -1 * u_k_update.x; // -1 simply to negate u_k_update.x
         ir_top.u_k = u_k_update.x;
-    } else if (u_k_update.x > 1 && u_k_update.x < 2) {
+    } else if (u_k_update.x > NO_ACCELERATION && u_k_update.x < MAX_POSITIVE_ACCELERATION) {
         ir_bottom.u_k = u_k_update.x;
-        ir_top.u_k = 1 * u_k_update.x;
-    } else if (u_k_update.x == 1){
+        ir_top.u_k = -1 * u_k_update.x; // -1 simply to negate u_k_update.x
+    } else if (u_k_update.x == NO_ACCELERATION){
         ir_bottom.u_k = u_k_update.x;
         ir_top.u_k = u_k_update.x;
     }
