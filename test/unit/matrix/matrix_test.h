@@ -33,8 +33,11 @@ class MatrixTest : public CppUnit::TestCase {
         CPPUNIT_TEST(inv_mat_ValidMatrix_ExpectCorrect);
         CPPUNIT_TEST(inv_mat_InvalidMatrix_ExpectError);
     CPPUNIT_TEST_SUITE_END();
-
+private:
+    float **ma1, **ma2, **ma3, **ma4, **vec1, **vecEmpty;
 public:
+    void setUp();
+    void tearDown();
 
     void mult_mat_mat_ValidMatrix_ExpectCorrect();
     void mult_mat_mat_InvalidMatrix_ExpectError();

@@ -1,4 +1,4 @@
-#include "matrix_math/matrix_math.h"
+#include "matrix/matrix.h"
 
 
 /*float** mult_mat_mat(float **ma1, float **ma2, uint8_t mat_size) {
@@ -31,7 +31,7 @@ float** mult_mat_mat(float **ma1, float **ma2, uint8_t ma1_rows, uint8_t ma1_col
     for (i = 0; i < ma2_columns; ++i) {
         res[i] = (float *) malloc(ma1_rows * sizeof(float*));
         for (j = 0; j < ma1_rows; j++) {
-            res[row] = (float *) malloc(sizeof(float));
+            res[j] = (float *) malloc(sizeof(float));
         }
     }
 
@@ -46,7 +46,7 @@ float** mult_mat_mat(float **ma1, float **ma2, uint8_t ma1_rows, uint8_t ma1_col
     return res;
 }
 
-float** mult_const_vec(float** vec1, float k, int rows){
+float** mult_const_vec(float** vec1, float k, uint8_t rows){
     int i;
     float** res = malloc(rows * sizeof(float*));
 
@@ -55,7 +55,7 @@ float** mult_const_vec(float** vec1, float k, int rows){
     }
 
     for (i = 0; i < rows; ++i) {
-        res[i] = k * vec1[i][0];
+        res[i][0] = k * vec1[i][0];
     }
     return res;
 }
@@ -87,7 +87,7 @@ float** mult_mat_vec(float **ma1, float** vec1, uint8_t rows, uint8_t cols){
     for (i = 0; i < rows; ++i) {
         res[i] = 0;
         for (j = 0; j < cols; ++j) {
-            res[i] += ma1[i][j] * vec1[j][0];
+            res[i][0] += ma1[i][j] * vec1[j][0];
         }
     }
     return res;
@@ -126,14 +126,14 @@ float** sub_mat_mat(float **ma1, float **ma2, uint8_t mat_size){
 }
 
 float** add_vec_vec(float** vec1, float** vec2, uint8_t size){
-    uint8_t i;
+    uint8_t row, i;
     float** res = malloc(size * sizeof(float*));
-    for (row = 0; row < rows; row++) {
+    for (row = 0; row < size; row++) {
         res[row] = (float *) malloc(sizeof(float));
     }
 
     for (i = 0; i < size; ++i) {
-        res[i] = vec1[i][0] + vec2[i][0];
+        res[i][0] = vec1[i][0] + vec2[i][0];
     }
 
     return res;
@@ -146,7 +146,7 @@ float** sub_vec_vec(float** vec1, float** vec2, uint8_t size){
         res[i] = (float *) malloc(sizeof(float));
     }
     for (i = 0; i < size; ++i) {
-        res[i] = vec1[i][0] - vec2[i][0];
+        res[i][0] = vec1[i][0] - vec2[i][0];
     }
 
     return res;

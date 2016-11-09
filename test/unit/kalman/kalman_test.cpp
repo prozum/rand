@@ -1,11 +1,13 @@
 #include "kalman_test.h"
+#include <stdlib.h>
+#include <cmath>
 extern "C" {
 #include "kalman/kalman.h"
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(KalmanTest);
 
-void KalmanTest::KalmanInit_NullAsStateValidParams_ExpectInvalidStateSentToLog()
+void KalmanTest::KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced()
 {
     kalman_state *NullState = NULL;
 

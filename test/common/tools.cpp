@@ -4,6 +4,8 @@ avr_t* Tools::init(const char *fname, uint32_t freq) {
     avr_t *avr = NULL;
     elf_firmware_t f;
 
+    avr = avr_make_mcu_by_name("atmega328p");
+
     elf_read_firmware(fname, &f);
 
     avr_init(avr);

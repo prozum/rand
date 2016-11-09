@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+void setC(kalman_state_matrix *state, const float **values);
+void setR(kalman_state_matrix *state, const float **values);
+
 void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
                              const float** C, const float** R)
 {
@@ -14,11 +17,11 @@ void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float
     state->G_k[0][0] = 0;
     state->G_k[1][0] = 1;
 
-    kalman_datafusion_setC(state, C);
-    kalman_datafusion_setR(state, R);
+    setC(state, C);
+    setR(state, R);
 }
 
-void kalman_datafusion_setC (kalman_state_matrix *state, const float** values)
+void setC (kalman_state_matrix *state, const float **values)
 {
     int i = 0;
 
@@ -27,7 +30,7 @@ void kalman_datafusion_setC (kalman_state_matrix *state, const float** values)
     }
 }
 
-void kalman_datafusion_setR (kalman_state_matrix *state, const float** values)
+void setR (kalman_state_matrix *state, const float **values)
 {
     int i = 0, j = 0;
 

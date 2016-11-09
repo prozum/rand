@@ -4,6 +4,8 @@
 
 /*We're doing a specific implementation of the Kalman filter for two units (laser + sonar)*/
 #define DATAFUSION_UNITS 2
+#define ZLASER 0
+#define ZSONAR 1
 
 typedef struct kalman_matrix_state_t {
     log_sender source_components;
@@ -23,9 +25,7 @@ typedef struct kalman_matrix_state_t {
 } kalman_state_matrix;
 
 void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
-                             const float** C, const float** R);
-void kalman_datafusion_setC (kalman_state_matrix *state, const float** values);
-void kalman_datafusion_setR (kalman_state_matrix *state, const float** values);
-
+                             const float **C, const float **R);
 void kalman_datafusion_filter (kalman_state_matrix *state, float z_laser, float z_sonar);
+void kalman_datafusion_calibrate (kalman_state_matrix *state, float z_0_laser, float z_0_sonar);
 
