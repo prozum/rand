@@ -120,6 +120,7 @@ void LOG_ERROR_BYPASS(const char *msg) {
     //TODO: Add code for safely landing drone
 }
 
+#if MOCK
 /**
  * Disables a module, blocking all future logs
  * @param device to disable.
@@ -142,7 +143,6 @@ void disable_device(log_sender device) {
     *ptr = new_dev;
 }
 
-#if MOCK
 uint8_t count_disabled_devices() {
     uint8_t devices = 0;
     disabled_device *ptr = head;

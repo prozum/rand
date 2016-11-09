@@ -19,7 +19,7 @@ void LOG(log_sender sender, const char *msg);
 void LOG_WARNING(log_sender sender, const char *msg);
 void LOG_ERROR(log_sender, const char *msg);
 void LOG_ERROR_BYPASS(const char *msg);
-void disable_logging_for(log_sender device);
+void disable_device(log_sender device);
 
 #if MOCK
 uint8_t count_disabled_devices();

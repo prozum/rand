@@ -1,9 +1,14 @@
-#include <malloc.h>
 #include "log_test.h"
+
+#include <string>
+#include <malloc.h>
+#include <stdint.h>
+
+extern "C" {
 #include "core/log.h"
 #include "core/io.h"
-#include <string>
-#include <stdint.h>
+}
+
 
 using namespace std;
 CPPUNIT_TEST_SUITE_REGISTRATION(LogTest);
@@ -185,7 +190,7 @@ void LogTest::LogErrorBypass_Testlog_ExpectErrTestLog() {
 void LogTest::DisableDevice_LogFromDisabled_ExpectNothing(){
     char const *msg = "Disabled Log";
     toggle_logging(LOG_ALL);
-    disable_logging_for(SENDER_BOARD);
+    disable_device(SENDER_BOARD);
 
     LOG(SENDER_BOARD, msg);
     char *wb = get_write_buffer(USB_TX);
@@ -197,7 +202,7 @@ void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing(){
     clear_write_buffer(USB_TX);
 
     toggle_logging(LOG_ALL);
-    disable_logging_for(SENDER_BOARD);
+    disable_device(SENDER_BOARD);
 
     LOG_WARNING(SENDER_BOARD, msg);
     char *wb = get_write_buffer(USB_TX);
@@ -207,7 +212,7 @@ void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing(){
 void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing(){
     char const *msg = "Disabled Log";
     toggle_logging(LOG_ALL);
-    disable_logging_for(SENDER_BOARD);
+    disable_device(SENDER_BOARD);
 
     LOG_ERROR(SENDER_BOARD, msg);
     char *wb = get_write_buffer(USB_TX);
@@ -217,7 +222,7 @@ void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing(){
 void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError(){
     char const *msg = "Disabled Log";
     toggle_logging(LOG_ALL);
-    disable_logging_for(SENDER_BOARD);
+    disable_device(SENDER_BOARD);
 
     LOG_ERROR_BYPASS(msg);
     char *wb = get_write_buffer(USB_TX);
@@ -227,8 +232,8 @@ void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError(){
 
 void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList(){
     toggle_logging(LOG_ALL);
-    disable_logging_for(SENDER_BOARD);
-    disable_logging_for(SENDER_BOARD);
+    disable_device(SENDER_BOARD);
+    disable_device(SENDER_BOARD);
 
     uint8_t dev_count = count_disabled_devices();
 
@@ -238,7 +243,7 @@ void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList(){
 
 void LogTest::SenderIgnored_OnIgnoredList_ExpectOne(){
     toggle_logging(LOG_ALL);
-    disable_logging_for(SENDER_BOARD);
+    disable_device(SENDER_BOARD);
 
     int blocked = sender_ignored(SENDER_BOARD);
 
@@ -247,11 +252,11 @@ void LogTest::SenderIgnored_OnIgnoredList_ExpectOne(){
 }
 void LogTest::SenderIgnored_NotOnList_ExpectZero(){
     toggle_logging(LOG_ALL);
-    disable_logging_for(SENDER_FC);
-    disable_logging_for(SENDER_IO);
-    disable_logging_for(SENDER_IR);
-    disable_logging_for(SENDER_LASER);
-    disable_logging_for(SENDER_SONAR);
+    disable_device(SENDER_FC);
+    disable_device(SENDER_IO);
+    disable_device(SENDER_IR);
+    disable_device(SENDER_LASER);
+    disable_device(SENDER_SONAR);
 
     int blocked = sender_ignored(SENDER_BOARD);
 

@@ -1,5 +1,5 @@
-#include <sim_avr.h>
 #include "io_test.h"
+#include "sim_avr.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(IOTest);
 

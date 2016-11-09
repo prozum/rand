@@ -512,7 +512,6 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
     if(DEFINED ${BOARD_ID}.build.pid)
         list(APPEND COMPILE_FLAGS "-DUSB_PID=${${BOARD_ID}.build.pid}")
     endif()
-    list(APPEND COMPILE_FLAGS "-mmcu=${${BOARD_ID}.build.mcu}")
     if(ARDUINO_SDK_VERSION VERSION_GREATER 1.0 OR ARDUINO_SDK_VERSION VERSION_EQUAL 1.0)
         set(PIN_HEADER ${${${BOARD_ID}.build.variant}.path})
         if(PIN_HEADER)
@@ -529,8 +528,8 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
     # C link libraries
     if (NOT FOR_LIBRARY)
         list(APPEND COMPILE_FLAGS "-L${AVR_LIB_PATH}")
-        list(APPEND ALL_LIBS ${INPUT_LIBS} "c" "m")
-        foreach(LIB ${ALL_LIBS})
+        list(APPEND LIBS "c" "m")
+        foreach(LIB ${LIBS})
             list(APPEND COMPILE_FLAGS "-l${LIB}")
         endforeach()
     endif()
@@ -598,9 +597,9 @@ function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS L
     # Compile elf
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
                         COMMAND ${AVR_C_COMPILER}
-                        ARGS     ${COMPILE_FLAGS}
-                        ${INPUT_SRCS}
-                        -o ${TARGET_PATH}.elf
+                        ARGS    ${INPUT_SRCS}
+                                -o ${TARGET_PATH}.elf
+                                ${COMPILE_FLAGS}
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                         COMMENT "Compiling elf"
                         VERBATIM)
@@ -1662,8 +1661,8 @@ set(AVR_AR           "avr-ar")
 #                              C Flags                                        
 #=============================================================================#
 set(AVR_C_FLAGS_COMMON "-mcall-prologues -ffunction-sections -fdata-sections")
-set(AVR_C_FLAGS                "${AVR_C_FLAGS_COMMON} -g -Os"          CACHE STRING "")
-set(AVR_C_FLAGS_DEBUG          "${AVR_C_FLAGS_COMMON} -g"              CACHE STRING "")
+set(AVR_C_FLAGS                "${AVR_C_FLAGS_COMMON} -Os -g"          CACHE STRING "")
+set(AVR_C_FLAGS_DEBUG          "${AVR_C_FLAGS_COMMON} -Os -g"          CACHE STRING "")
 set(AVR_C_FLAGS_MINSIZEREL     "${AVR_C_FLAGS_COMMON} -Os -DNDEBUG"    CACHE STRING "")
 set(AVR_C_FLAGS_RELEASE        "${AVR_C_FLAGS_COMMON} -Os -DNDEBUG -w" CACHE STRING "")
 set(AVR_C_FLAGS_RELWITHDEBINFO "${AVR_C_FLAGS_COMMON} -Os -g -w"       CACHE STRING "")
@@ -1672,8 +1671,8 @@ set(AVR_C_FLAGS_RELWITHDEBINFO "${AVR_C_FLAGS_COMMON} -Os -g -w"       CACHE STR
 #                             C++ Flags                                       
 #=============================================================================#
 set(AVR_CXX_FLAGS_COMMON "${AVR_C_FLAGS_COMMON} -fno-exceptions")
-set(AVR_CXX_FLAGS                "${AVR_CXX_FLAGS_COMMON} -g -Os"       CACHE STRING "")
-set(AVR_CXX_FLAGS_DEBUG          "${AVR_CXX_FLAGS_COMMON} -g"           CACHE STRING "")
+set(AVR_CXX_FLAGS                "${AVR_CXX_FLAGS_COMMON} -Os -g"       CACHE STRING "")
+set(AVR_CXX_FLAGS_DEBUG          "${AVR_CXX_FLAGS_COMMON} -Os -g"       CACHE STRING "")
 set(AVR_CXX_FLAGS_MINSIZEREL     "${AVR_CXX_FLAGS_COMMON} -Os -DNDEBUG" CACHE STRING "")
 set(AVR_CXX_FLAGS_RELEASE        "${AVR_CXX_FLAGS_COMMON} -Os -DNDEBUG" CACHE STRING "")
 set(AVR_CXX_FLAGS_RELWITHDEBINFO "${AVR_CXX_FLAGS_COMMON} -Os -g"       CACHE STRING "")
