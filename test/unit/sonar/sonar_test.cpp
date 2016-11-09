@@ -61,8 +61,9 @@ void SonarTest::readSonar_tooClose_expectValidByteZero() {
 void SonarTest::sonarInit_expectTriggerOutAndEchoIn() {
     sonar_init();
 
-    auto mode_echo = get_pin_mode((dpin_t)SONAR_ECHO_PIN);
-    auto mode_trigger = get_pin_mode((dpin_t)SONAR_TRIGGER_PIN);
+
+    pin_mode_t mode_echo = get_pin_mode((dpin_t)SONAR_ECHO_PIN);
+    pin_mode_t mode_trigger = get_pin_mode((dpin_t)SONAR_TRIGGER_PIN);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The echo pin was not setup correctly.", mode_echo, INPUT);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The trigger pin was not setup correctly.", mode_trigger, OUTPUT);
