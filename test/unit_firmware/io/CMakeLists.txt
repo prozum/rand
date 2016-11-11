@@ -8,7 +8,7 @@ foreach(PIN_ID ${PIN_IDS})
 				               TEST
 				               BOARD uno
 				               LIBS core
-				               SRCS pin${PIN_ID}-pinmode-${PIN_MODE})
+				               SRCS pin${PIN_ID}-pinmode-${PIN_MODE}.c)
 	endforeach()
 
 	# HIGH/LOW tests

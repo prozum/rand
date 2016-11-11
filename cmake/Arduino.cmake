@@ -344,13 +344,15 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
     required_variables(VARS INPUT_SRCS INPUT_BOARD MSG "must define for target ${INPUT_NAME}")
     
     set(ALL_SRCS ${INPUT_SRCS} ${INPUT_HDRS})
+    get_sources_paths(ALL_SRCS)
 
     # C flags
     get_avr_flags(COMPILE_FLAGS ${INPUT_BOARD} "${INPUT_LIBS}" True)
 
     # Setup target
     set(TARGET_AVR_NAME "${INPUT_NAME}-avr")
-    add_custom_target("${TARGET_AVR_NAME}")
+    add_custom_target("${TARGET_AVR_NAME}" COMMAND ""
+                      COMMENT "Building AVR Library: ${TARGET_AVR_NAME}")
 
     # Add dependencies
     foreach(LIB ${INPUT_LIBS})
@@ -359,12 +361,13 @@ function(GENERATE_AVR_LIBRARY INPUT_NAME)
 
     # Build object files
     foreach(SRC ${ALL_SRCS})
+        get_filename_component(OBJ_NAME ${SRC} NAME_WE)
         add_custom_command(TARGET ${TARGET_AVR_NAME}
                 COMMAND ${AVR_C_COMPILER}
-                ARGS ${COMPILE_FLAGS} ${SRC} -c -o ${CMAKE_CURRENT_BINARY_DIR}/${SRC}.o
+                ARGS ${COMPILE_FLAGS} ${SRC} -c -o ${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}.o
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 COMMENT "Compiling object file for ${SRC}")
-        list(APPEND OBJS "${CMAKE_CURRENT_BINARY_DIR}/${SRC}.o")
+        list(APPEND OBJS "${CMAKE_CURRENT_BINARY_DIR}/${OBJ_NAME}.o")
     endforeach()
 
     # Build static lib
@@ -424,16 +427,14 @@ function(GENERATE_AVR_FIRMWARE INPUT_NAME)
     if(NOT INPUT_PROGRAMMER)
         set(INPUT_PROGRAMMER ${ARDUINO_DEFAULT_PROGRAMMER})
     endif()
-    required_variables(VARS INPUT_BOARD MSG "must define for target ${INPUT_NAME}")
+    required_variables(VARS INPUT_SRCS INPUT_BOARD MSG "must define for target ${INPUT_NAME}")
 
     set(ALL_SRCS ${INPUT_SRCS} ${INPUT_HDRS})
-    set(LIB_DEP_INCLUDES)
-
-    required_variables(VARS ALL_SRCS MSG "must define SRCS or SKETCH for target ${INPUT_NAME}")
+    get_sources_paths(ALL_SRCS)
 
     setup_avr_target(${INPUT_NAME} ${INPUT_BOARD} "${ALL_SRCS}" "${INPUT_LIBS}" "${LIB_DEP_INCLUDES}" "" "${INPUT_TEST}")
 
-    if(INPUT_PORT)
+    if(INPUT_PORT AND NOT INPUT_TEST)
         setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
     else()
        # Detect port
@@ -452,8 +453,21 @@ function(GENERATE_AVR_FIRMWARE INPUT_NAME)
            setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
        endif()
     endif()
+endfunction()
 
-
+function(GET_SOURCES_PATHS VAR_SRCS)
+    foreach(SRC ${${VAR_SRCS}})
+        if(EXISTS ${SRC})
+            list(APPEND SRCS ${SRC})
+        elseif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${SRC})
+            list(APPEND SRCS ${CMAKE_CURRENT_SOURCE_DIR}/${SRC})
+        elseif(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${SRC})
+            list(APPEND SRCS ${CMAKE_CURRENT_BINARY_DIR}/${SRC})
+        else()
+            message(FATAL_ERROR "Cannot find file: ${SRC}")
+        endif()
+    endforeach()
+    set(${VAR_SRCS} ${SRCS} PARENT_SCOPE)
 endfunction()
 
 function(LOAD_TEST_FIRMWARE_DEFINES)
@@ -461,7 +475,7 @@ function(LOAD_TEST_FIRMWARE_DEFINES)
     get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
 
     list(LENGTH DEFINES LENGTH)
-    math(EXPR LENGTH "${LENGTH} - 1" )
+    math(EXPR LENGTH "${LENGTH} - 1")
     foreach(ITER RANGE ${LENGTH})
         list(GET DEFINES ${ITER} DEFINE)
         list(GET PATHS ${ITER} PATH)
@@ -469,6 +483,15 @@ function(LOAD_TEST_FIRMWARE_DEFINES)
     endforeach()
 endfunction()
 
+function(ADD_TEST_DEPENDENCIES TEST_TARGET)
+    get_property(TEST_FWS GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
+
+    foreach(TEST_FW ${TEST_FWS})
+        string(TOLOWER ${TEST_FW} TEST_FW)
+        string(REPLACE "_" "-" TEST_FW ${TEST_FW})
+        add_dependencies(${TEST_TARGET} ${TEST_FW})
+    endforeach()
+endfunction()
 
 
 #=============================================================================#
@@ -485,7 +508,6 @@ endfunction()
 #
 #=============================================================================#
 function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
-
     set(BOARD_CORE ${${BOARD_ID}.build.core})
 
     # Get Arduino version information
@@ -550,13 +572,12 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
     # Output
     separate_arguments(COMPILE_FLAGS)
     set(${COMPILE_FLAGS_VAR} "${COMPILE_FLAGS}" PARENT_SCOPE)
-
 endfunction()
 
 function(AVR_INCLUDE_DIRECTORIES)
     get_property(INC_DIRS DIRECTORY PROPERTY AVR_INCLUDE_DIRECTORIES)
 
-    math(EXPR LENGTH "${ARGC} - 1" )
+    math(EXPR LENGTH "${ARGC} - 1")
     foreach(ITER RANGE ${LENGTH})
         set(FULL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV${ITER}}")
         list(APPEND INC_DIRS "${FULL_PATH}")
@@ -583,7 +604,8 @@ endfunction()
 #=============================================================================#
 function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS LINK_FLAGS TEST_TARGET)
 
-    add_custom_target(${TARGET_NAME})
+    add_custom_target(${TARGET_NAME} COMMAND ""
+            COMMENT "Building AVR target: ${TARGET_NAME}")
 
     # Add lib dependencies
     foreach(LIB ${ALL_LIBS})
@@ -591,13 +613,12 @@ function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS L
     endforeach()
 
     get_avr_flags(COMPILE_FLAGS "${BOARD_ID}" "${ALL_LIBS}" False)
-
     set(TARGET_PATH ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAME})
 
     # Compile elf
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
                         COMMAND ${AVR_C_COMPILER}
-                        ARGS    ${INPUT_SRCS}
+                        ARGS    ${ALL_SRCS}
                                 -o ${TARGET_PATH}.elf
                                 ${COMPILE_FLAGS}
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -860,7 +881,7 @@ function(setup_arduino_bootloader_upload TARGET_NAME BOARD_ID PORT AVRDUDE_FLAGS
     list(APPEND AVRDUDE_ARGS "-Ueeprom:w:${TARGET_PATH}.eep:i")
     add_custom_target(${UPLOAD_TARGET}
                      ${AVRDUDE_PROGRAM}
-                     ${AVRDUDE_ARGS}
+                     ARGS ${AVRDUDE_ARGS}
                      DEPENDS ${TARGET_NAME})
 
     # Global upload target
