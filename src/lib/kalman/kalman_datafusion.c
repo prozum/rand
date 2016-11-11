@@ -74,3 +74,7 @@ void kalman_datafusion_filter(kalman_state_matrix *state, float z_laser, float z
     kalman_datafusion_predict(state);
     kalman_datafusion_update(state);
 }
+
+void kalman_datafusion_calibrate(kalman_state_matrix *state, float z_0_laser, float z_0_sonar) {
+
+}
