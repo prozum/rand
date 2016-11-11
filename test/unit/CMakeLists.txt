@@ -12,5 +12,4 @@ add_executable(unit-tests main.cpp
         log/log_test.cpp
         matrix/matrix_test.cpp
 )
-target_link_libraries(unit-tests common core sonar kalman ${CPPUNIT_LIBRARIES})
-add_test_dependencies(unit-tests)
+target_link_libraries(unit-tests common core sonar kalman matrix ${CPPUNIT_LIBRARIES})
