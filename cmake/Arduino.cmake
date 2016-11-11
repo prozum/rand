@@ -230,8 +230,8 @@
 #=============================================================================#
 #
 # ARDUINO_SDK_PATH            - Arduino SDK Path
-# AVR_AVRDUDE_PROGRAM     - Full path to avrdude programmer
-# AVR_AVRDUDE_CONFIG_PATH - Full path to avrdude configuration file
+# AVRDUDE_PROGRAM     - Full path to avrdude programmer
+# AVRDUDE_CONFIG_PATH - Full path to avrdude configuration file
 #
 # AVR_C_FLAGS             - C compiler flags
 # AVR_CXX_FLAGS           - C++ compiler flags
@@ -622,22 +622,22 @@ function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS L
                                 -o ${TARGET_PATH}.elf
                                 ${COMPILE_FLAGS}
                         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                        COMMENT "Compiling elf"
+                        COMMENT "Compiling ELF"
                         VERBATIM)
 
     # Copy and translate object files
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
                         COMMAND ${AVR_OBJCOPY}
-                        ARGS     ${ARDUINO_OBJCOPY_EEP_FLAGS}
-                                 ${TARGET_PATH}.elf
-                                 ${TARGET_PATH}.eep
+                                ${AVR_OBJCOPY_EEP_FLAGS}
+                                ${TARGET_PATH}.elf
+                                ${TARGET_PATH}.eep
                         COMMENT "Generating EEP image"
                         VERBATIM)
 
     # Convert firmware image to ASCII HEX format
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
                         COMMAND ${AVR_OBJCOPY}
-                        ARGS    ${ARDUINO_OBJCOPY_HEX_FLAGS}
+                                ${AVR_OBJCOPY_HEX_FLAGS}
                                 ${TARGET_PATH}.elf
                                 ${TARGET_PATH}.hex
                         COMMENT "Generating HEX image"
@@ -646,7 +646,7 @@ function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS L
     # Display target size
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
                         COMMAND ${CMAKE_COMMAND}
-                        ARGS    -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
+                                -DFIRMWARE_IMAGE=${TARGET_PATH}.elf
                                 -DMCU=${${BOARD_ID}.build.mcu}
                                 -DEEPROM_IMAGE=${TARGET_PATH}.eep
                                 -P ${ARDUINO_SIZE_SCRIPT}
@@ -881,7 +881,7 @@ function(setup_arduino_bootloader_upload TARGET_NAME BOARD_ID PORT AVRDUDE_FLAGS
     list(APPEND AVRDUDE_ARGS "-Ueeprom:w:${TARGET_PATH}.eep:i")
     add_custom_target(${UPLOAD_TARGET}
                      ${AVRDUDE_PROGRAM}
-                     ARGS ${AVRDUDE_ARGS}
+                     ${AVRDUDE_ARGS}
                      DEPENDS ${TARGET_NAME})
 
     # Global upload target
@@ -1021,7 +1021,7 @@ function(setup_arduino_programmer_args BOARD_ID PROGRAMMER TARGET_NAME PORT AVRD
         message(FATAL_ERROR "This should not happen")
     endif()
 
-    list(APPEND AVRDUDE_ARGS "-C${ARDUINO_AVRDUDE_CONFIG_PATH}")
+    list(APPEND AVRDUDE_ARGS "-C${AVRDUDE_CONFIG_PATH}")
 
     #TODO: Check mandatory settings before continuing
     if(NOT ${PROGRAMMER}.protocol)
@@ -1075,7 +1075,7 @@ function(setup_arduino_bootloader_args BOARD_ID TARGET_NAME PORT AVRDUDE_FLAGS O
     endif()
 
     list(APPEND AVRDUDE_ARGS
-        "-C${ARDUINO_AVRDUDE_CONFIG_PATH}"  # avrdude config
+        "-C${AVRDUDE_CONFIG_PATH}"  # avrdude config
         "-p${${BOARD_ID}.build.mcu}"        # MCU Type
         )
 
@@ -1728,11 +1728,10 @@ set(AVR_MODULE_LINKER_FLAGS_RELWITHDEBINFO "${AVR_LINKER_FLAGS}" CACHE STRING ""
 #=============================================================================#
 #                         Avr flags Settings
 #=============================================================================#
-set(AVR_OBJCOPY_EEP_FLAGS   "-O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load
-    --no-change-warnings --change-section-lma .eeprom=0"         CACHE STRING "")
-set(AVR_OBJCOPY_HEX_FLAGS   "-O ihex -R .eeprom"                 CACHE STRING "")
-set(AVRDUDE_FLAGS           "-V"                                 CACHE STRING "")
-set(AVR_LIB_PATH            "${CMAKE_BINARY_DIR}/lib/avr/"      CACHE STRING "")
+set(AVR_OBJCOPY_EEP_FLAGS   -O ihex -j .eeprom --set-section-flags=.eeprom=alloc,load --no-change-warnings --change-section-lma .eeprom=0         CACHE STRING "")
+set(AVR_OBJCOPY_HEX_FLAGS   -O ihex -R .eeprom                 CACHE STRING "")
+set(AVRDUDE_FLAGS           -V                                 CACHE STRING "")
+set(AVR_LIB_PATH            ${CMAKE_BINARY_DIR}/avr-lib/       CACHE STRING "")
 file(MAKE_DIRECTORY ${AVR_LIB_PATH})
 
 #=============================================================================#
@@ -1829,7 +1828,7 @@ if(NOT ARDUINO_FOUND AND ARDUINO_SDK_PATH)
         ARDUINO_BOARDS_PATH
         ARDUINO_PROGRAMMERS_PATH
         ARDUINO_VERSION_PATH
-        ARDUINO_AVRDUDE_CONFIG_PATH
+        AVRDUDE_CONFIG_PATH
         AVRDUDE_FLAGS
         AVRDUDE_PROGRAM
         AVR_OBJCOPY_EEP_FLAGS
