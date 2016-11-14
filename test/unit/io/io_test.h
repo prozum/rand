@@ -37,8 +37,8 @@ class IOTest : public CppUnit::TestFixture {
     CPPUNIT_TEST(SetPinMode_Pin8SetOUT_ExpectOUT);
     CPPUNIT_TEST(SetPinMode_Pin13SetIN_ExpectIN);
     CPPUNIT_TEST(SetPinMode_Pin13SetOUT_ExpectOUT);
-    CPPUNIT_TEST(SetPinMode_Pin13SetLessThan0_ExpectNoChange);
-    CPPUNIT_TEST(SetPinMode_Pin13SetHigherThan1_ExpectNoChange);
+    /*CPPUNIT_TEST(SetPinMode_Pin13SetLessThan0_ExpectNoChange);
+    CPPUNIT_TEST(SetPinMode_Pin13SetHigherThan1_ExpectNoChange); */
 
     CPPUNIT_TEST(WritePin_Pin0WriteLOW_ExpectLOW);
     CPPUNIT_TEST(WritePin_Pin7WriteLOW_ExpectLOW);
@@ -48,8 +48,8 @@ class IOTest : public CppUnit::TestFixture {
     CPPUNIT_TEST(WritePin_Pin7WriteHIGH_ExpectHIGH);
     CPPUNIT_TEST(WritePin_Pin8WriteHIGH_ExpectHIGH);
     CPPUNIT_TEST(WritePin_Pin13WriteHIGH_ExpectHIGH);
-    CPPUNIT_TEST(WritePin_Pin13WriteHigherThan1_ExpectNoChange);
-    CPPUNIT_TEST(WritePin_Pin13WriteLessThan0_ExpectNoChange);
+    //CPPUNIT_TEST(WritePin_Pin13WriteHigherThan1_ExpectNoChange);
+    //CPPUNIT_TEST(WritePin_Pin13WriteLessThan0_ExpectNoChange);
 
     CPPUNIT_TEST(ReadPin_Pin0ReadLOW_ExpectLOW);
     CPPUNIT_TEST(ReadPin_Pin7ReadLOW_ExpectLOW);

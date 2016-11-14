@@ -21,10 +21,10 @@ static level logging_level = LOG_NONE;
 
 /**
  * Toggles logging for the system at the given level.
- * @param lvl which classes of errors to log (may be LOG_ONLY_ERRORS, LOG_DEBUG, LOG_ALL, LOG_NONE)
+ * @param lvl which classes of errors to log (may be LOG_ONLY_ERRORS, LOG_MOCK, LOG_ALL, LOG_NONE)
  */
 void toggle_logging(level lvl) {
-#if DEBUG
+#if MOCK
     //Produce a message with version and project-name
     char init_msg[30];
     strcpy(init_msg, MAJOR_VERSION);
@@ -64,7 +64,7 @@ uint8_t sender_ignored(log_sender sender) {
  * @param msg is the message to log.
  */
 void LOG(log_sender sender, const char *msg) {
-#if DEBUG
+#if MOCK
     if(!sender_ignored(sender) && logging_level == LOG_ALL) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
@@ -80,7 +80,7 @@ void LOG(log_sender sender, const char *msg) {
  * @param msg  is the warning to log
  */
 void LOG_WARNING(log_sender sender, const char *msg) {
-#if DEBUG
+#if MOCK
     if(!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
@@ -96,7 +96,7 @@ void LOG_WARNING(log_sender sender, const char *msg) {
  * @param msg is the error to log
  */
 void LOG_ERROR(log_sender sender, const char *msg) {
-#if DEBUG
+#if MOCK
     if(!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
@@ -111,7 +111,7 @@ void LOG_ERROR(log_sender sender, const char *msg) {
  * @param msg is the error to log.
  */
 void LOG_ERROR_BYPASS(const char *msg) {
-#if DEBUG
+#if MOCK
     char cpy[strlen(msg) + 3];
     strcpy(cpy, msg);
 
