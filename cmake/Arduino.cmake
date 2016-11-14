@@ -597,7 +597,6 @@ endfunction()
 #        ALL_LIBS    - All libraries
 #        COMPILE_FLAGS - Compile flags
 #        LINK_FLAGS    - Linker flags
-#        MANUAL - (Advanced) Only use AVR Libc/Includes
 #
 # Creates an Arduino firmware target.
 #
