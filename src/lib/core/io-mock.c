@@ -131,7 +131,7 @@ void serial_write_string(tx_t pin, char *out) {
     }
 
     //Allocates place for a new string and copies it to the buffer
-    serial_buffer[pin][index] = malloc(strlen(out) * sizeof(char));
+    serial_buffer[pin][index] = malloc(strlen(out) + 1);
     strcpy(serial_buffer[pin][index], out);
 }
 
@@ -170,23 +170,23 @@ void clear_write_buffer(tx_t pin) {
 }
 
 /**
- * read a specified number of bytes from the given pin. This function presents no checks for whether the
+ * Read a specified number of bytes from the given pin. This function presents no checks for whether the
  * buffer has been filled or not.
- * @param pin to read from (the buffer is filled by serial_write(rx_t pin)
+ * @param pin to read from (the buffer is filled by serial_write(rx_t pin))
  * @param len number of bytes to read
  * @return a string from what was filled in the buffer
  */
 char* serial_read_string(tx_t pin, int len ) {
-    char *serial_string_val = malloc(len * sizeof(char));
+    char *serial_string_val = malloc(len + 1);
 
-    //declare integers for index of 2nd and 3rd dimension of the array
+    //Declare integers for index of 2nd and 3rd dimension of the array
     uint8_t index = 0;
     uint8_t it_index = 0;
 
     //Emulate a continous buffer by copying from the things that have been written via serial
     int i = 0;
     for (i; i < len; ++i) {
-        //if the char at hand is the string terminator (\0) move on to the next string in the buffer.
+        //If the char at hand is the string terminator (\0) move on to the next string in the buffer.
         if(serial_buffer[pin][index][it_index] == '\0') {
             index = (index + 1) % SERIAL_BUFFER_SIZE;
             it_index = 0;

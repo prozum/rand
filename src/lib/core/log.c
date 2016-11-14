@@ -3,9 +3,10 @@
 #include "core/log.h"
 
 //Prefix defines:
-static const char* WARNING_PREFIX = "W: ";
-static const char* ERROR_PREFIX = "E: ";
-static const char* MSG_PREFIX = "M: ";
+#define PREFIX_SIZE 4
+const char WARNING_PREFIX[PREFIX_SIZE] = "W: ";
+const char ERROR_PREFIX[PREFIX_SIZE]   = "E: ";
+const char MSG_PREFIX[PREFIX_SIZE]     = "M: ";
 
 typedef struct disabled_device_node disabled_device;
 
