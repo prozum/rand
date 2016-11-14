@@ -1,26 +1,37 @@
-#include "core/io.h"
-#include "sonar/sonar.h"
+#include "task.h"
 
-void initialize_sensors();
+void task_timer_setup()
+{
+    // disable interrupts
+    cli();
+
+    // reset all timer flags
+    TCCR1A = 0;
+    TCCR1B = 0;
+
+    // set prescaler of 256
+    TCCR1B |= (1 << CS12);
+
+    // enable interrupts
+    sei();
+}
+
+void task_arm_fc()
+{
+
+}
+
+void task_start_pulse()
+{
+
+}
+
+void task_stop_pulse()
+{
+
+}
 
 int main ()
 {
-    char buffer[65];
 
-    initialize_sensors();
-
-    double sonar_1 = read_sonar();
-
-    snprintf(buffer, 65, "%lf", sonar_1);
-
-    serial_write_string(SERIAL0, buffer);
-
-    // Schedular cyclic-executive
-    while(1);
 }
-
-void initialize_sensors ()
-{
-    sonar_init();
-}
-
