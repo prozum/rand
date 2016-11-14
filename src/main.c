@@ -1,7 +1,6 @@
 #include "task.h"
 
-void task_timer_setup()
-{
+void task_timer_setup() {
     // disable interrupts
     cli();
 
@@ -16,22 +15,18 @@ void task_timer_setup()
     sei();
 }
 
-void task_arm_fc()
-{
+void task_arm_fc() {
 
 }
 
-void task_start_pulse()
-{
+void task_start_pulse() {
 
 }
 
-void task_stop_pulse()
-{
+void task_stop_pulse() {
 
 }
 
-int main ()
-{
+int main() {
 
 }

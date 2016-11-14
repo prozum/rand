@@ -1,5 +1,4 @@
 #include "sonar/sonar.h"
-#include "core/io.h"
 
 
 #define SONAR_TIMEOUT 22000 //Just short of 4 meters
@@ -8,8 +7,7 @@
 float newest_reading;
 char sonar_valid_reading = 0;
 
-void sonar_init ()
-{
+void sonar_init() {
     //Setup pins of the sonar.
     set_pin_mode(SONAR_TRIGGER_PIN, OUTPUT);
     set_pin_mode(SONAR_ECHO_PIN, INPUT);
@@ -28,8 +26,7 @@ void pulse_sonar() {
     digital_write(SONAR_TRIGGER_PIN, LOW);
 }
 
-float read_sonar()
-{
+float read_sonar() {
     pulse_sonar();
 
     uint16_t duration = pulse_in(SONAR_ECHO_PIN, HIGH, SONAR_TIMEOUT);
@@ -37,8 +34,7 @@ float read_sonar()
     if (duration >= MIN_OUTPUT && duration <= SONAR_TIMEOUT) {
         newest_reading = duration;
         sonar_valid_reading = 1;
-    }
-    else {
+    } else {
         LOG_WARNING(SENDER_SONAR, "The sonar received faulty value.");
         sonar_valid_reading = 0;
     }

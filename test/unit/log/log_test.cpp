@@ -1,8 +1,6 @@
 #include "log_test.h"
 
-#include <string>
 #include <malloc.h>
-#include <stdint.h>
 
 extern "C" {
 #include "core/log.h"
@@ -13,7 +11,7 @@ extern "C" {
 using namespace std;
 CPPUNIT_TEST_SUITE_REGISTRATION(LogTest);
 
-void LogTest::ToggleLogging_ShowAllMessages_ExpectMessage(){
+void LogTest::ToggleLogging_ShowAllMessages_ExpectMessage() {
     char *wb;
     toggle_logging(LOG_ALL);
 
@@ -37,6 +35,7 @@ void LogTest::ToggleLogging_ShowAllMessages_ExpectMessage(){
     wb = get_write_buffer(USB_TX);
     CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
+
 void LogTest::ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages() {
     char *wb;
     toggle_logging(LOG_DEBUG);
@@ -61,6 +60,7 @@ void LogTest::ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages() 
     wb = get_write_buffer(USB_TX);
     CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
+
 void LogTest::ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings() {
     char *wb;
     toggle_logging(LOG_ONLY_ERRORS);
@@ -85,6 +85,7 @@ void LogTest::ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings() {
     wb = get_write_buffer(USB_TX);
     CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
+
 void LogTest::ToggleLogging_ShowNone_ExpectBypass() {
     char *wb;
     toggle_logging(LOG_NONE);
@@ -129,6 +130,7 @@ void LogTest::Log_Testlog_ExpectMsgTestlog() {
 
     CPPUNIT_ASSERT_MESSAGE(a_msg, !assrt.compare(wb));
 }
+
 void LogTest::LogWarning_Testlog_ExpectWarTestlog() {
     char const *msg = "Testlog";
     clear_write_buffer(USB_TX);
@@ -148,6 +150,7 @@ void LogTest::LogWarning_Testlog_ExpectWarTestlog() {
 
     CPPUNIT_ASSERT_MESSAGE(a_msg, !assrt.compare(wb));
 }
+
 void LogTest::LogError_Testlog_ExpectErrTestlog() {
     char const *msg = "Testlog";
     clear_write_buffer(USB_TX);
@@ -167,6 +170,7 @@ void LogTest::LogError_Testlog_ExpectErrTestlog() {
 
     CPPUNIT_ASSERT_MESSAGE(a_msg, !assrt.compare(wb));
 }
+
 void LogTest::LogErrorBypass_Testlog_ExpectErrTestLog() {
     char const *msg = "Testlog";
     clear_write_buffer(USB_TX);
@@ -187,7 +191,7 @@ void LogTest::LogErrorBypass_Testlog_ExpectErrTestLog() {
     CPPUNIT_ASSERT_MESSAGE(a_msg, !assrt.compare(wb));
 }
 
-void LogTest::DisableDevice_LogFromDisabled_ExpectNothing(){
+void LogTest::DisableDevice_LogFromDisabled_ExpectNothing() {
     char const *msg = "Disabled Log";
     toggle_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
@@ -197,7 +201,8 @@ void LogTest::DisableDevice_LogFromDisabled_ExpectNothing(){
 
     CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb == NULL);
 }
-void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing(){
+
+void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing() {
     char const *msg = "Disabled Log";
     clear_write_buffer(USB_TX);
 
@@ -209,7 +214,8 @@ void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing(){
 
     CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb == NULL);
 }
-void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing(){
+
+void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing() {
     char const *msg = "Disabled Log";
     toggle_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
@@ -219,7 +225,8 @@ void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing(){
 
     CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb == NULL);
 }
-void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError(){
+
+void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError() {
     char const *msg = "Disabled Log";
     toggle_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
@@ -230,7 +237,7 @@ void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError(){
     CPPUNIT_ASSERT_MESSAGE("The message was not delivered against expectation.", wb != NULL);
 }
 
-void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList(){
+void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList() {
     toggle_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
     disable_device(SENDER_BOARD);
@@ -241,7 +248,7 @@ void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList(){
     CPPUNIT_ASSERT_MESSAGE("The same device is present in list twice.", 1 == dev_count);
 }
 
-void LogTest::SenderIgnored_OnIgnoredList_ExpectOne(){
+void LogTest::SenderIgnored_OnIgnoredList_ExpectOne() {
     toggle_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
 
@@ -250,7 +257,8 @@ void LogTest::SenderIgnored_OnIgnoredList_ExpectOne(){
     //Assert blocked == 1
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The SENDER_BOARD device has not been blocked properly.", 1, blocked);
 }
-void LogTest::SenderIgnored_NotOnList_ExpectZero(){
+
+void LogTest::SenderIgnored_NotOnList_ExpectZero() {
     toggle_logging(LOG_ALL);
     disable_device(SENDER_FC);
     disable_device(SENDER_IO);

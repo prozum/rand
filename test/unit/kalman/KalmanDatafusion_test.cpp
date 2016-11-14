@@ -1,18 +1,20 @@
 #include "KalmanDatafusion_test.h"
+
 extern "C" {
 #include "kalman/kalman_datafusion.h"
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(KalmanDatafusionTest);
 
-void KalmanDatafusionTest::KalmanDFInit_NullStateValidParams_StateMallocedAndInitialized(){
+void KalmanDatafusionTest::KalmanDFInit_NullStateValidParams_StateMallocedAndInitialized() {
     kalman_state_matrix *state = NULL;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
-    const float *C  {{1, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -29,14 +31,16 @@ void KalmanDatafusionTest::KalmanDFInit_NullStateValidParams_StateMallocedAndIni
         }
     }
 }
-void KalmanDatafusionTest::KalmanDFInit_ValidStateValidParams_StateInitialized(){
+
+void KalmanDatafusionTest::KalmanDFInit_ValidStateValidParams_StateInitialized() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
-    const float *C  {{1, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -52,14 +56,16 @@ void KalmanDatafusionTest::KalmanDFInit_ValidStateValidParams_StateInitialized()
         }
     }
 }
-void KalmanDatafusionTest::KalmanDFInit_ValidStateCNull_StateInitializedWithCzero(){
+
+void KalmanDatafusionTest::KalmanDFInit_ValidStateCNull_StateInitializedWithCzero() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
-    const float *C  = NULL;
+    const float *R = {{1, 0},
+                      {0, 1}};
+    const float *C = NULL;
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -75,14 +81,15 @@ void KalmanDatafusionTest::KalmanDFInit_ValidStateCNull_StateInitializedWithCzer
         }
     }
 }
-void KalmanDatafusionTest::KalmanDFInit_ValidStateRNull_StateInitializedWithRone(){
+
+void KalmanDatafusionTest::KalmanDFInit_ValidStateRNull_StateInitializedWithRone() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
     const float *R = NULL;
-    const float *C  {{1, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -99,15 +106,16 @@ void KalmanDatafusionTest::KalmanDFInit_ValidStateRNull_StateInitializedWithRone
     }
 }
 
-void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToBoth(){
+void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToBoth() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
     const float r_avg = 1;
-    const float *C  {{1, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -118,15 +126,17 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToB
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
 }
-void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0MuchHigherThanSonar0_xkCloseToSonar(){
+
+void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0MuchHigherThanSonar0_xkCloseToSonar() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
     const float r_avg = 1;
-    const float *C  {{1, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -137,15 +147,17 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0MuchHigherThanSonar
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
 }
-void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaserValidSonarInvalid_xkCloseToLaser(){
+
+void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaserValidSonarInvalid_xkCloseToLaser() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
     const float r_avg = 1;
-    const float *C  {{1, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -158,15 +170,17 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaserValidSonarInvalid_xk
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
 }
-void KalmanDatafusionTest::KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax(){
+
+void KalmanDatafusionTest::KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
     const float r_avg = 1;
-    const float *C  {{1, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -180,15 +194,16 @@ void KalmanDatafusionTest::KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax(){
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", state.x_k == sonar_to_meters(22000));
 }
 
-void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev(){
+void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
     const float r_avg = 1;
-    const float *C  {{1, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
@@ -201,15 +216,17 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", x_prev < state.x_k);
 
 }
-void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxprev(){
+
+void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxprev() {
     kalman_state_matrix state;
 
     const float a = 1;
     const float b = 0.6;
     const float p_0 = 4;
-    const float *R = {{1, 0}, {0, 1}};
+    const float *R = {{1, 0},
+                      {0, 1}};
     const float r_avg = 1;
-    const float *C  {{1, 1}};
+    const float *C{{1, 1}};
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 

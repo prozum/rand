@@ -77,8 +77,8 @@ extern "C" {
  * 		for example blinking LED with delays based of poling timer value may be affected
  * 		little, while delays using busy loop will be much much longer than expected.
  * */
-#define		AVR8_FLASH_BREAKPOINTS	(0)
-#define		AVR8_RAM_BREAKPOINTS	(1)
+#define        AVR8_FLASH_BREAKPOINTS    (0)
+#define        AVR8_RAM_BREAKPOINTS    (1)
 
 #if AVR8_FLASH_BREAKPOINTS == 1
 #error	Flash breakpoints are not supported yet!
@@ -101,7 +101,7 @@ extern "C" {
  * 0 - use INT0
  * 1 - use INT1
  */
-#define	AVR8_SWINT_SOURCE	(0)
+#define    AVR8_SWINT_SOURCE    (0)
 
 /**
  * Maximum number of breakpoints supported.
@@ -113,7 +113,7 @@ extern "C" {
 /** Size of the buffer we use for receiving messages from gdb.
  *  must be in hex, and not fewer than 79 bytes,
     see gdb_read_registers for details */
-#define AVR8_MAX_BUFF   	0x50
+#define AVR8_MAX_BUFF    0x50
 
 typedef uint8_t bool_t;
 #define FALSE 0
@@ -141,7 +141,7 @@ void breakpoint(void);
  * Note that GDB will queue the messages until "\n" (0x0a) is received; then
  * it displays the messages in console.
  */
-void debug_message(const char* msg);
+void debug_message(const char *msg);
 
 
 /* Helper used only for internal testing of the stub */

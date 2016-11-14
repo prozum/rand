@@ -1,4 +1,4 @@
 generate_avr_library(fc
-    	BOARD uno
-		SRCS fc.c
-		LIBS core)
+        BOARD uno
+        SRCS fc.c
+        LIBS core)

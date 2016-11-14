@@ -19,17 +19,18 @@
     return res;
 }*/
 
-float** mult_mat_mat(float **ma1, float **ma2, uint8_t ma1_rows, uint8_t ma1_columns, uint8_t ma2_rows, uint8_t ma2_columns) {
+float **
+mult_mat_mat(float **ma1, float **ma2, uint8_t ma1_rows, uint8_t ma1_columns, uint8_t ma2_rows, uint8_t ma2_columns) {
     int i = 0, j = 0, k = 0;
 
-    if(ma1_columns != ma2_rows){
+    if (ma1_columns != ma2_rows) {
         //Error write to log
         return NULL;
     }
 
-    float** res = malloc(ma2_columns * sizeof(float*));
+    float **res = malloc(ma2_columns * sizeof(float *));
     for (i = 0; i < ma2_columns; ++i) {
-        res[i] = (float *) malloc(ma1_rows * sizeof(float*));
+        res[i] = (float *) malloc(ma1_rows * sizeof(float *));
         for (j = 0; j < ma1_rows; j++) {
             res[j] = (float *) malloc(sizeof(float));
         }
@@ -46,9 +47,9 @@ float** mult_mat_mat(float **ma1, float **ma2, uint8_t ma1_rows, uint8_t ma1_col
     return res;
 }
 
-float** mult_const_vec(float** vec1, float k, uint8_t rows){
+float **mult_const_vec(float **vec1, float k, uint8_t rows) {
     int i;
-    float** res = malloc(rows * sizeof(float*));
+    float **res = malloc(rows * sizeof(float *));
 
     for (i = 0; i < rows; i++) {
         res[i] = (float *) malloc(sizeof(float));
@@ -60,10 +61,10 @@ float** mult_const_vec(float** vec1, float k, uint8_t rows){
     return res;
 }
 
-float** trans_matrix(float **ma1, uint8_t rows, uint8_t cols){
+float **trans_matrix(float **ma1, uint8_t rows, uint8_t cols) {
     uint8_t i, j;
 
-    float** res = (float **) malloc(rows * sizeof(float*));
+    float **res = (float **) malloc(rows * sizeof(float *));
     for (i = 0; i < rows; i++) {
         res[i] = (float *) malloc(cols * sizeof(float));
     }
@@ -76,9 +77,9 @@ float** trans_matrix(float **ma1, uint8_t rows, uint8_t cols){
     return res;
 }
 
-float** mult_mat_vec(float **ma1, float** vec1, uint8_t rows, uint8_t cols){
+float **mult_mat_vec(float **ma1, float **vec1, uint8_t rows, uint8_t cols) {
     uint8_t i, j;
-    float** res = malloc(cols * sizeof(float));
+    float **res = malloc(cols * sizeof(float));
 
     for (i = 0; i < cols; i++) {
         res[i] = (float *) malloc(sizeof(float));
@@ -93,9 +94,9 @@ float** mult_mat_vec(float **ma1, float** vec1, uint8_t rows, uint8_t cols){
     return res;
 }
 
-float** add_mat_mat(float **ma1, float **ma2, uint8_t mat_size){
+float **add_mat_mat(float **ma1, float **ma2, uint8_t mat_size) {
     uint8_t i, j;
-    float** res = (float **) malloc(mat_size * sizeof(float*));
+    float **res = (float **) malloc(mat_size * sizeof(float *));
 
     for (i = 0; i < mat_size; ++i) {
         res[i] = (float *) malloc(mat_size * sizeof(float));
@@ -109,9 +110,9 @@ float** add_mat_mat(float **ma1, float **ma2, uint8_t mat_size){
     return res;
 }
 
-float** sub_mat_mat(float **ma1, float **ma2, uint8_t mat_size){
+float **sub_mat_mat(float **ma1, float **ma2, uint8_t mat_size) {
     uint8_t i, j;
-    float** res = (float **) malloc(mat_size * sizeof(float*));
+    float **res = (float **) malloc(mat_size * sizeof(float *));
 
     for (i = 0; i < mat_size; ++i) {
         res[i] = (float *) malloc(mat_size * sizeof(float));
@@ -125,9 +126,9 @@ float** sub_mat_mat(float **ma1, float **ma2, uint8_t mat_size){
     return res;
 }
 
-float** add_vec_vec(float** vec1, float** vec2, uint8_t size){
+float **add_vec_vec(float **vec1, float **vec2, uint8_t size) {
     uint8_t row, i;
-    float** res = malloc(size * sizeof(float*));
+    float **res = malloc(size * sizeof(float *));
     for (row = 0; row < size; row++) {
         res[row] = (float *) malloc(sizeof(float));
     }
@@ -139,9 +140,9 @@ float** add_vec_vec(float** vec1, float** vec2, uint8_t size){
     return res;
 }
 
-float** sub_vec_vec(float** vec1, float** vec2, uint8_t size){
+float **sub_vec_vec(float **vec1, float **vec2, uint8_t size) {
     uint8_t i;
-    float** res = malloc(size * sizeof(float*));
+    float **res = malloc(size * sizeof(float *));
     for (i = 0; i < size; i++) {
         res[i] = (float *) malloc(sizeof(float));
     }
@@ -152,14 +153,14 @@ float** sub_vec_vec(float** vec1, float** vec2, uint8_t size){
     return res;
 }
 
-float** inv_mat(float** ma1){
+float **inv_mat(float **ma1) {
     //Only functions with a simple 2x2 matrix
     int i, j;
     float det;
 
-    det = ma1[0][0]*ma1[1][1]-ma1[0][1]*ma1[1][0];
+    det = ma1[0][0] * ma1[1][1] - ma1[0][1] * ma1[1][0];
 
-    float** in_mat = (float **) malloc(2 * sizeof(float*));
+    float **in_mat = (float **) malloc(2 * sizeof(float *));
 
     for (i = 0; i < 2; ++i) {
         in_mat[i] = (float *) malloc(2 * sizeof(float));
@@ -167,8 +168,8 @@ float** inv_mat(float** ma1){
 
     for (i = 0; i < 2; ++i) {
         for (j = 0; j < 2; ++j) {
-            in_mat[i][j] = ma1[i][j]/det;
-            if(j != i)
+            in_mat[i][j] = ma1[i][j] / det;
+            if (j != i)
                 in_mat[i][j] = -in_mat[i][j];
         }
     }

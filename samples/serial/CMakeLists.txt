@@ -1,4 +1,4 @@
 generate_avr_firmware(serial-sample
-	BOARD uno
-	SRCS main.c
-	LIBS core)
+        BOARD uno
+        SRCS main.c
+        LIBS core)

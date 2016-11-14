@@ -1,9 +1,9 @@
 # CppSharp
 find_package(PkgConfig)
 pkg_search_module(CPPUNIT cppunit)
-if(NOT CPPUNIT_FOUND)
-	message(FATAL_ERROR "Please install CppUnit development files")
-endif()
+if (NOT CPPUNIT_FOUND)
+    message(FATAL_ERROR "Please install CppUnit development files")
+endif ()
 
 
 # Includes

@@ -12,10 +12,13 @@
 #include <stdint.h>
 #include "kalman.h"
 
-void positioning_init ();
-float calculate_a (kalman_state *state);
-void check_avoidance ();
-void update_u_k ();
+void positioning_init();
+
+float calculate_a(kalman_state *state);
+
+void check_avoidance();
+
+void update_u_k();
 
 #endif //RAND_POSITIONING_H
 

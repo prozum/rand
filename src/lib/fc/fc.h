@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 struct acceleration_s { /* between 0-1 negative acceleration, between 1-2 positive acceleration */
-             // positive(1-2)/negative(0-1)
+    // positive(1-2)/negative(0-1)
     float x; // up/down
     float y; // forward/backwards
     float z; // left/right
@@ -20,24 +20,37 @@ static const uint16_t STICK_M = 1500;
 static const uint16_t STICK_H = 2000;
 
 static void set_yaw(uint16_t d);
+
 static void set_pitch(uint16_t d);
+
 static void set_roll(uint16_t d);
+
 static void set_throttle(uint16_t d);
 
 void init_fc();
+
 void arm_fc();
+
 void disarm_fc();
 
 void rotate_left();
+
 void rotate_right();
+
 void rotate_stop();
 
 void move_left();
+
 void move_right();
+
 void move_forward();
+
 void move_back();
+
 void move_up();
+
 void move_down();
+
 void move_stop();
 
 #endif //RAND_FC_H

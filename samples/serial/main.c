@@ -9,8 +9,8 @@ void main() {
 
     serial_write_string(SERIAL0, "***GREETINGS STRANGER***\n\n\n");
     serial_write_string(SERIAL0, "Write something\n\n\n");
-    char* thing;
-    while(1) {
+    char *thing;
+    while (1) {
         thing = serial_read_string(SERIAL0, 10);
         //serial_write_string(SERIAL0, strlen(thing));
         serial_write_string(SERIAL0, thing);

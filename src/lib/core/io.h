@@ -5,7 +5,6 @@
 #include <stdio.h>
 
 #if !MOCK
-
 extern const uint16_t port_to_input[];
 
 #include <avr/io.h>
@@ -15,23 +14,22 @@ extern const uint16_t port_to_input[];
 #define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
 #define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )
 #define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
-
 #endif //MOCK
 
 #if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
-#   include "m328p.h"
+#include "m328p.h"
 #elif defined (__AVR_ATmega1280__)
-#   include "m1280.h"
+#include "m1280.h"
 #endif
 
 typedef enum pin_mode_e {
-    INPUT    = 0,
-    OUTPUT   = 1
+    INPUT = 0,
+    OUTPUT = 1
 } pin_mode_t;
 
 typedef enum dval_e {
-    LOW     = 0,
-    HIGH    = 1
+    LOW = 0,
+    HIGH = 1
 } dval_t;
 
 typedef uint16_t aval_t;
@@ -69,14 +67,14 @@ void serial_write_string(tx_t pin, char *out);
 /// \param pin the serial pin to read from **Currently not used**
 /// \param len The amount of characters to read
 /// \return the string representation of the read characters
-char* serial_read_string(tx_t pin, int len );
+char *serial_read_string(tx_t pin, int len);
 
 /// reads the next n amount of characters from the a serial connection and returns them as a string
 /// only reads if there is unread data in the uart.
 /// \param pin the serial pin to read from **Currently not used**
 /// \param len The amount of characters to read
 /// \return the string representation of the read characters or NULL if an empty string if no data is available
-char* serial_read_string_nowait(tx_t pin, int len );
+char *serial_read_string_nowait(tx_t pin, int len);
 
 /// initializes the avr uart for serial communication.
 void uart_init();
@@ -102,12 +100,19 @@ void adc_init();
 
 
 #if MOCK
+
 char *get_write_buffer(tx_t pin);
+
 char *get_write_buffer_index(tx_t pin, uint8_t index);
+
 void clear_write_buffer(tx_t pin);
+
 dval_t get_digital_buffer(dpin_t pin);
+
 void set_pulse(dpin_t pin, uint16_t pulse);
+
 pin_mode_t get_pin_mode(dpin_t pin);
+
 #endif //MOCK
 
 #endif //RAND_IO_H

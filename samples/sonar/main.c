@@ -4,11 +4,9 @@
 #define ECHO_PIN 6
 
 
-int main(void)
-{
+int main(void) {
     set_pin_mode(13, OUTPUT);
-    while(1)
-    {
+    while (1) {
         digital_write(13, HIGH);
 
         pulse_sonar();
@@ -17,7 +15,5 @@ int main(void)
         //_delay_loop_2(duration/100);
 
         digital_write(13, LOW);
-
-
     }
 }
