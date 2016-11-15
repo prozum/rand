@@ -24,8 +24,13 @@ static level logging_level = LOG_NONE;
  * Toggles logging for the system at the given level.
  * @param lvl which classes of errors to log (may be LOG_ONLY_ERRORS, LOG_MOCK, LOG_ALL, LOG_NONE)
  */
-void toggle_logging(level lvl) {
+void init_logging(level lvl) {
 #if MOCK
+    //for (int i = 0; i < SERIAL_PINS; i++) {
+    //    serial_buffer
+    //}
+
+
     //Produce a message with version and project-name
     char init_msg[30];
     strcpy(init_msg, MAJOR_VERSION);
@@ -67,10 +72,10 @@ uint8_t sender_ignored(log_sender sender) {
 void LOG(log_sender sender, const char *msg) {
 #if MOCK
     if (!sender_ignored(sender) && logging_level == LOG_ALL) {
-        char cpy[strlen(msg) + 3];
-        strcpy(cpy, msg);
+        char tmp[strlen(msg) + PREFIX_SIZE];
+        strcpy(tmp, msg);
 
-        serial_write_string(USB_TX, strcat(cpy, MSG_PREFIX));
+        serial_write_string(USB_TX, strcat(tmp, MSG_PREFIX));
     }
 #endif
 }
@@ -83,10 +88,10 @@ void LOG(log_sender sender, const char *msg) {
 void LOG_WARNING(log_sender sender, const char *msg) {
 #if MOCK
     if (!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
-        char cpy[strlen(msg) + 3];
-        strcpy(cpy, msg);
+        char tmp[strlen(msg) + PREFIX_SIZE];
+        strcpy(tmp, msg);
 
-        serial_write_string(USB_TX, strcat(cpy, WARNING_PREFIX));
+        serial_write_string(USB_TX, strcat(tmp, WARNING_PREFIX));
     }
 #endif
 }
@@ -99,10 +104,10 @@ void LOG_WARNING(log_sender sender, const char *msg) {
 void LOG_ERROR(log_sender sender, const char *msg) {
 #if MOCK
     if (!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
-        char cpy[strlen(msg) + 3];
-        strcpy(cpy, msg);
+        char tmp[strlen(msg) + PREFIX_SIZE];
+        strcpy(tmp, msg);
 
-        serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
+        serial_write_string(USB_TX, strcat(tmp, ERROR_PREFIX));
     }
 #endif
 }
@@ -113,7 +118,7 @@ void LOG_ERROR(log_sender sender, const char *msg) {
  */
 void LOG_ERROR_BYPASS(const char *msg) {
 #if MOCK
-    char cpy[strlen(msg) + 3];
+    char cpy[strlen(msg) + PREFIX_SIZE];
     strcpy(cpy, msg);
 
     serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));

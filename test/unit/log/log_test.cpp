@@ -13,7 +13,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(LogTest);
 
 void LogTest::ToggleLogging_ShowAllMessages_ExpectMessage() {
     char *wb;
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
 
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
@@ -38,7 +38,7 @@ void LogTest::ToggleLogging_ShowAllMessages_ExpectMessage() {
 
 void LogTest::ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages() {
     char *wb;
-    toggle_logging(LOG_DEBUG);
+    init_logging(LOG_DEBUG);
 
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
@@ -63,7 +63,7 @@ void LogTest::ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages() 
 
 void LogTest::ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings() {
     char *wb;
-    toggle_logging(LOG_ONLY_ERRORS);
+    init_logging(LOG_ONLY_ERRORS);
 
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
@@ -88,7 +88,7 @@ void LogTest::ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings() {
 
 void LogTest::ToggleLogging_ShowNone_ExpectBypass() {
     char *wb;
-    toggle_logging(LOG_NONE);
+    init_logging(LOG_NONE);
 
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
@@ -115,7 +115,7 @@ void LogTest::Log_Testlog_ExpectMsgTestlog() {
     char const *msg = "Testlog";
     clear_write_buffer(USB_TX);
 
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     LOG(SENDER_BOARD, msg);
 
     string assrt = "M: ";
@@ -135,7 +135,7 @@ void LogTest::LogWarning_Testlog_ExpectWarTestlog() {
     char const *msg = "Testlog";
     clear_write_buffer(USB_TX);
 
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     LOG(SENDER_BOARD, msg);
 
     string assrt = "W: ";
@@ -155,7 +155,7 @@ void LogTest::LogError_Testlog_ExpectErrTestlog() {
     char const *msg = "Testlog";
     clear_write_buffer(USB_TX);
 
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     LOG(SENDER_BOARD, msg);
 
     string assrt = "E: ";
@@ -175,7 +175,7 @@ void LogTest::LogErrorBypass_Testlog_ExpectErrTestLog() {
     char const *msg = "Testlog";
     clear_write_buffer(USB_TX);
 
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     LOG(SENDER_BOARD, msg);
 
     string assrt = "E: ";
@@ -193,7 +193,7 @@ void LogTest::LogErrorBypass_Testlog_ExpectErrTestLog() {
 
 void LogTest::DisableDevice_LogFromDisabled_ExpectNothing() {
     char const *msg = "Disabled Log";
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
 
     LOG(SENDER_BOARD, msg);
@@ -206,7 +206,7 @@ void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing() {
     char const *msg = "Disabled Log";
     clear_write_buffer(USB_TX);
 
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
 
     LOG_WARNING(SENDER_BOARD, msg);
@@ -217,7 +217,7 @@ void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing() {
 
 void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing() {
     char const *msg = "Disabled Log";
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
 
     LOG_ERROR(SENDER_BOARD, msg);
@@ -228,7 +228,7 @@ void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing() {
 
 void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError() {
     char const *msg = "Disabled Log";
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
 
     LOG_ERROR_BYPASS(msg);
@@ -238,7 +238,7 @@ void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError() {
 }
 
 void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList() {
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
     disable_device(SENDER_BOARD);
 
@@ -249,7 +249,7 @@ void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList() {
 }
 
 void LogTest::SenderIgnored_OnIgnoredList_ExpectOne() {
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
 
     int blocked = sender_ignored(SENDER_BOARD);
@@ -259,7 +259,7 @@ void LogTest::SenderIgnored_OnIgnoredList_ExpectOne() {
 }
 
 void LogTest::SenderIgnored_NotOnList_ExpectZero() {
-    toggle_logging(LOG_ALL);
+    init_logging(LOG_ALL);
     disable_device(SENDER_FC);
     disable_device(SENDER_IO);
     disable_device(SENDER_IR);

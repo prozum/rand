@@ -113,6 +113,7 @@ dval_t get_digital_buffer(dpin_t pin) {
 }
 
 //A two-dimensional array for storing char-pointers (i.e. strings)
+uint8_t serial_initialized = 0;
 char *serial_buffer[SERIAL_PINS][SERIAL_BUFFER_SIZE];
 uint8_t serial_buf_cnt[SERIAL_BUFFER_SIZE];
 
@@ -142,6 +143,15 @@ void serial_write_string(tx_t pin, char *out) {
  * @return the latest string written to the pin
  */
 char *get_write_buffer(tx_t pin) {
+    //Init buffer pointers to zero
+    if (!serial_initialized) {
+        for (int i = 0; i < SERIAL_PINS; i++) {
+            for (int j = 0; j < SERIAL_BUFFER_SIZE; j++) {
+                serial_buffer[i][j] = 0;
+            }
+        }
+        serial_initialized = 1;
+    }
     char *val = serial_buffer[pin][serial_buf_cnt[pin]];
 
     //Calculate the index of the latest write
@@ -165,6 +175,7 @@ void clear_write_buffer(tx_t pin) {
         //Clear deallocate the string if it was allocated.
         if (serial_buffer[pin][i]) {
             free(serial_buffer[pin][i]);
+            serial_buffer[pin][i] = 0;
         }
     }
 }
