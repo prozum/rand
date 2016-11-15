@@ -3,6 +3,7 @@ include(cmake/Arduino.cmake)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 project(rand C CXX)
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11")
 
 # Options
 option(SAMPLES "Samples" OFF)

@@ -1665,18 +1665,17 @@ endif ()
 
 
 #=============================================================================#
-#                              Cmd programs
+#                        Commandline programs
 #=============================================================================#
 set(AVR_C_COMPILER "avr-gcc")
 set(AVR_CXX_COMPILER "avr-g++")
 set(AVR_OBJCOPY "avr-objcopy")
 set(AVR_AR "avr-ar")
 
-
 #=============================================================================#
 #                              C Flags                                        
 #=============================================================================#
-set(AVR_C_FLAGS_COMMON "-mcall-prologues -ffunction-sections -fdata-sections")
+set(AVR_C_FLAGS_COMMON "-mcall-prologues -ffunction-sections -fdata-sections -std=c11")
 set(AVR_C_FLAGS "${AVR_C_FLAGS_COMMON} -Os -g" CACHE STRING "")
 set(AVR_C_FLAGS_DEBUG "${AVR_C_FLAGS_COMMON} -Os -g" CACHE STRING "")
 set(AVR_C_FLAGS_MINSIZEREL "${AVR_C_FLAGS_COMMON} -Os -DNDEBUG" CACHE STRING "")
@@ -1704,7 +1703,6 @@ set(AVR_EXE_LINKER_FLAGS_RELEASE "${AVR_LINKER_FLAGS}" CACHE STRING "")
 set(AVR_EXE_LINKER_FLAGS_RELWITHDEBINFO "${AVR_LINKER_FLAGS}" CACHE STRING "")
 
 #=============================================================================#
-#=============================================================================#
 #                       Shared Lbrary Linker Flags                            #
 #=============================================================================#
 set(AVR_SHARED_LINKER_FLAGS "${AVR_LINKER_FLAGS}" CACHE STRING "")
@@ -1718,7 +1716,6 @@ set(AVR_MODULE_LINKER_FLAGS_DEBUG "${AVR_LINKER_FLAGS}" CACHE STRING "")
 set(AVR_MODULE_LINKER_FLAGS_MINSIZEREL "${AVR_LINKER_FLAGS}" CACHE STRING "")
 set(AVR_MODULE_LINKER_FLAGS_RELEASE "${AVR_LINKER_FLAGS}" CACHE STRING "")
 set(AVR_MODULE_LINKER_FLAGS_RELWITHDEBINFO "${AVR_LINKER_FLAGS}" CACHE STRING "")
-
 
 #=============================================================================#
 #                         Avr flags Settings
