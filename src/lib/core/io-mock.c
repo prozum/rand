@@ -260,12 +260,12 @@ void analog_read_setpin(apin_t pin) {
 #define EEPROM_SIZE 2048
 uint8_t EEP_ARRAY[EEPROM_SIZE];
 
-void write_to_eeprom(uint8_t *p, uint8_t value)
+void eeprom_write(uint8_t *p, uint8_t value)
 {
     EEP_ARRAY[(int) p] = value;
 }
 
-uint8_t read_from_eeprom(uint8_t *p)
+uint8_t eeprom_read(uint8_t *p)
 {
     return EEP_ARRAY[(int) p];
 }

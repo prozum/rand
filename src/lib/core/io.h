@@ -99,9 +99,9 @@ void pwn_write(pwm_t pin, uint16_t width);
 void adc_init();
 
 
-void write_to_eeprom(uint8_t *p, uint8_t value);
+void eeprom_write(uint8_t *p, uint8_t value);
 
-uint8_t read_from_eeprom(uint8_t *p);
+uint8_t eeprom_read(uint8_t *p);
 
 #if MOCK
 

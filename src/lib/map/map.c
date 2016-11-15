@@ -3,8 +3,8 @@
 
 void begin_mapping()
 {
-    write_to_eeprom(0, 1);
-    uint8_t value = read_from_eeprom(0);
+    eeprom_write(0, 1);
+    uint8_t value = eeprom_read(0);
 
 #if MOCK
 #include <stdio.h>
