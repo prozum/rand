@@ -235,7 +235,7 @@ uint16_t analog_read() {
     }
 
     //Return the found value
-    return;
+    return val;
 }
 
 void analog_init() {
@@ -244,6 +244,19 @@ void analog_init() {
 
 void analog_read_setpin(apin_t pin) {
     apin = pin;
+}
+
+#define EEPROM_SIZE 2048
+uint8_t EEP_ARRAY[EEPROM_SIZE];
+
+void write_to_eeprom(uint8_t *p, uint8_t value)
+{
+    EEP_ARRAY[(int) p] = value;
+}
+
+uint8_t read_from_eeprom(uint8_t *p)
+{
+    return EEP_ARRAY[(int) p];
 }
 
 
