@@ -430,9 +430,9 @@ function(GENERATE_AVR_FIRMWARE INPUT_NAME)
 
     setup_avr_target(${INPUT_NAME} ${INPUT_BOARD} "${ALL_SRCS}" "${INPUT_LIBS}" "${LIB_DEP_INCLUDES}" "" "${INPUT_TEST}")
 
-    if (INPUT_PORT AND NOT INPUT_TEST)
+    if (INPUT_PORT)
         setup_arduino_upload(${INPUT_BOARD} ${INPUT_NAME} ${INPUT_PORT} "${INPUT_PROGRAMMER}" "${INPUT_AFLAGS}")
-    else ()
+    elseif (NOT INPUT_TEST)
         # Detect port
         if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
             file(GLOB INPUT_PORTS /dev/ttyACM*)
