@@ -3,7 +3,7 @@ add_subdirectory(cores)
 find_package(LibElf REQUIRED)
 if (NOT LIBELF_FOUND)
     message(FATAL_ERROR "Please install libelf")
-endif()
+endif ()
 
 include_directories(${LIBELF_INCLUDE_DIRS} /usr/local/include/ avr)
 

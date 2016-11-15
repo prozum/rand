@@ -4,21 +4,21 @@
 #include <stdlib.h>
 #include <string.h>
 #include <avr/io.h>
+
 #define NOT_A_PORT 0
 const uint16_t port_to_input[] = {
         NOT_A_PORT,
         NOT_A_PORT,
-        (uint16_t) &PINB,
+        (uint16_t) & PINB,
         NOT_A_PORT,
         NOT_A_PORT,
-        (uint16_t) &PINC,
+        (uint16_t) & PINC,
         NOT_A_PORT,
         NOT_A_PORT,
-        (uint16_t) &PIND,
+        (uint16_t) & PIND,
 };
 
-void set_pin_mode(dpin_t pin, pin_mode_t pm)
-{
+void set_pin_mode(dpin_t pin, pin_mode_t pm) {
     if (pm != OUTPUT && pm != INPUT) {
         LOG_ERROR_BYPASS("Invalid pin mode used in set_pin_mode");
         return;
@@ -47,8 +47,7 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm)
     }
 }
 
-void digital_write(dpin_t pin, dval_t ps)
-{
+void digital_write(dpin_t pin, dval_t ps) {
     if (ps != HIGH && ps != LOW) {
         LOG_ERROR_BYPASS("Invalid digital value used in digital_write");
         return;
@@ -61,7 +60,7 @@ void digital_write(dpin_t pin, dval_t ps)
     uint8_t port_ = dports[pin];
 
     // lookup the pin value based on a pin
-    uint8_t pin_  = dpins[pin];
+    uint8_t pin_ = dpins[pin];
 
     switch (port_) {
         case PORTB_:
@@ -75,15 +74,14 @@ void digital_write(dpin_t pin, dval_t ps)
     }
 }
 
-dval_t digital_read(dpin_t pin)
-{
+dval_t digital_read(dpin_t pin) {
     if (pin > MAXIMUM_PIN) {
         LOG_ERROR_BYPASS("Non-existing pin in digital_read");
         return LOW;
     }
 
     uint8_t port_ = dports[pin];
-    uint8_t pin_  = dpins[pin];
+    uint8_t pin_ = dpins[pin];
 
     switch (port_) {
         case PORTB_:
@@ -111,42 +109,42 @@ void uart_init() {
 
 
 void uart_putchar(char c) {
-    while (!( UCSR0A & (1<<UDRE0))); // wait while register is free
+    while (!(UCSR0A & (1 << UDRE0))); // wait while register is free
     UDR0 = c;
 }
 
 char uart_getchar() {
-    while(!(UCSR0A) & (1<<RXC0)); /* Wait until data exists. */
+    while (!(UCSR0A) & (1 << RXC0)); /* Wait until data exists. */
     return UDR0;
 }
 
 char uart_trygetchar() {
-    if (!( UCSR0A & (1<<UDRE0))) {  /* if unread data exists. */
+    if (!(UCSR0A & (1 << UDRE0))) {  /* if unread data exists. */
         return UDR0;
     }
-    return (char)0;
+    return (char) 0;
 }
 
-void serial_write_string(tx_t pin, char *out){
+void serial_write_string(tx_t pin, char *out) {
     int i;
-    for(i = 0; i < strlen(out)-1;i++) {
+    for (i = 0; i < strlen(out) - 1; i++) {
         uart_putchar(out[i]);
     }
 
 }
 
-char* serial_read_string(tx_t pin, int len ) {
-    char* str = malloc(sizeof(char)*(len+1));
+char *serial_read_string(tx_t pin, int len) {
+    char *str = malloc(sizeof(char) * (len + 1));
 
     int i;
-    for(i=0;i<len;i++){
+    for (i = 0; i < len; i++) {
         str[i] = uart_getchar();
     }
-    str[i+1] = '\0';
+    str[i + 1] = '\0';
     return str;
 }
 
-char* serial_read_string_nowait(tx_t pin, int len ) {
+char *serial_read_string_nowait(tx_t pin, int len) {
     char *str = malloc(sizeof(char) * (len + 1));
     str[0] = uart_trygetchar();
     if (str[0] != '\0') {
@@ -154,28 +152,31 @@ char* serial_read_string_nowait(tx_t pin, int len ) {
         for (i = 0; i < len; i++) {
             str[i] = uart_getchar();
         }
-        str[i+1] = '\0';
+        str[i + 1] = '\0';
         return str;
     }
     return NULL;
 }
 
-void adc_init(){
-    ADCSRA |= ((1<<ADPS2)|(1<<ADPS1)|(1<<ADPS0)); // set prescaler bits in ADCSRA(ADC control and status register A)
+void adc_init() {
+    ADCSRA |= ((1 << ADPS2) | (1 << ADPS1) |
+               (1 << ADPS0)); // set prescaler bits in ADCSRA(ADC control and status register A)
 
-    ADMUX |= (1<<REFS0); ADMUX &= ~(1<<REFS1); //Set mode: (Set reference voltage to 5V input)
+    ADMUX |= (1 << REFS0);
+    ADMUX &= ~(1 << REFS1); //Set mode: (Set reference voltage to 5V input)
 
-    ADCSRB &= ~((1<<ADTS2)|(1<<ADTS1)|(1<<ADTS0)); //set free running mode in control and status register B
+    ADCSRB &= ~((1 << ADTS2) | (1 << ADTS1) | (1 << ADTS0)); //set free running mode in control and status register B
 
-    ADCSRA |= (1<<ADATE);               //Enable auto trigger
-    ADCSRA |= (1<<ADEN);                //Enable ADC power supply
-    ADCSRA |= (1<<ADSC);                //Start first conversion(will run automatically from then on.
+    ADCSRA |= (1 << ADATE);               //Enable auto trigger
+    ADCSRA |= (1 << ADEN);                //Enable ADC power supply
+    ADCSRA |= (1 << ADSC);                //Start first conversion(will run automatically from then on.
 }
 
-void analog_read_setpin(apin_t pin){
+void analog_read_setpin(apin_t pin) {
     ADMUX = (ADMUX & 0xF0) | (pin & 0x0F);  //select ADC channel safely
 }
-uint16_t analog_read(){
+
+uint16_t analog_read() {
     return ADC;
 }
 

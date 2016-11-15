@@ -11,7 +11,7 @@ add_executable(unit-tests main.cpp
         kalman/kalman_test.cpp
         log/log_test.cpp
         matrix/matrix_test.cpp
-)
+        )
 
 add_test_dependencies(unit-tests)
 

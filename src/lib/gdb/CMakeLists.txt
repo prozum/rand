@@ -1,3 +1,3 @@
 generate_avr_library(gdb
-    	BOARD uno
-		SRCS gdb.c)
+        BOARD uno
+        SRCS gdb.c)

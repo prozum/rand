@@ -10,16 +10,12 @@ int main ()
 
     // initialize timer dependent tasks
     task_timer_setup();
-
     task_arm_fc();
 
-    while (1)
-    {
+    while (1) {
         task_pulse();
 
-        while(TCNT1 <= MINOR_CYCLE);
-
-        TCNT1 = 0;
+        while (TCNT1 <= MINOR_CYCLE);
     }
 }
 
@@ -29,5 +25,4 @@ ISR(TIMER1_OVF_vect)
     goto schedule_start;
     return;
 }
- */
-
+*/

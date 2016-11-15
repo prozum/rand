@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 struct acceleration_s { /* between 0-1 negative acceleration, between 1-2 positive acceleration */
-             // positive(1-2)/negative(0-1)
+    // positive(1-2)/negative(0-1)
     float x; // up/down
     float y; // forward/backwards
     float z; // left/right
@@ -19,7 +19,7 @@ static uint16_t MIN_FC_DUTY;
 static uint16_t MID_FC_DUTY;
 static uint16_t MAX_FC_DUTY;
 
-// value of 1 ms
+// ms = value of 1 ms
 void init_fc(uint16_t ms);
 
 void reset();
@@ -28,15 +28,23 @@ void set_arm();
 void set_disarm();
 
 void rotate_left();
+
 void rotate_right();
+
 void rotate_stop();
 
 void move_left();
+
 void move_right();
+
 void move_forward();
+
 void move_back();
+
 void move_up();
+
 void move_down();
+
 void move_stop();
 
 #endif //RAND_FC_H

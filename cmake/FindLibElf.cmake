@@ -15,10 +15,10 @@
 
 
 if (LIBELF_LIBRARIES AND LIBELF_INCLUDE_DIRS)
-    set (LibElf_FIND_QUIETLY TRUE)
+    set(LibElf_FIND_QUIETLY TRUE)
 endif (LIBELF_LIBRARIES AND LIBELF_INCLUDE_DIRS)
 
-find_path (LIBELF_INCLUDE_DIRS
+find_path(LIBELF_INCLUDE_DIRS
         NAMES
         libelf.h
         PATHS
@@ -32,7 +32,7 @@ find_path (LIBELF_INCLUDE_DIRS
         /sw/include/libelf
         ENV CPATH)
 
-find_library (LIBELF_LIBRARIES
+find_library(LIBELF_LIBRARIES
         NAMES
         elf
         PATHS
@@ -43,7 +43,7 @@ find_library (LIBELF_LIBRARIES
         ENV LIBRARY_PATH
         ENV LD_LIBRARY_PATH)
 
-include (FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 
 
 # handle the QUIETLY and REQUIRED arguments and set LIBELF_FOUND to TRUE if all listed variables are TRUE

@@ -5,6 +5,7 @@
 // which is on the Arduino Uno
 
 #include <stdint.h>
+
 #if !MOCK
 
 #ifndef F_CPU
@@ -30,17 +31,17 @@ static uint8_t dpins[] = {_BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3),
 // DDRx is a data direction register (tell what pins are input and output)
 // PORTx is the output register
 typedef enum reg_e {
-    PINB_   = 0x03,
-    DDRB_   = 0x04,
-    PORTB_  = 0x05,
+    PINB_ = 0x03,
+    DDRB_ = 0x04,
+    PORTB_ = 0x05,
 
-    PINC_   = 0x06,
-    DDRC_   = 0x07,
-    PORTC_  = 0x08,
+    PINC_ = 0x06,
+    DDRC_ = 0x07,
+    PORTC_ = 0x08,
 
-    PIND_   = 0x09,
-    DDRD_   = 0x0A,
-    PORTD_  = 0x0D
+    PIND_ = 0x09,
+    DDRD_ = 0x0A,
+    PORTD_ = 0x0D
 } reg_t;
 
 // table to lookup a 328p, use a physical arduino pin to get the 328p port value
@@ -81,29 +82,29 @@ typedef enum apin_e {
 
 // physical rx port (serial receive)
 typedef enum rx_e {
-    RX0     = 0,
-    USB_RX  = 0xFF
+    RX0 = 0,
+    USB_RX = 0xFF
 } rx_t;
 
 // physical rx port (serial send)
 typedef enum tx_e {
-    TX1     = 1,
-    USB_TX  = 0xFF
+    TX1 = 1,
+    USB_TX = 0xFF
 } tx_t;
 
 // physical pwm ports
 typedef enum pwm_e {
-    PWM3    = 3,
-    PWM5    = 5,
-    PWM6    = 6,
-    PWM9    = 9,
-    PWM10   = 10,
-    PWM11   = 11
+    PWM3 = 3,
+    PWM5 = 5,
+    PWM6 = 6,
+    PWM9 = 9,
+    PWM10 = 10,
+    PWM11 = 11
 } pwm_t;
 
-typedef enum serial_e{
+typedef enum serial_e {
     SERIAL0 = 0
-}serial_t;
+} serial_t;
 
 
 #endif //RAND_M328P_H

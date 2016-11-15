@@ -5,8 +5,8 @@
 //Prefix defines:
 #define PREFIX_SIZE 4
 const char WARNING_PREFIX[PREFIX_SIZE] = "W: ";
-const char ERROR_PREFIX[PREFIX_SIZE]   = "E: ";
-const char MSG_PREFIX[PREFIX_SIZE]     = "M: ";
+const char ERROR_PREFIX[PREFIX_SIZE] = "E: ";
+const char MSG_PREFIX[PREFIX_SIZE] = "M: ";
 
 typedef struct disabled_device_node disabled_device;
 
@@ -47,9 +47,9 @@ void toggle_logging(level lvl) {
 uint8_t sender_ignored(log_sender sender) {
     disabled_device *itr = head;
 
-    while(itr != NULL) {
+    while (itr != NULL) {
         //see if the sender is in the list of blocked senders, return 'true' if it is.
-        if(itr->blocked_device == sender) {
+        if (itr->blocked_device == sender) {
             return 1;
         }
         itr = itr->next;
@@ -66,7 +66,7 @@ uint8_t sender_ignored(log_sender sender) {
  */
 void LOG(log_sender sender, const char *msg) {
 #if MOCK
-    if(!sender_ignored(sender) && logging_level == LOG_ALL) {
+    if (!sender_ignored(sender) && logging_level == LOG_ALL) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
@@ -82,7 +82,7 @@ void LOG(log_sender sender, const char *msg) {
  */
 void LOG_WARNING(log_sender sender, const char *msg) {
 #if MOCK
-    if(!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
+    if (!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
@@ -98,7 +98,7 @@ void LOG_WARNING(log_sender sender, const char *msg) {
  */
 void LOG_ERROR(log_sender sender, const char *msg) {
 #if MOCK
-    if(!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
+    if (!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char cpy[strlen(msg) + 3];
         strcpy(cpy, msg);
 
@@ -122,6 +122,7 @@ void LOG_ERROR_BYPASS(const char *msg) {
 }
 
 #if MOCK
+
 /**
  * Disables a module, blocking all future logs
  * @param device to disable.
@@ -134,7 +135,7 @@ void disable_device(log_sender device) {
 
     while (ptr != NULL) {
         //return if the device is already in the list.
-        if(ptr->blocked_device == device)
+        if (ptr->blocked_device == device)
             return;
 
         ptr = ptr->next;
@@ -155,4 +156,5 @@ uint8_t count_disabled_devices() {
 
     return devices;
 }
+
 #endif //MOCK

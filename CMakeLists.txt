@@ -15,14 +15,14 @@ avr_include_directories(src/lib)
 
 add_subdirectory(src)
 
-if(SERIAL_TARGETS)
+if (SERIAL_TARGETS)
     setup_serial_targets()
-endif()
+endif ()
 
-if(SAMPLES)
+if (SAMPLES)
     add_subdirectory(samples)
-endif()
+endif ()
 
-if(TESTS)
+if (TESTS)
     add_subdirectory(test)
-endif()
+endif ()

@@ -81,35 +81,35 @@ typedef enum apin_e {
 } apin_t;
 
 typedef enum pwm_e {
-    PWM2    = 2;
-    PWM3    = 3,
-    PWM4    = 4,
-    PWM5    = 5,
-    PWM6    = 6,
-    PWM7    = 7,
-    PWM8    = 8,
-    PWM9    = 9,
-    PWM10   = 10,
-    PWM11   = 11,
-    PWM12   = 12,
-    PWM13   = 13,
-    PWM44   = 44,
-    PWM45   = 45,
-    PWM46   = 46
+    PWM2 = 2;
+    PWM3 = 3,
+    PWM4 = 4,
+    PWM5 = 5,
+    PWM6 = 6,
+    PWM7 = 7,
+    PWM8 = 8,
+    PWM9 = 9,
+    PWM10 = 10,
+    PWM11 = 11,
+    PWM12 = 12,
+    PWM13 = 13,
+    PWM44 = 44,
+    PWM45 = 45,
+    PWM46 = 46
 } pwm_d;
 
 typedef enum rx_e {
-    RX0     = 0,
-    RX15    = 15,
-    RX17    = 17,
-    RX19    = 19
+    RX0 = 0,
+    RX15 = 15,
+    RX17 = 17,
+    RX19 = 19
 } rx_t;
 
 typedef enum tx_e {
-    TX1     = 1,
-    TX14    = 14,
-    TX16    = 16,
-    TX18    = 18
+    TX1 = 1,
+    TX14 = 14,
+    TX16 = 16,
+    TX18 = 18
 } tx_t;
 
 #endif //RAND_M1280_H

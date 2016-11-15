@@ -11,6 +11,7 @@
 #define SERIAL_BUFFER_SIZE 5
 
 pin_mode_t pin_mode[DIGITAL_PINS];
+
 /***
  * Sets the pin-mode of the specified pin.
  * @param pin to set pin-mode of.
@@ -31,22 +32,20 @@ pin_mode_t get_pin_mode(dpin_t pin) {
 
 //A two dimensional array for storing dvals (i.e. a buffer of some size for each pin)
 dval_t digital_buffer[DIGITAL_PINS][DIGITAL_BUFFER_SIZE];
-uint8_t dig_buf_cnt [DIGITAL_PINS];
+uint8_t dig_buf_cnt[DIGITAL_PINS];
 
 /**
  * Get the latest value written to the specified pin
  * @param pin to read from
  * @return HIGH or LOW depending on what it was set to.
  */
-dval_t digital_read(dpin_t pin)
-{
+dval_t digital_read(dpin_t pin) {
     dval_t val = digital_buffer[pin][dig_buf_cnt[pin]];
 
     //Calculate the next buffer position of the given pin
-    if(dig_buf_cnt[pin] == 0) {
+    if (dig_buf_cnt[pin] == 0) {
         dig_buf_cnt[pin] = DIGITAL_BUFFER_SIZE - 1;
-    }
-    else {
+    } else {
         dig_buf_cnt[pin]--;
     }
 
@@ -61,6 +60,7 @@ char uart_getchar() {
 
 //A buffer for storing the desired pulses
 uint16_t pulse_buffer[DIGITAL_PINS];
+
 /**
  * Set the pulse to return from pulse_in on the specifyied pin
  * @param pin to set pulse for
@@ -78,7 +78,7 @@ void set_pulse(dpin_t pin, uint16_t pulse) {
  * @return the length of the pulse
  */
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout) {
-    if(pulse_buffer[pin] > timeout)
+    if (pulse_buffer[pin] > timeout)
         return 0;
 
     return pulse_buffer[pin];
@@ -115,6 +115,7 @@ dval_t get_digital_buffer(dpin_t pin) {
 //A two-dimensional array for storing char-pointers (i.e. strings)
 char *serial_buffer[SERIAL_PINS][SERIAL_BUFFER_SIZE];
 uint8_t serial_buf_cnt[SERIAL_BUFFER_SIZE];
+
 /**
  * Write a string to the specified pin
  * @param pin to write to
@@ -126,7 +127,7 @@ void serial_write_string(tx_t pin, char *out) {
     uint8_t index = serial_buf_cnt[pin];
 
     //Checks if a string has been allocated on the buffer slot and clears it in that case
-    if(serial_buffer[pin][index]) {
+    if (serial_buffer[pin][index]) {
         free(serial_buffer[pin][index]);
     }
 
@@ -144,10 +145,9 @@ char *get_write_buffer(tx_t pin) {
     char *val = serial_buffer[pin][serial_buf_cnt[pin]];
 
     //Calculate the index of the latest write
-    if(serial_buf_cnt[pin] == 0) {
+    if (serial_buf_cnt[pin] == 0) {
         serial_buf_cnt[pin] = SERIAL_BUFFER_SIZE - 1;
-    }
-    else {
+    } else {
         serial_buf_cnt[pin]--;
     }
 
@@ -163,7 +163,7 @@ void clear_write_buffer(tx_t pin) {
     //Run through the whole buffer
     for (i; i < SERIAL_BUFFER_SIZE; ++i) {
         //Clear deallocate the string if it was allocated.
-        if(serial_buffer[pin][i]) {
+        if (serial_buffer[pin][i]) {
             free(serial_buffer[pin][i]);
         }
     }
@@ -176,7 +176,7 @@ void clear_write_buffer(tx_t pin) {
  * @param len number of bytes to read
  * @return a string from what was filled in the buffer
  */
-char* serial_read_string(tx_t pin, int len ) {
+char *serial_read_string(tx_t pin, int len) {
     char *serial_string_val = malloc(len + 1);
 
     //Declare integers for index of 2nd and 3rd dimension of the array
@@ -187,7 +187,7 @@ char* serial_read_string(tx_t pin, int len ) {
     int i = 0;
     for (i; i < len; ++i) {
         //If the char at hand is the string terminator (\0) move on to the next string in the buffer.
-        if(serial_buffer[pin][index][it_index] == '\0') {
+        if (serial_buffer[pin][index][it_index] == '\0') {
             index = (index + 1) % SERIAL_BUFFER_SIZE;
             it_index = 0;
         }
@@ -201,13 +201,13 @@ char* serial_read_string(tx_t pin, int len ) {
 
 aval_t analog_buffer[ANALOG_PINS][ANALOG_BUFFER_SIZE];
 uint8_t analog_buf_count[ANALOG_PINS];
+
 /***
  * Writes an analog value to the specified pin. The latest value may be read using analog_read.
  * @param pin the pin to write to
  * @param out the value to the pin
  */
-void analog_write(apin_t pin, aval_t out)
-{
+void analog_write(apin_t pin, aval_t out) {
     //Increments the counter and makes sure it does not exceed buffer size
     analog_buf_count[pin] = (analog_buf_count[pin] + 1) % ANALOG_BUFFER_SIZE;
     //Set the value of the analog write buffer to the value specified.
@@ -222,16 +222,15 @@ void analog_write(apin_t pin, aval_t out)
  * @return the latest value written by analog_write to the specified pin.
  */
 apin_t apin;
-uint16_t analog_read()
-{
+
+uint16_t analog_read() {
     //Get the value from the buffer (when writing it is incremented before filling in the value)
     aval_t val = analog_buffer[apin][analog_buf_count[apin]];
 
     //Calculate the correct value of the counter (% does not work due to possible overflow)
-    if(analog_buf_count[apin] == 0) {
+    if (analog_buf_count[apin] == 0) {
         analog_buf_count[apin] = ANALOG_BUFFER_SIZE - 1;
-    }
-    else {
+    } else {
         analog_buf_count[apin]--;
     }
 
@@ -239,11 +238,11 @@ uint16_t analog_read()
     return;
 }
 
-void analog_init(){
+void analog_init() {
     return;
 }
 
-void analog_read_setpin(apin_t pin){
+void analog_read_setpin(apin_t pin) {
     apin = pin;
 }
 

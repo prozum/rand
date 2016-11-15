@@ -1,14 +1,13 @@
 #include "kalman_datafusion.h"
 #include "matrix/matrix.h"
-#include <stdlib.h>
 #include <math.h>
 
 void setC(kalman_state_matrix *state, const float **values);
+
 void setR(kalman_state_matrix *state, const float **values);
 
-void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
-                             const float** C, const float** R)
-{
+void kalman_datafusion_init(kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
+                            const float **C, const float **R) {
     state->source_components = component;
     state->a = a;
     state->b = b;
@@ -21,8 +20,7 @@ void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float
     setR(state, R);
 }
 
-void setC (kalman_state_matrix *state, const float **values)
-{
+void setC(kalman_state_matrix *state, const float **values) {
     int i = 0;
 
     for (i; i < DATAFUSION_UNITS; ++i) {
@@ -30,8 +28,7 @@ void setC (kalman_state_matrix *state, const float **values)
     }
 }
 
-void setR (kalman_state_matrix *state, const float **values)
-{
+void setR(kalman_state_matrix *state, const float **values) {
     int i = 0, j = 0;
 
     for (i; i < DATAFUSION_UNITS; ++i) {
@@ -41,25 +38,26 @@ void setR (kalman_state_matrix *state, const float **values)
     }
 }
 
-void kalman_datafusion_predict (kalman_state_matrix* state)
-{
+void kalman_datafusion_predict(kalman_state_matrix *state) {
     //x_k = a * x_k + b * u_k (predict the next state from the previous and the control signal)
     state->x_k = state->a * state->x_k + state->b * state->u_k;
     //p_k = a^2 * x_k (calculate the uncertainty)
     state->p_k = pow(state->a, 2) * state->x_k;
 }
 
-void kalman_datafusion_update(kalman_state_matrix* state)
-{
+void kalman_datafusion_update(kalman_state_matrix *state) {
     float **cT = trans_matrix(state->C, 1, 2);
 
-    float **inv = inv_mat(add_mat_mat(mult_mat_mat(mult_const_vec(state->C, state->p_k, 1), cT, 2, 1, 1, 2), state->R, 2));
+    float **inv = inv_mat(
+            add_mat_mat(mult_mat_mat(mult_const_vec(state->C, state->p_k, 1), cT, 2, 1, 1, 2), state->R, 2));
 
     //G_k = inv * (p * cT)
     state->G_k = mult_mat_mat(mult_const_vec(cT, state->p_k, 3), inv, 1, 2, 2, 2);
 
     //x = x+ G * (z - (C*x))
-    state->x_k = state->x_k + mult_mat_mat(state->G_k, sub_vec_vec(state->z_k, mult_const_vec(state->C, state->x_k, 1), 2), 2, 2, 2, 2)[0][0];
+    state->x_k = state->x_k +
+                 mult_mat_mat(state->G_k, sub_vec_vec(state->z_k, mult_const_vec(state->C, state->x_k, 1), 2), 2, 2, 2,
+                              2)[0][0];
 
     state->p_k = (1 - mult_mat_mat(state->G_k, state->C, 1, 2, 2, 2)[0][0]) * state->p_k;
 

@@ -1,7 +1,6 @@
 #include "kalman/kalman.h"
 
-void kalman_init(kalman_state *state, double _a, double _r, log_sender component)
-{
+void kalman_init(kalman_state *state, double _a, double _r, log_sender component) {
     if (!state) {
         state = malloc(sizeof(kalman_state));
     }
@@ -19,9 +18,8 @@ void kalman_init(kalman_state *state, double _a, double _r, log_sender component
     state->source_components = component;
 }
 
-void kalman_run(kalman_state *state, double z_k)
-{
-    if(!state)
+void kalman_run(kalman_state *state, double z_k) {
+    if (!state)
         return;
 
     // the x_k and p_k we use in the calculations are those of the previous calculation
@@ -43,16 +41,14 @@ void kalman_run(kalman_state *state, double z_k)
     state->p_k = (1 - state->g_k) * state->p_k;
 }
 
-void kalman_calibrate(kalman_state *initial_state, double z_0)
-{
+void kalman_calibrate(kalman_state *initial_state, double z_0) {
     int calibration_done = 0;
-    while (!calibration_done)
-    {
+    while (!calibration_done) {
         kalman_run(initial_state, z_0);
 
         double diff = initial_state->x_k - z_0;
 
-        if(diff <= initial_state->r)
+        if (diff <= initial_state->r)
             calibration_done = 1;
     }
 }

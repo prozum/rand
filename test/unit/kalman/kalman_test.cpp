@@ -1,14 +1,14 @@
 #include "kalman_test.h"
 #include <stdlib.h>
 #include <cmath>
+
 extern "C" {
 #include "kalman/kalman.h"
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(KalmanTest);
 
-void KalmanTest::KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced()
-{
+void KalmanTest::KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced() {
     kalman_state *NullState = NULL;
 
     double a = 1, r = 10;
@@ -24,7 +24,7 @@ void KalmanTest::KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced()
     CPPUNIT_ASSERT_MESSAGE("The x_k value was not set to 0.", NullState->x_k == 0);
 }
 
-void KalmanTest::KalmanInit_ValidStateValidParams_ExpectStateWithEqualParams(){
+void KalmanTest::KalmanInit_ValidStateValidParams_ExpectStateWithEqualParams() {
     kalman_state pState;
 
     double a = 1, r = 10;
@@ -39,7 +39,7 @@ void KalmanTest::KalmanInit_ValidStateValidParams_ExpectStateWithEqualParams(){
     CPPUNIT_ASSERT_MESSAGE("The x_k value was not set to 0.", pState.x_k == 0);
 }
 
-void KalmanTest::KalmanRun_NullStateValidParam_ExpectStateStillNull(){
+void KalmanTest::KalmanRun_NullStateValidParam_ExpectStateStillNull() {
     kalman_state *state = NULL;
 
     kalman_run(state, 10);
@@ -47,7 +47,7 @@ void KalmanTest::KalmanRun_NullStateValidParam_ExpectStateStillNull(){
     CPPUNIT_ASSERT_MESSAGE("The kalman_state was initialized against expectation", state == NULL);
 }
 
-void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev(){
+void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev() {
     kalman_state state;
     float a = 1, r = 1, z_k = 10, x_prev = 4;
     kalman_init(&state, a, r, SENDER_BOARD);
@@ -58,7 +58,7 @@ void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev(){
     CPPUNIT_ASSERT_MESSAGE("The x_k value was supposed to increase.", state.x_k > x_prev);
 }
 
-void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev(){
+void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev() {
     kalman_state state;
     float a = 1, r = 1, z_k = 4, x_prev = 10;
     kalman_init(&state, a, r, SENDER_BOARD);
@@ -69,7 +69,7 @@ void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev(){
     CPPUNIT_ASSERT_MESSAGE("The x_k value was supposed to increase.", state.x_k < x_prev);
 }
 
-void KalmanTest::KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0(){
+void KalmanTest::KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0() {
     kalman_state state;
     float a = 1, r = 1, z_0 = 6;
     kalman_init(&state, a, r, SENDER_BOARD);

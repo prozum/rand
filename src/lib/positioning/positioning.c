@@ -15,8 +15,7 @@ kalman_state laser_right_state;
 kalman_state ir_top;
 kalman_state ir_bottom;
 
-void positioning_init ()
-{
+void positioning_init() {
     kalman_datafusion_init(&front_state, 2, SENDER_SONAR);
 
     /* initialize datafusion A,B,C  here */
@@ -27,8 +26,7 @@ void positioning_init ()
     kalman_init(&ir_top, 1, 3 /* change */, SENDER_IR);
 }
 
-void check_avoidance ()
-{
+void check_avoidance() {
     /* updates u_k for all kalman states */
     update_u_k();
 
@@ -38,9 +36,8 @@ void check_avoidance ()
     /* flying logic (avoidance, turns etc.) */
 }
 
-void update_u_k ()
-{
-    acceleration_t u_k_update  = fc_read_acceleration();
+void update_u_k() {
+    acceleration_t u_k_update = fc_read_acceleration();
 
     /* if z is between 0 and 1, then we have a positive acceleration to the left
      * if z is between 1 and 2, then we have a positive acceleration to the right
@@ -51,7 +48,7 @@ void update_u_k ()
     } else if (u_k_update.z > NO_ACCELERATION && u_k_update.z < MAX_POSITIVE_ACCELERATION) {
         laser_right_state.u_k = u_k_update.z;
         laser_left_state.u_k = -1 * u_k_update.z; // -1 simply to negate u_k_update.z
-    } else if (u_k_update.z == NO_ACCELERATION){
+    } else if (u_k_update.z == NO_ACCELERATION) {
         laser_left_state.u_k = u_k_update.z;
         laser_right_state.u_k = u_k_update.z;
     }
@@ -75,7 +72,7 @@ void update_u_k ()
     } else if (u_k_update.x > NO_ACCELERATION && u_k_update.x < MAX_POSITIVE_ACCELERATION) {
         ir_bottom.u_k = u_k_update.x;
         ir_top.u_k = -1 * u_k_update.x; // -1 simply to negate u_k_update.x
-    } else if (u_k_update.x == NO_ACCELERATION){
+    } else if (u_k_update.x == NO_ACCELERATION) {
         ir_bottom.u_k = u_k_update.x;
         ir_top.u_k = u_k_update.x;
     }

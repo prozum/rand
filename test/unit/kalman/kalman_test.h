@@ -8,24 +8,26 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
-class KalmanTest : public CppUnit::TestCase
-{
-    CPPUNIT_TEST_SUITE(KalmanTest);
+class KalmanTest : public CppUnit::TestCase {
+        CPPUNIT_TEST_SUITE(KalmanTest);
         CPPUNIT_TEST(KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced);
         CPPUNIT_TEST(KalmanInit_ValidStateValidParams_ExpectStateWithEqualParams);
         CPPUNIT_TEST(KalmanRun_NullStateValidParam_ExpectStateStillNull);
         CPPUNIT_TEST(KalmanRun_ValidStatezkGxk_ExpectxkGxkprev);
         CPPUNIT_TEST(KalmanRun_ValidStatezkLxk_ExpectxkLxkprev);
         CPPUNIT_TEST(KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0);
-    CPPUNIT_TEST_SUITE_END();
+        CPPUNIT_TEST_SUITE_END();
 
 public:
 
-    void KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced ();
+    void KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced();
+
     void KalmanInit_ValidStateValidParams_ExpectStateWithEqualParams();
 
     void KalmanRun_NullStateValidParam_ExpectStateStillNull();
+
     void KalmanRun_ValidStatezkGxk_ExpectxkGxkprev();
+
     void KalmanRun_ValidStatezkLxk_ExpectxkLxkprev();
 
     void KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0();

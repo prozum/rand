@@ -37,8 +37,7 @@ void IR_init() {
     kalman_init(&IR_bottom_state, 1, 1, SENDER_IR); //<-- 1, 1 should be changed
 }
 
-void IR_calibrate(float z_0)
-{
+void IR_calibrate(float z_0) {
     kalman_calibrate(&IR_top_state, read_top_IR()); // the 100 is Z_0, needs to be changed
     kalman_calibrate(&IR_bottom_state, read_bottom_IR()); // the 100 is Z_0, needs to be changed
 }
