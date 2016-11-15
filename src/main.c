@@ -1,32 +1,28 @@
 #include "task.h"
 
-void task_timer_setup() {
-    // disable interrupts
-    cli();
+int main ()
+{
+    // initialize tasks
 
-    // reset all timer flags
-    TCCR1A = 0;
-    TCCR1B = 0;
+    /* insert non-timer dependent tasks here */
 
-    // set prescaler of 256
-    TCCR1B |= (1 << CS12);
+    task_init_fc();
 
-    // enable interrupts
-    sei();
+    // initialize timer dependent tasks
+    task_timer_setup();
+    task_arm_fc();
+
+    while (1) {
+        task_pulse();
+
+        while (TCNT1 <= MINOR_CYCLE);
+    }
 }
 
-void task_arm_fc() {
-
+/*
+ISR(TIMER1_OVF_vect)
+{
+    goto schedule_start;
+    return;
 }
-
-void task_start_pulse() {
-
-}
-
-void task_stop_pulse() {
-
-}
-
-int main() {
-
-}
+*/

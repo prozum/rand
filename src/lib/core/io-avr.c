@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <avr/io.h>
+#include <avr/eeprom.h>
 
 #define NOT_A_PORT 0
 const uint16_t port_to_input[] = {
@@ -178,6 +179,16 @@ void analog_read_setpin(apin_t pin) {
 
 uint16_t analog_read() {
     return ADC;
+}
+
+void write_to_eeprom(uint8_t *p, uint8_t value)
+{
+    eeprom_write_byte(p, value);
+}
+
+uint8_t read_from_eeprom(uint8_t *p)
+{
+    return eepfrom_read_byte(p);
 }
 
 /*

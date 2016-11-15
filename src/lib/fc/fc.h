@@ -10,28 +10,22 @@ struct acceleration_s { /* between 0-1 negative acceleration, between 1-2 positi
     float z; // left/right
 } acceleration_t;
 
-const uint16_t MIN_FC_DUTY = 1250;
-const uint16_t MID_FC_DUTY = 1500;
-const uint16_t MAX_FC_DUTY = 1750;
+uint16_t yaw;
+uint16_t pitch;
+uint16_t roll;
+uint16_t throttle;
 
-// low, medium and high stick positions
-static const uint16_t STICK_L = 1000;
-static const uint16_t STICK_M = 1500;
-static const uint16_t STICK_H = 2000;
+static uint16_t MIN_FC_DUTY;
+static uint16_t MID_FC_DUTY;
+static uint16_t MAX_FC_DUTY;
 
-static void set_yaw(uint16_t d);
+// ms = value of 1 ms
+void init_fc(uint16_t ms);
 
-static void set_pitch(uint16_t d);
+void reset();
 
-static void set_roll(uint16_t d);
-
-static void set_throttle(uint16_t d);
-
-void init_fc();
-
-void arm_fc();
-
-void disarm_fc();
+void set_arm();
+void set_disarm();
 
 void rotate_left();
 
