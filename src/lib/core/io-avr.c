@@ -181,14 +181,14 @@ uint16_t analog_read() {
     return ADC;
 }
 
-void write_to_eeprom(uint8_t *p, uint8_t value)
+void write_to_eeprom(uint8_t p, uint8_t value)
 {
-    eeprom_write_byte(p, value);
+    eeprom_write_byte((uint8_t *)p, value);
 }
 
-uint8_t read_from_eeprom(uint8_t *p)
+uint8_t read_from_eeprom(uint8_t p)
 {
-    return eepfrom_read_byte(p);
+    return eeprom_read_byte((uint8_t *)p);
 }
 
 /*
