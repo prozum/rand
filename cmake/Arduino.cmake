@@ -543,10 +543,16 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
         list(APPEND COMPILE_FLAGS "-I${INC_DIR}")
     endforeach ()
 
+    if (APPLE)
+        list(APPEND COMPILE_FLAGS "-I/Applications/Arduino.app/Contents/Java/hardware/tools/avr/avr/include/")
+    endif ()
+
     # C link libraries
     if (NOT FOR_LIBRARY)
         list(APPEND COMPILE_FLAGS "-L${AVR_LIB_PATH}")
-        list(APPEND LIBS "c" "m")
+        if (NOT APPLE)
+            list(APPEND LIBS "c" "m")
+        endif ()
         foreach (LIB ${LIBS})
             list(APPEND COMPILE_FLAGS "-l${LIB}")
         endforeach ()
