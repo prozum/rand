@@ -1,35 +1,39 @@
+#include <stdint.h>
+
 #include "sonar/sonar.h"
-
-
-#define SONAR_TIMEOUT 22000 //Just short of 4 meters
-#define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
 
 float newest_reading;
 char sonar_valid_reading = 0;
 
-void sonar_init() {
-    //Setup pins of the sonar.
-    set_pin_mode(SONAR_TRIGGER_PIN, OUTPUT);
-    set_pin_mode(SONAR_ECHO_PIN, INPUT);
+sonar_t *sonar_init(dpin_t trig, dpin_t echo) {
+    sonar_t *sonar = malloc(sizeof(sonar_t));
+
+    sonar->trig = trig;
+    sonar-> echo = echo;
+
+    set_pin_mode(trig, OUTPUT);
+    set_pin_mode(echo, INPUT);
+
+    return sonar;
 }
 
-void pulse_sonar() {
+void pulse_sonar(sonar_t *sonar) {
     //Send a pulse on the trigger pin.
-    digital_write(SONAR_TRIGGER_PIN, LOW);
+    digital_write(sonar->trig, LOW);
 #if !MOCK
     _delay_ms(2);
 #endif
-    digital_write(SONAR_TRIGGER_PIN, HIGH);
+    digital_write(sonar->trig, HIGH);
 #if !MOCK
     _delay_ms(2);
 #endif
-    digital_write(SONAR_TRIGGER_PIN, LOW);
+    digital_write(sonar->trig, LOW);
 }
 
-float read_sonar() {
-    pulse_sonar();
+float read_sonar(sonar_t *sonar) {
+    pulse_sonar(sonar);
 
-    uint16_t duration = pulse_in(SONAR_ECHO_PIN, HIGH, SONAR_TIMEOUT);
+    uint16_t duration = pulse_in(sonar->echo, HIGH, SONAR_TIMEOUT);
 
     if (duration >= MIN_OUTPUT && duration <= SONAR_TIMEOUT) {
         newest_reading = duration;
