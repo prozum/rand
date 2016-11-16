@@ -193,7 +193,6 @@ uint8_t eeprom_read(uint8_t p)
     return eeprom_read_byte((uint8_t *)p);
 }
 
-/*
 
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
@@ -233,4 +232,4 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 
 
     return CLOCK_CYCLES_TO_MS(width * 21 + 16);
-}*/
+}
