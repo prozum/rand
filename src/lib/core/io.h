@@ -41,7 +41,7 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm);
 
 /// Initializes a pin to write pwm signals
 /// \param pin the pin to be initialized.
-void pwm_init(pwm_t pin);
+//void pwm_init(pwm_t pin);
 
 // write state to digital pin
 void digital_write(dpin_t pin, dval_t ps);
@@ -94,10 +94,14 @@ char uart_trygetchar(/*FILE *stream*/);
 /// Sets the pulse width emitting from a pin
 /// \param pin The pin to write to
 /// \param width the width of the pwm pulse
-void pwn_write(pwm_t pin, uint16_t width);
+//void pwn_write(pwm_t pin, uint16_t width);
 
 void adc_init();
 
+
+void eeprom_write(uint8_t p, uint8_t value);
+
+uint8_t eeprom_read(uint8_t p);
 
 #if MOCK
 

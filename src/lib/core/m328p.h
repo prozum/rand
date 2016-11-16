@@ -6,12 +6,9 @@
 
 #include <stdint.h>
 
+#define EEPROM_SIZE 2048
+
 #if !MOCK
-
-#ifndef F_CPU
-#define F_CPU 16000000UL
-#endif
-
 #define BAUD 9600
 
 #include <util/setbaud.h>

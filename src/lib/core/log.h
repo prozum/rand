@@ -18,7 +18,7 @@ typedef enum log_sender_e {
  * Toggles logging for the system at the given level.
  * @param lvl which classes of errors to log (may be LOG_ONLY_ERRORS, LOG_DEBUG, LOG_ALL, LOG_NONE)
  */
-void toggle_logging(level lvl);
+void init_logging(level lvl);
 
 void LOG(log_sender sender, const char *msg);
 

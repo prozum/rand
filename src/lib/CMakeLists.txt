@@ -15,3 +15,6 @@ add_subdirectory(sonar)
 add_subdirectory(kalman)
 
 add_subdirectory(matrix)
+
+# Map library
+add_subdirectory(map)
