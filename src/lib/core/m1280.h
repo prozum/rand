@@ -81,7 +81,7 @@ typedef enum apin_e {
 } apin_t;
 
 typedef enum pwm_e {
-    PWM2 = 2;
+    PWM2 = 2,
     PWM3 = 3,
     PWM4 = 4,
     PWM5 = 5,
@@ -111,5 +111,9 @@ typedef enum tx_e {
     TX16 = 16,
     TX18 = 18
 } tx_t;
+
+typedef enum serial_e {
+    SERIAL0 = 0
+} serial_t;
 
 #endif //RAND_M1280_H

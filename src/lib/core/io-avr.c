@@ -124,11 +124,12 @@ char uart_trygetchar() {
         return UDR0;
     }
     return (char) 0;
+    return (char)0; //return \0 if no unread data is found.
 }
 
 void serial_write_string(tx_t pin, char *out) {
     int i;
-    for (i = 0; i < strlen(out) - 1; i++) {
+    for (i = 0; i < strlen(out); i++) { //(out[i] != '\0')
         uart_putchar(out[i]);
     }
 
@@ -167,10 +168,11 @@ void adc_init() {
     ADMUX &= ~(1 << REFS1); //Set mode: (Set reference voltage to 5V input)
 
     ADCSRB &= ~((1 << ADTS2) | (1 << ADTS1) | (1 << ADTS0)); //set free running mode in control and status register B
+    ADMUX = (ADMUX & 0xF0) | (0x00); //set default reading pin(Analog 0)
 
-    ADCSRA |= (1 << ADATE);               //Enable auto trigger
-    ADCSRA |= (1 << ADEN);                //Enable ADC power supply
-    ADCSRA |= (1 << ADSC);                //Start first conversion(will run automatically from then on.
+    ADCSRA |= (1<<ADATE);               //Enable auto trigger
+    ADCSRA |= (1<<ADEN);                //Enable ADC power supply
+    ADCSRA |= (1<<ADSC);                //Start first conversion(will run automatically from then on.)
 }
 
 void analog_read_setpin(apin_t pin) {
