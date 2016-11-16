@@ -18,15 +18,15 @@
 typedef struct sonar_s {
     dpin_t trig;
     dpin_t echo;
+    uint8_t valid; // flag to check if latest value is valid
+    float value; // latest reading
 } sonar_t;
-
-extern char sonar_valid_reading;
 
 sonar_t *sonar_init(dpin_t trig, dpin_t echo);
 
 float read_sonar(sonar_t *sonar);
 
-float sonar_to_meters(float newest_reading);
+float sonar_to_meters(float reading);
 
 void pulse_sonar(sonar_t *sonar);
 

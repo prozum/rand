@@ -2,14 +2,15 @@
 
 #include "sonar/sonar.h"
 
-float newest_reading;
-char sonar_valid_reading = 0;
+
 
 sonar_t *sonar_init(dpin_t trig, dpin_t echo) {
     sonar_t *sonar = malloc(sizeof(sonar_t));
 
     sonar->trig = trig;
     sonar-> echo = echo;
+    sonar->valid = 0;
+    sonar->value = 0;
 
     set_pin_mode(trig, OUTPUT);
     set_pin_mode(echo, INPUT);
@@ -36,16 +37,16 @@ float read_sonar(sonar_t *sonar) {
     uint16_t duration = pulse_in(sonar->echo, HIGH, SONAR_TIMEOUT);
 
     if (duration >= MIN_OUTPUT && duration <= SONAR_TIMEOUT) {
-        newest_reading = duration;
-        sonar_valid_reading = 1;
+        sonar->value = duration;
+        sonar->valid = 1;
     } else {
         LOG_WARNING(SENDER_SONAR, "The sonar received faulty value.");
-        sonar_valid_reading = 0;
+        sonar->valid = 0;
     }
 
-    return newest_reading;
+    return sonar->value;
 }
 
-float sonar_to_meters(float newest_reading) {
-    return 0.01979 * newest_reading + 0.23361;
+float sonar_to_meters(float reading) {
+    return 0.01979 * reading + 0.23361;
 }
