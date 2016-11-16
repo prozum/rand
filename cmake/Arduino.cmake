@@ -619,9 +619,9 @@ function(SETUP_AVR_TARGET TARGET_NAME BOARD_ID ALL_SRCS ALL_LIBS COMPILE_FLAGS L
     # Compile elf
     add_custom_command(TARGET ${TARGET_NAME} POST_BUILD
             COMMAND ${AVR_C_COMPILER}
-            ARGS ${COMPILE_FLAGS}
-            ${ALL_SRCS}
+            ARGS ${ALL_SRCS}
             -o ${TARGET_PATH}.elf
+            ${COMPILE_FLAGS}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
             COMMENT "Compiling ELF"
             VERBATIM)
