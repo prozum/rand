@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-#define EEPROM_SIZE 2048
+#define EEPROM_SIZE 1024
 
 #if !MOCK
 #define BAUD 9600

@@ -1,21 +1,35 @@
 #include "core/io.h"
 #include "map/map.h"
 
+#define WIDTH 90
+#define HEIGHT 90
+
+void draw_block(uint8_t x, uint8_t y, uint8_t offset, uint8_t size)
+{
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            map_write(x + offset + i, y + offset + j, 1);
+        }
+    }
+}
+
 int main ()
 {
-    int i;
-    char buffer[64];
+    int x, y;
 
     uart_init();
 
+    map_init(WIDTH, HEIGHT, 1);
+
+    draw_block(4, 1, 38, 3);
+    draw_block(9, 5, 38, 3);
+    draw_block(1, 9, 38, 3);
+    draw_block(5, 9, 38, 3);
+    draw_block(9, 9, 38, 3);
+
     while (1) {
-        for (i = 0; i < EEPROM_SIZE; i++) {
-            eeprom_write(i, i % 2);
-        }
-        for (i = 0; i < EEPROM_SIZE; i++) {
-            uint8_t value = eeprom_read(i);
-            sprintf(buffer, "i: %u value: %u \n", i, value);
-            serial_write_string(SERIAL0, buffer);
-        }
+        serial_write_string(SERIAL0, "+-----------------------------------------|EEPROM|-----------------------------------------+\n");
+        map_show();
+        serial_write_string(SERIAL0, "+------------------------------------------------------------------------------------------+\n\n");
     }
 }

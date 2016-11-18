@@ -11,7 +11,7 @@ typedef enum log_level_e {
     LOG_ONLY_ERRORS = 0, LOG_DEBUG = 1, LOG_ALL = 2, LOG_NONE = -1
 } level;
 typedef enum log_sender_e {
-    SENDER_SONAR, SENDER_IR, SENDER_IO, SENDER_LASER, SENDER_FC, SENDER_BOARD
+    SENDER_SONAR, SENDER_IR, SENDER_IO, SENDER_LASER, SENDER_FC, SENDER_MAP, SENDER_BOARD
 } log_sender;
 
 /**

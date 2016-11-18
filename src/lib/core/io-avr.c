@@ -183,14 +183,35 @@ uint16_t analog_read() {
     return ADC;
 }
 
-void eeprom_write(uint8_t p, uint8_t value)
+void eeprom_write(uint16_t p, uint8_t value)
 {
+#if DEBUG
+    char buffer[64];
+    sprintf(buffer,"write| addr: %d value: %d\n", (uint8_t *)p, value);
+    serial_write_string(SERIAL0, buffer);
+#endif
     eeprom_write_byte((uint8_t *)p, value);
 }
 
-uint8_t eeprom_read(uint8_t p)
+uint8_t eeprom_read(uint16_t p)
 {
-    return eeprom_read_byte((uint8_t *)p);
+    uint8_t value = eeprom_read_byte((uint8_t *)p);
+#if DEBUG
+    char buffer[64];
+    sprintf(buffer,"read| addr: %d value: %d\n", (uint8_t *)p, value);
+    serial_write_string(SERIAL0, buffer);
+#endif
+    return value;
+}
+
+void eeprom_show()
+{
+    char tmp[16];
+
+    for (int i = 0; i < EEPROM_SIZE; ++i) {
+        sprintf(tmp, "%d", eeprom_read(i));
+        serial_write_string(SERIAL0, tmp);
+    }
 }
 
 /*

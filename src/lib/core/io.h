@@ -99,9 +99,11 @@ char uart_trygetchar(/*FILE *stream*/);
 void adc_init();
 
 
-void eeprom_write(uint8_t p, uint8_t value);
+void eeprom_write(uint16_t p, uint8_t value);
 
-uint8_t eeprom_read(uint8_t p);
+uint8_t eeprom_read(uint16_t p);
+
+void eeprom_show();
 
 #if MOCK
 

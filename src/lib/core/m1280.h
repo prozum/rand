@@ -4,6 +4,8 @@
 // IO header defines for the atmega 1280
 // which is on the Arduino Mega
 
+#define EEPROM_SIZE 4096
+
 typedef enum dpin_e {
     P0,
     P1,

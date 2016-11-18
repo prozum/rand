@@ -1,5 +1,73 @@
 #include "map.h"
-#define EEPROM_SIZE 2048
+#include "core/log.h"
+
+uint8_t map_width,
+        map_height;
+
+void map_init(uint8_t width, uint8_t height, uint8_t clean)
+{
+    if (map_width * map_height > MAX_MAP_SIZE) {
+        LOG_ERROR(SENDER_MAP, "Map size too big!");
+    }
+
+    map_width = width;
+    map_height = height;
+
+    if (clean)
+        map_clean();
+}
+
+void map_write(uint8_t x, uint8_t y, uint8_t value)
+{
+    uint16_t addr = (y * map_width + x) / 8;
+    uint16_t offset =  (y * map_width + x) % 8;
+
+    uint8_t new_value = eeprom_read(addr);
+
+    if (value) {
+        new_value |= 1 << offset;
+    } else {
+        new_value &= ~(1 << offset);
+    }
+
+    eeprom_write(addr, new_value);
+}
+
+uint8_t map_read(uint8_t x, uint8_t y)
+{
+    uint16_t addr = (y * map_width + x) / 8;
+    uint16_t offset =  (y * map_width + x) % 8;
+
+    uint8_t value = eeprom_read(addr);
+
+    return (value >> offset) & 1;
+}
+
+void map_clean()
+{
+    uint16_t map_size = (map_width * map_height) / 8;
+    if (map_width * map_height % 8)
+        map_size++;
+    for (int i = 0; i < map_size; i++) {
+        eeprom_write(i, 0);
+    }
+}
+
+void map_show()
+{
+    uint8_t x, y;
+    for (y = 0; y < map_height; y++) {
+        uart_putchar('|');
+        for (x = 0; x < map_width; x++) {
+            if (map_read(x, y))
+                uart_putchar('#');
+            else
+                uart_putchar(' ');
+        }
+        uart_putchar('|');
+        uart_putchar('\n');
+    }
+}
 
 void begin_mapping()
 {
