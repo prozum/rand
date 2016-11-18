@@ -25,9 +25,7 @@ void LOG(log_sender sender, const char *msg);
 void LOG_WARNING(log_sender sender, const char *msg);
 
 void LOG_ERROR(log_sender, const char *msg);
-
-void LOG_ERROR_BYPASS(const char *msg);
-
+void ERROR(const char *msg);
 void disable_device(log_sender device);
 
 #if MOCK

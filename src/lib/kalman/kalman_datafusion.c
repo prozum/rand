@@ -1,13 +1,26 @@
 #include "kalman_datafusion.h"
 #include "matrix/matrix.h"
 #include <math.h>
+#include <sonar/sonar.h>
+#include "laser/laser.h"
+#include "positioning/positioning.h"
 
-void setC(kalman_state_matrix *state, const float **values);
+void setC(kalman_state_matrix *state, float **values);
+void setR(kalman_state_matrix *state, float **values);
+void calibrate_open_space(kalman_state_matrix*, float, float);
 
-void setR(kalman_state_matrix *state, const float **values);
+void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
+                             float** C, float** R)
+{
+    //Check if state has been allocated
+    if(!state) {
+        state = malloc(sizeof(kalman_state_matrix));
 
-void kalman_datafusion_init(kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
-                            const float **C, const float **R) {
+        //Not enough heap-space, abort flight.
+        if(!state)
+            ERROR("Failed to malloc space for the datafusion-matrix");
+    }
+
     state->source_components = component;
     state->a = a;
     state->b = b;
@@ -20,7 +33,8 @@ void kalman_datafusion_init(kalman_state_matrix *state, float a, float b, float 
     setR(state, R);
 }
 
-void setC(kalman_state_matrix *state, const float **values) {
+void setC (kalman_state_matrix *state, float **values)
+{
     int i = 0;
 
     for (i; i < DATAFUSION_UNITS; ++i) {
@@ -28,7 +42,8 @@ void setC(kalman_state_matrix *state, const float **values) {
     }
 }
 
-void setR(kalman_state_matrix *state, const float **values) {
+void setR (kalman_state_matrix *state, float **values)
+{
     int i = 0, j = 0;
 
     for (i; i < DATAFUSION_UNITS; ++i) {
@@ -66,13 +81,61 @@ void kalman_datafusion_update(kalman_state_matrix *state) {
 
 void kalman_datafusion_filter(kalman_state_matrix *state, float z_laser, float z_sonar) {
     //Create a vector of the current readings.
-    state->z_k[0][0] = z_laser;
-    state->z_k[1][0] = z_sonar;
+    state->z_k[ZLASER][0] = z_laser;
+    state->z_k[ZSONAR][0] = z_sonar;
     //Filter
     kalman_datafusion_predict(state);
     kalman_datafusion_update(state);
 }
 
 void kalman_datafusion_calibrate(kalman_state_matrix *state, float z_0_laser, float z_0_sonar) {
+    //Both sonar and laser have valid readings, most likely faces open space
+    //Could also face a window
+    if(sonar_valid_reading && laser_valid_reading) {
+        //Calculate the difference between the readings and determine if we are close to a window
+        float diff = z_0_laser - z_0_sonar;
+        if(diff > WINDOW_RECON_THRESHOLD) {
+            state->x_k = z_0_sonar;
+            return;
+        }
 
+        calibrate_open_space(state, z_0_laser, z_0_sonar);
+    }
+    //The range of sonar and laser are the same. We can do nothing but trust the laser
+    else if (!sonar_valid_reading && laser_valid_reading) {
+        state->x_k = z_0_laser;
+    }
+    //Drone is most likely facing a window - trust the sonar
+    else if (sonar_valid_reading && !laser_valid_reading) {
+        state->x_k = z_0_sonar;
+    }
+    //Drone probably faces an open space
+    else {
+        calibrate_open_space(state, z_0_laser, z_0_sonar);
+    }
+}
+
+void calibrate_open_space(kalman_state_matrix *state, float z_0_laser, float z_0_sonar){
+    //Declare variables for average variance of sensors, readings and a flag to indicate if the calibration is done.
+    float diff = 0;
+    uint8_t calibrated = 0;
+    float avg = (z_0_laser + z_0_sonar) / 2;
+    float r_avg = 0;
+
+    int i, j;
+    for (i = 0; i < DATAFUSION_UNITS; ++i) {
+        for (j = 0; j < DATAFUSION_UNITS; ++j) {
+            r_avg += state->R[i][j];
+        }
+    }
+    r_avg = r_avg / (2 * DATAFUSION_UNITS);
+
+    //Run the filter until the value is lower than the average variance.
+    while(!calibrated) {
+        kalman_datafusion_filter(state, z_0_laser, z_0_laser);
+
+        diff = abs(avg - state->x_k);
+        if(diff <= r_avg)
+            calibrated = 1;
+    }
 }

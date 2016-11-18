@@ -116,7 +116,7 @@ void LOG_ERROR(log_sender sender, const char *msg) {
  * Bypasses all filters an logs a serious error.
  * @param msg is the error to log.
  */
-void LOG_ERROR_BYPASS(const char *msg) {
+void ERROR(const char *msg) {
 #if MOCK
     char cpy[strlen(msg) + PREFIX_SIZE];
     strcpy(cpy, msg);
