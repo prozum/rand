@@ -1,12 +1,4 @@
 #include "ir/ir.h"
-#include "core/io.h"
-#include "kalman/kalman.h"
-#include <math.h>
-
-//The IR is placed on an 8-bit pin
-#define IR_MAX_INPUT 255
-#define TOP_PIN 2
-#define BOTTOM_PIN 2
 
 kalman_state IR_top_state;
 kalman_state IR_bottom_state;
@@ -32,7 +24,11 @@ uint8_t IR_to_cm[256] =
         };
 
 
-void IR_init() {
+ir_t *IR_init(apin_t pin) {
+    ir_t *ir = malloc(sizeof(ir_t));
+
+    ir->pin = pin;
+
     kalman_init(&IR_top_state, 1, 1, SENDER_IR); //<-- 1, 1 should be changed
     kalman_init(&IR_bottom_state, 1, 1, SENDER_IR); //<-- 1, 1 should be changed
 }
@@ -42,16 +38,15 @@ void IR_calibrate(float z_0) {
     kalman_calibrate(&IR_bottom_state, read_bottom_IR()); // the 100 is Z_0, needs to be changed
 }
 
-float read_top_IR() {
-    uint8_t IR_value = analog_read(TOP_PIN);
+float IR_read(ir_t *ir) {
+    uint8_t IR_value = analog_read(ir->pin);
     return IR_to_cm[IR_value];
 }
 
-float read_bottom_IR() {
-    uint8_t IR_value = analog_read(BOTTOM_PIN);
-    return IR_to_cm[IR_value];
-}
-
+/*
+ * SAVED FOR ANOTHER TIME; DO NOT DELETE
+ * /
+/*
 float IR_top_to_meters() {
     return 7881.82 * pow(IR_top_state.x_k, -1.086);
 }
@@ -59,3 +54,4 @@ float IR_top_to_meters() {
 float IR_bottom_to_meters() {
     return 7881.82 * pow(IR_bottom_state.x_k, -1.086);
 }
+*/

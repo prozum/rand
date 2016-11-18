@@ -1,18 +1,28 @@
 #ifndef RAND_IR_H
 #define RAND_IR_H
 
-#define IR_TOP_PIN 1
-#define IR_BOTTOM_PIN 2
+#include <math.h>
 
-void IR_init();
 
-float read_top_IR();
+#include "core/io.h"
+#include "kalman/kalman.h"
 
-float read_bottom_IR();
+//The IR is placed on an 8-bit pin
+#define IR_MAX_INPUT 255
 
+typedef struct ir_s {
+    apin_t pin;
+} ir_t;
+
+ir_t *IR_init(apin_t pin);
+
+float IR_read(ir_t *ir);
+
+/*
 float IR_top_to_meters();
 
 float IR_bottom_to_meters();
+*/
 
 void IR_calibrate(float z_0);
 

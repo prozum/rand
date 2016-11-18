@@ -2,6 +2,8 @@
 #include "core/io.h"
 #include "core/log.h"
 
+#ifndef RAND_KALMAN_DF_H
+#define RAND_KALMAN_DF_H
 /*We're doing a specific implementation of the Kalman filter for two units (laser + sonar)*/
 #define DATAFUSION_UNITS 2
 #define ZLASER 0
@@ -24,10 +26,10 @@ typedef struct kalman_matrix_state_t {
 
 } kalman_state_matrix;
 
-void kalman_datafusion_init(kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
-                            const float **C, const float **R);
+void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
+                             float **C, float **R);
+void kalman_datafusion_filter (kalman_state_matrix *state, float z_laser, float z_sonar);
+void kalman_datafusion_calibrate (kalman_state_matrix *state, float z_0_laser, float z_0_sonar);
 
-void kalman_datafusion_filter(kalman_state_matrix *state, float z_laser, float z_sonar);
-
-void kalman_datafusion_calibrate(kalman_state_matrix *state, float z_0_laser, float z_0_sonar);
+#endif //RAND_KALMAN_DF_H
 

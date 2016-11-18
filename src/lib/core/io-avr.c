@@ -21,10 +21,10 @@ const uint16_t port_to_input[] = {
 
 void set_pin_mode(dpin_t pin, pin_mode_t pm) {
     if (pm != OUTPUT && pm != INPUT) {
-        LOG_ERROR_BYPASS("Invalid pin mode used in set_pin_mode");
+        ERROR("Invalid pin mode used in set_pin_mode");
         return;
     } else if (pin > MAXIMUM_PIN) {
-        LOG_ERROR_BYPASS("Non-existing pin in set_pin_mode");
+        ERROR("Non-existing pin in set_pin_mode");
         return;
     }
 
@@ -50,10 +50,10 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm) {
 
 void digital_write(dpin_t pin, dval_t ps) {
     if (ps != HIGH && ps != LOW) {
-        LOG_ERROR_BYPASS("Invalid digital value used in digital_write");
+        ERROR("Invalid digital value used in digital_write");
         return;
     } else if (pin > MAXIMUM_PIN) {
-        LOG_ERROR_BYPASS("Non-existing pin in digital_write");
+        ERROR("Non-existing pin in digital_write");
         return;
     }
 
@@ -77,7 +77,7 @@ void digital_write(dpin_t pin, dval_t ps) {
 
 dval_t digital_read(dpin_t pin) {
     if (pin > MAXIMUM_PIN) {
-        LOG_ERROR_BYPASS("Non-existing pin in digital_read");
+        ERROR("Non-existing pin in digital_read");
         return LOW;
     }
 
@@ -214,7 +214,6 @@ void eeprom_show()
     }
 }
 
-/*
 
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
@@ -254,4 +253,4 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 
 
     return CLOCK_CYCLES_TO_MS(width * 21 + 16);
-}*/
+}

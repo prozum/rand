@@ -5,18 +5,23 @@ extern "C" {
 #include "sonar/sonar.h"
 }
 
+#define TRIGGER P2
+#define ECHO P3
+
 using namespace std;
 
 CPPUNIT_TEST_SUITE_REGISTRATION(SonarTest);
 
 void SonarTest::pulseSonar_expectBuffer010() {
-    sonar_init();
-    pulse_sonar();
+    sonar_t *sonar;
+
+    sonar = sonar_init(TRIGGER, ECHO);
+    pulse_sonar(sonar);
 
     //The values in the buffer is stored in reverse order:
-    dval_t low2 = digital_read((dpin_t) SONAR_TRIGGER_PIN);
-    dval_t high = digital_read((dpin_t) SONAR_TRIGGER_PIN);
-    dval_t low1 = digital_read((dpin_t) SONAR_TRIGGER_PIN);
+    dval_t low2 = digital_read((dpin_t) sonar->trig);
+    dval_t high = digital_read((dpin_t) sonar->trig);
+    dval_t low1 = digital_read((dpin_t) sonar->trig);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The first low pulse was not send correctly", LOW, low1);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The high pulse was not send correctly", HIGH, high);
@@ -24,47 +29,57 @@ void SonarTest::pulseSonar_expectBuffer010() {
 }
 
 void SonarTest::readSonar_inRange_expectValidByteOne() {
-    sonar_init();
+    sonar_t *sonar;
 
-    float pulse_emulation = 16000;
-    set_pulse((dpin_t) SONAR_ECHO_PIN, pulse_emulation);
+    sonar = sonar_init(TRIGGER, ECHO);
 
-    float reading = read_sonar();
+    uint16_t pulse_emulation = 16000;
+    set_pulse(sonar->echo, pulse_emulation); // write to pulse buffer
+
+    float reading = read_sonar(sonar);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar did not read a valid value.", pulse_emulation, reading);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The valid byte was not set correctly", 1, (int) sonar_valid_reading);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The valid byte was not set correctly", 1, (int) sonar->value);
 }
 
 void SonarTest::readSonar_outOfRange_expectValidByteZero() {
-    sonar_init();
-    uint16_t pulse_emulation = 23000;
-    set_pulse((dpin_t) SONAR_ECHO_PIN, pulse_emulation);
+    sonar_t *sonar;
 
-    float reading = read_sonar();
+    sonar = sonar_init(TRIGGER, ECHO);
+
+    uint16_t pulse_emulation = 23000;
+
+    set_pulse(sonar->echo, pulse_emulation);
+
+    float reading = read_sonar(sonar);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar return the reading, even though it was out of range.",
                                  reading, (float) 0);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, (int) sonar_valid_reading);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, (int) sonar->value);
 }
 
 void SonarTest::readSonar_tooClose_expectValidByteZero() {
-    sonar_init();
-    uint16_t pulse_emulation = 50;
-    set_pulse((dpin_t) SONAR_ECHO_PIN, pulse_emulation);
+    sonar_t *sonar;
 
-    float reading = read_sonar();
+    sonar = sonar_init(TRIGGER, ECHO);
+
+    uint16_t pulse_emulation = 50;
+    set_pulse(sonar->echo, pulse_emulation);
+
+    float reading = read_sonar(sonar);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar return the reading, even though it was out of range.",
                                  reading, (float) 0);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, (int) sonar_valid_reading);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, (int) sonar->value);
 }
 
 void SonarTest::sonarInit_expectTriggerOutAndEchoIn() {
-    sonar_init();
+    sonar_t *sonar;
 
+    sonar = sonar_init(TRIGGER, ECHO);
 
-    pin_mode_t mode_echo = get_pin_mode((dpin_t) SONAR_ECHO_PIN);
-    pin_mode_t mode_trigger = get_pin_mode((dpin_t) SONAR_TRIGGER_PIN);
+    pin_mode_t mode_echo = get_pin_mode(sonar->echo);
+    pin_mode_t mode_trigger = get_pin_mode(sonar->trig);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The echo pin was not setup correctly.", mode_echo, INPUT);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The trigger pin was not setup correctly.", mode_trigger, OUTPUT);

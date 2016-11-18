@@ -19,6 +19,9 @@
 #define PITCH       P10
 #define THROTTLE    P11
 
+#define SONAR_TRIGGER_PIN 1
+#define SONAR_ECHO_PIN 2
+
 void task_timer_setup();
 
 void task_arm_fc();

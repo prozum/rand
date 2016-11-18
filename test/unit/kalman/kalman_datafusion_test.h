@@ -21,8 +21,12 @@ class KalmanDatafusionTest : public CppUnit::TestCase {
     CPPUNIT_TEST(KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev);
     CPPUNIT_TEST(KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxprev);
     CPPUNIT_TEST_SUITE_END();
-
+private:
+    float **R, **C;
 public:
+    void setUp();
+    void tearDown();
+
     void KalmanDFInit_NullStateValidParams_StateMallocedAndInitialized();
 
     void KalmanDFInit_ValidStateValidParams_StateInitialized();
