@@ -12,18 +12,11 @@
 
 typedef struct ir_s {
     apin_t pin;
+    uint8_t value;
 } ir_t;
 
 ir_t *IR_init(apin_t pin);
 
-float IR_read(ir_t *ir);
-
-/*
-float IR_top_to_meters();
-
-float IR_bottom_to_meters();
-*/
-
-void IR_calibrate(float z_0);
+void IR_read(ir_t *ir);
 
 #endif //RAND_IR_H

@@ -1,8 +1,5 @@
 #include "ir/ir.h"
 
-kalman_state IR_top_state;
-kalman_state IR_bottom_state;
-
 uint8_t IR_to_cm[256] =
         {
                 19, 19, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 17,
@@ -28,19 +25,11 @@ ir_t *IR_init(apin_t pin) {
     ir_t *ir = malloc(sizeof(ir_t));
 
     ir->pin = pin;
-
-    kalman_init(&IR_top_state, 1, 1, SENDER_IR); //<-- 1, 1 should be changed
-    kalman_init(&IR_bottom_state, 1, 1, SENDER_IR); //<-- 1, 1 should be changed
 }
 
-void IR_calibrate(float z_0) {
-    kalman_calibrate(&IR_top_state, read_top_IR()); // the 100 is Z_0, needs to be changed
-    kalman_calibrate(&IR_bottom_state, read_bottom_IR()); // the 100 is Z_0, needs to be changed
-}
-
-float IR_read(ir_t *ir) {
+void IR_read(ir_t *ir) {
     uint8_t IR_value = analog_read(ir->pin);
-    return IR_to_cm[IR_value];
+    ir->value = IR_to_cm[IR_value];
 }
 
 /*

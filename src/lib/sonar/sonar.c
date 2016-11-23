@@ -31,7 +31,7 @@ void pulse_sonar(sonar_t *sonar) {
     digital_write(sonar->trig, LOW);
 }
 
-float read_sonar(sonar_t *sonar) {
+void read_sonar(sonar_t *sonar) {
     pulse_sonar(sonar);
 
     uint16_t duration = pulse_in(sonar->echo, HIGH, SONAR_TIMEOUT);
@@ -43,8 +43,6 @@ float read_sonar(sonar_t *sonar) {
         LOG_WARNING(SENDER_SONAR, "The sonar received faulty value.");
         sonar->valid = 0;
     }
-
-    return sonar->value;
 }
 
 float sonar_to_meters(float reading) {

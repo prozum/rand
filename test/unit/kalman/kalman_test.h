@@ -8,6 +8,10 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
+#include <stdlib.h>
+#include <cmath>
+#include <cmath>
+
 class KalmanTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(KalmanTest);
         CPPUNIT_TEST(KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced);

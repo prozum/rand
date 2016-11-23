@@ -20,7 +20,7 @@ typedef struct kalman_state_t {
 
 } kalman_state;
 
-void kalman_init(kalman_state *state, double _a, double _r, log_sender component);
+kalman_state *kalman_init(double _a, double _r, log_sender component);
 
 void kalman_run(kalman_state *state, double z_k);
 

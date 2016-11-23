@@ -1,12 +1,5 @@
 #include "log_test.h"
 
-#include <malloc.h>
-
-extern "C" {
-#include "core/log.h"
-#include "core/io.h"
-}
-
 
 using namespace std;
 CPPUNIT_TEST_SUITE_REGISTRATION(LogTest);
@@ -31,7 +24,7 @@ void LogTest::ToggleLogging_ShowAllMessages_ExpectMessage() {
     CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
-    LOG_ERROR_BYPASS("Test bypass error");
+    ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
     CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
@@ -56,7 +49,7 @@ void LogTest::ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages() 
     CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
-    LOG_ERROR_BYPASS("Test bypass error");
+    ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
     CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
@@ -81,7 +74,7 @@ void LogTest::ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings() {
     CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
-    LOG_ERROR_BYPASS("Test bypass error");
+    ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
     CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
@@ -106,7 +99,7 @@ void LogTest::ToggleLogging_ShowNone_ExpectBypass() {
     CPPUNIT_ASSERT_MESSAGE("The error was delivered against expectation.", wb != NULL);
 
     clear_write_buffer(USB_TX);
-    LOG_ERROR_BYPASS("Test bypass error");
+    ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
     CPPUNIT_ASSERT_MESSAGE("The bypassed error was delivered against expectation.", wb != NULL);
 }
@@ -231,7 +224,7 @@ void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError() {
     init_logging(LOG_ALL);
     disable_device(SENDER_BOARD);
 
-    LOG_ERROR_BYPASS(msg);
+    ERROR(msg);
     char *wb = get_write_buffer(USB_TX);
 
     CPPUNIT_ASSERT_MESSAGE("The message was not delivered against expectation.", wb != NULL);

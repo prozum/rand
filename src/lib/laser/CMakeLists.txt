@@ -1,5 +1,5 @@
 generate_avr_library(laser
+        MOCK
     BOARD uno
 	SRCS laser.c
-	HDRS laser.h
 	LIBS core)

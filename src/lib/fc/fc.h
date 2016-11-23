@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct acceleration_s { /* between 0-1 negative acceleration, between 1-2 positive acceleration */
+typedef struct acceleration_s { /* between 0-1 negative acceleration, between 1-2 positive acceleration */
     // positive(1-2)/negative(0-1)
     float x; // up/down
     float y; // forward/backwards
@@ -46,5 +46,7 @@ void move_up();
 void move_down();
 
 void move_stop();
+
+acceleration_t fc_read_acceleration();
 
 #endif //RAND_FC_H

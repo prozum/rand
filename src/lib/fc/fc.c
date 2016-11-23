@@ -1,4 +1,5 @@
 #include "fc/fc.h"
+#include "core/log.h"
 
 void init_fc(uint16_t ms)
 {
@@ -74,4 +75,11 @@ void move_stop()
     pitch = MID_FC_DUTY;
     roll = MID_FC_DUTY;
     yaw = MID_FC_DUTY;
+}
+
+acceleration_t fc_read_acceleration() {
+    ERROR("This function is not supported yet.");
+
+    acceleration_t accel = {0, 0, 0};
+    return accel;
 }
