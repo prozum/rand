@@ -8,6 +8,13 @@
 
 #define EEPROM_SIZE 1024
 
+typedef enum reg_e {
+    PORTB_,
+    PORTC_,
+    PORTD_
+} reg_t;
+
+
 #if !MOCK
 #define BAUD 9600
 
@@ -20,32 +27,14 @@ static uint8_t dpins[] = {_BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3),
                           _BV(PORTD4), _BV(PORTD5), _BV(PORTD6), _BV(PORTD7),
                           _BV(PORTB0), _BV(PORTB1), _BV(PORTB2), _BV(PORTB3),
                           _BV(PORTB4), _BV(PORTB5)};
-#endif //MOCK
 
-
-// values of the different atmega 328p registers
-// PINx is an input register
-// DDRx is a data direction register (tell what pins are input and output)
-// PORTx is the output register
-typedef enum reg_e {
-    PINB_ = 0x03,
-    DDRB_ = 0x04,
-    PORTB_ = 0x05,
-
-    PINC_ = 0x06,
-    DDRC_ = 0x07,
-    PORTC_ = 0x08,
-
-    PIND_ = 0x09,
-    DDRD_ = 0x0A,
-    PORTD_ = 0x0D
-} reg_t;
 
 // table to lookup a 328p, use a physical arduino pin to get the 328p port value
 // for instance if you look up dports[1] you get the CPU's value of PORTB
 // PORTB is the port that contains pin 1 on the arduino
 static uint8_t dports[] = {PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_,
                            PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_};
+#endif //MOCK
 
 // physical digital pin values on the arduino uno
 typedef enum dpin_e {
