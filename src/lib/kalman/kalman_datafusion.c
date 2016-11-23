@@ -1,36 +1,29 @@
 #include "kalman_datafusion.h"
-#include "matrix/matrix.h"
-#include <math.h>
-#include <sonar/sonar.h>
-#include "laser/laser.h"
-#include "positioning/positioning.h"
 
 void setC(kalman_state_matrix *state, float **values);
 void setR(kalman_state_matrix *state, float **values);
 void calibrate_open_space(kalman_state_matrix*, float, float);
 
-void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
+kalman_state_matrix *kalman_datafusion_init (float a, float b, log_sender component,
                              float** C, float** R)
 {
-    //Check if state has been allocated
-    if(!state) {
-        state = malloc(sizeof(kalman_state_matrix));
-
-        //Not enough heap-space, abort flight.
-        if(!state)
-            ERROR("Failed to malloc space for the datafusion-matrix");
-    }
+    kalman_state_matrix *state = malloc(sizeof(kalman_state_matrix));
+    //Not enough heap-space, abort flight.
+    if(!state)
+        ERROR("Failed to malloc space for the datafusion-matrix");
 
     state->source_components = component;
     state->a = a;
     state->b = b;
-    state->p_k = p_0;
+    state->p_k = 10;
     state->u_k = 1;
     state->G_k[0][0] = 0;
     state->G_k[1][0] = 1;
 
     setC(state, C);
     setR(state, R);
+
+    return state;
 }
 
 void setC (kalman_state_matrix *state, float **values)
@@ -89,30 +82,29 @@ void kalman_datafusion_filter(kalman_state_matrix *state, float z_laser, float z
 }
 
 void kalman_datafusion_calibrate(kalman_state_matrix *state, float z_0_laser, float z_0_sonar) {
-    //Both sonar and laser have valid readings, most likely faces open space
-    //Could also face a window
-    if(sonar_valid_reading && laser_valid_reading) {
+    /*if(z_0_sonar->valid && z_0_laser->valid) {
         //Calculate the difference between the readings and determine if we are close to a window
-        float diff = z_0_laser - z_0_sonar;
+        float diff = l_val - s_val;
         if(diff > WINDOW_RECON_THRESHOLD) {
-            state->x_k = z_0_sonar;
+            state->x_k = s_val;
             return;
         }
 
         calibrate_open_space(state, z_0_laser, z_0_sonar);
     }
-    //The range of sonar and laser are the same. We can do nothing but trust the laser
-    else if (!sonar_valid_reading && laser_valid_reading) {
-        state->x_k = z_0_laser;
+    //The range of sonar and laser are the same, but sonar is invalid. We can do nothing but trust the laser
+    else if (!z_0_sonar->valid && z_0_laser->valid) {
+        state->x_k = l_val;
     }
     //Drone is most likely facing a window - trust the sonar
-    else if (sonar_valid_reading && !laser_valid_reading) {
-        state->x_k = z_0_sonar;
+    else if (z_0_sonar->valid && !z_0_laser->valid) {
+        state->x_k = s_val;
     }
     //Drone probably faces an open space
     else {
         calibrate_open_space(state, z_0_laser, z_0_sonar);
-    }
+    }*/
+    calibrate_open_space(state, z_0_laser, z_0_sonar);
 }
 
 void calibrate_open_space(kalman_state_matrix *state, float z_0_laser, float z_0_sonar){
@@ -132,7 +124,7 @@ void calibrate_open_space(kalman_state_matrix *state, float z_0_laser, float z_0
 
     //Run the filter until the value is lower than the average variance.
     while(!calibrated) {
-        kalman_datafusion_filter(state, z_0_laser, z_0_laser);
+        kalman_datafusion_filter(state, z_0_laser, z_0_sonar);
 
         diff = abs(avg - state->x_k);
         if(diff <= r_avg)

@@ -6,6 +6,10 @@
 
 #include "fc/fc.h"
 #include "core/io.h"
+#include "lib/sonar/sonar.h"
+#include "lib/ir/ir.h"
+#include "lib/laser/laser.h"
+#include "lib/positioning/positioning.h"
 
 #define ONE_MS 63 // defines 1 millisecond
 #define ONE_AND_A_HALF_MS 94 // defines 1.5 millisecond
@@ -19,11 +23,20 @@
 #define PITCH       P10
 #define THROTTLE    P11
 
-#define SONAR_TRIGGER_PIN 1
-#define SONAR_ECHO_PIN 2
+#define SONAR_TRIGGER_PIN P2
+#define SONAR_ECHO_PIN P3
+#define IR_BOTTOM_PIN A0
+#define IR_TOP_PIN A1
+
+sonar_t *sonar;
+laser_t *laser;
+ir_t *top_ir;
+ir_t *bottom_ir;
+position_t *recent_position;
 
 void task_timer_setup();
 
+/*flight controller tasks*/
 void task_arm_fc();
 void task_disarm_fc();
 void task_init_fc();

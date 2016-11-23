@@ -1,9 +1,9 @@
 #include "kalman_datafusion_test.h"
-#include "../../../../../../usr/lib/avr/include/stdlib.h"
 
 extern "C" {
 #include "kalman/kalman_datafusion.h"
 #include "sonar/sonar.h"
+#include "laser/laser.h"
 }
 
 CPPUNIT_TEST_SUITE_REGISTRATION(KalmanDatafusionTest);
@@ -104,10 +104,10 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToB
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
-    const float z_0_laser = 3;
-    const float z_0_sonar = 3;
+    laser_t *z_0_laser = laser_init(USB_TX);
+    sonar_t *z_0_sonar = sonar_init(P2 ,P1);
     kalman_datafusion_calibrate(&state, z_0_laser, z_0_sonar);
-    float diff = abs(state.x_k - z_0_laser);
+    float diff = abs(state.x_k - z_0_laser->value);
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
 }
@@ -121,10 +121,14 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0MuchHigherThanSonar
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
-    const float z_0_laser = 0.3;
-    const float z_0_sonar = 3.5;
+    laser_t *z_0_laser = laser_init(USB_TX);
+    z_0_laser->value = 0.3;
+    z_0_laser->valid = 1;
+    sonar_t *z_0_sonar = sonar_init(P0, P1);
+    z_0_sonar->value = 17671; //about 350cm
+    z_0_sonar->valid = 1;
     kalman_datafusion_calibrate(&state, z_0_laser, z_0_sonar);
-    float diff = abs(state.x_k - z_0_sonar);
+    float diff = abs(state.x_k - sonar_to_meters(z_0_sonar->value));
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
 }
@@ -138,12 +142,15 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaserValidSonarInvalid_xk
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
-    const float z_0_laser = 3;
-    const float z_0_sonar = 2.5;
-    sonar_valid_reading = 0;
+    laser_t *z_0_laser = laser_init(USB_TX);
+    z_0_laser->value = 3;
+    z_0_laser->valid = 1;
+    sonar_t *z_0_sonar = sonar_init(P0, P1);
+    z_0_sonar->value = 12618; //about 250cm
+    z_0_sonar->valid = 1;
 
     kalman_datafusion_calibrate(&state, z_0_laser, z_0_sonar);
-    float diff = abs(state.x_k - z_0_laser);
+    float diff = abs(state.x_k - z_0_laser->value);
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
 }
@@ -157,14 +164,15 @@ void KalmanDatafusionTest::KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax(){
 
     kalman_datafusion_init(&state, a, b, p_0, SENDER_BOARD, C, R);
 
-    const float z_0_laser = 10;
-    //laser_valid_reading = 0;
-    const float z_0_sonar = 3.3;
-    sonar_valid_reading = 0;
+    laser_t *z_0_laser = laser_init(USB_TX);
+    z_0_laser->value = 10;
+    z_0_laser->valid = 0;
+    sonar_t *z_0_sonar = sonar_init(P0, P1);
+    z_0_sonar->value = 16661; //330 cm
+    z_0_sonar->valid = 0;
     kalman_datafusion_calibrate(&state, z_0_laser, z_0_sonar);
 
-    //22000 is SONAR_TIMEOUT (maximum possible reading)
-    CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", state.x_k == sonar_to_meters(22000));
+    CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", state.x_k == sonar_to_meters(SONAR_TIMEOUT));
 }
 
 void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev(){
@@ -178,8 +186,12 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev
 
     const float x_prev = 3.7;
     state.x_k = x_prev;
-    const float z_laser = 1.2;
-    const float z_sonar = 1.2;
+    laser_t *z_laser = laser_init(USB_TX);
+    z_laser->value = 1.2;
+    z_laser->valid = 1;
+    sonar_t *z_sonar = sonar_init(P0, P1);
+    z_sonar->value = 6051; //120cm
+    z_sonar->valid = 1;
     kalman_datafusion_filter(&state, z_laser, z_sonar);
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", x_prev < state.x_k);
@@ -196,8 +208,10 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxpre
 
     const float x_prev = 1.2;
     state.x_k = x_prev;
-    const float z_laser = 3;
-    const float z_sonar = 3;
+    laser_t *z_laser = laser_init(USB_TX);
+    z_laser->value = 3;
+    sonar_t *z_sonar = sonar_init(P0, P1);
+    z_sonar->value = 15145; //300cm
     kalman_datafusion_filter(&state, z_laser, z_sonar);
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", state.x_k > x_prev);

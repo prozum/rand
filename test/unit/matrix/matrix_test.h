@@ -8,6 +8,12 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
+#include <stdlib.h>
+
+extern "C" {
+#include "matrix/matrix.h"
+};
+
 class MatrixTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(MatrixTest);
         CPPUNIT_TEST(mult_mat_mat_ValidMatrix_ExpectCorrect);

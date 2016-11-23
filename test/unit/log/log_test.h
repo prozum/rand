@@ -8,6 +8,11 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
+extern "C" {
+#include "core/log.h"
+#include "core/io.h"
+}
+
 class LogTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(LogTest);
         CPPUNIT_TEST(ToggleLogging_ShowAllMessages_ExpectMessage);

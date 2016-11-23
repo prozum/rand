@@ -1,14 +1,11 @@
 #include "kalman/kalman.h"
 
-void kalman_init(kalman_state *state, double _a, double _r, log_sender component) {
-    //Check if the state has been allocated.
-    if (!state) {
-        state = malloc(sizeof(kalman_state));
+kalman_state *kalman_init(double _a, double _r, log_sender component) {
+    kalman_state *state = malloc(sizeof(kalman_state));
 
-        //Insufficient memory on the heap, call for a safe-landing
-        if(!state) {
-            ERROR("Not enough heap-space for Kalman filter.");
-        }
+    //Insufficient memory on the heap, call for a safe-landing
+    if(!state) {
+        ERROR("Not enough heap-space for Kalman filter.");
     }
 
     state->a = _a;

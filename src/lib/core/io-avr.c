@@ -207,8 +207,9 @@ uint8_t eeprom_read(uint16_t p)
 void eeprom_show()
 {
     char tmp[16];
+    int i = 0;
 
-    for (int i = 0; i < EEPROM_SIZE; ++i) {
+    for (i; i < EEPROM_SIZE; ++i) {
         sprintf(tmp, "%d", eeprom_read(i));
         serial_write_string(SERIAL0, tmp);
     }

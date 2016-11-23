@@ -1,15 +1,17 @@
-#include <stdint.h>
-#include "core/io.h"
-#include "core/log.h"
-
 #ifndef RAND_KALMAN_DF_H
 #define RAND_KALMAN_DF_H
+
+#include <stdint.h>
+#include "core/log.h"
+#include "matrix/matrix.h"
+#include <math.h>
+
 /*We're doing a specific implementation of the Kalman filter for two units (laser + sonar)*/
 #define DATAFUSION_UNITS 2
 #define ZLASER 0
 #define ZSONAR 1
 
-typedef struct kalman_matrix_state_t {
+typedef struct kalman_matrix_state_s {
     log_sender source_components;
 
     float a; //How much we assume the next measurement differs from the previous one
@@ -26,7 +28,7 @@ typedef struct kalman_matrix_state_t {
 
 } kalman_state_matrix;
 
-void kalman_datafusion_init (kalman_state_matrix *state, float a, float b, float p_0, log_sender component,
+kalman_state_matrix *kalman_datafusion_init (float a, float b, log_sender component,
                              float **C, float **R);
 void kalman_datafusion_filter (kalman_state_matrix *state, float z_laser, float z_sonar);
 void kalman_datafusion_calibrate (kalman_state_matrix *state, float z_0_laser, float z_0_sonar);

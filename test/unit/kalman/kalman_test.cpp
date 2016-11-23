@@ -1,6 +1,4 @@
 #include "kalman_test.h"
-#include <stdlib.h>
-#include <cmath>
 
 extern "C" {
 #include "kalman/kalman.h"

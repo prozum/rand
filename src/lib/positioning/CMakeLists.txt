@@ -1,6 +1,6 @@
 generate_avr_library(positioning
+        MOCK
     BOARD uno
     SRCS positioning.c
-    HDRS positioning.h
-    LIBS kalman
+    LIBS fc kalman core
 )

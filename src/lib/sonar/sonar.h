@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #include "core/io.h"
-#include "kalman/kalman_datafusion.h"
+#include "core/log.h"
 
 #define SONAR_TIMEOUT 22000 //Just short of 4 meters
 #define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
@@ -19,22 +19,16 @@ typedef struct sonar_s {
     dpin_t trig;
     dpin_t echo;
     uint8_t valid; // flag to check if latest value is valid
-    float value; // latest reading
+    uint16_t value; // latest reading in mikroseconds
 } sonar_t;
 
 sonar_t *sonar_init(dpin_t trig, dpin_t echo);
 
-float read_sonar(sonar_t *sonar);
+void read_sonar(sonar_t *sonar);
 
 float sonar_to_meters(float reading);
 
 void pulse_sonar(sonar_t *sonar);
-
-#if MOCK
-
-void pulse_sonar(sonar_t *sonar);
-
-#endif
 
 #endif //RAND_SONAR_H
 

@@ -8,6 +8,9 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
+#define TRIGGER P2
+#define ECHO P3
+
 class SonarTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(SonarTest);
         CPPUNIT_TEST(sonarInit_expectTriggerOutAndEchoIn);
