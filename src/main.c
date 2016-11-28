@@ -10,20 +10,48 @@ int main ()
 {
     init_not_timed();
 
-    task_init_fc();
-
     // initialize timer dependent tasks
     task_timer_setup();
     task_arm_fc();
 
     while (1) {
         task_pulse();
+
         read_sonar(sonar);
-        IR_read(bottom_ir);
-        IR_read(top_ir);
-        //laser_read(laser);
 
         while (TCNT1 <= MINOR_CYCLE);
+
+        TCNT1 = 0;
+
+        task_pulse();
+
+        while (TCNT1 <= MINOR_CYCLE);
+
+        TCNT1 = 0;
+
+        task_pulse();
+
+        IR_read(bottom_ir);
+        IR_read(top_ir);
+        laser_read_dist(laser);
+
+        while (TCNT1 <= MINOR_CYCLE);
+
+        TCNT1 = 0;
+
+        task_pulse();
+
+        while (TCNT1 <= MINOR_CYCLE);
+
+        TCNT1 = 0;
+
+        task_pulse();
+
+        task_calculate_position();
+
+        while (TCNT1 <= MINOR_CYCLE);
+
+        TCNT1 = 0;
     }
 }
 
@@ -33,6 +61,7 @@ void init_not_timed() {
     laser = laser_init(USB_RX);
     top_ir = IR_init(IR_TOP_PIN);
     bottom_ir = IR_init(IR_BOTTOM_PIN);
+    task_init_fc();
     /*Maybe some error-checking here*/
 
     float a[SENSOR_FILTERS];

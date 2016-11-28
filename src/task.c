@@ -108,3 +108,13 @@ void task_pulse()
     if(THROTTLE == TWO_MS)
         digital_write(THROTTLE, LOW);
 }
+
+void task_update_movement()
+{
+
+}
+
+void task_navigation()
+{
+
+}

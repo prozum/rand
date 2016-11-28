@@ -41,5 +41,7 @@ void task_arm_fc();
 void task_disarm_fc();
 void task_init_fc();
 void task_pulse();
+void task_update_movement();
+void task_navigation();
 
 #endif //RAND_TASK_H

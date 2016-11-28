@@ -19,6 +19,8 @@ typedef struct laser_s {
 
 laser_t *laser_init(tx_t pin);
 
+uint16_t laser_read_dist(laser_t *laser);
+
 #endif //RAND_LASER_H
 
 
