@@ -8,6 +8,12 @@
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestResult.h>
 
+extern "C" {
+#include "kalman/kalman_datafusion.h"
+#include "sonar/sonar.h"
+#include "laser/laser.h"
+}
+
 class KalmanDatafusionTest : public CppUnit::TestCase {
     CPPUNIT_TEST_SUITE(KalmanDatafusionTest);
     CPPUNIT_TEST(KalmanDFInit_NullStateValidParams_StateMallocedAndInitialized);
@@ -23,6 +29,7 @@ class KalmanDatafusionTest : public CppUnit::TestCase {
     CPPUNIT_TEST_SUITE_END();
 private:
     float **R, **C;
+    void assert(kalman_state_matrix *state, const float a, const float b, const float p_0);
 public:
     void setUp();
     void tearDown();

@@ -17,8 +17,9 @@ kalman_state_matrix *kalman_datafusion_init (float a, float b, log_sender compon
     state->b = b;
     state->p_k = 10;
     state->u_k = 1;
-    state->G_k[0][0] = 0;
-    state->G_k[1][0] = 1;
+    state->G_k = matrix_constructor(1, 2);
+    state->G_k->values[0][0] = 1;
+    state->G_k->values[0][1] = 1;
 
     setC(state, C);
     setR(state, R);
@@ -30,8 +31,10 @@ void setC (kalman_state_matrix *state, float **values)
 {
     int i = 0;
 
+    state->C = matrix_constructor(DATAFUSION_UNITS, 1);
+
     for (i; i < DATAFUSION_UNITS; ++i) {
-        state->C[i][0] = values[i][0];
+        state->C->values[i][0] = values[i][0];
     }
 }
 
@@ -39,9 +42,11 @@ void setR (kalman_state_matrix *state, float **values)
 {
     int i = 0, j = 0;
 
+    state->R = matrix_constructor(DATAFUSION_UNITS, DATAFUSION_UNITS);
+
     for (i; i < DATAFUSION_UNITS; ++i) {
         for (j; j < DATAFUSION_UNITS; j++) {
-            state->R[i][j] = values[i][j];
+            state->R->values[i][j] = values[i][j];
         }
     }
 }
@@ -53,29 +58,78 @@ void kalman_datafusion_predict(kalman_state_matrix *state) {
     state->p_k = pow(state->a, 2) * state->x_k;
 }
 
+void calculate_G(kalman_state_matrix *state) {
+    //G = MatrixMatrixMultiply(p * Transpose(c), inv((MatrixMatrixMultiply(C * p, Transpose(C))+R)))
+
+    //Calculate p * Transpose(c)
+    matrix_t *CT = trans_matrix(state->C);
+    matrix_t *CpT = mult_const_vec(CT, state->p_k);
+
+    //calculate inv((MatrixMatrixMultiply(C * p, Transpose(C))+R))
+    matrix_t *Cp = mult_const_vec(state->C, state->p_k);
+    matrix_t *mm_CpCT = mult_mat_mat(Cp, CT);
+    matrix_t *no_inv = add_mat_mat(mm_CpCT, state->R);
+    matrix_t *inv = inv_mat(no_inv);
+
+    //Free previous G and update with new one
+    matrix_destructor(state->G_k);
+    state->G_k = mult_mat_mat(CpT, inv);
+
+    //clean up
+    matrix_destructor(CT);
+    matrix_destructor(CpT);
+    matrix_destructor(Cp);
+    matrix_destructor(mm_CpCT);
+    matrix_destructor(no_inv);
+    matrix_destructor(inv);
+}
+
+void calculate_x(kalman_state_matrix *state) {
+    //x = x + MatrixMatrixMultiply(G, z - C * x)
+
+    //calculate C * x + z
+    matrix_t *Cx = mult_const_vec(state->C, state->x_k);
+    matrix_t *zCx = add_vec_vec(state->z_k, Cx);
+
+    //calculate MatrixMatrixMultiply(G, z - C * x)
+    matrix_t *mmm = mult_mat_mat(state->G_k, zCx);
+
+    //G_k is 1x2 and z - C * x is 2x1 so mmm is 1x1
+    float res = state->x_k +  mmm->values[0][0];
+
+    //Update x of the state
+    state->x_k = res;
+
+    //clean up
+    matrix_destructor(Cx);
+    matrix_destructor(zCx);
+    matrix_destructor(mmm);
+}
+
+void calculate_p(kalman_state_matrix *state) {
+    //p = (1 - MatrixMatrixMultiply(G, C)) * p
+
+    matrix_t *mGC = mult_mat_mat(state->G_k, state->C); //G is 1x2 and C is 2x1 so result is 1x1
+    float res = (1 - mGC->values[0][0]) * state->p_k;
+
+    //update
+    state->p_k = res;
+
+    //clean up
+    matrix_destructor(mGC);
+}
+
 void kalman_datafusion_update(kalman_state_matrix *state) {
-    float **cT = trans_matrix(state->C, 1, 2);
-
-    float **inv = inv_mat(
-            add_mat_mat(mult_mat_mat(mult_const_vec(state->C, state->p_k, 1), cT, 2, 1, 1, 2), state->R, 2));
-
-    //G_k = inv * (p * cT)
-    state->G_k = mult_mat_mat(mult_const_vec(cT, state->p_k, 3), inv, 1, 2, 2, 2);
-
-    //x = x+ G * (z - (C*x))
-    state->x_k = state->x_k +
-                 mult_mat_mat(state->G_k, sub_vec_vec(state->z_k, mult_const_vec(state->C, state->x_k, 1), 2), 2, 2, 2,
-                              2)[0][0];
-
-    state->p_k = (1 - mult_mat_mat(state->G_k, state->C, 1, 2, 2, 2)[0][0]) * state->p_k;
-
-
+    calculate_G(state);
+    calculate_x(state);
+    calculate_p(state);
 }
 
 void kalman_datafusion_filter(kalman_state_matrix *state, float z_laser, float z_sonar) {
-    //Create a vector of the current readings.
-    state->z_k[ZLASER][0] = z_laser;
-    state->z_k[ZSONAR][0] = z_sonar;
+    //Update the z-vector with the current readings.
+    state->z_k->values[ZLASER][0] = z_laser;
+    state->z_k->values[ZSONAR][0] = z_sonar;
+
     //Filter
     kalman_datafusion_predict(state);
     kalman_datafusion_update(state);
@@ -117,7 +171,7 @@ void calibrate_open_space(kalman_state_matrix *state, float z_0_laser, float z_0
     int i, j;
     for (i = 0; i < DATAFUSION_UNITS; ++i) {
         for (j = 0; j < DATAFUSION_UNITS; ++j) {
-            r_avg += state->R[i][j];
+            r_avg += state->R->values[i][j];
         }
     }
     r_avg = r_avg / (2 * DATAFUSION_UNITS);

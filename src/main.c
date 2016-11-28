@@ -47,7 +47,7 @@ int main ()
 
         task_pulse();
 
-        task_calculate_position();
+        //task_calculate_position();
 
         while (TCNT1 <= MINOR_CYCLE);
 

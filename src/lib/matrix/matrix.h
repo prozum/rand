@@ -3,30 +3,39 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "core/log.h"
 
-float **
-mult_mat_mat(float **m1, float **m2, uint8_t ma1_rows, uint8_t ma1_columns, uint8_t ma2_rows, uint8_t ma2_columns);
+typedef struct matrix_s {
+    uint8_t rows, columns;
+    float **values;
+} matrix_t;
 
-float **mult_mat_vec(float **m, float **v, uint8_t rows, uint8_t cols);
+matrix_t *mult_mat_mat(matrix_t *left_matrix, matrix_t *right_matrix);
 
-float **trans_matrix(float **m1, uint8_t rows, uint8_t cols);
+matrix_t *mult_mat_vec(matrix_t *matrix, matrix_t *vector);
 
-float **add_mat_mat(float **m1, float **m2, uint8_t size);
+matrix_t *trans_matrix(matrix_t *matrix);
 
-float **sub_mat_mat(float **m1, float **m2, uint8_t size);
+matrix_t *add_mat_mat(matrix_t *left, matrix_t *right);
 
-float **ident_mat(uint8_t id);
+matrix_t *sub_mat_mat(matrix_t *left, matrix_t *right);
 
-float **mult_const_vec(float **vec1, float k, uint8_t rows);
+matrix_t *ident_mat(uint8_t size);
 
-float **add_vec_vec(float **vec1, float **vec2, uint8_t size);
+matrix_t *mult_const_vec(matrix_t *vector, float k);
 
-float **sub_vec_vec(float **vec1, float **vec2, uint8_t size);
+matrix_t *add_vec_vec(matrix_t *left_vector, matrix_t *right_vector);
 
-float **inv_mat(float **ma1);
+matrix_t *sub_vec_vec(matrix_t *left, matrix_t *right);
 
-void mat_T(float *m);
+matrix_t *inv_mat(matrix_t *matrix);
 
-void mat_inv(float *m);
+/*void mat_T(float *m);
+
+void mat_inv(float *m);*/
+
+matrix_t *matrix_constructor(uint8_t rows, uint8_t columns);
+
+void matrix_destructor(matrix_t *matrix);
 
 #endif //RAND_MATRIX_MATH_H
