@@ -1,6 +1,5 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-
 #include <iostream>
 
 // Setup
@@ -42,6 +41,7 @@ int main(int argc, char *args[]) {
 
     RunSim();
 
+    
     // Clean up
     TTF_CloseFont(font);
     TTF_Quit();
@@ -90,7 +90,8 @@ bool SetupTTF(const std::string &fontName) {
     }
 
     // Load our fonts, with a huge size
-    font = TTF_OpenFont(fontName.c_str(), 90);
+    std::string path = std::string(SDL_GetBasePath()) + fontName;
+    font = TTF_OpenFont(path.c_str(), 90);
 
     // Error check
     if (font == nullptr) {
