@@ -34,7 +34,7 @@ const uint8_t dpinss = {
     _BV(PORTD7),                                        // D
     _BV(PORTG2), _BV(PORTG1), _BV(PORTG0),              // G
     _BV(PORTL7), _BV(PORTL6), _BV(PORTL5), _BV(PORTL4), _BV(PORTL3), _BV(PORTL2), _BV(PORTL1), _BV(PORTL0), // L
-    _BV(PORTB3), _BV(PORTB2), _BV(PORTB1), _BV(PORTB0) // B
+    _BV(PORTB3), _BV(PORTB2), _BV(PORTB1), _BV(PORTB0)  // B
 };
 
 
