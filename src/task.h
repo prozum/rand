@@ -36,10 +36,21 @@ position_t *recent_position;
 
 void task_timer_setup();
 
+/*pre-timer initialization*/
+void init_not_timed();
+
 /*flight controller tasks*/
 void task_arm_fc();
 void task_disarm_fc();
 void task_init_fc();
 void task_pulse();
+
+/*sensor tasks*/
+void task_read_laser();
+void task_read_ir();
+void task_read_sonar();
+
+/*machine intelligence task*/
+void task_navigation();
 
 #endif //RAND_TASK_H

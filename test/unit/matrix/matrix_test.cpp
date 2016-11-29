@@ -2,70 +2,71 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
 
-void MatrixTest::setUp() {
-    float mat1[3][3] = {{9.1, 6.0, 2.8},
+void MatrixTest::setUp_mat1() {
+    float mat[3][3] = {{9.1, 6.0, 2.8},
                         {7.4, 1.0, 3.0},
                         {4.5, 0.0, 8.0}};
-    float mat2[3][3] = {{1.0, 2.0, 3.0},
+    for (int i = 0; i < ma1->rows; ++i) {
+        for (int j = 0; j < ma1->columns; ++j) {
+            ma1->values[i][j] = mat[i][j];
+        }
+    }
+}
+
+void MatrixTest::setup_mat2() {
+    float mat[3][3] = {{1.0, 2.0, 3.0},
                         {4.0, 5.0, 6.0},
                         {7.0, 8.0, 9.0}};
-    float mat3[2][2] = {{32.1, 8.3},
+    for (int i = 0; i < ma2->rows; ++i) {
+        for (int j = 0; j < ma2->columns; ++j) {
+            ma2->values[i][j] = mat[i][j];
+        }
+    }
+}
+
+void MatrixTest::setup_mat3() {
+    float mat[2][2] = {{32.1, 8.3},
                         {0.72, 43.7}};
-    float mat4[3][2] = {{1, 2},
+    for (int i = 0; i < ma3->rows; ++i) {
+        for (int j = 0; j < ma3->columns; ++j) {
+            ma3->values[i][j] = mat[i][j];
+        }
+    }
+
+}
+
+void MatrixTest::setup_mat4() {
+    float mat[3][2] = {{1, 2},
                         {3, 4},
                         {5, 6}};
 
-    vec1 = (float **) malloc(3 * sizeof(float *));
-    for (int k = 0; k < 3; ++k) {
-        vec1[k] = (float *) malloc(sizeof(float));
-    }
-    vec1[0][0] = 1;
-    vec1[1][0] = 2;
-    vec1[2][0] = 1;
-
-    int size = 3, row, col, i, j;
-    ma1 = (float **) malloc(size * sizeof(float *));
-    ma2 = (float **) malloc(size * sizeof(float *));
-    ma3 = (float **) malloc(size * sizeof(float *));
-    ma4 = (float **) malloc(size * sizeof(float *));
-
-
-    //Allocating space for second dimension
-    for (row = 0; row < size; ++row) {
-        ma1[row] = (float *) malloc(size * sizeof(float));
-    }
-    for (row = 0; row < size; ++row) {
-        ma2[row] = (float *) malloc(size * sizeof(float));
-    }
-    for (row = 0; row < 2; ++row) {
-        ma3[row] = (float *) malloc(2 * sizeof(float));
-    }
-    for (row = 0; row < 2; ++row) {
-        ma4[row] = (float *) malloc(3 * sizeof(float));
-    }
-
-    //Setting values to test values from mat1 and 4
-    for (row = 0; row < size; row++) {
-        for (col = 0; col < size; col++) {
-            ma1[row][col] = mat1[row][col];
+    for (int i = 0; i < ma4->rows; ++i) {
+        for (int j = 0; j < ma4->columns; ++j) {
+            ma4->values[i][j] = mat[i][j];
         }
     }
+}
 
-    for (row = 0; row < size; row++) {
-        for (col = 0; col < size; col++) {
-            ma2[row][col] = mat2[row][col];
-        }
+void MatrixTest::setup_vec() {
+    float ve[3][1] = {{1} , {2}, {1}};
+
+    for (int i = 0; i < vec->columns; ++i) {
+        vec->values[i][0] = ve[i][0];
     }
-    for (row = 0; row < 2; ++row) {
-        for (col = 0; col < 2; ++col) {
-            ma3[row][col] = mat3[row][col];
-        }
-    }
-    for (row = 0; row < 3; ++row) {
-        for (col = 0; col < 2; ++col) {
-            ma4[row][col] = mat4[row][col];
-        }
-    }
+}
+
+void MatrixTest::setUp() {
+    ma1 = matrix_constructor(3, 3);
+    setUp_mat1();
+    ma2 = matrix_constructor(3, 3);
+    setup_mat2();
+    ma3 = matrix_constructor(2, 2);
+    setup_mat3();
+    ma4 = matrix_constructor(3, 2);
+    setup_mat4();
+
+    vec = matrix_constructor(3, 1);
+    setup_vec();
 }
 
 void MatrixTest::tearDown() {
@@ -77,24 +78,26 @@ void MatrixTest::tearDown() {
 }
 
 void MatrixTest::mult_mat_mat_ValidMatrix_ExpectCorrect() {
-    double **resMat;
+    matrix_t *resMat = mult_mat_mat(ma1, ma2);
     //double **resMat = mult_mat_mat(ma1, ma2, 3, 3, 3, 3);
-    double ResMulMat3x3[3][3] = {{52.7, 70.6, 88.5},
+    float ResMulMat3x3[3][3] = {{52.7, 70.6, 88.5},
                                  {32.4, 43.8, 55.2},
                                  {60.5, 73.0, 85.5}};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResMulMat3x3[i][j] != resMat[i][j])
+            if (ResMulMat3x3[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
+
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::mult_mat_mat_InvalidMatrix_ExpectError() {
-    double **resMat;
+    matrix_t *resMat = mult_mat_mat(ma1, ma3);
     //double **resMat = mult_mat_mat(ma1, ma3, 3, 3, 2, 2);
     double ResMulMat3x3[3][3] = {{52.7, 70.6, 88.5},
                                  {32.4, 43.8, 55.2},
@@ -103,15 +106,16 @@ void MatrixTest::mult_mat_mat_InvalidMatrix_ExpectError() {
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResMulMat3x3[i][j] != resMat[i][j])
+            if (ResMulMat3x3[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(false, IsEqual);
 }
 
 void MatrixTest::mult_mat_mat_DifferentSizes_ExpectCorrect() {
-    float **resMat;
+    matrix_t *resMat;
     //resMat = mult_mat_mat(ma1, ma4, 3, 3, 3, 2);
     float ResMulMat[3][2] = {{41.1, 59},
                              {25.4, 36.8},
@@ -120,226 +124,225 @@ void MatrixTest::mult_mat_mat_DifferentSizes_ExpectCorrect() {
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 2; ++j) {
-            if (ResMulMat[i][j] != resMat[i][j])
+            if (ResMulMat[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::trans_matrix_SquareMatrix_ExpectTransposed() {
-    double ResTransMat[3][3] = {{1, 4, 7},
+    float ResTransMat[3][3] = {{1, 4, 7},
                                 {2, 5, 8},
                                 {3, 6, 9}};
-    double **resMat;
-    //double **resMat = trans_matrix(ma2);
+    matrix_t *resMat = trans_matrix(ma2);
 
     bool IsEqual = true;
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResTransMat[i][j] != resMat[i][j])
+            if (ResTransMat[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::trans_matrix_NotSquareMatrix_ExpectTransposed() {
-    double ResTransMat[3][3] = {{1, 3, 5},
+    float ResTransMat[3][3] = {{1, 3, 5},
                                 {2, 4, 6}};
-    double **resMat;
-    //double **resMat = trans_matrix(ma4);
+    matrix_t *resMat = trans_matrix(ma4);
 
     bool IsEqual = true;
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 2; ++j) {
-            if (ResTransMat[i][j] != resMat[i][j])
+            if (ResTransMat[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::add_mat_mat_ValidMatrix_ExpectCorrect() {
-    double **resMat;
-    //double **resMat = add_mat_mat(ma1, ma2);
-    double ResAddMat3x3[3][3] = {{10.1, 8, 5.8},
+    matrix_t *resMat = add_mat_mat(ma1, ma2);
+    float ResAddMat3x3[3][3] = {{10.1, 8, 5.8},
                                  {11.4, 6, 9},
                                  {11.5, 8, 17}};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResAddMat3x3[i][j] != resMat[i][j])
+            if (ResAddMat3x3[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(false, IsEqual);
 }
 
 void MatrixTest::add_mat_mat_InvalidMatrix_ExpectError() {
-    double **resMat;
-    //double **resMat = add_mat_mat(ma1, ma3);
-    double ResAddMat3x3[3][3] = {{10.1, 8, 5.8},
+    matrix_t *resMat = add_mat_mat(ma1, ma3);
+    float ResAddMat3x3[3][3] = {{10.1, 8, 5.8},
                                  {11.4, 6, 9},
                                  {11.5, 8, 17}};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResAddMat3x3[i][j] != resMat[i][j])
+            if (ResAddMat3x3[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(false, IsEqual);
 }
 
 void MatrixTest::sub_mat_mat_ValidMatrix_ExpectCorrect() {
-    double **resMat;
+    matrix_t *resMat;
     //double **resMat = sub_mat_mat(ma1, ma2);
-    double ResSubMat3x3[3][3] = {{8.1,  4,  -0.2},
+    float ResSubMat3x3[3][3] = {{8.1,  4,  -0.2},
                                  {3.4,  -4, -3},
                                  {-2.5, -8, -1}};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResSubMat3x3[i][j] != resMat[i][j])
+            if (ResSubMat3x3[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(false, IsEqual);
 }
 
 void MatrixTest::sub_mat_mat_InvalidMatrix_ExpectError() {
-    double **resMat;
-    //double **resMat = sub_mat_mat(ma1, ma3);
-    double ResSubMat3x3[3][3] = {{8.1,  4,  -0.2},
+    matrix_t *resMat = sub_mat_mat(ma1, ma3);
+    float ResSubMat3x3[3][3] = {{8.1,  4,  -0.2},
                                  {3.4,  -4, -3},
                                  {-2.5, -8, -1}};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResSubMat3x3[i][j] != resMat[i][j])
+            if (ResSubMat3x3[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(false, IsEqual);
 }
 
 void MatrixTest::ident_mat_ExpectCorrect() {
-    double **resMat;
-    //double **resMat = ident_mat(3);
-    double ResIdentMat3[3][3] = {{1, 0, 0},
+    matrix_t *resMat = ident_mat(3);
+    float ResIdentMat3[3][3] = {{1, 0, 0},
                                  {0, 1, 0},
                                  {0, 0, 1}};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResIdentMat3[i][j] != resMat[i][j])
+            if (ResIdentMat3[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::add_vec_vec_ValidVectors_ExpectCorrect() {
-    float **ResVec = add_vec_vec(vec1, vec1, 3);
+    matrix_t *ResVec = add_vec_vec(vec, vec);
 
-    double ResAddVec[] = {2, 4, 2};
+    float ResAddVec[] = {2, 4, 2};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
-        if (ResAddVec[i] != ResVec[0][i])
+        if (ResAddVec[i] != ResVec->values[i][0])
             IsEqual = false;
     }
+    matrix_destructor(ResVec);
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::add_vec_vec_EmptyVector_ExpectError() {
     float ResAddVec[] = {2, 4, 2};
 
-    float **ResVec = add_vec_vec(vec1, vecEmpty, 3);
+    matrix_t *ResVec = add_vec_vec(vec, vecEmpty);
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
-        if (ResAddVec[i] != ResVec[0][i])
+        if (ResAddVec[i] != ResVec->values[0][i])
             IsEqual = false;
     }
+    matrix_destructor(ResVec);
     CPPUNIT_ASSERT_EQUAL(false, IsEqual);
 }
 
 void MatrixTest::sub_vec_Vec_ValidVectors_ExpectCorrect() {
     float ResSubVec[] = {0, 0, 0};
 
-    float **ResVec = sub_vec_vec(vec1, vec1, 3);
+    matrix_t *ResVec = sub_vec_vec(vec, vec);
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
-        if (ResSubVec[i] != ResVec[0][i])
+        if (ResSubVec[i] != ResVec->values[0][i])
             IsEqual = false;
     }
+    matrix_destructor(ResVec);
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::sub_vec_vec_EmptyVectors_ExpectError() {
     float ResSubVec[] = {0, 0, 0};
-    float **ResVec = sub_vec_vec(vec1, vecEmpty, 3);
+    matrix_t *ResVec = sub_vec_vec(vec, vecEmpty);
 
-    bool IsEqual = true;
-    for (int i = 0; i < 3; ++i) {
-        if (ResSubVec[i] != ResVec[0][i])
-            IsEqual = false;
-    }
-    CPPUNIT_ASSERT_EQUAL(false, IsEqual);
+    CPPUNIT_ASSERT_MESSAGE("sub_vec_vec allocated a vector eventhough a parameter was NULL.", ResVec == NULL);
 }
 
 void MatrixTest::inv_mat_ValidMatrix_ExpectCorrect() {
-    double **resMat, InvMat[3][3] = {{1, 2, 3},
-                                     {0, 1, 4},
-                                     {5, 6, 0}}, **matToInv;
+    float InvMat[3][3] = {{1, 2, 3},
+                         {0, 1, 4},
+                         {5, 6, 0}};
 
-    matToInv = (double **) malloc(3 * sizeof(double *));
-    for (int i = 0; i < 3; ++i) {
-        matToInv[i] = (double *) malloc(3 * sizeof(double));
-    }
+    matrix_t *matToInv = matrix_constructor(3, 3);
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            matToInv[i][j] = InvMat[i][j];
+            matToInv->values[i][j] = InvMat[i][j];
         }
     }
 
-    //resMat = inv_mat(matToInv);
-    double ResMat[3][3] = {{-24, 18,  5},
+    matrix_t *resMat = inv_mat(matToInv);
+    float ResMat[3][3] = {{-24, 18,  5},
                            {20,  -15, -4},
                            {-5,  4,   1}};
 
     bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResMat[i][j] != resMat[i][j])
+            if (ResMat[i][j] != resMat->values[i][j])
                 IsEqual = false;
         }
     }
+    matrix_destructor(matToInv);
+    matrix_destructor(resMat);
     CPPUNIT_ASSERT_EQUAL(true, IsEqual);
 }
 
 void MatrixTest::inv_mat_InvalidMatrix_ExpectError() {
-    double **actualResMat, ResMat[3][3] = {{-24, 18,  5},
-                                           {20,  -15, -4},
-                                           {-5,  4,   1}};
+    float ResMat[3][3] = {  {-24, 18,  5},
+                            {20,  -15, -4},
+                            {-5,  4,   1}};
 
-    //double **actualResMat = inv_mat(ma2);
+    matrix_t *matToInv = matrix_constructor(3, 3);
 
-    bool IsEqual = true;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            if (ResMat[i][j] != actualResMat[i][j])
-                IsEqual = false;
+            matToInv->values[i][j] = ResMat[i][j];
         }
     }
-    CPPUNIT_ASSERT_EQUAL(false, IsEqual);
+
+    matrix_t *res = inv_mat(matToInv);
+    CPPUNIT_ASSERT(NULL == res);
 }

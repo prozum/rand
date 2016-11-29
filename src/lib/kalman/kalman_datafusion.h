@@ -16,12 +16,12 @@ typedef struct kalman_matrix_state_s {
 
     float a; //How much we assume the next measurement differs from the previous one
     float b; //Weight of control-input in next estimate
-    float **C; //Noise scale constant[]
-    float **R; //variance of sensor, i.e. how much a measurement tends to differ from the actual [][]
+    matrix_t *C; //Noise scale constant[]
+    matrix_t *R; //variance of sensor, i.e. how much a measurement tends to differ from the actual [][]
 
     float u_k; //Control signal
-    float **z_k; //Current observation []
-    float **G_k; //kalman gain vector   []
+    matrix_t *z_k; //Current observation []
+    matrix_t *G_k; //kalman gain vector   []
     float p_k; //prediction error matrix
 
     float x_k; //State variable

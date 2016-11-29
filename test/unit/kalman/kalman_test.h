@@ -14,8 +14,7 @@
 
 class KalmanTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(KalmanTest);
-        CPPUNIT_TEST(KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced);
-        CPPUNIT_TEST(KalmanInit_ValidStateValidParams_ExpectStateWithEqualParams);
+        CPPUNIT_TEST(KalmanInit_ValidParams_ExpectValidStateMalloced);
         CPPUNIT_TEST(KalmanRun_NullStateValidParam_ExpectStateStillNull);
         CPPUNIT_TEST(KalmanRun_ValidStatezkGxk_ExpectxkGxkprev);
         CPPUNIT_TEST(KalmanRun_ValidStatezkLxk_ExpectxkLxkprev);
@@ -24,9 +23,7 @@ class KalmanTest : public CppUnit::TestCase {
 
 public:
 
-    void KalmanInit_NullAsStateValidParams_ExpectValidStateMalloced();
-
-    void KalmanInit_ValidStateValidParams_ExpectStateWithEqualParams();
+    void KalmanInit_ValidParams_ExpectValidStateMalloced();
 
     void KalmanRun_NullStateValidParam_ExpectStateStillNull();
 

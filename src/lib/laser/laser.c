@@ -1,7 +1,5 @@
 #include "laser/laser.h"
 
-uint8_t laser_valid_reading;
-
 laser_t *laser_init(tx_t pin) {
     laser_t *laser = malloc(sizeof(laser_t));
 
@@ -12,4 +10,15 @@ laser_t *laser_init(tx_t pin) {
     laser->front_value = 0;
 
     return laser;
+}
+
+uint16_t laser_read_dist(laser_t *laser)
+{
+    laser->front_value = atoi(serial_read_string_nowait(SERIAL0, 4));
+
+    if (laser->front_value == 0) {
+        laser->valid = 0;
+    } else  {
+        laser->valid = 1;
+    }
 }

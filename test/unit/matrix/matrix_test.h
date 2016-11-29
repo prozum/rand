@@ -40,7 +40,13 @@ class MatrixTest : public CppUnit::TestCase {
         CPPUNIT_TEST(inv_mat_InvalidMatrix_ExpectError);
         CPPUNIT_TEST_SUITE_END();
 private:
-    float **ma1, **ma2, **ma3, **ma4, **vec1, **vecEmpty;
+    matrix_t *ma1, *ma2, *ma3, *ma4, *vec, *vecEmpty;
+
+    void setUp_mat1();
+    void setup_mat2();
+    void setup_mat3();
+    void setup_mat4();
+    void setup_vec();
 public:
     void setUp();
 
