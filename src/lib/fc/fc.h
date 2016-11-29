@@ -2,51 +2,64 @@
 #define RAND_FC_H
 
 #include <stdint.h>
+#include <stdlib.h>
 
-typedef struct acceleration_s { /* between 0-1 negative acceleration, between 1-2 positive acceleration */
-    // positive(1-2)/negative(0-1)
-    float x; // up/down
+#include "sonar/sonar.h"
+#include "laser/laser.h"
+#include "ir/ir.h"
+#include "positioning/positioning.h"
+#include "core/log.h"
+#include "core/io.h"
+
+typedef struct acceleration_s {
+    float x; // left/right
     float y; // forward/backwards
-    float z; // left/right
+    float z; // up/down
 } acceleration_t;
 
-uint16_t yaw;
-uint16_t pitch;
-uint16_t roll;
-uint16_t throttle;
+typedef struct duty_s {
+    uint16_t MIN_FC_DUTY;
+    uint16_t MID_FC_DUTY;
+    uint16_t MAX_FC_DUTY;
+} duty_t;
 
-static uint16_t MIN_FC_DUTY;
-static uint16_t MID_FC_DUTY;
-static uint16_t MAX_FC_DUTY;
+typedef struct fc_s {
+    duty_t *duty;
+    acceleration_t *acc;
+    serial_t serial;
+
+    uint16_t yaw;
+    uint16_t pitch;
+    uint16_t roll;
+    uint16_t throttle;
+} fc_t;
 
 // ms = value of 1 ms
-void init_fc(uint16_t ms);
+void init_fc(fc_t *fc, serial_t serial, uint16_t ms);
+void clean_fc(fc_t *fc);
+void set_arm(fc_t *fc);
+void set_disarm(fc_t *fc);
 
-void reset();
+void rotate_left(fc_t *fc);
 
-void set_arm();
-void set_disarm();
+void rotate_right(fc_t *fc);
 
-void rotate_left();
+void rotate_stop(fc_t *fc);
 
-void rotate_right();
+void move_left(fc_t *fc);
 
-void rotate_stop();
+void move_right(fc_t *fc);
 
-void move_left();
+void move_forward(fc_t *fc);
 
-void move_right();
+void move_back(fc_t *fc);
 
-void move_forward();
+void move_up(fc_t *fc);
 
-void move_back();
+void move_down(fc_t *fc);
 
-void move_up();
+void move_stop(fc_t *fc);
 
-void move_down();
-
-void move_stop();
-
-acceleration_t fc_read_acceleration();
+acceleration_t fc_read_acceleration(fc_t *fc);
 
 #endif //RAND_FC_H

@@ -1,83 +1,94 @@
 #include "fc/fc.h"
-#include "core/log.h"
+#include <core/m328p.h>
 
-void init_fc(uint16_t ms)
+void init_fc(fc_t *fc, serial_t serial, uint16_t ms)
 {
-    MIN_FC_DUTY = ms;
-    MID_FC_DUTY = (ms * 1.5);
-    MAX_FC_DUTY = (ms * 2);
+    fc->acc = (acceleration_t *)malloc(sizeof(acceleration_t));
+    fc->duty = (duty_t *)malloc(sizeof(duty_t));
+    fc->serial = serial;
+
+    fc->duty->MIN_FC_DUTY = ms;
+    fc->duty->MID_FC_DUTY = (uint16_t)(ms * 1.5);
+    fc->duty->MAX_FC_DUTY = (uint16_t)(ms * 2);
 }
 
-void set_arm()
+void clean_fc(fc_t *fc)
 {
-    yaw = MAX_FC_DUTY;
-    throttle = MIN_FC_DUTY;
-    pitch = MID_FC_DUTY;
-    roll = MID_FC_DUTY;
+    free(fc->acc);
+    free(fc->duty);
+    free(fc);
 }
 
-void set_disarm()
+void set_arm(fc_t *fc)
 {
-    yaw = MIN_FC_DUTY;
-    throttle = MIN_FC_DUTY;
-    pitch = MID_FC_DUTY;
-    roll = MID_FC_DUTY;
+    fc->yaw = fc->duty->MAX_FC_DUTY;
+    fc->throttle = fc->duty->MIN_FC_DUTY;
+    fc->pitch = fc->duty->MID_FC_DUTY;
+    fc->roll = fc->duty->MID_FC_DUTY;
 }
 
-void rotate_left()
+void set_disarm(fc_t *fc)
 {
-    yaw = MIN_FC_DUTY;
+    fc->yaw = fc->duty->MIN_FC_DUTY;
+    fc->throttle = fc->duty->MIN_FC_DUTY;
+    fc->pitch = fc->duty->MID_FC_DUTY;
+    fc->roll = fc->duty->MID_FC_DUTY;
 }
 
-void rotate_right()
+void rotate_left(fc_t *fc)
 {
-    yaw = MAX_FC_DUTY;
+    fc->yaw = fc->duty->MIN_FC_DUTY;
 }
 
-void rotate_stop()
+void rotate_right(fc_t *fc)
 {
-    yaw = MID_FC_DUTY;
+    fc->yaw = fc->duty->MAX_FC_DUTY;
 }
 
-void move_left()
+void rotate_stop(fc_t *fc)
 {
-    roll = MIN_FC_DUTY;
+    fc->yaw = fc->duty->MID_FC_DUTY;
 }
 
-void move_right()
+void move_left(fc_t *fc)
 {
-    roll = MAX_FC_DUTY;
+    fc->roll = fc->duty->MIN_FC_DUTY;
 }
 
-void move_forward()
+void move_right(fc_t *fc)
 {
-    pitch = MAX_FC_DUTY;
+    fc->roll = fc->duty->MAX_FC_DUTY;
 }
 
-void move_back()
+void move_forward(fc_t *fc)
 {
-    pitch = MIN_FC_DUTY;
+    fc->pitch = fc->duty->MAX_FC_DUTY;
 }
 
-void move_up()
+void move_back(fc_t *fc)
 {
-    throttle = MAX_FC_DUTY;
+    fc->pitch = fc->duty->MIN_FC_DUTY;
 }
 
-void move_down()
+void move_up(fc_t *fc)
 {
-    throttle = MIN_FC_DUTY;
+    fc->throttle = fc->duty->MAX_FC_DUTY;
 }
 
-void move_stop()
+void move_down(fc_t *fc)
 {
-    throttle = MID_FC_DUTY;
-    pitch = MID_FC_DUTY;
-    roll = MID_FC_DUTY;
-    yaw = MID_FC_DUTY;
+    fc->throttle = fc->duty->MIN_FC_DUTY;
 }
 
-acceleration_t fc_read_acceleration() {
+void move_stop(fc_t *fc)
+{
+    fc->throttle = fc->duty->MID_FC_DUTY;
+    fc->pitch = fc->duty->MID_FC_DUTY;
+    fc->roll = fc->duty->MID_FC_DUTY;
+    fc->yaw = fc->duty->MID_FC_DUTY;
+}
+
+acceleration_t fc_read_acceleration(fc_t *fc) {
     ERROR("This function is not supported yet.");
 
     acceleration_t accel = {0, 0, 0};
