@@ -172,7 +172,11 @@ void task_read_ir()
     IR_read(bottom_ir);
     IR_read(top_ir);
 }
+
 void task_read_sonar()
+{
+    sonar->valid = 0;
+
     uint16_t start, stop;
     uint16_t next_ping = TCNT1 + TWO_MS;
 
@@ -182,23 +186,27 @@ void task_read_sonar()
 
     next_ping = TCNT1 + TWO_MS;
     sonar_ping(sonar, HIGH);
-    while(TCNT1 < next_ping);
 
+    while(TCNT1 < next_ping);
     sonar_ping(sonar, LOW);
 
     //Start timer and read sonar and stop timer
+    stop = TCNT1 + SONAR_TIMEOUT;
     start = TCNT1;
-    read_sonar(sonar);
-    stop = TCNT1;
 
-    //If the value was valid convert the value and update the struct
-    if(sonar->valid) {
-        sonar->value = sonar_to_meters(TIMER_TICK_TO_MILIS(stop - start));
-    }
-    else {
-        sonar->value = 0;
+    while (TCNT1 < stop)
+    {
+        read_sonar(sonar);
+
+        if (sonar->echo) {
+            sonar->value = TCNT1 - start;
+            sonar->valid = 1;
+            sonar->value = sonar_to_meters(sonar->value);
+            break;
+        }
     }
 }
+
 void task_read_acceleration()
 {
     fc_read_acceleration(fc);

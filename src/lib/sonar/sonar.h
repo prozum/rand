@@ -7,7 +7,6 @@
 #include "core/io.h"
 #include "core/log.h"
 
-#define SONAR_TIMEOUT 11000 //microseconds - Just short of 2 meters
 #define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
 
 #if !MOCK

@@ -25,6 +25,7 @@
 #define PITCH       P10
 #define THROTTLE    P11
 
+#define SONAR_TIMEOUT 11 * ONE_MS
 #define SONAR_TRIGGER_PIN P2
 #define SONAR_ECHO_PIN P3
 #define IR_BOTTOM_PIN A0

@@ -222,6 +222,7 @@ void eeprom_show()
  * @param timeout the maximum time in microseconds to wait for the pulse
  * @return 1 if the value was read, 0 otherwise
  */
+/*
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
     uint8_t pin_ = dpins[pin];
@@ -260,3 +261,4 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 
     return 1;
 }
+ */

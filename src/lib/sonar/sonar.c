@@ -24,7 +24,8 @@ void sonar_ping(sonar_t *sonar, dval_t value) {
 }
 
 void read_sonar(sonar_t *sonar) {
-    sonar->valid = pulse_in(sonar->echo, HIGH, SONAR_TIMEOUT);
+    //sonar->valid = pulse_in(sonar->echo, HIGH, SONAR_TIMEOUT);
+    digital_read(sonar->echo);
 }
 
 float sonar_to_meters(float reading) {
