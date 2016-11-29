@@ -66,7 +66,7 @@ void task_timer_setup()
 
 void task_init_fc()
 {
-    init_fc(ONE_MS);
+    init_fc(fc, SERIAL0, ONE_MS);
 
     set_pin_mode(YAW, OUTPUT);
     set_pin_mode(ROLL, OUTPUT);
@@ -76,7 +76,7 @@ void task_init_fc()
 
 void task_arm_fc()
 {
-    set_arm();
+    set_arm(fc);
 
     int i;
 
@@ -92,7 +92,7 @@ void task_arm_fc()
 
 void task_disarm_fc()
 {
-    set_disarm();
+    set_disarm(fc);
 
     int i;
 
@@ -115,44 +115,44 @@ void task_pulse()
 
     while (TCNT1 <= ONE_MS);
 
-    if(YAW == ONE_MS)
+    if(fc->yaw == ONE_MS)
         digital_write(YAW, LOW);
 
-    if(ROLL == ONE_MS)
+    if(fc->roll == ONE_MS)
         digital_write(ROLL, LOW);
 
-    if(PITCH == ONE_MS)
+    if(fc->pitch == ONE_MS)
         digital_write(PITCH, LOW);
 
-    if(THROTTLE == ONE_MS)
+    if(fc->throttle == ONE_MS)
         digital_write(THROTTLE, LOW);
 
     while (TCNT1 <= ONE_AND_A_HALF_MS);
 
-    if(YAW == ONE_AND_A_HALF_MS)
+    if(fc->yaw == ONE_AND_A_HALF_MS)
         digital_write(YAW, LOW);
 
-    if(ROLL == ONE_AND_A_HALF_MS)
+    if(fc->roll == ONE_AND_A_HALF_MS)
         digital_write(ROLL, LOW);
 
-    if(PITCH == ONE_AND_A_HALF_MS)
+    if(fc->pitch == ONE_AND_A_HALF_MS)
         digital_write(PITCH, LOW);
 
-    if(THROTTLE == ONE_AND_A_HALF_MS)
+    if(fc->throttle == ONE_AND_A_HALF_MS)
         digital_write(THROTTLE, LOW);
 
     while (TCNT1 <= TWO_MS);
 
-    if(YAW == TWO_MS)
+    if(fc->yaw == TWO_MS)
         digital_write(YAW, LOW);
 
-    if(ROLL == TWO_MS)
+    if(fc->roll == TWO_MS)
         digital_write(ROLL, LOW);
 
-    if(PITCH == TWO_MS)
+    if(fc->pitch == TWO_MS)
         digital_write(PITCH, LOW);
 
-    if(THROTTLE == TWO_MS)
+    if(fc->throttle == TWO_MS)
         digital_write(THROTTLE, LOW);
 }
 
@@ -175,4 +175,9 @@ void task_read_ir()
 void task_read_sonar()
 {
     read_sonar(sonar);
+}
+
+void task_read_acceleration()
+{
+    fc_read_acceleration(fc);
 }

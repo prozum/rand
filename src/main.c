@@ -1,8 +1,4 @@
 #include "task.h"
-#include "sonar/sonar.h"
-#include "laser/laser.h"
-#include "ir/ir.h"
-#include "positioning/positioning.h"
 
 void init_not_timed();
 
