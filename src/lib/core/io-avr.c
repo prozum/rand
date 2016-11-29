@@ -44,13 +44,13 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm) {
             DDRD = (DDRD & ~pin_) | (pin_ * pm);
             break;
         default:
-            LOG_ERROR(SENDER_IO, "Trying to set invalid pin in set_pin_mode");
+            WARNING(SENDER_IO, "Trying to set invalid pin in set_pin_mode");
     }
 }
 
 void digital_write(dpin_t pin, dval_t ps) {
     if (ps != HIGH && ps != LOW) {
-        ERROR("Invalid digital value used in digital_write");
+        WARNING(SENDER_IO, "Invalid digital value used in digital_write");
         return;
     } else if (pin > MAXIMUM_PIN) {
         ERROR("Non-existing pin in digital_write");
@@ -71,7 +71,7 @@ void digital_write(dpin_t pin, dval_t ps) {
             PORTD |= (PORTD & ~pin_) | (pin_ * ps);
             break;
         default:
-            LOG_ERROR(SENDER_IO, "Trying to write to invalid pin in set_pin_mode");
+            ERROR("Trying to write to invalid pin in set_pin_mode");
     }
 }
 
@@ -92,7 +92,7 @@ dval_t digital_read(dpin_t pin) {
             // if the port is PORTD_ then return the pin's value in PORTD
             return (dval_t)(PIND & pin_);
         default:
-            LOG_ERROR(SENDER_IO, "Trying to read from invalid pin in digital_read");
+            ERROR("Trying to read from invalid pin in digital_read");
     }
 }
 
@@ -215,17 +215,23 @@ void eeprom_show()
     }
 }
 
-
+/**
+ * Reads a pulse on the specified pin
+ * @param pin to read from
+ * @param state the pulse starts with this value
+ * @param timeout the maximum time in microseconds to wait for the pulse
+ * @return 1 if the value was read, 0 otherwise
+ */
 uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
 {
     uint8_t pin_ = dpins[pin];
     uint8_t port_ = dports[pin];
     uint8_t state_ = (state ? pin_ : 0);
-    uint16_t width = 0;
 
     uint16_t loop_count = 0;
-    uint16_t loop_max = MS_TO_CLOCK_CYCLES(timeout) / 16; // maybe bitshift with 4 instead
+    uint16_t loop_max = MS_TO_CLOCK_CYCLES(timeout) / 16; //16 clock-cycles pr. loop-iteration?
 
+    //Read first instance of the pulse
     while (((volatile uint8_t)port_to_input[port_]) & pin_ == state_)
     {
         if (loop_count++ == loop_max)
@@ -234,6 +240,7 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
         }
     }
 
+    //Read the following opposite pulse value, i.e. the duck (HIGH-LOW-HIGH) or raise (LOW-HIGH-LOW)
     while (((volatile uint8_t)port_to_input[port_]) & pin_ != state_)
     {
         if (loop_count++ == loop_max)
@@ -242,16 +249,14 @@ uint16_t pulse_in(dpin_t pin, dval_t state, uint16_t timeout)
         }
     }
 
+    //Read the last part of the pulse
     while (((volatile uint8_t)port_to_input[port_]) & pin_ == state_)
     {
         if (loop_count++ == loop_max)
         {
             return 0;
         }
-
-        width++;
     }
 
-
-    return CLOCK_CYCLES_TO_MS(width * 21 + 16);
+    return 1;
 }

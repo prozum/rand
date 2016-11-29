@@ -1,0 +1,24 @@
+--------------- TASKS -----------------
+subprogram "task_pulse"
+  loop 
+    repeat <16128 times;
+  end loop;
+  loop after line 80
+    repeat <7936 times;
+  end loop;
+end "task_pulse";
+
+subprogram "task_sonar"
+  loop
+    repeat <125 times;
+  end loop;
+end "task_sonar";
+
+------------- MATRIX ------------------
+--subprogram "matrix_constructor"
+--
+--end "matrix_constructor";
+
+subprogram "matrix_destructor"
+  loop repeats <3 times; end loop;
+end "matrix_destructor";

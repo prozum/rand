@@ -33,10 +33,12 @@ void SonarTest::readSonar_inRange_expectValidByteOne() {
     uint16_t pulse_emulation = 16000;
     set_pulse(sonar->echo, pulse_emulation); // write to pulse buffer
 
+    pulse_sonar(sonar);
     read_sonar(sonar);
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar did not read a valid value.", pulse_emulation, sonar->value);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The valid byte was not set correctly", 1, (int) sonar->value);
+    uint8_t ONE = 1;
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar did not read a valid value.", 316.92f, sonar->value);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The valid byte was not set correctly", ONE, sonar->valid);
 }
 
 void SonarTest::readSonar_outOfRange_expectValidByteZero() {
@@ -48,10 +50,11 @@ void SonarTest::readSonar_outOfRange_expectValidByteZero() {
 
     set_pulse(sonar->echo, pulse_emulation);
 
+    pulse_sonar(sonar);
     read_sonar(sonar);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar return the reading, even though it was out of range.",
-                                 sonar->value, (uint16_t) 0);
+                                 sonar->value, 0.0f);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", 0, (int) sonar->value);
 }
 
@@ -63,11 +66,13 @@ void SonarTest::readSonar_tooClose_expectValidByteZero() {
     uint16_t pulse_emulation = 50;
     set_pulse(sonar->echo, pulse_emulation);
 
+    pulse_sonar(sonar);
     read_sonar(sonar);
 
+    uint8_t ZERO = 1;
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar return the reading, even though it was out of range.",
-                                 sonar->value, (uint16_t) 0);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", (uint16_t) 0, sonar->value);
+                                 sonar->value, 0.0f);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The sonar failed to set the valid byte to false.", ZERO, sonar->valid);
 }
 
 void SonarTest::sonarInit_expectTriggerOutAndEchoIn() {

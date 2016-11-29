@@ -18,6 +18,8 @@
 #define MINOR_CYCLE 1125
 #define OVERFLOW (MAJOR_CYCLE + ONE_MS) // 100 ms + 1 ms
 
+#define TIMER_TICK_TO_MILIS(x) ((x) / ONE_MS)
+
 #define YAW         P8
 #define ROLL        P9
 #define PITCH       P10
@@ -54,5 +56,6 @@ void task_read_acceleration();
 
 /*machine intelligence task*/
 void task_navigation();
+void task_sonar();
 
 #endif //RAND_TASK_H

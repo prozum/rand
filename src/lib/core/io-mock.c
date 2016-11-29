@@ -210,6 +210,10 @@ char *serial_read_string(tx_t pin, int len) {
     return serial_string_val;
 }
 
+char *serial_read_string_nowait(tx_t pin, int len) {
+    serial_read_string(pin, len);
+}
+
 aval_t analog_buffer[ANALOG_PINS][ANALOG_BUFFER_SIZE];
 uint8_t analog_buf_count[ANALOG_PINS];
 

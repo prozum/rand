@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "matrix/matrix.h"
 
 /**
@@ -61,10 +62,10 @@ matrix_t *mult_const_vec(matrix_t *vector, float k) {
 matrix_t *trans_matrix(matrix_t *matrix) {
     uint8_t i, j;
 
-    matrix_t *res = matrix_constructor(matrix->rows, matrix->columns);
+    matrix_t *res = matrix_constructor(matrix->columns, matrix->rows);
 
-    for (i = 0; i < matrix->rows; ++i) {
-        for (j = 0; j < matrix->columns; ++j) {
+    for (i = 0; i < res->rows; ++i) {
+        for (j = 0; j < res->columns; ++j) {
             res->values[i][j] = matrix->values[j][i];
         }
     }
@@ -248,6 +249,18 @@ matrix_t *inv_mat(matrix_t *matrix) {
     return inv_mat;
 }
 
+matrix_t *ident_mat(uint8_t size) {
+    matrix_t *res = matrix_constructor(size, size);
+
+    uint8_t i, j;
+    for(i = 0; i < size; i++) {
+        for(j = 0; j < size; j++) {
+            if(i == j)
+                res->values[i][j] = 1;
+        }
+    }
+}
+
 /**
  * Allocates a new matrix for use in the matrix-library
  * @param rows of the matrix
@@ -261,7 +274,7 @@ matrix_t *matrix_constructor(uint8_t rows, uint8_t columns) {
     new_matrix->columns = columns;
 
     new_matrix->values = malloc(rows * sizeof(float*));
-    for (i = 0; i < rows; ++i) {
+    for (i = 0; i <= rows; i++) {
         new_matrix->values[i] = malloc(columns * sizeof(float));
     }
 

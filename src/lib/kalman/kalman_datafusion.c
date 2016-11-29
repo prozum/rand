@@ -17,12 +17,18 @@ kalman_state_matrix *kalman_datafusion_init (float a, float b, log_sender compon
     state->b = b;
     state->p_k = 10;
     state->u_k = 1;
+
+    //Initialize G_k
     state->G_k = matrix_constructor(1, 2);
     state->G_k->values[0][0] = 1;
     state->G_k->values[0][1] = 1;
 
+    //Initialize and fill C and R
     setC(state, C);
     setR(state, R);
+
+    //Initialize z_k
+    state->z_k = matrix_constructor(2, 1);
 
     return state;
 }
@@ -33,8 +39,15 @@ void setC (kalman_state_matrix *state, float **values)
 
     state->C = matrix_constructor(DATAFUSION_UNITS, 1);
 
-    for (i; i < DATAFUSION_UNITS; ++i) {
-        state->C->values[i][0] = values[i][0];
+    if(values) {
+        for (i; i < DATAFUSION_UNITS; ++i) {
+            state->C->values[i][0] = values[i][0];
+        }
+    }
+    else {
+        for(i = 0; i < DATAFUSION_UNITS; i++) {
+            state->C->values[i][0] = 1;
+        }
     }
 }
 
@@ -44,9 +57,18 @@ void setR (kalman_state_matrix *state, float **values)
 
     state->R = matrix_constructor(DATAFUSION_UNITS, DATAFUSION_UNITS);
 
-    for (i; i < DATAFUSION_UNITS; ++i) {
-        for (j; j < DATAFUSION_UNITS; j++) {
-            state->R->values[i][j] = values[i][j];
+    if(values) {
+        for (i; i < DATAFUSION_UNITS; ++i) {
+            for (j; j < DATAFUSION_UNITS; j++) {
+                state->R->values[i][j] = values[i][j];
+            }
+        }
+    }
+    else {
+        for (i; i < DATAFUSION_UNITS; ++i) {
+            for (j; j < DATAFUSION_UNITS; j++) {
+                state->R->values[i][j] = 0;
+            }
         }
     }
 }
@@ -54,6 +76,7 @@ void setR (kalman_state_matrix *state, float **values)
 void kalman_datafusion_predict(kalman_state_matrix *state) {
     //x_k = a * x_k + b * u_k (predict the next state from the previous and the control signal)
     state->x_k = state->a * state->x_k + state->b * state->u_k;
+
     //p_k = a^2 * x_k (calculate the uncertainty)
     state->p_k = pow(state->a, 2) * state->x_k;
 }

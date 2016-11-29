@@ -85,7 +85,7 @@ void LOG(log_sender sender, const char *msg) {
  * @param sender is the module to log from
  * @param msg  is the warning to log
  */
-void LOG_WARNING(log_sender sender, const char *msg) {
+void WARNING(log_sender sender, const char *msg) {
 #if MOCK
     if (!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
@@ -101,7 +101,7 @@ void LOG_WARNING(log_sender sender, const char *msg) {
  * @param sender is the module to log from
  * @param msg is the error to log
  */
-void LOG_ERROR(log_sender sender, const char *msg) {
+void SERIOUS_WARNING(log_sender sender, const char *msg) {
 #if MOCK
     if (!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
