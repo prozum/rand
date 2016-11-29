@@ -192,10 +192,11 @@ void KalmanDatafusionTest::setUp() {
     R[1][0] = 0;
     R[1][1] = 1;
 
-    C = (float**) malloc(sizeof(float*));
-    C[0] = (float*) malloc(DATAFUSION_UNITS * sizeof(float*));
+    C = (float**) malloc(DATAFUSION_UNITS * sizeof(float*));
+    C[0] = (float*) malloc(sizeof(float));
+    C[1] = (float*) malloc(sizeof(float));
     C[0][0] = 1;
-    C[0][1] = 1;
+    C[1][0] = 1;
 }
 
 void KalmanDatafusionTest::tearDown() {

@@ -18,33 +18,24 @@ sonar_t *sonar_init(dpin_t trig, dpin_t echo) {
     return sonar;
 }
 
-void pulse_sonar(sonar_t *sonar) {
+void sonar_ping(sonar_t *sonar, dval_t value) {
     //Send a pulse on the trigger pin.
-    digital_write(sonar->trig, LOW);
-#if !MOCK
-    _delay_ms(2);
-#endif
-    digital_write(sonar->trig, HIGH);
-#if !MOCK
-    _delay_ms(2);
-#endif
-    digital_write(sonar->trig, LOW);
+    digital_write(sonar->trig, value);
 }
 
 void read_sonar(sonar_t *sonar) {
-    pulse_sonar(sonar);
-
-    uint16_t duration = pulse_in(sonar->echo, HIGH, SONAR_TIMEOUT);
-
-    if (duration >= MIN_OUTPUT && duration <= SONAR_TIMEOUT) {
-        sonar->value = duration;
-        sonar->valid = 1;
-    } else {
-        LOG_WARNING(SENDER_SONAR, "The sonar received faulty value.");
-        sonar->valid = 0;
-    }
+    //sonar->valid = pulse_in(sonar->echo, HIGH, SONAR_TIMEOUT);
+    digital_read(sonar->echo);
 }
 
 float sonar_to_meters(float reading) {
     return 0.01979 * reading + 0.23361;
 }
+
+#if MOCK
+void pulse_sonar(sonar_t *sonar) {
+    sonar_ping(sonar, LOW);
+    sonar_ping(sonar, HIGH);
+    sonar_ping(sonar, LOW);
+}
+#endif //MOCK

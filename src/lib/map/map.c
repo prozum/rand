@@ -7,7 +7,7 @@ uint8_t map_width,
 void map_init(uint8_t width, uint8_t height, uint8_t clean)
 {
     if (map_width * map_height > MAX_MAP_SIZE) {
-        LOG_ERROR(SENDER_MAP, "Map size too big!");
+        SERIOUS_WARNING(SENDER_MAP, "Map size too big!");
     }
 
     map_width = width;

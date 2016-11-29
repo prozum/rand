@@ -18,11 +18,14 @@
 #define MINOR_CYCLE 1125
 #define OVERFLOW (MAJOR_CYCLE + ONE_MS) // 100 ms + 1 ms
 
+#define TIMER_TICK_TO_MILIS(x) ((x) / ONE_MS)
+
 #define YAW         P8
 #define ROLL        P9
 #define PITCH       P10
 #define THROTTLE    P11
 
+#define SONAR_TIMEOUT 11 * ONE_MS
 #define SONAR_TRIGGER_PIN P2
 #define SONAR_ECHO_PIN P3
 #define IR_BOTTOM_PIN A0
@@ -54,5 +57,6 @@ void task_read_acceleration();
 
 /*machine intelligence task*/
 void task_navigation();
+void task_sonar();
 
 #endif //RAND_TASK_H

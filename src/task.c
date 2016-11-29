@@ -127,6 +127,7 @@ void task_pulse()
     if(fc->throttle == ONE_MS)
         digital_write(THROTTLE, LOW);
 
+    //This loop MUST be below line 80
     while (TCNT1 <= ONE_AND_A_HALF_MS);
 
     if(fc->yaw == ONE_AND_A_HALF_MS)
@@ -174,7 +175,36 @@ void task_read_ir()
 
 void task_read_sonar()
 {
-    read_sonar(sonar);
+    sonar->valid = 0;
+
+    uint16_t start, stop;
+    uint16_t next_ping = TCNT1 + TWO_MS;
+
+    //Ping and LOW-HIGH-LOW with 2 milis delay in-between
+    sonar_ping (sonar, LOW);
+    while(TCNT1 < next_ping);
+
+    next_ping = TCNT1 + TWO_MS;
+    sonar_ping(sonar, HIGH);
+
+    while(TCNT1 < next_ping);
+    sonar_ping(sonar, LOW);
+
+    //Start timer and read sonar and stop timer
+    stop = TCNT1 + SONAR_TIMEOUT;
+    start = TCNT1;
+
+    while (TCNT1 < stop)
+    {
+        read_sonar(sonar);
+
+        if (sonar->echo) {
+            sonar->value = TCNT1 - start;
+            sonar->valid = 1;
+            sonar->value = sonar_to_meters(sonar->value);
+            break;
+        }
+    }
 }
 
 void task_read_acceleration()
