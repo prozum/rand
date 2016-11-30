@@ -7,7 +7,11 @@
 using namespace std;
 
 Simulator::Simulator() {
-    M.loadMap("map.txt");
+    SimObject::setDefaultSimulator(this);
+    Render = make_unique<SdlRenderer>();
+    M = make_unique<Map>();
+
+    M->loadMap("map.txt");
 }
 
 Simulator::~Simulator() {
@@ -16,23 +20,26 @@ Simulator::~Simulator() {
 int Simulator::run() {
     SDL_Event event;
 
-    M.printMap();
+    Render->init();
 
-    Renderer.init();
+    M->printMap();
 
     while (true) {
-        Renderer.start();
         while (SDL_PollEvent(&event) == 1) {
             if (event.type == SDL_QUIT) {
                 return 0;
             }
         }
 
-        Renderer.clear();
+        Render->clear();
 
-        M.draw(Renderer);
+        drawObjects();
 
-        Renderer.update();
+        Render->update();
     }
+}
+
+void Simulator::drawObjects() {
+    M->draw();
 }
 

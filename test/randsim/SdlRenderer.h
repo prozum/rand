@@ -19,7 +19,6 @@ public:
     bool init();
     ~SdlRenderer();
 
-    void start();
     void clear();
     void update();
 

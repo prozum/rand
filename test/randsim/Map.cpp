@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "Simulator.h"
 
 #include <iostream>
 #include <fstream>
@@ -58,26 +59,30 @@ void Map::printMap() {
     }
 }
 
-void Map::draw(Renderer &R) {
+void Map::draw() {
     int X = 0;
     int Y = 0;
     for(auto &Row : MapBlocks) {
         for (auto &Block : *Row) {
             switch (Block) {
                 case Block::Air:
-                    R.setColor({255, 255, 255});
+                    Sim->Render->setColor({255, 255, 255});
                     break;
                 case Block::Wall:
-                    R.setColor({0, 0, 0});
+                    Sim->Render->setColor({0, 0, 0});
                     break;
                 case Block::Window:
-                    R.setColor({0, 0, 255});
+                    Sim->Render->setColor({0, 0, 255});
                     break;
             }
-            R.drawRect({X,Y}, 20, 20);
+            Sim->Render->drawRect({X,Y}, 20, 20);
             X+=21;
         }
         Y+=21;
         X=0;
     }
+}
+
+void Map::update() {
+
 }

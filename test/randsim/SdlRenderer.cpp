@@ -53,10 +53,6 @@ SdlRenderer::~SdlRenderer() {
     SDL_Quit();
 }
 
-void SdlRenderer::start() {
-    FrameTime = SDL_GetTicks();
-}
-
 void SdlRenderer::clear() {
     SDL_RenderClear(Renderer);
 }
@@ -66,6 +62,8 @@ void SdlRenderer::update() {
 
     if ((SDL_GetTicks() - FrameTime) < MinFrameTime)
         SDL_Delay(MinFrameTime - (SDL_GetTicks() - FrameTime));
+
+    FrameTime = SDL_GetTicks();
 }
 
 

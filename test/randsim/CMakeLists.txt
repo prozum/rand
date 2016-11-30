@@ -13,8 +13,8 @@ file(COPY "fonts" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 #file(COPY "map.txt" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 configure_file(map.txt map.txt COPYONLY)
 
-add_executable(randsim Main.cpp Drone.cpp Map.cpp fonts/Ubuntu-C.ttf Simulator.cpp Simulator.h Renderer.cpp Renderer.h SdlRenderer.cpp SdlRenderer.h)
+add_executable(randsim Main.cpp Drone.cpp Map.cpp fonts/Ubuntu-C.ttf Simulator.cpp Simulator.h Renderer.cpp Renderer.h SdlRenderer.cpp SdlRenderer.h SimObject.cpp SimObject.h)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
-target_link_libraries(randsim ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
+target_link_libraries(randsim fc ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 

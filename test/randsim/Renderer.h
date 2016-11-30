@@ -15,7 +15,8 @@ struct Color {
 
 class Renderer {
 public:
-    virtual void start() = 0;
+    virtual bool init() = 0;
+
     virtual void clear() = 0;
     virtual void update() = 0;
 
