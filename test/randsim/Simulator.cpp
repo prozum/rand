@@ -7,7 +7,7 @@
 using namespace std;
 
 Simulator::Simulator() {
-    M.loadMap("map.txt");
+    M.loadMap(string(SDL_GetBasePath()) + "map.txt");
 }
 
 Simulator::~Simulator() {
