@@ -11,14 +11,14 @@
 #define WALL_CHAR '#'
 #define WINDOW_CHAR '&'
 
-enum class Block {
+enum class BlockType {
     Air,
     Wall,
     Window
 };
 
 class Map : SimObject {
-    std::vector<std::unique_ptr<std::vector<Block>>> MapBlocks;
+    std::vector<std::unique_ptr<std::vector<BlockType>>> MapBlocks;
 
 public:
     unsigned long Width = 0;
