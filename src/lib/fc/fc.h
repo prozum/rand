@@ -17,6 +17,12 @@ typedef struct acceleration_s {
     float z; // up/down
 } acceleration_t;
 
+typedef struct velocity_s {
+    float x; // left/right
+    float y; // forward/backwards
+    float z; // up/down
+} velocity_t;
+
 typedef struct duty_s {
     uint16_t MIN_FC_DUTY;
     uint16_t MID_FC_DUTY;
@@ -26,6 +32,7 @@ typedef struct duty_s {
 typedef struct fc_s {
     duty_t *duty;
     acceleration_t *acc;
+    velocity_t *vel;
     serial_t serial;
 
     uint16_t yaw;
