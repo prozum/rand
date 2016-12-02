@@ -1,10 +1,7 @@
 #include "Block.h"
 #include "Simulator.h"
 
-Block::Block(BlockType Type, Dot Pos) {
-    this->Type = Type;
-    this->Pos = Pos;
-}
+Block::Block(BlockType Type, Dot Pos) : Type(Type), Pos(Pos) { }
 
 void Block::draw() {
     switch (Type) {

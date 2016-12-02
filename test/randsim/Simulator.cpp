@@ -1,4 +1,5 @@
 #include "Block.h"
+#include "Drone.h"
 #include "Simulator.h"
 #include "Map.h"
 #include "SdlRenderer.h"
@@ -13,6 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
+    Drn = make_unique<Drone>(Dot(500, 500), 100);
 
 }
 
@@ -72,6 +74,8 @@ void Simulator::drawObjects() {
     for (auto B : Blocks) {
         B.draw();
     }
+
+    Drn->draw();
 
     drawBlockGrid();
 }

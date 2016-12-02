@@ -4,5 +4,12 @@
 #include "SimObject.h"
 
 class Drone : SimObject {
-    void draw(Renderer &R);
+    Dot Pos;
+    int Size;
+
+public:
+    Drone(Dot Pos, int Size);
+
+    void draw();
+    void update();
 };

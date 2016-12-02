@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL2_gfxPrimitives.h>
 
 #include "Renderer.h"
 
@@ -9,6 +10,7 @@ class SdlRenderer : public Renderer {
     SDL_Window *Window;
     SDL_Renderer *Renderer;
     TTF_Font *Font;
+    SDL_Color CurColor = {0, 0, 0, 0};
 
     int Fps = 60;
     int MinFrameTime = 1000 / Fps;

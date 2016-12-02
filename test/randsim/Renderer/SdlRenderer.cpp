@@ -67,7 +67,8 @@ void SdlRenderer::update() {
 }
 
 void SdlRenderer::setColor(Color C, int Alpha) {
-    SDL_SetRenderDrawColor(Renderer, (Uint8)C.R, (Uint8)C.G, (Uint8)C.B, (Uint8)Alpha);
+    CurColor = {(Uint8)C.R, (Uint8)C.G, (Uint8)C.B, (Uint8)Alpha };
+    SDL_SetRenderDrawColor(Renderer, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 
 
@@ -80,16 +81,21 @@ void SdlRenderer::drawLineRel(Dot Start, Dot End) {
 }
 
 void SdlRenderer::drawRect(Dot Pos, int Width, int Height) {
-    const SDL_Rect Rect = {Pos.X - Offset.X, Pos.Y - Offset.Y, Width, Height};
+    const SDL_Rect Rect = {Pos.X, Pos.Y, Width, Height};
     SDL_RenderFillRect(Renderer, &Rect);
 }
 
 void SdlRenderer::drawRectRel(Dot Pos, int Width, int Height) {
-    const SDL_Rect Rect = {rel(Pos.X - Offset.X), rel(Pos.Y - Offset.Y), rel(Width), rel(Height)};
+    const SDL_Rect Rect = {relX(Pos.X), relY(Pos.Y), rel(Width), rel(Height)};
     SDL_RenderFillRect(Renderer, &Rect);
 }
 
-void SdlRenderer::drawCircle(Dot Center, int Radius) {}
-void SdlRenderer::drawCircleRel(Dot Center, int Radius) {}
+void SdlRenderer::drawCircle(Dot Center, int Radius) {
+    filledCircleRGBA(Renderer, (Uint16)Center.X, (Uint16)Center.Y, (Uint16)Radius, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
+}
+void SdlRenderer::drawCircleRel(Dot Center, int Radius) {
+    filledCircleRGBA(Renderer, (Uint16)relX(Center.X), (Uint16)relY(Center.Y), (Uint16)rel(Radius), CurColor.r, CurColor.g, CurColor.b, CurColor.a);
+}
+
 void SdlRenderer::drawText(std::string Text, Dot Pos) {}
 void SdlRenderer::drawTextRel(std::string Text, Dot Pos) {}
