@@ -6,7 +6,6 @@
 #include "Renderer.h"
 
 class SdlRenderer : public Renderer {
-    SDL_Rect WindowRect = {900, 300, 1050, 1050};
     SDL_Window *Window;
     SDL_Renderer *Renderer;
     TTF_Font *Font;
@@ -22,11 +21,18 @@ public:
     void clear();
     void update();
 
-    void setColor(Color C);
+    void setColor(Color C, int Alpha = 255);
 
+    // Fixed
     void drawLine(Dot Start, Dot End);
     void drawRect(Dot Pos, int Width, int Height);
     void drawCircle(Dot Center, int Radius);
     void drawText(std::string Text, Dot Pos);
+
+    // Relative
+    void drawLineRel(Dot Start, Dot End);
+    void drawRectRel(Dot Pos, int Width, int Height);
+    void drawCircleRel(Dot Center, int Radius);
+    void drawTextRel(std::string Text, Dot Pos);
 };
 

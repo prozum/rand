@@ -6,16 +6,12 @@
 
 #include "Renderer.h"
 #include "SimObject.h"
+#include "Block.h"
 
 #define AIR_CHAR ' '
 #define WALL_CHAR '#'
 #define WINDOW_CHAR '&'
 
-enum class BlockType {
-    Air,
-    Wall,
-    Window
-};
 
 class Map : SimObject {
     std::vector<std::unique_ptr<std::vector<BlockType>>> MapBlocks;

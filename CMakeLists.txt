@@ -17,6 +17,8 @@ avr_include_directories(src/lib)
 
 add_subdirectory(src)
 
+message("compiler: ${CMAKE_CXX_COMPILER_ID}")
+
 if (SERIAL_TARGETS)
     setup_serial_targets()
 endif ()

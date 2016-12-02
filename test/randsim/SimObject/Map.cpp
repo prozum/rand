@@ -1,6 +1,6 @@
 #include "Map.h"
 
-#include "Simulator.h"
+#include "../Simulator.h"
 
 #include <iostream>
 #include <fstream>
@@ -68,10 +68,8 @@ void Map::draw() {
             switch (Block) {
                 case BlockType::Air:
                     Sim->Render->setColor({255, 255, 255});
-                    R.setColor({255, 255, 255});
                     break;
                 case BlockType::Wall:
-                    R.setColor({0, 0, 0});
                     Sim->Render->setColor({0, 0, 0});
                     break;
                 case BlockType::Window:

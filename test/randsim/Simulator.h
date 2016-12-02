@@ -1,13 +1,17 @@
 #pragma once
 
-#include "SdlRenderer.h"
-#include "Map.h"
+#include <memory>
+#include <vector>
+
+#include "Renderer.h"
+
+class Block;
 
 class Simulator {
 
 public:
     std::unique_ptr<Renderer> Render;
-    std::unique_ptr<Map> M;
+    std::vector<Block> Blocks;
 
     Simulator();
     ~Simulator();
@@ -15,4 +19,7 @@ public:
     int run();
 
     void drawObjects();
+    bool loadMap(std::string Path);
+
+    void drawBlockGrid();
 };
