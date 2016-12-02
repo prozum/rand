@@ -3,7 +3,7 @@
 #include <string>
 
 struct Dot {
-    Dot(int X, int Y) {
+    Dot(int X = 0, int Y = 0) {
         this->X = X;
         this->Y = Y;
     }

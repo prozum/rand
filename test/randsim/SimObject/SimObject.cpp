@@ -2,7 +2,7 @@
 
 Simulator *SimObject::DefaultSim;
 
-SimObject::SimObject() {
+SimObject::SimObject(Dot Pos) : Pos(Pos) {
     Sim = DefaultSim;
 }
 

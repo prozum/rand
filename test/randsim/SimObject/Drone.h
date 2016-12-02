@@ -4,7 +4,7 @@
 #include "SimObject.h"
 
 class Drone : SimObject {
-    Dot Pos;
+    float Angle;
     int Size;
 
 public:

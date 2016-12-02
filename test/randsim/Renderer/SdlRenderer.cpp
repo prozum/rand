@@ -77,7 +77,7 @@ void SdlRenderer::drawLine(Dot Start, Dot End) {
 }
 
 void SdlRenderer::drawLineRel(Dot Start, Dot End) {
-    SDL_RenderDrawLine(Renderer, rel(Start.X), rel(Start.Y), rel(End.X), rel(End.Y));
+    SDL_RenderDrawLine(Renderer, relX(Start.X), relY(Start.Y), relX(End.X), relY(End.Y));
 }
 
 void SdlRenderer::drawRect(Dot Pos, int Width, int Height) {

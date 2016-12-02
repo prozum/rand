@@ -11,7 +11,9 @@ class SimObject {
 public:
     Simulator *Sim;
 
-    SimObject();
+    Dot Pos;
+
+    SimObject(Dot Pos);
     static void setDefaultSimulator(Simulator *Sim);
 
     virtual void draw() = 0;

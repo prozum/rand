@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Map::Map() {}
+Map::Map() : SimObject(Dot()) {}
 
 void Map::loadMap(string Path) {
     ifstream File(Path, ifstream::in);

@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Dot(500, 500), 100);
+    Drn = make_unique<Drone>(Dot(500, 500), 200);
 
 }
 
@@ -51,6 +51,8 @@ int Simulator::run() {
                         case SDLK_DOWN:
                             Render->Offset.Y += Block::Size;
                             break;
+                        case SDLK_ESCAPE:
+                            return 0;
                     }
                     break;
                 case SDL_WINDOWEVENT:
@@ -65,19 +67,25 @@ int Simulator::run() {
         Render->clear();
 
         drawObjects();
+        updateObjects();
 
         Render->update();
     }
 }
 
 void Simulator::drawObjects() {
+    drawBlockGrid();
+
     for (auto B : Blocks) {
         B.draw();
     }
 
     Drn->draw();
 
-    drawBlockGrid();
+}
+
+void Simulator::updateObjects() {
+    Drn->update();
 }
 
 bool Simulator::loadMap(string Path) {
@@ -89,11 +97,11 @@ bool Simulator::loadMap(string Path) {
     while ((c = File.get()) != EOF) {
         switch (c) {
             case WALL_CHAR:
-                Blocks.push_back(Block(BlockType::Wall, {x, y}));
+                Blocks.push_back(Block({x, y}, BlockType::Wall));
                 x += Block::Size;
                 break;
             case WINDOW_CHAR:
-                Blocks.push_back(Block(BlockType::Window, {x, y}));
+                Blocks.push_back(Block({x, y}, BlockType::Window));
                 x += Block::Size;
                 break;
             case AIR_CHAR:
@@ -121,6 +129,7 @@ void Simulator::drawBlockGrid() {
     int HLines = Height / BlockSize;
     int VLines = Width / BlockSize;
 
+    Render->setColor({0, 0, 0});
     for (int i = 1; i <= HLines; ++i) {
         int LineY = i * BlockSize;
         Render->drawLine({0, LineY}, {Width, LineY});
@@ -131,3 +140,4 @@ void Simulator::drawBlockGrid() {
         Render->drawLine({LineX, 0}, {LineX, Height});
     }
 }
+

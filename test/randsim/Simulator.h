@@ -22,6 +22,7 @@ public:
     int run();
 
     void drawObjects();
+    void updateObjects();
     bool loadMap(std::string Path);
 
     void drawBlockGrid();

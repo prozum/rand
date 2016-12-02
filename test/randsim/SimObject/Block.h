@@ -9,17 +9,14 @@ enum class BlockType {
 };
 
 class Block : SimObject {
-
     BlockType Type;
-    Dot Pos;
 
 public:
     static const int Size = 50;
 
-    Block(BlockType Type, Dot Pos);
+    Block(Dot Pos, BlockType Type);
 
     void draw();
-
     void update();
 };
 

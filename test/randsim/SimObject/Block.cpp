@@ -1,7 +1,7 @@
 #include "Block.h"
 #include "Simulator.h"
 
-Block::Block(BlockType Type, Dot Pos) : Type(Type), Pos(Pos) { }
+Block::Block(Dot Pos, BlockType Type) : SimObject(Pos), Type(Type) { }
 
 void Block::draw() {
     switch (Type) {
