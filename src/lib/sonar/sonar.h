@@ -24,6 +24,7 @@ sonar_t *sonar_init(dpin_t trig, dpin_t echo);
 
 void read_sonar(sonar_t *sonar);
 void sonar_ping(sonar_t *sonar, dval_t value);
+void set_sonar(sonar_t *sonar, float);
 
 float sonar_to_meters(float reading);
 
