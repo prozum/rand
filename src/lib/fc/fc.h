@@ -17,6 +17,12 @@ typedef struct acceleration_s {
     float z; // up/down
 } acceleration_t;
 
+typedef struct velocity_s {
+    float x; // left/right
+    float y; // forward/backwards
+    float z; // up/down
+} velocity_t;
+
 typedef struct duty_s {
     uint16_t MIN_FC_DUTY;
     uint16_t MID_FC_DUTY;
@@ -26,8 +32,10 @@ typedef struct duty_s {
 typedef struct fc_s {
     duty_t *duty;
     acceleration_t *acc;
+    velocity_t *vel;
     serial_t serial;
 
+    uint16_t deltatime;
     uint16_t yaw;
     uint16_t pitch;
     uint16_t roll;
@@ -61,5 +69,11 @@ void move_down(fc_t *fc);
 void move_stop(fc_t *fc);
 
 acceleration_t fc_read_acceleration(fc_t *fc);
+
+void set_acceleration(fc_t *fc, float, float);
+
+void set_velocity(fc_t *fc, float, float);
+
+void update_velocity(fc_t *fc, acceleration_t *a, float);
 
 #endif //RAND_FC_H

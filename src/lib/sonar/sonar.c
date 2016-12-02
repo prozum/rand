@@ -32,6 +32,10 @@ float sonar_to_meters(float reading) {
     return 0.01979 * reading + 0.23361;
 }
 
+void set_sonar(sonar_t *sonar, float value){
+    sonar->value = value;
+}
+
 #if MOCK
 void pulse_sonar(sonar_t *sonar) {
     sonar_ping(sonar, LOW);
