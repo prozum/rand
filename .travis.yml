@@ -2,11 +2,11 @@ language: c
 dist: trusty
 
 before_install:
-  - sudo apt-get -qq install gcc-avr gdb-avr avrdude arduino libcppunit-1.13 libcppunit-dev libelf-dev
+  - sudo apt-get -qq install gcc-avr gdb-avr avrdude arduino libcppunit-1.13 libcppunit-dev libelf-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-gfx-dev
 
 install:
   - mkdir build && cd build
-  - cmake ..
+  - cmake -DTESTS=1 ..
 
 script:
   - make -j 8

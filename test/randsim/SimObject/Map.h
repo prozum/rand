@@ -5,18 +5,15 @@
 #include <string>
 
 #include "Renderer.h"
+#include "SimObject.h"
+#include "Block.h"
 
 #define AIR_CHAR ' '
 #define WALL_CHAR '#'
 #define WINDOW_CHAR '&'
 
-enum class BlockType {
-    Air,
-    Wall,
-    Window
-};
 
-class Map {
+class Map : SimObject {
     std::vector<std::unique_ptr<std::vector<BlockType>>> MapBlocks;
 
 public:
@@ -27,5 +24,6 @@ public:
 
     void loadMap(std::string Path);
     void printMap();
-    void draw(Renderer &R);
+    void draw();
+    void update();
 };

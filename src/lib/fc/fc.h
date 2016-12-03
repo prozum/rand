@@ -35,6 +35,7 @@ typedef struct fc_s {
     velocity_t *vel;
     serial_t serial;
 
+    uint16_t deltatime;
     uint16_t yaw;
     uint16_t pitch;
     uint16_t roll;
@@ -68,5 +69,11 @@ void move_down(fc_t *fc);
 void move_stop(fc_t *fc);
 
 acceleration_t fc_read_acceleration(fc_t *fc);
+
+void set_acceleration(fc_t *fc, float, float);
+
+void set_velocity(fc_t *fc, float, float);
+
+void update_velocity(fc_t *fc, acceleration_t *a, float);
 
 #endif //RAND_FC_H

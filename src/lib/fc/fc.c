@@ -88,9 +88,25 @@ void move_stop(fc_t *fc)
     fc->yaw = fc->duty->MID_FC_DUTY;
 }
 
+void set_acceleration(fc_t *fc, float x, float y){
+    fc->acc->y = y;
+    fc->acc->x = x;
+}
+
+void set_velocity(fc_t *fc, float x, float y){
+    fc->vel->y = y;
+    fc->vel->x = x;
+}
+
+//Assumed that time is in seconds.
+void update_velocity(fc_t *fc, acceleration_t *a, float time){
+    fc->vel->x = fc->vel->x + a->x * time;
+    fc->vel->y = fc->vel->y + a->y * time;
+}
+
 acceleration_t fc_read_acceleration(fc_t *fc) {
     ERROR("This function is not supported yet.");
 
-    acceleration_t accel = {0, 0, 0};
+    acceleration_t accel = {0, 0.5, 0};
     return accel;
 }
