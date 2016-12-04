@@ -85,5 +85,13 @@ void update_u_k() {
         ir_bottom.u_k = u_k_update.x;
         ir_top.u_k = u_k_update.x;
     }*/
+}
 
+void navigation(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom)
+{
+    /* this should stop the drone if there's less or equal to 120 cm forward */
+    if ( (sonar->valid) == 1 && (sonar->value <= 120 || laser->front_value <= 120))
+        move_stop(fc);
+    
+    
 }

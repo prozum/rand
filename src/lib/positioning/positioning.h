@@ -50,6 +50,8 @@ void positioning_calculate(position_t *position, float sensor_readings[SENSOR_FI
 
 void update_u_k();
 
+void navigation(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom);
+
 #endif //RAND_POSITIONING_H
 
 
