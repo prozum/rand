@@ -29,12 +29,14 @@ public:
     void drawLine(Dot Start, Dot End);
     void drawRect(Dot Pos, int Width, int Height);
     void drawCircle(Dot Center, int Radius);
+    void drawPie(Dot Center, int Radius, int Start, int End);
     void drawText(std::string Text, Dot Pos);
 
     // Relative
     void drawLineRel(Dot Start, Dot End);
     void drawRectRel(Dot Pos, int Width, int Height);
     void drawCircleRel(Dot Center, int Radius);
+    void drawPieRel(Dot Center, int Radius, int Start, int End);
     void drawTextRel(std::string Text, Dot Pos);
 };
 

@@ -35,12 +35,14 @@ public:
     virtual void drawLine(Dot Start, Dot End) = 0;
     virtual void drawRect(Dot Pos, int Width, int Height) = 0;
     virtual void drawCircle(Dot Center, int Radius) = 0;
+    virtual void drawPie(Dot Center, int Radius, int Start, int End) = 0;
     virtual void drawText(std::string Text, Dot Pos) = 0;
 
     // Relative
     virtual void drawLineRel(Dot Start, Dot End) = 0;
     virtual void drawRectRel(Dot Pos, int Width, int Height) = 0;
     virtual void drawCircleRel(Dot Center, int Radius) = 0;
+    virtual void drawPieRel(Dot Center, int Radius, int Start, int End) = 0;
     virtual void drawTextRel(std::string Text, Dot Pos) = 0;
 
     inline int rel(int Val) { return int(Val * Zoom); }

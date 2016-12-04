@@ -99,3 +99,11 @@ void SdlRenderer::drawCircleRel(Dot Center, int Radius) {
 
 void SdlRenderer::drawText(std::string Text, Dot Pos) {}
 void SdlRenderer::drawTextRel(std::string Text, Dot Pos) {}
+
+void SdlRenderer::drawPie(Dot Center, int Radius, int Start, int End) {
+    filledPieRGBA(Renderer, Center.X, Center.Y, Radius, Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
+}
+
+void SdlRenderer::drawPieRel(Dot Center, int Radius, int Start, int End) {
+    filledPieRGBA(Renderer, relX(Center.X), relY(Center.Y), rel(Radius), Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
+}
