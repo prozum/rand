@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Dot(500, 500), 200);
+    Drn = make_unique<Drone>(Dot(500, 500), 100);
 
 }
 
@@ -40,16 +40,20 @@ int Simulator::run() {
                 case SDL_KEYDOWN:
                     switch(Event.key.keysym.sym) {
                         case SDLK_RIGHT:
-                            Render->Offset.X += Block::Size;
+                            Render->Offset.X += int(1 / Render->Zoom) ?
+                                                int(1 / Render->Zoom) * Block::Size : Block::Size;
                             break;
                         case SDLK_LEFT:
-                            Render->Offset.X -= Block::Size;
+                            Render->Offset.X -= int(1 / Render->Zoom) ?
+                                                int(1 / Render->Zoom) * Block::Size : Block::Size;
                             break;
                         case SDLK_UP:
-                            Render->Offset.Y -= Block::Size;
+                            Render->Offset.Y -= int(1 / Render->Zoom) ?
+                                                int(1 / Render->Zoom) * Block::Size : Block::Size;
                             break;
                         case SDLK_DOWN:
-                            Render->Offset.Y += Block::Size;
+                            Render->Offset.Y += int(1 / Render->Zoom) ?
+                                                int(1 / Render->Zoom) * Block::Size : Block::Size;
                             break;
                         case SDLK_ESCAPE:
                             return 0;
@@ -60,6 +64,11 @@ int Simulator::run() {
                         Render->WinWidth = Event.window.data1;
                         Render->WinHeight = Event.window.data2;
                     }
+                    break;
+                case SDL_MOUSEWHEEL:
+                    Render->Zoom += Event.wheel.y * 0.1;
+                    if (Render->Zoom < 0.1)
+                        Render->Zoom = 0.1;
                     break;
             }
         }
