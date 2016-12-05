@@ -33,9 +33,10 @@ bool SdlRenderer::init() {
         std::cout << " Failed to initialize TTF : " << SDL_GetError() << std::endl;
         return false;
     }
+    
     // Load font
     std::string path = std::string(SDL_GetBasePath()) + string("Fonts/Ubuntu-C.ttf");
-    Font = TTF_OpenFont(path.c_str(), 90);
+    Font = TTF_OpenFont(path.c_str(), 26);
     if (Font == nullptr)
     {
         std::cout << " Failed to load font : " << SDL_GetError() << std::endl;
@@ -97,7 +98,16 @@ void SdlRenderer::drawCircleRel(Dot Center, int Radius) {
     filledCircleRGBA(Renderer, (Uint16)relX(Center.X), (Uint16)relY(Center.Y), (Uint16)rel(Radius), CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 
-void SdlRenderer::drawText(std::string Text, Dot Pos) {}
+void SdlRenderer::drawText(std::string Text, Dot Pos) {
+    auto TextSurface = TTF_RenderText_Shaded(Font, Text.c_str(), CurColor, {0, 0, 0});
+    auto TextTexture = SDL_CreateTextureFromSurface(Renderer, TextSurface);
+    SDL_Rect Quad = {Pos.X, Pos.Y, TextSurface->w, TextSurface->h};
+
+    SDL_RenderCopyEx(Renderer, TextTexture, NULL, &Quad, 0, NULL, SDL_FLIP_NONE);
+    SDL_FreeSurface(TextSurface);
+    SDL_DestroyTexture(TextTexture);
+
+}
 void SdlRenderer::drawTextRel(std::string Text, Dot Pos) {}
 
 void SdlRenderer::drawPie(Dot Center, int Radius, int Start, int End) {

@@ -26,4 +26,5 @@ public:
     bool loadMap(std::string Path);
 
     void drawBlockGrid();
+    void drawInfoBox();
 };

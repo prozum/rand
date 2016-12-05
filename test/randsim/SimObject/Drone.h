@@ -4,8 +4,9 @@
 #include "Renderer.h"
 #include "SimObject.h"
 
-class Drone : SimObject {
-    float Angle;
+class Drone : public SimObject {
+public:
+    double Angle;
     int Size;
 
     fc_t FC;
@@ -14,9 +15,11 @@ class Drone : SimObject {
     ir_t IrTop;
     ir_t IrBottom;
 
-public:
     Drone(Dot Pos, int Size);
 
     void draw();
     void update();
+
+    void calcSonarDist();
+    void calcLaserDist();
 };

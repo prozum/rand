@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <cmath>
 
 struct Dot {
     Dot(int X = 0, int Y = 0) {
@@ -16,6 +17,11 @@ struct Color {
     int G;
     int B;
 };
+
+
+inline double rad_to_deg(double radians) {
+    return radians * (180.0 / M_PI);
+}
 
 class Renderer {
 public:
@@ -48,5 +54,9 @@ public:
     inline int rel(int Val) { return int(Val * Zoom); }
     inline int relX(int Val) { return int((Val - Offset.X) * Zoom); }
     inline int relY(int Val) { return int((Val - Offset.Y) * Zoom); }
+
+    inline int iRel(int Val) { return int(Val / Zoom); }
+    inline int iRelX(int Val) { return int((Val / Zoom) + Offset.X); }
+    inline int iRelY(int Val) { return int((Val / Zoom) + Offset.Y); }
 };
 

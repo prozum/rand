@@ -8,7 +8,7 @@ enum class BlockType {
     Window
 };
 
-class Block : SimObject {
+class Block : public SimObject {
     BlockType Type;
 
 public:
