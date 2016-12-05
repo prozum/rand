@@ -1,4 +1,4 @@
-#include "positioning.h"
+#include "nav.h"
 
 position_t *positioning_init(float a[SENSOR_FILTERS], float r[SENSOR_FILTERS],
                              float A[DATAFUSION_FILTERS], float B[DATAFUSION_FILTERS]) {

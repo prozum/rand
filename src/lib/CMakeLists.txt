@@ -16,7 +16,7 @@ add_subdirectory(laser)
 add_subdirectory(kalman)
 add_subdirectory(matrix)
 
-add_subdirectory(positioning)
+add_subdirectory(nav)
 # Positioning and control
 # Map library
 add_subdirectory(map)

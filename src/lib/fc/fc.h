@@ -7,7 +7,6 @@
 #include "sonar/sonar.h"
 #include "laser/laser.h"
 #include "ir/ir.h"
-#include "positioning/positioning.h"
 #include "core/log.h"
 #include "core/io.h"
 
