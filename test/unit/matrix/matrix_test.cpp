@@ -276,6 +276,15 @@ void MatrixTest::inv_mat_InvalidMatrix_ExpectError() {
     CPPUNIT_ASSERT(NULL == res);
 }
 
+void MatrixTest::matrix_get_1x1_ExpectCorrect() {
+    float value[1][1] = {{10}};
+
+    matrix_t *get_from = matrix_constructor(1, 1);
+    get_from->values[0] = value[0][0];
+
+    CPPUNIT_ASSERT_EQUAL(value[0][0], matrix_get(get_from, 0, 0));
+    matrix_destructor(get_from);
+}
 void MatrixTest::matrix_get_1x2_ExpectCorrect() {
     float vector[1][2] = {{2, 4}};
 
@@ -339,6 +348,17 @@ void MatrixTest::matrix_get_3x3_ExpectCorrect() {
         }
     }
     matrix_destructor(get_from);
+}
+
+void MatrixTest::matrix_set_1x1_ExpectCorrect() {
+    float value[1][1] = {{10}};
+
+    matrix_t *set_to = matrix_constructor(1, 1);
+
+    matrix_set(set_to, 0, 0, value[0][0]);
+
+    CPPUNIT_ASSERT_EQUAL(value[0][0], set_to->values[0]);
+    matrix_destructor(set_to);
 }
 
 void MatrixTest::matrix_set_1x2_ExpectCorrect() {

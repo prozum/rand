@@ -17,6 +17,7 @@ kalman_state *kalman_init(float _a, float _r, log_sender component) {
 
     //State and control-signal
     state->x_k = 0;
+    state->u_k = 0;
 
     state->source_components = component;
 }

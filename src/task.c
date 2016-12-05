@@ -201,7 +201,7 @@ void task_read_sonar()
         if (sonar->echo) {
             sonar->value = TCNT1 - start;
             sonar->valid = 1;
-            sonar->value = sonar_to_meters(sonar->value);
+            sonar->value = sonar_to_centimeters(TIMER_TICK_TO_MILIS(sonar->value));
             break;
         }
     }

@@ -18,7 +18,7 @@ void KalmanTest::KalmanInit_ValidParams_ExpectValidStateMalloced() {
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The a value was not set correctly.", a, NullState->a);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The u_k value was not set to 0.", 0.0f, NullState->u_k);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The g_k value was not set to 0.", 0.0f, NullState->g_k);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The p_k value must be > than 0.", 0.0f, NullState->p_k);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The p_k value must be > than 0.", 10.0f, NullState->p_k);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The x_k value was not set to 0.", 0.0f, NullState->x_k);
 }
 

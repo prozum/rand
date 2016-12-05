@@ -16,13 +16,13 @@ class SonarTest : public CppUnit::TestCase {
         CPPUNIT_TEST(sonarInit_expectTriggerOutAndEchoIn);
         CPPUNIT_TEST(pulseSonar_expectBuffer010);
 
-        CPPUNIT_TEST(readSonar_inRange_expectValidByteOne);
+        /*CPPUNIT_TEST(readSonar_inRange_expectValidByteOne);
         CPPUNIT_TEST(readSonar_outOfRange_expectValidByteZero);
-        CPPUNIT_TEST(readSonar_tooClose_expectValidByteZero);
+        CPPUNIT_TEST(readSonar_tooClose_expectValidByteZero);*/
 
-        CPPUNIT_TEST(sonarToMeters_110_expect2dot41);
-        CPPUNIT_TEST(sonarToMeters_8000_expect158dot57);
-        CPPUNIT_TEST(sonarToMeters_22000_expect453dot68);
+        CPPUNIT_TEST(sonarToCentimeters_11millis_expect188);
+        CPPUNIT_TEST(sonarToCentimeters_1millis_expect17);
+        CPPUNIT_TEST(sonarToCentimeters_5millis_expect85);
         CPPUNIT_TEST_SUITE_END();
 public :
 
@@ -30,15 +30,13 @@ public :
 
     void pulseSonar_expectBuffer010();
 
-    void readSonar_inRange_expectValidByteOne();
-
+    /*void readSonar_inRange_expectValidByteOne();
     void readSonar_outOfRange_expectValidByteZero();
+    void readSonar_tooClose_expectValidByteZero();*/
 
-    void readSonar_tooClose_expectValidByteZero();
+    void sonarToCentimeters_11millis_expect188();
 
-    void sonarToMeters_110_expect2dot41();
+    void sonarToCentimeters_1millis_expect17();
 
-    void sonarToMeters_8000_expect158dot57();
-
-    void sonarToMeters_22000_expect453dot68();
+    void sonarToCentimeters_5millis_expect85();
 };
