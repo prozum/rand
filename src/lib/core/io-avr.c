@@ -38,10 +38,10 @@ void set_pin_mode(dpin_t pin, pin_mode_t pm) {
         case PORTB_:
             // (DDRx & ~pin_) cancels out the pin mode, so it's 0
             // | pin_ then sets the pin mode to 0 or 1 according to it's value
-            DDRB = (DDRB & ~pin_) | (pin_ * pm);
+            DDRB = ((DDRB & ~pin_) | (pin_ * pm));
             break;
         case PORTD_:
-            DDRD = (DDRD & ~pin_) | (pin_ * pm);
+            DDRD = ((DDRD & ~pin_) | (pin_ * pm));
             break;
         default:
             WARNING(SENDER_IO, "Trying to set invalid pin in set_pin_mode");

@@ -47,5 +47,5 @@ public:
 
     static avr_ioport_state_t avr_get_state(avr_t *avr, char port);
 
-    static void avr_set_state(avr_t *avr, char port, int reg, int mask, int v);
+    static void avr_set_state(avr_t *avr, char port, uint32_t reg, uint32_t mask, uint32_t v);
 };

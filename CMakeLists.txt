@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 # Options
 option(SAMPLES "Samples" OFF)
-option(TESTS "Tests" OFF)
+option(TESTS "Tests" ON)
 option(SERIAL_TARGETS "Serial Targets" OFF)
 option(SIZE_TARGETS "Size Targets" OFF)
 
