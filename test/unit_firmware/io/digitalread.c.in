@@ -1,13 +1,11 @@
 #include "core/io.h"
 
+#include <stdlib.h>
 #include <assert.h>
 
 int main()
 {
-    if (digital_read(@PIN_ID@) == @PIN_VAL@)
-    {
-        set_pin_mode(@PIN_ID@, @PIN_VAL@);
-    }
+    if (digital_read(@PIN_ID@) == @PIN_VAL@) {
 
-    while(1);
+    }
 }

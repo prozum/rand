@@ -27,12 +27,12 @@ avr_ioport_state_t Tools::avr_get_state(avr_t *avr, char port) {
     return state;
 }
 
-void Tools::avr_set_state(avr_t *avr, char port, uint32_t reg, uint32_t mask, uint32_t v) {
+void Tools::avr_set_state(avr_t *avr, uint32_t reg, uint32_t pin, uint32_t val) {
     avr_ioport_external_t ext;
-    ext.name = reg;
-    ext.value = v;
-    ext.mask = mask;
 
-    avr_raise_irq(avr_io_getirq(avr, AVR_IOCTL_IOPORT_GETIRQ(port), mask), v);
-    avr_ioctl(avr, AVR_IOCTL_IOPORT_SET_EXTERNAL(port), &ext);
+    ext.name = reg;
+    ext.mask = pin;
+    ext.value = val;
+
+    avr_ioctl(avr, AVR_IOCTL_IOPORT_SET_EXTERNAL(reg), &ext);
 }

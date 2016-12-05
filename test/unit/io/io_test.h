@@ -15,7 +15,7 @@ extern "C" {
 
 #define ATMEGA328p "atmega328p"
 #define F_CPU 16000000
-#define STEPS 10000
+#define STEPS 100000
 #define INVALID_DDR "INVALID DDRx"
 #define INVALID_PORT "INVALID PORTx"
 #define INVALID_PIN "INVALID PINx"
