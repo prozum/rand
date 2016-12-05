@@ -232,27 +232,30 @@ void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError() {
 
 void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList() {
     init_logging(LOG_ALL);
+    clear_list();
     disable_device(SENDER_BOARD);
     disable_device(SENDER_BOARD);
 
     uint8_t dev_count = count_disabled_devices();
 
     //Assert dev_count == 1
-    CPPUNIT_ASSERT_MESSAGE("The same device is present in list twice.", 1 == dev_count);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The same device is present in list twice.", 1, (int) dev_count);
 }
 
 void LogTest::SenderIgnored_OnIgnoredList_ExpectOne() {
     init_logging(LOG_ALL);
+    clear_list();
     disable_device(SENDER_BOARD);
 
-    int blocked = sender_ignored(SENDER_BOARD);
+    uint8_t blocked = sender_ignored(SENDER_BOARD);
 
     //Assert blocked == 1
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The SENDER_BOARD device has not been blocked properly.", 1, blocked);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The SENDER_BOARD device has not been blocked properly.", 1, (int) blocked);
 }
 
 void LogTest::SenderIgnored_NotOnList_ExpectZero() {
     init_logging(LOG_ALL);
+    clear_list();
     disable_device(SENDER_FC);
     disable_device(SENDER_IO);
     disable_device(SENDER_IR);

@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include "core/io.h"
 #include "core/log.h"
 
@@ -70,14 +71,17 @@ uint8_t sender_ignored(log_sender sender) {
  * @param msg is the message to log.
  */
 void LOG(log_sender sender, const char *msg) {
-#if MOCK
+#if !MOCK
     if (!sender_ignored(sender) && logging_level == LOG_ALL) {
         char tmp[strlen(msg) + PREFIX_SIZE];
         strcpy(tmp, msg);
 
         serial_write_string(USB_TX, strcat(tmp, MSG_PREFIX));
     }
-#endif
+#endif !MOCK
+#if MOCK
+    printf("%s%s\n", "MESSAGE: ", msg);
+#endif //MOCK
 }
 
 /**
@@ -86,14 +90,17 @@ void LOG(log_sender sender, const char *msg) {
  * @param msg  is the warning to log
  */
 void WARNING(log_sender sender, const char *msg) {
-#if MOCK
+#if !MOCK
     if (!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
         strcpy(tmp, msg);
 
         serial_write_string(USB_TX, strcat(tmp, WARNING_PREFIX));
     }
-#endif
+#endif //!MOCK
+#if MOCK
+    printf("%s%s\n", "WARNING: ", msg);
+#endif //MOCK
 }
 
 /**
@@ -102,14 +109,17 @@ void WARNING(log_sender sender, const char *msg) {
  * @param msg is the error to log
  */
 void SERIOUS_WARNING(log_sender sender, const char *msg) {
-#if MOCK
+#if !MOCK
     if (!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
         strcpy(tmp, msg);
 
         serial_write_string(USB_TX, strcat(tmp, ERROR_PREFIX));
     }
-#endif
+#endif //!MOCK
+#if MOCK
+    printf("%s%s\n", "SERIOUS WARNING: ", msg);
+#endif //MOCK
 }
 
 /**
@@ -117,13 +127,16 @@ void SERIOUS_WARNING(log_sender sender, const char *msg) {
  * @param msg is the error to log.
  */
 void ERROR(const char *msg) {
-#if MOCK
+#if !MOCK
     char cpy[strlen(msg) + PREFIX_SIZE];
     strcpy(cpy, msg);
 
     serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
-#endif
+#endif //!MOCK
     //TODO: Add code for safely landing drone
+#if MOCK
+    printf("%s%s\n", "ERROR: ", msg);
+#endif //MOCK
 }
 
 #if MOCK
@@ -133,21 +146,28 @@ void ERROR(const char *msg) {
  * @param device to disable.
  */
 void disable_device(log_sender device) {
-    disabled_device new_dev = {.blocked_device = device, .next = NULL};
+    disabled_device *new_dev = malloc(sizeof(disabled_device));;
+    new_dev->blocked_device = device;
+    new_dev->next = NULL;
 
     //Run through list to find an available slot
-    disabled_device *ptr = head;
+    if(!head) {
+        head = new_dev;
+        return;
+    }
 
-    while (ptr != NULL) {
+    disabled_device *ptr = head;
+    while (ptr->next) {
         //return if the device is already in the list.
         if (ptr->blocked_device == device)
             return;
 
         ptr = ptr->next;
     }
-
-    //Fill in the disable device on that spot
-    *ptr = new_dev;
+    if(ptr->blocked_device != device)
+        ptr->next = new_dev;
+    else
+        free(new_dev);
 }
 
 uint8_t count_disabled_devices() {
@@ -160,6 +180,24 @@ uint8_t count_disabled_devices() {
     }
 
     return devices;
+}
+
+void clear_list() {
+    disabled_device *next;
+
+    if(!head)
+        return;
+
+    while(head->next) {
+        next = head->next;
+        free(head);
+        head = next;
+    }
+
+    if(head) {
+        free(head);
+        head = NULL;
+    }
 }
 
 #endif //MOCK

@@ -7,7 +7,7 @@
 
 typedef struct matrix_s {
     uint8_t rows, columns;
-    float **values;
+    float *values;
 } matrix_t;
 
 matrix_t *mult_mat_mat(matrix_t *left_matrix, matrix_t *right_matrix);
@@ -35,7 +35,9 @@ matrix_t *inv_mat(matrix_t *matrix);
 void mat_inv(float *m);*/
 
 matrix_t *matrix_constructor(uint8_t rows, uint8_t columns);
-
 void matrix_destructor(matrix_t *matrix);
+
+void matrix_set(matrix_t *matrix, uint8_t row, uint8_t column, float value);
+float matrix_get(matrix_t *matrix, uint8_t row, uint8_t column);
 
 #endif //RAND_MATRIX_MATH_H

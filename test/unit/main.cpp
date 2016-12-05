@@ -3,9 +3,11 @@
 #include <cppunit/CompilerOutputter.h>
 
 //#include "io/io_test.h"
-//#include "matrix/matrix_test.h"
 #include "kalman/kalman_datafusion_test.h"
 #include "kalman/kalman_test.h"
+#include "log/log_test.h"
+#include "matrix/matrix_test.h"
+#include "sonar/sonar_test.h"
 
 
 int main(int argc, char **argv) {

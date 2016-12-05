@@ -15,7 +15,7 @@ extern "C" {
 
 class LogTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(LogTest);
-        CPPUNIT_TEST(ToggleLogging_ShowAllMessages_ExpectMessage);
+        /*CPPUNIT_TEST(ToggleLogging_ShowAllMessages_ExpectMessage);
         CPPUNIT_TEST(ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages);
         CPPUNIT_TEST(ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings);
         CPPUNIT_TEST(ToggleLogging_ShowNone_ExpectBypass);
@@ -23,12 +23,12 @@ class LogTest : public CppUnit::TestCase {
         CPPUNIT_TEST(Log_Testlog_ExpectMsgTestlog);
         CPPUNIT_TEST(LogWarning_Testlog_ExpectWarTestlog);
         CPPUNIT_TEST(LogError_Testlog_ExpectErrTestlog);
-        CPPUNIT_TEST(LogErrorBypass_Testlog_ExpectErrTestLog);
+        CPPUNIT_TEST(LogErrorBypass_Testlog_ExpectErrTestLog);*/
 
-        CPPUNIT_TEST(DisableDevice_LogFromDisabled_ExpectNothing);
+        /*CPPUNIT_TEST(DisableDevice_LogFromDisabled_ExpectNothing);
         CPPUNIT_TEST(DisableDevice_LogWarningFromDisabled_ExpectNothing);
         CPPUNIT_TEST(DisableDevice_LogErrorFromDisabled_ExpectNothing);
-        CPPUNIT_TEST(DisableDevice_LogErrorBypassFromDisabled_ExpectError);
+        CPPUNIT_TEST(DisableDevice_LogErrorBypassFromDisabled_ExpectError);*/
         CPPUNIT_TEST(DisableDevice_DisableSameTwice_ExpectOneOnList);
 
         CPPUNIT_TEST(SenderIgnored_OnIgnoredList_ExpectOne);

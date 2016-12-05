@@ -15,7 +15,7 @@ extern "C" {
 }
 
 class KalmanDatafusionTest : public CppUnit::TestCase {
-    CPPUNIT_TEST_SUITE(KalmanDatafusionTest);
+    /*CPPUNIT_TEST_SUITE(KalmanDatafusionTest);
     CPPUNIT_TEST(KalmanDFInit_NullStateValidParams_StateMallocedAndInitialized);
     CPPUNIT_TEST(KalmanDFInit_ValidStateValidParams_StateInitialized);
     CPPUNIT_TEST(KalmanDFInit_ValidStateCNull_StateInitializedWithCzero);
@@ -26,7 +26,7 @@ class KalmanDatafusionTest : public CppUnit::TestCase {
     CPPUNIT_TEST(KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax);
     CPPUNIT_TEST(KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev);
     CPPUNIT_TEST(KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxprev);
-    CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE_END();*/
 private:
     float **R, **C;
     void assert(kalman_state_matrix *state, const float a, const float b, const float p_0);
