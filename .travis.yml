@@ -3,6 +3,18 @@ dist: trusty
 
 before_install:
   - sudo apt-get -qq install gcc-avr gdb-avr avrdude arduino libcppunit-1.13 libcppunit-dev libelf-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-gfx-dev
+  - echo "prefix=/usr
+  exec_prefix=${prefix}
+  libdir=${prefix}/lib/x86_64-linux-gnu
+  includedir=${prefix}/include
+
+  Name: SDL2_gfx
+  Description: drawing and graphical effects extension for SDL
+  Version: 1.0.1
+  Requires: sdl2 >= 2.0.0
+  Libs: -L${libdir} -lSDL2_gfx
+  Cflags: -I${includedir}/SDL2
+  " | sudo tee /usr/lib/x86_64-linux-gnu/pkgconfig/SDL2_gfx.pc
 
 install:
   - mkdir build && cd build

@@ -1,6 +1,10 @@
 #include "Simulator.h"
 #include "Drone.h"
 
+extern "C" {
+#include "nav/nav.h"
+}
+
 #include <cmath>
 
 inline double rad_to_deg(double radians) {
@@ -23,6 +27,8 @@ void Drone::draw() {
 }
 
 void Drone::update() {
+    navigation(&FC, &Laser, &Sonar, &IrTop, &IrBottom);
+
     Angle = float(Angle + 0.05);
     if (Angle > M_PI * 2)
         Angle = 0;
