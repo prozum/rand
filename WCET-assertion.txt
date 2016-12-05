@@ -14,11 +14,69 @@ subprogram "task_sonar"
   end loop;
 end "task_sonar";
 
-------------- MATRIX ------------------
---subprogram "matrix_constructor"
---
---end "matrix_constructor";
+------------- LASER -------------------
+subprogram "laser_read_dist"
+  loop repeats 4 times; end loop;
+end "laser_read_dist";
 
+
+------------- MATRIX ------------------
 subprogram "matrix_destructor"
-  loop repeats <3 times; end loop;
+  loop repeats <3 times; end loop; --all matrices are at most 2x2, so small overestimation
 end "matrix_destructor";
+
+subprogram "mult_mat_mat"
+  time 100 cycles; --fill with runtime-analysis
+end "mult_mat_mat";
+
+subprogram "mult_const_vec"
+  time 100 cycles; --fill with runtime-analysis
+end "mult_const_vec";
+
+subprogram "trans_matrix"
+  time 100 cycles; --fill with runtime-analysis
+end "trans_matrix";
+
+subprogram "mult_mat_vec"
+  time 100 cycles;
+end "mult_mat_vec";
+
+subprogram "add_mat_mat"
+  time 100 cycles;
+end "add_mat_mat";
+
+subprogram "sub_mat_mat"
+  time 100 cycles;
+end "sub_mat_mat";
+
+subprogram "add_vec_vec"
+  time 100 cycles;
+end "add_vec_vec";
+
+subprogram "sub_vec_vec"
+  time 100 cycles;
+end "sub_vec_vec";
+
+subprogram "inv_mat"
+  time 100 cycles;
+end "inv_mat";
+
+subprogram "ident_mat"
+  loop that contains loop
+    repeats <3 times;
+  end loop;
+  loop that is in loop
+    repeats <3 times;
+  end loop;
+end "ident_mat";
+
+------------- STDLIB ----------------
+--free--
+subprogram "002036"
+  time 500 cycles; --use Kaspers WCET-tool for estimation!!!
+end "002036";
+
+--malloc--
+subprogram "001F18"
+  time 500 cycles; --use Kaspers WECET-tool for estimation!!
+end "001F18";

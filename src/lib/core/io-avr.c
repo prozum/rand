@@ -135,10 +135,10 @@ void serial_write_string(tx_t pin, char *out) {
 
 }
 
-char *serial_read_string(tx_t pin, int len) {
+char *serial_read_string(tx_t pin, uint8_t len) {
     char *str = malloc(sizeof(char) * (len + 1));
 
-    int i;
+    uint8_t i;
     for (i = 0; i < len; i++) {
         str[i] = uart_getchar();
     }
@@ -146,11 +146,11 @@ char *serial_read_string(tx_t pin, int len) {
     return str;
 }
 
-char *serial_read_string_nowait(tx_t pin, int len) {
+char *serial_read_string_nowait(tx_t pin, uint8_t len) {
     char *str = malloc(sizeof(char) * (len + 1));
     str[0] = uart_trygetchar();
     if (str[0] != '\0') {
-        int i;
+        uint8_t i;
         for (i = 0; i < len; i++) {
             str[i] = uart_getchar();
         }

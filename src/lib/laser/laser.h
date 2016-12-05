@@ -12,9 +12,9 @@ typedef struct laser_s {
     tx_t pin; //pin -- maybe not tx_t, I have no idea!
     uint8_t valid; // flag to check if latest value is valid
     //latests readings
-    float left_value;
-    float right_value;
-    float front_value;
+    uint16_t left_value;
+    uint16_t right_value;
+    uint16_t front_value;
 } laser_t;
 
 laser_t *laser_init(tx_t pin);

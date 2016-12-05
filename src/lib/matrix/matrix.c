@@ -273,10 +273,7 @@ matrix_t *matrix_constructor(uint8_t rows, uint8_t columns) {
     new_matrix->rows = rows;
     new_matrix->columns = columns;
 
-    new_matrix->values = malloc(rows * sizeof(float*));
-    for (i = 0; i <= rows; i++) {
-        new_matrix->values[i] = malloc(columns * sizeof(float));
-    }
+    new_matrix->values = malloc(columns * rows * sizeof(float));
 
     if(!new_matrix || new_matrix->values)
         ERROR("mat_const: failed to allocate a matrix.");

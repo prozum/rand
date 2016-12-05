@@ -57,6 +57,6 @@ void task_read_acceleration();
 
 /*machine intelligence task*/
 void task_navigation();
-void task_sonar();
+
 
 #endif //RAND_TASK_H

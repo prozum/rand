@@ -67,14 +67,14 @@ void serial_write_string(tx_t pin, char *out);
 /// \param pin the serial pin to read from **Currently not used**
 /// \param len The amount of characters to read
 /// \return the string representation of the read characters
-char *serial_read_string(tx_t pin, int len);
+char *serial_read_string(tx_t pin, uint8_t len);
 
 /// reads the next n amount of characters from the a serial connection and returns them as a string
 /// only reads if there is unread data in the uart.
 /// \param pin the serial pin to read from **Currently not used**
 /// \param len The amount of characters to read
 /// \return the string representation of the read characters or NULL if an empty string if no data is available
-char *serial_read_string_nowait(tx_t pin, int len);
+char *serial_read_string_nowait(tx_t pin, uint8_t len);
 
 /// initializes the avr uart for serial communication.
 void uart_init();

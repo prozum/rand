@@ -21,7 +21,16 @@ void set_laser_values(laser_t *laser, float left, float right, float front){
 
 uint16_t laser_read_dist(laser_t *laser)
 {
-    laser->front_value = atoi(serial_read_string_nowait(SERIAL0, 4));
+    uint8_t i = 0;
+    uint16_t res = 0;
+    const uint8_t INPUT_SIZE = 4;
+    char *input = serial_read_string_nowait(SERIAL0, INPUT_SIZE);
+
+    for(i; i < INPUT_SIZE; i++) {
+        res += input[i] << (INPUT_SIZE - (i + 1));
+    }
+
+    laser->front_value = res;
 
     if (laser->front_value == 0) {
         laser->valid = 0;

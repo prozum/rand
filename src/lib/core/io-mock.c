@@ -187,7 +187,7 @@ void clear_write_buffer(tx_t pin) {
  * @param len number of bytes to read
  * @return a string from what was filled in the buffer
  */
-char *serial_read_string(tx_t pin, int len) {
+char *serial_read_string(tx_t pin, uint8_t len) {
     char *serial_string_val = malloc(len + 1);
 
     //Declare integers for index of 2nd and 3rd dimension of the array
@@ -210,7 +210,7 @@ char *serial_read_string(tx_t pin, int len) {
     return serial_string_val;
 }
 
-char *serial_read_string_nowait(tx_t pin, int len) {
+char *serial_read_string_nowait(tx_t pin, uint8_t len) {
     serial_read_string(pin, len);
 }
 
