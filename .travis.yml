@@ -4,7 +4,7 @@ dist: trusty
 before_install:
   - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
   - sudo apt-get update -q
-  - sudo apt-get -qq install gcc-6 gcc-avr gdb-avr avrdude arduino libcppunit-1.13 libcppunit-dev libelf-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-gfx-dev
+  - sudo apt-get -qq install gcc-6 g++-6 gcc-avr gdb-avr avrdude arduino libcppunit-1.13 libcppunit-dev libelf-dev libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libsdl2-gfx-dev
   - sudo cp .travis-sdl2-gfx.pc /usr/lib/x86_64-linux-gnu/pkgconfig/SDL2_gfx.pc
   - export CXX="/usr/bin/g++-6" CC="/usr/bin/gcc-6"
 
