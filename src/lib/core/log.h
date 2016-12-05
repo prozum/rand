@@ -31,8 +31,8 @@ void disable_device(log_sender device);
 #if MOCK
 
 uint8_t count_disabled_devices();
-
 uint8_t sender_ignored(log_sender sender);
+void clear_list();
 
 #endif //MOCK
 

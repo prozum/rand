@@ -17,7 +17,7 @@ typedef struct sonar_s {
     dpin_t trig;
     dpin_t echo;
     uint8_t valid; // flag to check if latest value is valid
-    float value; // latest reading in cm
+    uint16_t value; // latest reading in cm
 } sonar_t;
 
 sonar_t *sonar_init(dpin_t trig, dpin_t echo);
@@ -26,7 +26,7 @@ void read_sonar(sonar_t *sonar);
 void sonar_ping(sonar_t *sonar, dval_t value);
 void set_sonar(sonar_t *sonar, float);
 
-float sonar_to_meters(float reading);
+uint16_t sonar_to_centimeters(float millis);
 
 #if MOCK
 void pulse_sonar(sonar_t *sonar);

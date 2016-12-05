@@ -37,8 +37,8 @@ CPPUNIT_TEST_SUITE(IOTest);
         CPPUNIT_TEST(SetPinMode_Pin8SetOUT_ExpectOUT);
         CPPUNIT_TEST(SetPinMode_Pin13SetIN_ExpectIN);
         CPPUNIT_TEST(SetPinMode_Pin13SetOUT_ExpectOUT);
-        /*CPPUNIT_TEST(SetPinMode_Pin13SetLessThan0_ExpectNoChange);
-        CPPUNIT_TEST(SetPinMode_Pin13SetHigherThan1_ExpectNoChange); */
+        //CPPUNIT_TEST(SetPinMode_Pin13SetLessThan0_ExpectNoChange);
+        //CPPUNIT_TEST(SetPinMode_Pin13SetHigherThan1_ExpectNoChange);
 
         CPPUNIT_TEST(WritePin_Pin0WriteLOW_ExpectLOW);
         CPPUNIT_TEST(WritePin_Pin7WriteLOW_ExpectLOW);

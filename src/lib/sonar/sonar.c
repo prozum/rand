@@ -28,8 +28,9 @@ void read_sonar(sonar_t *sonar) {
     digital_read(sonar->echo);
 }
 
-float sonar_to_meters(float reading) {
-    return 0.01979 * reading + 0.23361;
+uint16_t sonar_to_centimeters(float millis) {
+    //Speed of sound is 34.32 cm/millisecond and the sound travels twice the distance to the measured object
+    return (uint16_t) (millis * 34.32f) / 2.0f;
 }
 
 void set_sonar(sonar_t *sonar, float value){

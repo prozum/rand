@@ -8,23 +8,23 @@
 typedef struct kalman_state_t {
     log_sender source_components;
 
-    double a; //How much we assume the next measurement differs from the previous one
-    double r; //variance of sensor, i.e. how much a measurement tends to differ from the actual
+    float a; //How much we assume the next measurement differs from the previous one
+    float r; //variance of sensor, i.e. how much a measurement tends to differ from the actual
 
-    double z_k; //Current observation
-    double g_k; //kalman gain variable
-    double p_k; //prediction error variable
+    float z_k; //Current observation
+    float g_k; //kalman gain variable
+    float p_k; //prediction error variable
 
-    double x_k; //State variable
+    float x_k; //State variable
     float u_k; // control signal
 
 } kalman_state;
 
-kalman_state *kalman_init(double _a, double _r, log_sender component);
+kalman_state *kalman_init(float _a, float _r, log_sender component);
 
-void kalman_run(kalman_state *state, double z_k);
+void kalman_run(kalman_state *state, float z_k);
 
-void kalman_calibrate(kalman_state *initial_state, double z_0);
+void kalman_calibrate(kalman_state *initial_state, float z_0);
 
 #endif //RAND_SINGLE_KALMAN_H
 

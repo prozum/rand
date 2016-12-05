@@ -16,6 +16,18 @@ extern "C" {
 
 class MatrixTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(MatrixTest);
+        CPPUNIT_TEST(matrix_get_1x1_ExpectCorrect);
+        CPPUNIT_TEST(matrix_get_1x2_ExpectCorrect);
+        CPPUNIT_TEST(matrix_get_2x1_ExpectCorrect);
+        CPPUNIT_TEST(matrix_get_2x2_ExpectCorrect);
+        CPPUNIT_TEST(matrix_get_3x3_ExpectCorrect);
+
+        CPPUNIT_TEST(matrix_set_1x1_ExpectCorrect);
+        CPPUNIT_TEST(matrix_set_1x2_ExpectCorrect);
+        CPPUNIT_TEST(matrix_set_2x1_ExpectCorrect);
+        CPPUNIT_TEST(matrix_set_2x2_ExpectCorrect);
+        CPPUNIT_TEST(matrix_set_3x3_ExpectCorrect);
+
         CPPUNIT_TEST(mult_mat_mat_ValidMatrix_ExpectCorrect);
         CPPUNIT_TEST(mult_mat_mat_InvalidMatrix_ExpectError);
         CPPUNIT_TEST(mult_mat_mat_DifferentSizes_ExpectCorrect);
@@ -84,4 +96,15 @@ public:
 
     void inv_mat_InvalidMatrix_ExpectError();
 
+    void matrix_get_1x1_ExpectCorrect();
+    void matrix_get_2x2_ExpectCorrect();
+    void matrix_get_1x2_ExpectCorrect();
+    void matrix_get_2x1_ExpectCorrect();
+    void matrix_get_3x3_ExpectCorrect();
+
+    void matrix_set_1x1_ExpectCorrect();
+    void matrix_set_2x2_ExpectCorrect();
+    void matrix_set_1x2_ExpectCorrect();
+    void matrix_set_2x1_ExpectCorrect();
+    void matrix_set_3x3_ExpectCorrect();
 };

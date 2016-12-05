@@ -29,7 +29,7 @@ typedef struct kalman_matrix_state_s {
 } kalman_state_matrix;
 
 kalman_state_matrix *kalman_datafusion_init (float a, float b, log_sender component,
-                             float **C, float **R);
+                             matrix_t *C, matrix_t *R);
 void kalman_datafusion_filter (kalman_state_matrix *state, float z_laser, float z_sonar);
 void kalman_datafusion_calibrate (kalman_state_matrix *state, float z_0_laser, float z_0_sonar);
 
