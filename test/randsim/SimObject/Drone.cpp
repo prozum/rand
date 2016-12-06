@@ -31,7 +31,11 @@ void Drone::draw() {
 
 void Drone::update() {
     calcSonarDist();
-    navigation(&FC, &Laser, &Sonar, &IrTop, &IrBottom);
+    rep_t rep;
+    nav_t nav; //don't know what to do with this
+    init_rep(&FC, &Laser, &Sonar, &IrTop, &IrBottom, &rep);
+
+    navigation(&rep, &nav);
 
     //Pos.X += 1;
     Pos.Y = 525;

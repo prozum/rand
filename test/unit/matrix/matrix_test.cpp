@@ -175,7 +175,7 @@ void MatrixTest::sub_mat_mat_ValidMatrix_ExpectCorrect() {
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            CPPUNIT_ASSERT_EQUAL(ResSubMat3x3[i][j], matrix_get(resMat, i, j));
+            CPPUNIT_ASSERT_EQUAL((int)(10*ResSubMat3x3[i][j]), (int)(10*matrix_get(resMat, i, j)));
         }
     }
     matrix_destructor(resMat);

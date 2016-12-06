@@ -1,8 +1,8 @@
 #include "core/io.h"
 #include "map/map.h"
 
-#define WIDTH 90
-#define HEIGHT 90
+#define WIDTH 64
+#define HEIGHT 64
 
 void draw_block(uint8_t x, uint8_t y, uint8_t offset, uint8_t size)
 {

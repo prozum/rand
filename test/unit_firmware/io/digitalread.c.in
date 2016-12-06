@@ -1,8 +1,13 @@
 #include "core/io.h"
 
+#include <stdlib.h>
 #include <assert.h>
 
 int main()
 {
-    assert(digital_read(@PIN_ID@) == @PIN_VAL@);
+    if (digital_read(@PIN_ID@) == @PIN_VAL@) {
+        return 0;
+    }
+
+    while (1);
 }

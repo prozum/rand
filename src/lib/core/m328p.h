@@ -32,8 +32,8 @@ static uint8_t dpins[] = {_BV(PORTD0), _BV(PORTD1), _BV(PORTD2), _BV(PORTD3),
 // table to lookup a 328p, use a physical arduino pin to get the 328p port value
 // for instance if you look up dports[1] you get the CPU's value of PORTB
 // PORTB is the port that contains pin 1 on the arduino
-static uint8_t dports[] = {PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_,
-                           PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_};
+static uint8_t dports[] = {PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_, PORTD_,
+                           PORTB_, PORTB_, PORTB_, PORTB_, PORTB_, PORTB_};
 #endif //MOCK
 
 // physical digital pin values on the arduino uno

@@ -17,6 +17,14 @@ typedef struct ir_s {
 
 ir_t *IR_init(apin_t pin);
 
-void IR_read(ir_t *ir);
+uint16_t IR_read(ir_t *ir);
+
+/*
+float IR_top_to_meters();
+
+float IR_bottom_to_meters();
+*/
+
+void IR_calibrate(float z_0);
 
 #endif //RAND_IR_H

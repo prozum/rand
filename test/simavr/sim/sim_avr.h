@@ -145,6 +145,7 @@ typedef void (*avr_run_t)(
  * the rest is runtime data (as little as possible)
  */
 typedef struct avr_t {
+	uint32_t opcode;
 	const char * mmcu;	// name of the AVR
 	// these are filled by sim_core_declare from constants in /usr/lib/avr/include/avr/io*.h
 	uint16_t 	ramend;
