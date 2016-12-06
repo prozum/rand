@@ -19,34 +19,31 @@ void map_init(uint8_t width, uint8_t height, uint8_t clean)
 
 void map_write(uint8_t x, uint8_t y, uint8_t value)
 {
-    uint16_t addr = (y * map_width + x) / 8;
-    uint16_t offset =  (y * map_width + x) % 8;
+    uint16_t addr = (y * map_width + x) / FIELDS_PER_BYTE;
+    uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;
 
-    uint8_t new_value = eeprom_read(addr);
+    uint8_t new_value = eeprom_read(addr); //load the byte to be read from
 
-    if (value) {
-        new_value |= 1 << offset;
-    } else {
-        new_value &= ~(1 << offset);
-    }
+    uint8_t mask = FULL_FIELD << offset * FIELD_SIZE; //safety mask
+    new_value = (new_value & ~(mask)) | ((value << offset) & mask);
 
     eeprom_write(addr, new_value);
 }
 
 uint8_t map_read(uint8_t x, uint8_t y)
 {
-    uint16_t addr = (y * map_width + x) / 8;
-    uint16_t offset =  (y * map_width + x) % 8;
+    uint16_t addr = (y * map_width + x) / FIELDS_PER_BYTE;
+    uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;;
 
     uint8_t value = eeprom_read(addr);
 
-    return (value >> offset) & 1;
+    return (value >> (offset)) & FULL_FIELD;
 }
 
 void map_clean()
 {
-    uint16_t map_size = (map_width * map_height) / 8;
-    if (map_width * map_height % 8)
+    uint16_t map_size = (map_width * map_height) / FIELDS_PER_BYTE;
+    if (map_width * map_height % FIELDS_PER_BYTE)
         map_size++;
     for (int i = 0; i < map_size; i++) {
         eeprom_write(i, 0);
@@ -59,10 +56,15 @@ void map_show()
     for (y = 0; y < map_height; y++) {
         uart_putchar('|');
         for (x = 0; x < map_width; x++) {
-            if (map_read(x, y))
-                uart_putchar('#');
-            else
+            if(map_read(x,y) == unvisited) {
                 uart_putchar(' ');
+            }else if(map_read(x,y) == visited) {
+                uart_putchar('\'');
+            }else if(map_read(x,y) == wall) {
+                uart_putchar('#');
+            }else if(map_read(x,y) == transparent) {
+                uart_putchar('¤');
+            }
         }
         uart_putchar('|');
         uart_putchar('\n');

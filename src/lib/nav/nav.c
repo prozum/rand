@@ -87,11 +87,52 @@ void update_u_k() {
     }*/
 }
 
-void navigation(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom)
-{
+/**
+ * This function is called by the scheduler for every
+ */
+void navigation(rep_t *rep, nav_t *nav){
     /* this should stop the drone if there's less or equal to 120 cm forward */
-    if ( (sonar->valid) == 1 && (sonar->value <= 120 || laser->front_value <= 120))
-        move_stop(fc);
+    if ( (rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE))
+        move_stop(rep->fc);
     
     
 }
+
+void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep){
+    rep->fc = fc;
+    rep->laser = laser;
+    rep->sonar = sonar;
+    rep->ir_top = irTop;
+    rep->ir_bottom = irBottom;
+}
+
+/**
+ * Takes in the newest measured data.
+ * @return the updated representation struct
+ *
+rep_t update(rep_t *rep){
+    rep_t rep;
+    rep.fc = rep->fc;
+    rep.laser = rep->laser;
+    rep.sonar = sonar;
+    rep.ir_top = ir_top;
+    rep.ir_bottom = ir_bottom;
+
+    return rep;
+}*/
+
+uint8_t CheckAWallF(rep_t rep){
+    if((rep.sonar->valid) == 1 && (rep.sonar->value <= 40 || rep.laser->front_value <= 40)){
+        return 1;
+    }
+    return 0;
+}
+
+uint8_t CheckAWallL(rep_t rep) {
+    if (rep.laser->left_value <= 40) {
+        return 1;
+    }
+    return 0;
+}
+
+

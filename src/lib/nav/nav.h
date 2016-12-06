@@ -10,6 +10,7 @@
 
 #define DATAFUSION_FILTERS 1
 #define SENSOR_FILTERS 4
+#define MIN_RANGE 40
 
 #include <stdint.h>
 
@@ -25,6 +26,7 @@
 #define LASER_r 1
 #define IR_r 1
 #define KALMAN_b 0 //We do not take the control signal into account as of now.
+#define PERIOD 100 //The time between calls of the navigator.
 
 #define FRONT_READING 0
 #define LEFT_READING 0
@@ -35,6 +37,46 @@
 typedef struct position_s {
     /*Fill here*/
 } position_t;
+
+typedef struct rep_s{
+    fc_t *fc;
+    laser_t *laser;
+    sonar_t *sonar;
+    ir_t *ir_top;
+    ir_t *ir_bottom;
+}rep_t;
+
+/**
+ * The drone only performs one task at any time
+ * this type defines that task.
+ */
+typedef enum task_e{
+    turnleft,
+    turnaround,
+    turnright,
+    moveforward,
+    moveup,
+    movedown,
+    searching
+}task_t;
+
+typedef struct state_s{
+    uint8_t AWallF      : 1; //wall within 40cm in front
+    uint8_t AWallR      : 1; //wall within 40cm on the right
+    uint8_t AWallL      : 1; //wall within 40cm on the left
+    uint8_t AWinF       : 1; //window within 40cm in front
+    uint8_t AWinR       : 1; //window within 40cm on the right
+    uint8_t AWinL       : 1; //window within 40cm on the left
+    uint8_t AGround     : 1; //floor within 40cm below
+    uint8_t ACeiling    : 1; //ceiling within 40cm above
+}state_t;
+
+typedef struct nav_s{
+    state_t state;
+    uint8_t timer;
+    task_t task;
+    uint16_t angle;
+}nav_t;
 
 kalman_state *kalman_filters[SENSOR_FILTERS];
 kalman_state_matrix *datafusion_filters[DATAFUSION_UNITS];
@@ -50,7 +92,9 @@ void positioning_calculate(position_t *position, float sensor_readings[SENSOR_FI
 
 void update_u_k();
 
-void navigation(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom);
+void navigation(rep_t *rep, nav_t *nav);
+
+void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep);
 
 #endif //RAND_POSITIONING_H
 
