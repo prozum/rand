@@ -41,8 +41,8 @@ void Drone::update() {
     Sonar.calcDist(Sim->Blocks);
 
     //Pos.X += 1;
-    Pos.X = 113.5;
-    Pos.Y = -113.5;
+    Pos.X = 112.5;
+    Pos.Y = -137.5;
 
     navigation(&rep, &nav);
 

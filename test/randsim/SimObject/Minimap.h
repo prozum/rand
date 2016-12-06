@@ -20,13 +20,13 @@ extern "C" {
 #define BLUE   {0, 0, 255}
 #define BLACK  {0, 0, 0}
 
-class Map : SimObject {
+class Minimap : SimObject {
 
 public:
     unsigned long Width = 0;
     unsigned long Height = 0;
 
-    Map();
+    Minimap();
 
     void loadMap(std::string Path);
     void printMap();

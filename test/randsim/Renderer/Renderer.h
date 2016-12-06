@@ -23,7 +23,7 @@ public:
     int WinWidth = 1000;
     int WinHeight = 1000;
     float Zoom = 1.0;
-    Vector2D Offset = {0, 0};
+    Vector2D Offset = {-500, 500};
 
     virtual bool init() = 0;
 
@@ -53,12 +53,12 @@ public:
     // Relative functions
     inline int rel(double Val) { return int(Val * Zoom); }
     inline int relX(double Val) { return int((Val - Offset.X) * Zoom); }
-    inline int relY(double Val) { return int((-Val - Offset.Y) * Zoom); }
+    inline int relY(double Val) { return int(-(Val - Offset.Y) * Zoom); }
 
     // Inverse relative functions
-    inline double iRel(double Val) { return int(Val / Zoom); }
-    inline double iRelX(double Val) { return int((Val / Zoom) + Offset.X); }
-    inline double iRelY(int Val) { return int((-Val / Zoom) + Offset.Y); }
+    inline double iRel(double Val) { return Val / Zoom; }
+    inline double iRelX(double Val) { return Val / Zoom + Offset.X; }
+    inline double iRelY(double Val) { return -(Val / Zoom - Offset.Y); }
 
 };
 

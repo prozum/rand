@@ -1,7 +1,7 @@
 #include "Block.h"
 #include "Drone.h"
 #include "Simulator.h"
-#include "Map.h"
+#include "Minimap.h"
 #include "SdlRenderer.h"
 
 #include <SDL2/SDL.h>
@@ -15,7 +15,7 @@ Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
     Drn = make_unique<Drone>(Vector2D(75, 75), 50);
-
+    Map = make_unique<Minimap>();
 }
 
 Simulator::~Simulator() {
@@ -48,11 +48,11 @@ int Simulator::run() {
                                                 int(1 / Render->Zoom) * Block::Size : Block::Size;
                             break;
                         case SDLK_UP:
-                            Render->Offset.Y -= int(1 / Render->Zoom) ?
+                            Render->Offset.Y += int(1 / Render->Zoom) ?
                                                 int(1 / Render->Zoom) * Block::Size : Block::Size;
                             break;
                         case SDLK_DOWN:
-                            Render->Offset.Y += int(1 / Render->Zoom) ?
+                            Render->Offset.Y -= int(1 / Render->Zoom) ?
                                                 int(1 / Render->Zoom) * Block::Size : Block::Size;
                             break;
                         case SDLK_ESCAPE:
@@ -94,6 +94,7 @@ void Simulator::drawObjects() {
     Drn->draw();
 
     drawInfoBox();
+    Map->draw();
 }
 
 void Simulator::updateObjects() {
@@ -133,47 +134,56 @@ bool Simulator::loadMap(string Path) {
 }
 
 void Simulator::drawBlockGrid() {
-    int Height = Render->WinHeight;
-    int Width = Render->WinWidth;
+    int WinHeight = Render->WinHeight;
+    int WinWidth = Render->WinWidth;
 
-    int BlockSize = int(Block::Size * Render->Zoom);
+    int RelBlockSize = int(Block::Size * Render->Zoom);
 
-    int HLines = Height / BlockSize;
-    int VLines = Width / BlockSize;
-    //int FirstBoldY = Render->Offset.Y % (Block::Size * 4) ? 0 : 1;
+    int HLines = WinHeight / RelBlockSize;
+    int VLines = WinWidth / RelBlockSize;
 
     Render->setColor({0, 0, 0});
 
-
     for (int i = 1; i <= HLines; ++i) {
-        int LineY = i * BlockSize;
-        if (i % 4)
-            Render->drawLine({0, LineY}, {Width, LineY});
-        else {
-            Render->drawLine({0, LineY - 1}, {Width, LineY - 1});
-            Render->drawLine({0, LineY}, {Width, LineY});
-            Render->drawLine({0, LineY + 1}, {Width, LineY + 1});
+        int CorY = i * RelBlockSize;
+        int RealY = int(-Render->Offset.Y + Block::Size * i);
+        if (RealY % 100 != 0) {
+            Render->drawLine({0, CorY}, {WinWidth, CorY});
+        } else if (RealY != 0) {
+            Render->drawLine({0, CorY - 1}, {WinWidth, CorY - 1});
+            Render->drawLine({0, CorY}, {WinWidth, CorY});
+            Render->drawLine({0, CorY + 1}, {WinWidth, CorY + 1});
+        } else {
+            Render->setColor({255, 0, 0});
+            Render->drawLine({0, CorY - 1}, {WinWidth, CorY - 1});
+            Render->drawLine({0, CorY}, {WinWidth, CorY});
+            Render->drawLine({0, CorY + 1}, {WinWidth, CorY + 1});
+            Render->setColor({0, 0, 0});
         }
     }
 
-
-    //int FirstBoldX = Render->Offset.X % (Block::Size * 4) ? 0 : 1;
     for (int i = 1; i <= VLines; ++i) {
-        int LineX = i * BlockSize;
-        if (i % 4)
-            Render->drawLine({LineX, 0}, {LineX, Height});
-        else {
-            Render->drawLine({LineX - 1, 0}, {LineX - 1, Height});
-            Render->drawLine({LineX, 0}, {LineX, Height});
-            Render->drawLine({LineX + 1, 0}, {LineX + 1, Height});
+        int CorX = i * RelBlockSize;
+        int RealX = int(Render->Offset.X + Block::Size * i);
+        if (RealX % 100 != 0) {
+            Render->drawLine({CorX, 0}, {CorX, WinHeight});
+        } else if (RealX != 0) {
+            Render->drawLine({CorX - 1, 0}, {CorX - 1, WinHeight});
+            Render->drawLine({CorX, 0}, {CorX, WinHeight});
+            Render->drawLine({CorX + 1, 0}, {CorX + 1, WinHeight});
+        } else {
+            Render->setColor({255, 0, 0});
+            Render->drawLine({CorX - 1, 0}, {CorX - 1, WinHeight});
+            Render->drawLine({CorX, 0}, {CorX, WinHeight});
+            Render->drawLine({CorX + 1, 0}, {CorX + 1, WinHeight});
+            Render->setColor({0, 0, 0});
         }
     }
-
 }
 
 void Simulator::drawInfoBox() {
-    int Height = int(Render->WinHeight * 0.6);
-    int Width = Height / 2;
+    int Height = Render->WinHeight * 0.7;
+    int Width = Render->WinHeight * 0.3;
 
     Vector2D Pos = {int(Render->WinWidth - Width), int(Render->WinHeight - Height)};
     int MarginX = 25, MarginY = 25;
@@ -221,7 +231,7 @@ void Simulator::drawInfoBox() {
 
 
     // Block to cm meter
-    int MeterHeight = Render->WinHeight * 0.1;
+    int MeterHeight = Block::Size * 8;
     int MeterTopY = Render->WinHeight - MeterHeight - MarginY;
     int MeterBotY =  Render->WinHeight - MarginY;
     Render->drawLine({OffsetX + 10, MeterTopY}, {OffsetX + 30, MeterTopY});

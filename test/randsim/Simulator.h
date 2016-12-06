@@ -3,10 +3,10 @@
 #include <memory>
 #include <vector>
 
-#include "Renderer.h"
-
+class Renderer;
 class Block;
 class Drone;
+class Minimap;
 
 class Simulator {
 
@@ -14,6 +14,7 @@ public:
     std::unique_ptr<Renderer> Render;
 
     std::unique_ptr<Drone> Drn;
+    std::unique_ptr<Minimap> Map;
     std::vector<Block> Blocks;
 
     Simulator();
