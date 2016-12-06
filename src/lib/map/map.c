@@ -57,16 +57,16 @@ void map_show()
         uart_putchar('|');
         for (x = 0; x < map_width; x++) {
             switch (map_read(x, y)) {
-                case unvisited:
+                case UNVISITED:
                     uart_putchar(' ');
                     break;
-                case visited:
+                case VISITED:
                     uart_putchar('\'');
                     break;
-                case wall:
+                case WALL:
                     uart_putchar('#');
                     break;
-                case transparent:
+                case TRANSPARENT:
                     uart_putchar('&');
                     break;
                 default:

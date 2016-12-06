@@ -85,7 +85,7 @@ static uint8_t avr_uart_rxc_read(struct avr_t * avr, avr_io_addr_t addr, void * 
 		if (ri && ti)
 			usleep(1);
 	}
-	// if reception is idle and the fifo is empty, tell whomever there is room
+	// if reception is IDLE and the fifo is empty, tell whomever there is room
 	if (avr_regbit_get(avr, p->rxen) && uart_fifo_isempty(&p->input)) {
 		avr_raise_irq(p->io.irq + UART_IRQ_OUT_XOFF, 0);
 		avr_raise_irq(p->io.irq + UART_IRQ_OUT_XON, 1);

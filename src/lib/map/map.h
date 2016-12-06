@@ -14,10 +14,10 @@
  * Currently a field has 4 states and can be represented by 2 bits.
  */
 typedef enum fieldstate_e{
-    unvisited = 0,
-    visited = 1,
-    wall = 2,
-    transparent = 3
+    UNVISITED = 0,
+    VISITED = 1,
+    WALL = 2,
+    TRANSPARENT = 3
 }fieldstate_t;
 
 void map_init(uint8_t width, uint8_t height, uint8_t clean);
