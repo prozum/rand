@@ -15,6 +15,7 @@ public:
     double determinant(Vector2D V);
     double dot(Vector2D);
     double length();
+    void compose(double Length, double Angle);
 
     double X;
     double Y;

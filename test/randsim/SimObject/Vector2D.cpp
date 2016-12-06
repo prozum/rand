@@ -15,6 +15,11 @@ Vector2D Vector2D::operator-(const Vector2D &Arg) {
     return Vector2D(this->X - Arg.X, this->Y - Arg.Y);
 }
 
+void Vector2D::compose(double Length, double Angle) {
+    this->X = cos(Angle) * Length;
+    this->Y = sin(Angle) * Length;
+}
+
 double Vector2D::determinant(Vector2D V) {
     return (X * V.Y) - (Y * V.X);
 }
