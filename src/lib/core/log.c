@@ -71,14 +71,14 @@ uint8_t sender_ignored(log_sender sender) {
  * @param msg is the message to log.
  */
 void LOG(log_sender sender, const char *msg) {
-#if !MOCK
+#ifndef MOCK
     if (!sender_ignored(sender) && logging_level == LOG_ALL) {
         char tmp[strlen(msg) + PREFIX_SIZE];
         strcpy(tmp, msg);
 
         serial_write_string(USB_TX, strcat(tmp, MSG_PREFIX));
     }
-#endif !MOCK
+#endif // !MOCK
 #if MOCK
     printf("%s%s\n", "MESSAGE: ", msg);
 #endif //MOCK

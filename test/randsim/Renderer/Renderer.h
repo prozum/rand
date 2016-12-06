@@ -27,7 +27,7 @@ class Renderer {
 public:
     int WinWidth = 1000;
     int WinHeight = 1000;
-    float Zoom = 0.3;
+    float Zoom = 1.0;
     Dot Offset = {0, 0};
 
     virtual bool init() = 0;
@@ -42,19 +42,21 @@ public:
     virtual void drawRect(Dot Pos, int Width, int Height) = 0;
     virtual void drawCircle(Dot Center, int Radius) = 0;
     virtual void drawPie(Dot Center, int Radius, int Start, int End) = 0;
-    virtual void drawText(std::string Text, Dot Pos) = 0;
+    virtual void drawText(std::string Text, Dot Pos, Color Background = {0, 0, 0}) = 0;
 
     // Relative
     virtual void drawLineRel(Dot Start, Dot End) = 0;
     virtual void drawRectRel(Dot Pos, int Width, int Height) = 0;
     virtual void drawCircleRel(Dot Center, int Radius) = 0;
     virtual void drawPieRel(Dot Center, int Radius, int Start, int End) = 0;
-    virtual void drawTextRel(std::string Text, Dot Pos) = 0;
+    virtual void drawTextRel(std::string Text, Dot Pos, Color Background = {0, 0, 0}) = 0;
 
+    // Relative functions
     inline int rel(int Val) { return int(Val * Zoom); }
     inline int relX(int Val) { return int((Val - Offset.X) * Zoom); }
     inline int relY(int Val) { return int((Val - Offset.Y) * Zoom); }
 
+    // Inverse relative functions
     inline int iRel(int Val) { return int(Val / Zoom); }
     inline int iRelX(int Val) { return int((Val / Zoom) + Offset.X); }
     inline int iRelY(int Val) { return int((Val / Zoom) + Offset.Y); }

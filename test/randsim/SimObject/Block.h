@@ -12,7 +12,7 @@ class Block : public SimObject {
     BlockType Type;
 
 public:
-    static const int Size = 50;
+    static const int Size = 25;
 
     Block(Dot Pos, BlockType Type);
 

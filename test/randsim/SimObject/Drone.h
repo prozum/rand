@@ -6,8 +6,8 @@
 
 class Drone : public SimObject {
 public:
-    double Angle;
-    int Size;
+    double Angle;   // Angle in radians
+    int Size;       // Size in cm
 
     fc_t FC;
     sonar_t Sonar;
