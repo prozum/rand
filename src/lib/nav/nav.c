@@ -8,9 +8,15 @@ position_t *positioning_init(float a[SENSOR_FILTERS], float r[SENSOR_FILTERS],
     }
     i = 0;
     for (i; i < DATAFUSION_FILTERS; ++i) {
-        /*todo: FIND A BETTER SOLUTION!*/
-        float C[2][2] = {{1, 0}, {1, 0}};
-        float R[2][2] = {{1, 0}, {0, 1}};
+        matrix_t *C = matrix_constructor(2, 1);
+        matrix_set(C, 0, 0, 1);
+        matrix_set(C, 1, 0, 1);
+
+        matrix_t *R = matrix_constructor(2, 2);
+        matrix_set(R, 0, 0, 1);
+        matrix_set(R, 0, 1, 0);
+        matrix_set(R, 1, 0, 0);
+        matrix_set(R, 1, 1, 1);
 
         datafusion_filters[i] = kalman_datafusion_init(A[i], B[DATAFUSION_FILTERS], SENDER_BOARD, C, R);
     }
