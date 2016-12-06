@@ -175,9 +175,9 @@ void Simulator::drawInfoBox() {
     int Height = int(Render->WinHeight * 0.6);
     int Width = Height / 2;
 
-    Dot Pos = {int(Render->WinWidth - Width), int(Render->WinHeight - Height)};
+    Vector2D Pos = {int(Render->WinWidth - Width), int(Render->WinHeight - Height)};
     int MarginX = 25, MarginY = 25;
-    int OffsetX = Pos.X + MarginX, OffsetY = Pos.Y + MarginY;
+    int OffsetX = Pos.x + MarginX, OffsetY = Pos.x + MarginY;
 
     // Design constants
     const int Indent = OffsetX + 20;
@@ -204,7 +204,7 @@ void Simulator::drawInfoBox() {
     // Drone info
     int DroneOffset = MouseOffset + PropSpace + ObjSpace;
     Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
-    Render->drawText(string("Pos: (") + to_string(Drn->Pos.X) + " cm, " + to_string(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
+    Render->drawText(string("Pos: (") + to_string(Drn->Pos.x) + " cm, " + to_string(Drn->Pos.y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
     Render->drawText(string("Angle: ") + to_string(rad_to_deg(Drn->Angle)), {Indent, DroneOffset + PropSpace * 2}, BGColor);
 
     // Laser info
@@ -217,7 +217,7 @@ void Simulator::drawInfoBox() {
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + to_string(Drn->Sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + to_string(Drn->sonar.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
 
     // Block to cm meter

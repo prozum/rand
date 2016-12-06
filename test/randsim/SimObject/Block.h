@@ -18,10 +18,10 @@ public:
     Vector2D min;
     Vector2D max;
 
-    Block(Dot Pos, BlockType Type);
+    Block(Vector2D Pos, BlockType Type);
 
     void draw();
     void update();
-    bool intersection(Ray ray);
+    bool intersection(Ray ray, Vector2D& res);
 };
 

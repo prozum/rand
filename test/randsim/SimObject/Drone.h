@@ -11,7 +11,7 @@ public:
     double Angle;   // Angle in radians
     int Size;       // Size in cm
 
-    Sonar Sonar;
+    Sonar sonar;
     fc_t FC;
     laser_t Laser;
     ir_t IrTop;
@@ -21,6 +21,5 @@ public:
 
     void draw();
     void update();
-    void calcSonarDist();
     void calcLaserDist();
 };

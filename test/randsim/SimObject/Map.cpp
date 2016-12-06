@@ -15,7 +15,7 @@ using namespace std;
 #define MAP_HEIGHT 64
 #define MAP_WIDTH  64
 
-Map::Map() : SimObject(Dot()) {
+Map::Map() : SimObject(Vector2D()) {
     map_init(MAP_WIDTH, MAP_HEIGHT, 0);
 }
 

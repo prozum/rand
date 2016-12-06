@@ -9,7 +9,7 @@ extern "C" {
 #include <cmath>
 #include <iostream>
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0) { }
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), sonar(57, 15.0) { }
 
 void Drone::draw() {
     // Drone
@@ -17,12 +17,12 @@ void Drone::draw() {
 
     // Direction line
     Sim->Render->setColor({255, 0, 0});
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(sin(Angle) * Size / 2), Pos.Y + int(cos(Angle) * Size / 2)});
+    Sim->Render->drawLineRel(Pos, {Pos.x + int(sin(Angle) * Size / 2), Pos.y + int(cos(Angle) * Size / 2)});
 
     // Sonar
     Sim->Render->setColor({255, 0, 0}, 100);
     //Sim->Render->drawPieRel(Pos, 500, int(rad_to_deg(Angle) - 7.5), int(rad_to_deg(Angle) + 7.5));
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(sin(Angle) * 500), Pos.Y + int(cos(Angle) * 500)});
+    Sim->Render->drawLineRel(Pos, {Pos.x + int(sin(Angle) * 500), Pos.y + int(cos(Angle) * 500)});
 
     // Laser
     Sim->Render->setColor({0, 0, 255}, 100);
@@ -30,16 +30,15 @@ void Drone::draw() {
 }
 
 void Drone::update() {
-    calcLaserDist();
+    //calcLaserDist();
     //calcSonarDist();
 
     rep_t rep;
     nav_t nav; //don't know what to do with this
     init_nav(&nav);
-    init_rep(&FC, &Laser, &Sonar, &IrTop, &IrBottom, &rep);
+    init_rep(&FC, &Laser, &(sonar.sonar), &IrTop, &IrBottom, &rep);
 
-    calcSonarDist();
-    navigation(&FC, &Laser, &(Sonar.Sonar), &IrTop, &IrBottom);
+    sonar.calcDist(Sim->Blocks);
 
     //Pos.X += 1;
     Pos.x = 500;
@@ -167,6 +166,7 @@ void Drone::calcSonarDist() {
 }
  */
 
+/*
 void Drone::calcLaserDist() {
 
     int Radius = Size/2;
@@ -207,4 +207,4 @@ void Drone::calcLaserDist() {
     std::cout << "Found: " << (Angle < StartAngle && Angle > EndAngle) << std::endl;
     //}
 }
-
+*/

@@ -6,6 +6,4 @@ class Ray {
 public:
     Vector2D origin;
     Vector2D direction;
-
-
 };
