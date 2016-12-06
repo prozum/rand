@@ -71,11 +71,13 @@ typedef struct state_s{
     uint8_t ACeiling    : 1; //ceiling within 40cm above
 }state_t;
 
+void update_state(state_t *state);
+
 typedef struct nav_s{
-    state_t state;
-    uint8_t timer;
-    task_t task;
-    uint16_t angle;
+    state_t *state;
+    uint8_t *timer;
+    task_t *task;
+    uint16_t *angle;
 }nav_t;
 
 kalman_state *kalman_filters[SENSOR_FILTERS];
@@ -95,6 +97,15 @@ void update_u_k();
 void navigation(rep_t *rep, nav_t *nav);
 
 void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep);
+
+uint8_t CheckAWallF(rep_t *rep);
+uint8_t CheckAWallL(rep_t *rep);
+uint8_t CheckAWallR(rep_t *rep);
+uint8_t CheckAWinF(rep_t *rep);
+uint8_t CheckAWinL(rep_t *rep);
+uint8_t CheckAWinR(rep_t *rep);
+uint8_t CheckAGround(rep_t *rep);
+uint8_t CheckAWCeiling(rep_t *rep);
 
 #endif //RAND_POSITIONING_H
 

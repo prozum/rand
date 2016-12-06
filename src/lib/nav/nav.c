@@ -87,9 +87,11 @@ void update_u_k() {
     }*/
 }
 
-void navigation(rep_t *rep, nav_t *nav)
-{
-    /* this should stop the drone if there's less or equal to 40 cm forward */
+/**
+ * This function is called by the scheduler for every
+ */
+void navigation(rep_t *rep, nav_t *nav){
+    /* this should stop the drone if there's less or equal to 120 cm forward */
     if ( (rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE))
         move_stop(rep->fc);
     
@@ -175,6 +177,17 @@ uint8_t CheckAWinR(rep_t *rep) {
         //Cross reference map and turn to check with sonar if necessary
     }
     return 0;
+}
+
+void update_state(state_t *state, rep_t *rep){
+    state->ACeiling = CheckAWCeiling(&rep);
+    state->AGround =  CheckAGround(&rep);
+    state->AWallF = CheckAWallF(&rep);
+    state->AWallL = CheckAWallL(&rep);
+    state->AWallR = CheckAWallR(&rep);
+    state->AWinF = CheckAWinF(&rep);
+    state->AWinL = CheckAWinL(&rep);
+    state->AWinR = CheckAWinR(&rep);
 }
 
 
