@@ -35,6 +35,7 @@ void Drone::update() {
 
     rep_t rep;
     nav_t nav; //don't know what to do with this
+    init_nav(&nav);
     init_rep(&FC, &Laser, &Sonar, &IrTop, &IrBottom, &rep);
 
     navigation(&rep, &nav);

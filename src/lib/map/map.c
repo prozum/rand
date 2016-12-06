@@ -57,16 +57,16 @@ void map_show()
         uart_putchar('|');
         for (x = 0; x < map_width; x++) {
             switch (map_read(x, y)) {
-                case unvisited:
+                case UNVISITED:
                     uart_putchar(' ');
                     break;
-                case visited:
+                case VISITED:
                     uart_putchar('\'');
                     break;
-                case wall:
+                case WALL:
                     uart_putchar('#');
                     break;
-                case transparent:
+                case TRANSPARENT:
                     uart_putchar('&');
                     break;
                 default:
@@ -90,7 +90,7 @@ void begin_mapping()
 
   //  for (int i = 0; i < EEPROM_SIZE; i++)
    // {
-        /* insert logic that uses the sensors to find a wall*/
+        /* insert logic that uses the sensors to find a WALL*/
 
         /* insert logic that converts real distance to pixel distance */
 

@@ -226,7 +226,7 @@ typedef struct avr_t {
 	uint8_t		sreg[8];
 
 	/* Interrupt state:
-		00: idle (no wait, no pending interrupts) or disabled
+		00: IDLE (no wait, no pending interrupts) or disabled
 		<0: wait till zero
 		>0: interrupt pending */
 	int8_t		interrupt_state;	// interrupt state
