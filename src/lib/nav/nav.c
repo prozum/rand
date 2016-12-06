@@ -87,11 +87,9 @@ void update_u_k() {
     }*/
 }
 
-/**
- * This function is called by the scheduler for every
- */
-void navigation(rep_t *rep, nav_t *nav){
-    /* this should stop the drone if there's less or equal to 120 cm forward */
+void navigation(rep_t *rep, nav_t *nav)
+{
+    /* this should stop the drone if there's less or equal to 40 cm forward */
     if ( (rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE))
         move_stop(rep->fc);
     
@@ -121,18 +119,63 @@ rep_t update(rep_t *rep){
     return rep;
 }*/
 
-uint8_t CheckAWallF(rep_t rep){
-    if((rep.sonar->valid) == 1 && (rep.sonar->value <= 40 || rep.laser->front_value <= 40)){
+uint8_t CheckAWallF(rep_t *rep){
+    if((rep->sonar->valid) == 1 && (rep->sonar->value <= 40 || rep->laser->front_value <= 40)){
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckAWallL(rep_t rep) {
-    if (rep.laser->left_value <= 40) {
+uint8_t CheckAWallL(rep_t *rep) {
+    //Check map
+    if (rep->laser->left_value <= 40) {
         return 1;
     }
     return 0;
 }
+
+uint8_t CheckAWallR(rep_t *rep) {
+    //Check map
+    if (rep->laser->right_value <= 40) {
+        return 1;
+    }
+    return 0;
+}
+
+uint8_t CheckAGround(rep_t *rep) {
+    if (rep->ir_bottom->value <= 40) {
+        return 1;
+    }
+    return 0;
+}
+
+uint8_t CheckACeiling(rep_t *rep) {
+    if (rep->ir_top->value <= 40) {
+        return 1;
+    }
+    return 0;
+}
+
+uint8_t CheckAWinF(rep_t *rep) {
+    if (rep->sonar->valid && rep->laser->left_value >= 60 && rep->sonar->value <= 40) {
+        return 1;
+    }
+    return 0;
+}
+
+uint8_t CheckAWinL(rep_t *rep) {
+    if (rep->laser->left_value >= 40) {
+        //Cross reference map and turn to check with sonar if necessary
+    }
+    return 0;
+}
+
+uint8_t CheckAWinR(rep_t *rep) {
+    if (rep->laser->right_value >= 40) {
+        //Cross reference map and turn to check with sonar if necessary
+    }
+    return 0;
+}
+
 
 
