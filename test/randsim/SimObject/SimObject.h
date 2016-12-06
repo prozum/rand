@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Renderer.h"
+#include "Vector2D.h"
 
 class Simulator;
 
@@ -11,11 +12,14 @@ class SimObject {
 public:
     Simulator *Sim;
 
-    Dot Pos;
+    Vector2D Pos;
 
-    SimObject(Dot Pos);
+    SimObject(Vector2D Pos);
     static void setDefaultSimulator(Simulator *Sim);
 
+    double calcDist(SimObject *obj);
+    double calcDist(double X, double Y);
+    double calcAngle(double X, double Y);
     virtual void draw() = 0;
     virtual void update() = 0;
 };

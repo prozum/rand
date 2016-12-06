@@ -22,4 +22,12 @@ void Block::update() {
 
 }
 
+bool Block::intersection(Ray ray) {
+    int Tnear = -INFINITY;
+    int Tfar = INFINITY;
+
+    uint32_t T1 =
+
+
+}
 
