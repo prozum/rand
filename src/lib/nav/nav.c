@@ -88,9 +88,54 @@ void update_u_k() {
 }
 
 /**
- * This function is called by the scheduler for every
+ * This function is called by the scheduler every period
  */
 void navigation(rep_t *rep, nav_t *nav){
+    //what were we doing?
+    task_t currenttask = nav->task;
+    if (currenttask == idle) {
+        /*check if anything is near
+         * if nothing is near, check if area is discovered
+         * if not, turn around to explore,
+         * else start moving
+         */
+        onIdle();
+    }else if(currenttask == turnleft){
+         /*
+          * Do something
+          */
+        onTurnleft();
+    }else if(currenttask == turnright){
+        /*
+         * Do something
+         */
+        onTurnright();
+    }else if(currenttask == turnaround){
+        /*
+         * Do something
+         */
+        onTurnaround();
+    }else if(currenttask == movedown){
+        /*
+         * Do something
+         */
+        onMovedown();
+    }else if(currenttask == moveup){
+        /*
+         * Do something
+         */
+        onMoveup();
+    }else if(currenttask == moveforward){
+        /*
+         * Do something
+         */
+        onMoveforward();
+    }else if(currenttask == searching){
+        /*
+         * Do something
+         */
+        onSearching();
+    }
     /* this should stop the drone if there's less or equal to 120 cm forward */
     if ( (rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE))
         move_stop(rep->fc);
@@ -180,14 +225,46 @@ uint8_t CheckAWinR(rep_t *rep) {
 }
 
 void update_state(state_t *state, rep_t *rep){
-    state->ACeiling = CheckAWCeiling(&rep);
-    state->AGround =  CheckAGround(&rep);
-    state->AWallF = CheckAWallF(&rep);
-    state->AWallL = CheckAWallL(&rep);
-    state->AWallR = CheckAWallR(&rep);
-    state->AWinF = CheckAWinF(&rep);
-    state->AWinL = CheckAWinL(&rep);
-    state->AWinR = CheckAWinR(&rep);
+    state->ACeiling = CheckACeiling(rep);
+    state->AGround =  CheckAGround(rep);
+    state->AWallF = CheckAWallF(rep);
+    state->AWallL = CheckAWallL(rep);
+    state->AWallR = CheckAWallR(rep);
+    state->AWinF = CheckAWinF(rep);
+    state->AWinL = CheckAWinL(rep);
+    state->AWinR = CheckAWinR(rep);
+}
+
+void onIdle(){
+
+}
+
+void onTurnleft(){
+
+}
+
+void onTurnright(){
+
+}
+
+void onTurnaround(){
+
+}
+
+void onMoveforward(){
+
+}
+
+void onMoveup(){
+
+}
+
+void onMovedown(){
+
+}
+
+void onSearching(){
+
 }
 
 
