@@ -38,3 +38,6 @@ CMakeLists.txt.user
 *.swp
 *.swo
 *.swn
+
+# Runtime config files
+map.txt
