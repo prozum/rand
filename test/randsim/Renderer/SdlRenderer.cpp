@@ -118,6 +118,7 @@ void SdlRenderer::drawPieRel(Vector2D Center, int Radius, int Start, int End) {
     filledPieRGBA(Renderer, relX(Center.X), relY(Center.Y), rel(Radius), Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 
+
 void SdlRenderer::initMinimap(int Width, int Height) {
     MinimapWidth = Width;
     MinimapHeight = Height;
@@ -129,3 +130,4 @@ void SdlRenderer::initMinimap(int Width, int Height) {
 void SdlRenderer::drawMinimapPixel(int X, int Y, Color Color) {
 
 }
+

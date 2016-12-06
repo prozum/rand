@@ -11,9 +11,12 @@ struct Color {
     int B;
 };
 
-inline double rad_to_deg(double radians) {
-    return radians * (180.0 / M_PI);
+inline double RadToDeg(double Radians) {
+    return Radians * (180.0 / M_PI);
 }
+
+// String functions
+std::string DoubleToStr(double Double, int Precision = 5);
 
 class Renderer {
 public:
@@ -50,11 +53,12 @@ public:
     // Relative functions
     inline int rel(double Val) { return int(Val * Zoom); }
     inline int relX(double Val) { return int((Val - Offset.X) * Zoom); }
-    inline int relY(double Val) { return int((Val - Offset.Y) * Zoom); }
+    inline int relY(double Val) { return int((-Val - Offset.Y) * Zoom); }
 
     // Inverse relative functions
     inline double iRel(double Val) { return int(Val / Zoom); }
     inline double iRelX(double Val) { return int((Val / Zoom) + Offset.X); }
-    inline double iRelY(int Val) { return int((Val / Zoom) + Offset.Y); }
+    inline double iRelY(int Val) { return int((-Val / Zoom) + Offset.Y); }
+
 };
 
