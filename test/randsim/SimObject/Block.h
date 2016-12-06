@@ -13,7 +13,7 @@ class Block : public SimObject {
     BlockType Type;
 
 public:
-    static const int Size = 25;
+    static constexpr double Size = 25;
 
     Vector2D Min;
     Vector2D Max;

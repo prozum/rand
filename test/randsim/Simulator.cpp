@@ -103,28 +103,28 @@ void Simulator::updateObjects() {
 bool Simulator::loadMap(string Path) {
     ifstream File(Path, ifstream::in);
 
-    int x = Block::Size / 2;
-    int y = Block::Size / 2;
-    char c;
-    while ((c = File.get()) != EOF) {
-        switch (c) {
+    double X = Block::Size / 2;
+    double Y = - Block::Size / 2;
+    char C;
+    while ((C = File.get()) != EOF) {
+        switch (C) {
             case WALL_CHAR:
-                Blocks.push_back(Block({x, y}, BlockType::Wall));
-                x += Block::Size;
+                Blocks.push_back(Block({X, Y}, BlockType::Wall));
+                X += Block::Size;
                 break;
             case WINDOW_CHAR:
-                Blocks.push_back(Block({x, y}, BlockType::Window));
-                x += Block::Size;
+                Blocks.push_back(Block({X, Y}, BlockType::Window));
+                X += Block::Size;
                 break;
             case AIR_CHAR:
-                x += Block::Size;
+                X += Block::Size;
                 break;
             case '\n':
-                y += Block::Size;
-                x = Block::Size / 2;
+                Y -= Block::Size;
+                X = Block::Size / 2;
                 break;
             default:
-                cout << "Wrong character in file: '" << c << "'";
+                cout << "Wrong character in file: '" << C << "'";
                 return false;
         }
     }
@@ -199,25 +199,25 @@ void Simulator::drawInfoBox() {
     // Mouse pos
     int MouseX, MouseY;
     SDL_GetMouseState(&MouseX, &MouseY);
-    Render->drawText(string("Pos : (") + to_string(Render->iRelX(MouseX)) + " cm, " + to_string(Render->iRelY(MouseY)) + " cm)", {Indent, MouseOffset + PropSpace}, BGColor);
+    Render->drawText(string("Pos : (") + DoubleToStr(Render->iRelX(MouseX)) + " cm, " + DoubleToStr(Render->iRelY(MouseY)) + " cm)", {Indent, MouseOffset + PropSpace}, BGColor);
 
     // Drone info
     int DroneOffset = MouseOffset + PropSpace + ObjSpace;
     Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
-    Render->drawText(string("Pos: (") + to_string(Drn->Pos.X) + " cm, " + to_string(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
-    Render->drawText(string("Angle: ") + to_string(rad_to_deg(Drn->Angle)), {Indent, DroneOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Pos: (") + DoubleToStr(Drn->Pos.X) + " cm, " + DoubleToStr(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
+    Render->drawText(string("Angle: ") + DoubleToStr(RadToDeg(Drn->Angle)), {Indent, DroneOffset + PropSpace * 2}, BGColor);
 
     // Laser info
     int LaserOffset = DroneOffset + PropSpace * 2 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
-    Render->drawText(string("Front: ") + to_string(Drn->Laser.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
-    Render->drawText(string("Left: ")  + to_string(Drn->Laser.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
-    Render->drawText(string("Right: ") + to_string(Drn->Laser.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->Laser.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Left: ")  + DoubleToStr(Drn->Laser.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Right: ") + DoubleToStr(Drn->Laser.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
 
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + to_string(Drn->Sonar.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->Sonar.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
 
     // Block to cm meter
@@ -229,6 +229,6 @@ void Simulator::drawInfoBox() {
     Render->drawLine({OffsetX + 20, MeterTopY}, {OffsetX + 20, MeterBotY});
     Render->drawLine({OffsetX + 21, MeterTopY}, {OffsetX + 21, MeterBotY});
     Render->drawLine({OffsetX + 10, MeterBotY}, {OffsetX + 30, MeterBotY});
-    Render->drawText(to_string(Render->iRel(MeterHeight)) + string("cm"), {OffsetX + 30, MeterTopY + MeterHeight / 2 - 15}, BGColor);
+    Render->drawText(DoubleToStr(Render->iRel(MeterHeight)) + string("cm"), {OffsetX + 30, MeterTopY + MeterHeight / 2 - 15}, BGColor);
 }
 

@@ -42,6 +42,7 @@ public:
     void drawPieRel(Vector2D Center, int Radius, int Start, int End);
     void drawTextRel(std::string Text, Vector2D Pos, Color Background = {0, 0, 0});
 
+
     // Minimap
     void initMinimap(int Width, int Height);
     void drawMinimapPixel(int X, int Y, Color Color);
