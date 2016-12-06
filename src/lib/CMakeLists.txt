@@ -13,6 +13,7 @@ add_subdirectory(sonar)
 add_subdirectory(laser)
 
 # Kalman library
+add_subdirectory(libfixmath)
 add_subdirectory(kalman)
 add_subdirectory(matrix)
 

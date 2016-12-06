@@ -27,8 +27,6 @@ void init_not_timed() {
     float R[DATAFUSION_FILTERS];
     R[FRONT_READING] = LASER_r + SONAR_r / 2;
 
-    recent_position = positioning_init(a, r, A, R);
-
     read_sonar(sonar);
     IR_read(bottom_ir);
     IR_read(top_ir);
@@ -43,8 +41,6 @@ void init_not_timed() {
     float df_readings[DATAFUSION_FILTERS];
     df_readings[ZLASER] = laser->front_value;
     df_readings[ZSONAR] = sonar->value;
-
-    positioning_calibrate(recent_position, readings, df_readings);
 }
 
 void task_timer_setup()

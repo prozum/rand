@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SimObject.h"
+#include "Ray.h"
 
 enum class BlockType {
     Air,
@@ -14,9 +15,13 @@ class Block : public SimObject {
 public:
     static const int Size = 25;
 
-    Block(Dot Pos, BlockType Type);
+    Vector2D min;
+    Vector2D max;
+
+    Block(Vector2D Pos, BlockType Type);
 
     void draw();
     void update();
+    bool intersection(Ray ray, Vector2D& res);
 };
 

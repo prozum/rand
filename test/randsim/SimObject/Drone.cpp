@@ -9,7 +9,7 @@ extern "C" {
 #include <cmath>
 #include <iostream>
 
-Drone::Drone(Dot Pos, int Size) : SimObject(Pos), Size(Size), Angle(0) { }
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), sonar(57, 15.0) { }
 
 void Drone::draw() {
     // Drone
@@ -17,12 +17,12 @@ void Drone::draw() {
 
     // Direction line
     Sim->Render->setColor({255, 0, 0});
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(sin(Angle) * Size / 2), Pos.Y + int(cos(Angle) * Size / 2)});
+    Sim->Render->drawLineRel(Pos, {Pos.x + int(sin(Angle) * Size / 2), Pos.y + int(cos(Angle) * Size / 2)});
 
     // Sonar
     Sim->Render->setColor({255, 0, 0}, 100);
     //Sim->Render->drawPieRel(Pos, 500, int(rad_to_deg(Angle) - 7.5), int(rad_to_deg(Angle) + 7.5));
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(sin(Angle) * 500), Pos.Y + int(cos(Angle) * 500)});
+    Sim->Render->drawLineRel(Pos, {Pos.x + int(sin(Angle) * 500), Pos.y + int(cos(Angle) * 500)});
 
     // Laser
     Sim->Render->setColor({0, 0, 255}, 100);
@@ -30,18 +30,21 @@ void Drone::draw() {
 }
 
 void Drone::update() {
-    calcLaserDist();
+    //calcLaserDist();
     //calcSonarDist();
 
     rep_t rep;
     nav_t nav; //don't know what to do with this
     init_nav(&nav);
-    init_rep(&FC, &Laser, &Sonar, &IrTop, &IrBottom, &rep);
+    init_rep(&FC, &Laser, &(sonar.sonar), &IrTop, &IrBottom, &rep);
+
+    sonar.calcDist(Sim->Blocks);
+
+    //Pos.X += 1;
+    Pos.x = 500;
+    Pos.y = 525;
 
     navigation(&rep, &nav);
-
-    Pos.Y = 112;
-    Pos.X = 112;
 
     Angle = Angle + 0.05;
     if (Angle > M_PI * 2)
@@ -51,31 +54,98 @@ void Drone::update() {
     //    Pos.X = 475;
 }
 
+/*
 void Drone::calcSonarDist() {
-    int MinDist = 2200;
-    double DeltaX, DeltaY, Dist;
-    int X1, X2, Y1, Y2;
-    double StartAngle, EndAngle;
     int HalfBlock = Block::Size / 2;
 
-    //for (auto B : Sim->Blocks) {
-        auto B = Sim->Blocks[70];
-        if (Pos.X > B.Pos.X - HalfBlock &&
-            Pos.X < B.Pos.X + HalfBlock) {
-            X1 = - HalfBlock;
-            X2 = HalfBlock;
-        } else {
-            X1 = B.Pos.X - (Pos.X - HalfBlock);
-            X2 = B.Pos.X - (Pos.X + HalfBlock);
-        }
+    auto leftSonarAngle = Angle + 0.13;
+    auto rightSonarAngle = Angle - 0.13;
 
-        if (Pos.Y > B.Pos.Y - HalfBlock &&
-            Pos.Y < B.Pos.Y + HalfBlock) {
-            Y1 = - HalfBlock;
-            Y2 = HalfBlock;
-        } else {
-            Y1 = B.Pos.Y - (Pos.Y - HalfBlock);
-            Y2 = B.Pos.Y - (Pos.Y + HalfBlock);
+    double closest = 0;
+
+    for (auto B : Sim->Blocks) {
+        if (Pos.X >= B.Pos.X + HalfBlock &&
+            Pos.Y >= B.Pos.Y + HalfBlock) {
+            auto bTopAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y - HalfBlock);
+            auto bMidAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
+            auto bBotAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
+
+            if (bTopAngle <= rightSonarAngle && bMidAngle >= rightSonarAngle &&
+                bBotAngle >= leftSonarAngle && bMidAngle <= leftSonarAngle) {
+                auto d = calcDist(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
+                if (closest == 0 || (d > closest && d <= 220)) {
+                    closest = d;
+                }
+            } else if (bTopAngle > rightSonarAngle &&
+                       bMidAngle >= leftSonarAngle) {
+                auto d = calcDist(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
+                if (closest == 0 || (d > closest && d <= 220)) {
+                    closest = d;
+                }
+            } else if (bBotAngle > leftSonarAngle &&
+                       bMidAngle <= rightSonarAngle) {
+                auto d = calcDist(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
+                if (closest == 0 || (d > closest && d <= 220)) {
+                    closest = d;
+                }
+            } else {
+                break;
+            }
+        } else if (Pos.X <= B.Pos.X - HalfBlock &&
+                   Pos.Y >= B.Pos.Y + HalfBlock) {
+            auto bTopAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y - HalfBlock);
+            auto bMidAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
+            auto bBotAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
+
+            if (bTopAngle >= leftSonarAngle && bMidAngle <= bTopAngle &&
+                bBotAngle <= rightSonarAngle && bMidAngle >= rightSonarAngle) {
+                auto d = calcDist(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
+                if (closest == 0 || (d > closest && d <= 220)) {
+                    closest = d;
+                }
+            } else if (bTopAngle > rightSonarAngle &&
+                       bMidAngle >= leftSonarAngle) {
+                auto d = calcDist(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
+                if (closest == 0 || (d > closest && d <= 220)) {
+                    closest = d;
+                }
+            } else if (bBotAngle > leftSonarAngle &&
+                       bMidAngle <= rightSonarAngle) {
+                auto d = calcDist(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
+                if (closest == 0 || (d > closest && d <= 220)) {
+                    closest = d;
+                }
+            } else {
+                break;
+            }
+        } else if (Pos.X <= B.Pos.X - HalfBlock &&
+                   Pos.Y >= B.Pos.Y - HalfBlock) {
+            auto bTopAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y - HalfBlock);
+            auto bMidAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y - HalfBlock);
+            auto bBotAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
+
+        } else if (Pos.X <= B.Pos.X + HalfBlock &&
+                   Pos.Y >= B.Pos.Y - HalfBlock) {
+            auto bTopAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y - HalfBlock);
+            auto bMidAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
+            auto bBotAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
+
+        } else if (Pos.X >= B.Pos.X - HalfBlock &&
+                   Pos.X <= B.Pos.X + HalfBlock &&
+                   Pos.Y >= B.Pos.Y + HalfBlock) {
+
+        } else if (Pos.X <= B.Pos.X - HalfBlock &&
+                   Pos.Y >= B.Pos.Y - HalfBlock &&
+                   Pos.Y <= B.Pos.Y + HalfBlock) {
+
+        } else if (Pos.X >= B.Pos.X - HalfBlock &&
+                   Pos.X <= B.Pos.X + HalfBlock &&
+                   Pos.Y <= B.Pos.Y - HalfBlock) {
+
+        } else if (Pos.X >= B.Pos.X + HalfBlock &&
+                   Pos.Y >= B.Pos.Y - HalfBlock &&
+                   Pos.Y <= B.Pos.Y + HalfBlock) {
+
         }
 
         std::cout << "Block: x: " << B.Pos.X << " y: " << B.Pos.Y << std::endl;
@@ -92,8 +162,11 @@ void Drone::calcSonarDist() {
         std::cout << "Angle: " << Angle << std::endl;
         std::cout << "Found: " << (Angle < StartAngle && Angle > EndAngle) << std::endl;
     //}
+    }
 }
+ */
 
+/*
 void Drone::calcLaserDist() {
 
     int Radius = Size/2;
@@ -134,4 +207,4 @@ void Drone::calcLaserDist() {
     std::cout << "Found: " << (Angle < StartAngle && Angle > EndAngle) << std::endl;
     //}
 }
-
+*/
