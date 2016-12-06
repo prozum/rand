@@ -195,8 +195,8 @@ char *serial_read_string(tx_t pin, uint8_t len) {
     uint8_t it_index = 0;
 
     //Emulate a continous buffer by copying from the things that have been written via serial
-    int i = 0;
-    for (i; i < len; ++i) {
+    int i;
+    for (i = 0; i < len; ++i) {
         //If the char at hand is the string terminator (\0) move on to the next string in the buffer.
         if (serial_buffer[pin][index][it_index] == '\0') {
             index = (index + 1) % SERIAL_BUFFER_SIZE;
@@ -211,7 +211,7 @@ char *serial_read_string(tx_t pin, uint8_t len) {
 }
 
 char *serial_read_string_nowait(tx_t pin, uint8_t len) {
-    serial_read_string(pin, len);
+    return serial_read_string(pin, len);
 }
 
 aval_t analog_buffer[ANALOG_PINS][ANALOG_BUFFER_SIZE];

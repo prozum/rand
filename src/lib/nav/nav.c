@@ -2,12 +2,11 @@
 
 position_t *positioning_init(float a[SENSOR_FILTERS], float r[SENSOR_FILTERS],
                              float A[DATAFUSION_FILTERS], float B[DATAFUSION_FILTERS]) {
-    int i = 0;
-    for (i; i < SENSOR_FILTERS; ++i) {
+    int i;
+    for (i = 0; i < SENSOR_FILTERS; ++i) {
         kalman_filters[i] = kalman_init(a[i], r[i], SENDER_BOARD);
     }
-    i = 0;
-    for (i; i < DATAFUSION_FILTERS; ++i) {
+    for (i = 0; i < DATAFUSION_FILTERS; ++i) {
         /*todo: FIND A BETTER SOLUTION!*/
         float C[2][2] = {{1, 0}, {1, 0}};
         float R[2][2] = {{1, 0}, {0, 1}};
@@ -24,13 +23,12 @@ position_t *positioning_init(float a[SENSOR_FILTERS], float r[SENSOR_FILTERS],
 
 void positioning_calibrate(position_t *position, float sensor_initial_readings[SENSOR_FILTERS],
                            float df_init_readings[2 * SENSOR_FILTERS]) {
-    int i = 0;
-    for (i; i < DATAFUSION_FILTERS; ++i) {
+    int i;
+    for (i = 0; i < DATAFUSION_FILTERS; ++i) {
         kalman_datafusion_calibrate(datafusion_filters[i], df_init_readings[2*i], df_init_readings[2*i + 1]);
     }
 
-    i = 0;
-    for (i; i < SENSOR_FILTERS; ++i) {
+    for (i = 0; i < SENSOR_FILTERS; ++i) {
         kalman_calibrate(kalman_filters[i], sensor_initial_readings[i]);
     }
 
@@ -180,14 +178,14 @@ uint8_t CheckAWinR(rep_t *rep) {
 }
 
 void update_state(state_t *state, rep_t *rep){
-    state->ACeiling = CheckAWCeiling(&rep);
-    state->AGround =  CheckAGround(&rep);
-    state->AWallF = CheckAWallF(&rep);
-    state->AWallL = CheckAWallL(&rep);
-    state->AWallR = CheckAWallR(&rep);
-    state->AWinF = CheckAWinF(&rep);
-    state->AWinL = CheckAWinL(&rep);
-    state->AWinR = CheckAWinR(&rep);
+    state->ACeiling = CheckAWCeiling(rep);
+    state->AGround =  CheckAGround(rep);
+    state->AWallF = CheckAWallF(rep);
+    state->AWallL = CheckAWallL(rep);
+    state->AWallR = CheckAWallR(rep);
+    state->AWinF = CheckAWinF(rep);
+    state->AWinL = CheckAWinL(rep);
+    state->AWinR = CheckAWinR(rep);
 }
 
 
