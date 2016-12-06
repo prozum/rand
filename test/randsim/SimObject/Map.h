@@ -8,13 +8,17 @@
 #include "SimObject.h"
 #include "Block.h"
 
+extern "C" {
+#include "map/map.h"
+}
+
 #define AIR_CHAR ' '
 #define WALL_CHAR '#'
 #define WINDOW_CHAR '&'
 
 
 class Map : SimObject {
-    std::vector<std::unique_ptr<std::vector<BlockType>>> MapBlocks;
+
 
 public:
     unsigned long Width = 0;

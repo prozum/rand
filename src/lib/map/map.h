@@ -10,7 +10,7 @@
 #define FIELD_SIZE 2
 
 /**
- * represents the states that a field in the map can be in.
+ * Represents the states that a field in the map can be in.
  * Currently a field has 4 states and can be represented by 2 bits.
  */
 typedef enum fieldstate_e{
@@ -30,6 +30,5 @@ void map_clean();
 
 void map_show();
 
-void begin_mapping();
 
 #endif //RAND_MAP_H

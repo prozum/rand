@@ -137,6 +137,11 @@ void serial_write_string(tx_t pin, char *out) {
     strcpy(serial_buffer[pin][index], out);
 }
 
+void uart_putchar(char c/*, FILE *stream*/)
+{
+    printf("%c", c);
+}
+
 /**
  * Get the latest string written to the specified pin
  * @param pin to get buffer from
