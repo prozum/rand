@@ -1,27 +1,28 @@
 #include "Vector2D.h"
 
-Vector2D::Vector2D() : x(0), y(0) { }
+Vector2D::Vector2D() : X(0), Y(0) { }
 
-Vector2D::Vector2D(const Vector2D& vector) : x(vector.x), y(vector.y) { }
+Vector2D::Vector2D(const Vector2D& vector) : X(vector.X), Y(vector.Y) { }
 
-Vector2D::Vector2D(int32_t x, int32_t y) : x(x), y(y) { }
+Vector2D::Vector2D(double X, double Y) : X(X), Y(Y) { }
+Vector2D::Vector2D(int X, int Y) : X(X), Y(Y) { }
 
-Vector2D Vector2D::operator+(const Vector2D &arg) {
-    return Vector2D(this->x + arg.x, this->y + arg.y);
+Vector2D Vector2D::operator+(const Vector2D &Arg) {
+    return Vector2D(this->X + Arg.X, this->Y + Arg.Y);
 }
 
-Vector2D Vector2D::operator-(const Vector2D &arg) {
-    return Vector2D(this->x - arg.x, this->y - arg.y);
+Vector2D Vector2D::operator-(const Vector2D &Arg) {
+    return Vector2D(this->X - Arg.X, this->Y - Arg.Y);
 }
 
-int32_t Vector2D::determinant(Vector2D v) {
-    return x*v.y - y*v.x;
+double Vector2D::determinant(Vector2D V) {
+    return (X * V.Y) - (Y * V.X);
 }
 
-int32_t Vector2D::dot(Vector2D v) {
-    return x*v.x + y*v.y;
+double Vector2D::dot(Vector2D V) {
+    return (X * V.X) + (Y * V.Y);
 }
 
 double Vector2D::length() {
-    return sqrt(pow(x, 2) + pow(y, 2));
+    return sqrt(pow(X, 2) + pow(Y, 2));
 }

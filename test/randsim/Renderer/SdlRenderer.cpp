@@ -73,48 +73,48 @@ void SdlRenderer::setColor(Color C, int Alpha) {
 }
 
 
-void SdlRenderer::drawLine(Dot Start, Dot End) {
+void SdlRenderer::drawLine(Vector2D Start, Vector2D End) {
     SDL_RenderDrawLine(Renderer, Start.X, Start.Y, End.X, End.Y);
 }
 
-void SdlRenderer::drawLineRel(Dot Start, Dot End) {
+void SdlRenderer::drawLineRel(Vector2D Start, Vector2D End) {
     SDL_RenderDrawLine(Renderer, relX(Start.X), relY(Start.Y), relX(End.X), relY(End.Y));
 }
 
-void SdlRenderer::drawRect(Dot Pos, int Width, int Height) {
-    const SDL_Rect Rect = {Pos.X, Pos.Y, Width, Height};
+void SdlRenderer::drawRect(Vector2D Pos, int Width, int Height) {
+    const SDL_Rect Rect = {int(Pos.X), int(Pos.Y), Width, Height};
     SDL_RenderFillRect(Renderer, &Rect);
 }
 
-void SdlRenderer::drawRectRel(Dot Pos, int Width, int Height) {
+void SdlRenderer::drawRectRel(Vector2D Pos, int Width, int Height) {
     const SDL_Rect Rect = {relX(Pos.X), relY(Pos.Y), rel(Width), rel(Height)};
     SDL_RenderFillRect(Renderer, &Rect);
 }
 
-void SdlRenderer::drawCircle(Dot Center, int Radius) {
+void SdlRenderer::drawCircle(Vector2D Center, int Radius) {
     filledCircleRGBA(Renderer, (Uint16)Center.X, (Uint16)Center.Y, (Uint16)Radius, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
-void SdlRenderer::drawCircleRel(Dot Center, int Radius) {
+void SdlRenderer::drawCircleRel(Vector2D Center, int Radius) {
     filledCircleRGBA(Renderer, (Uint16)relX(Center.X), (Uint16)relY(Center.Y), (Uint16)rel(Radius), CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 
-void SdlRenderer::drawText(std::string Text, Dot Pos, Color BG) {
+void SdlRenderer::drawText(std::string Text, Vector2D Pos, Color BG) {
     auto TextSurface = TTF_RenderText_Shaded(Font, Text.c_str(), CurColor, {(Uint8)BG.R, (Uint8)BG.B, (Uint8)BG.G, 0});
     auto TextTexture = SDL_CreateTextureFromSurface(Renderer, TextSurface);
-    SDL_Rect Quad = {Pos.X, Pos.Y, TextSurface->w, TextSurface->h};
+    SDL_Rect Quad = {int(Pos.X), int(Pos.Y), TextSurface->w, TextSurface->h};
 
     SDL_RenderCopyEx(Renderer, TextTexture, NULL, &Quad, 0, NULL, SDL_FLIP_NONE);
     SDL_FreeSurface(TextSurface);
     SDL_DestroyTexture(TextTexture);
 
 }
-void SdlRenderer::drawTextRel(std::string Text, Dot Pos, Color Background) {}
+void SdlRenderer::drawTextRel(std::string Text, Vector2D Pos, Color Background) {}
 
-void SdlRenderer::drawPie(Dot Center, int Radius, int Start, int End) {
-    filledPieRGBA(Renderer, Center.X, Center.Y, Radius, Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
+void SdlRenderer::drawPie(Vector2D Center, int Radius, int Start, int End) {
+    filledPieRGBA(Renderer, int(Center.X), int(Center.Y), Radius, Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 
-void SdlRenderer::drawPieRel(Dot Center, int Radius, int Start, int End) {
+void SdlRenderer::drawPieRel(Vector2D Center, int Radius, int Start, int End) {
     filledPieRGBA(Renderer, relX(Center.X), relY(Center.Y), rel(Radius), Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 

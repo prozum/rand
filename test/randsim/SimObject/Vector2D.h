@@ -7,14 +7,15 @@ class Vector2D {
 public:
     Vector2D();
     Vector2D(const Vector2D&);
-    Vector2D(int32_t x, int32_t y);
+    Vector2D(double X, double Y);
+    Vector2D(int X, int Y);
 
-    Vector2D operator-(const Vector2D &arg);
-    Vector2D operator+(const Vector2D &arg);
-    int32_t determinant(Vector2D);
-    int32_t dot(Vector2D);
+    Vector2D operator-(const Vector2D &Arg);
+    Vector2D operator+(const Vector2D &Arg);
+    double determinant(Vector2D V);
+    double dot(Vector2D);
     double length();
 
-    int32_t x;
-    int32_t y;
+    double X;
+    double Y;
 };

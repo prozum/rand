@@ -15,8 +15,8 @@ class Block : public SimObject {
 public:
     static const int Size = 25;
 
-    Vector2D min;
-    Vector2D max;
+    Vector2D Min;
+    Vector2D Max;
 
     Block(Vector2D Pos, BlockType Type);
 

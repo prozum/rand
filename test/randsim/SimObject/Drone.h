@@ -11,7 +11,7 @@ public:
     double Angle;   // Angle in radians
     int Size;       // Size in cm
 
-    Sonar sonar;
+    Sonar Sonar;
     fc_t FC;
     laser_t Laser;
     ir_t IrTop;

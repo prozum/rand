@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Dot(75, 75), 50);
+    Drn = make_unique<Drone>(Vector2D(75, 75), 50);
 
 }
 
@@ -140,14 +140,14 @@ void Simulator::drawBlockGrid() {
 
     int HLines = Height / BlockSize;
     int VLines = Width / BlockSize;
-    int FirstBoldY = Render->Offset.Y % (Block::Size * 4) ? 0 : 1;
+    //int FirstBoldY = Render->Offset.Y % (Block::Size * 4) ? 0 : 1;
 
     Render->setColor({0, 0, 0});
 
 
     for (int i = 1; i <= HLines; ++i) {
         int LineY = i * BlockSize;
-        if ((i + FirstBoldY) % 4)
+        if (i % 4)
             Render->drawLine({0, LineY}, {Width, LineY});
         else {
             Render->drawLine({0, LineY - 1}, {Width, LineY - 1});
@@ -157,10 +157,10 @@ void Simulator::drawBlockGrid() {
     }
 
 
-    int FirstBoldX = Render->Offset.X % (Block::Size * 4) ? 0 : 1;
+    //int FirstBoldX = Render->Offset.X % (Block::Size * 4) ? 0 : 1;
     for (int i = 1; i <= VLines; ++i) {
         int LineX = i * BlockSize;
-        if ((i + FirstBoldX) % 4)
+        if (i % 4)
             Render->drawLine({LineX, 0}, {LineX, Height});
         else {
             Render->drawLine({LineX - 1, 0}, {LineX - 1, Height});
@@ -177,7 +177,7 @@ void Simulator::drawInfoBox() {
 
     Vector2D Pos = {int(Render->WinWidth - Width), int(Render->WinHeight - Height)};
     int MarginX = 25, MarginY = 25;
-    int OffsetX = Pos.x + MarginX, OffsetY = Pos.x + MarginY;
+    int OffsetX = Pos.X + MarginX, OffsetY = Pos.Y + MarginY;
 
     // Design constants
     const int Indent = OffsetX + 20;
@@ -204,7 +204,7 @@ void Simulator::drawInfoBox() {
     // Drone info
     int DroneOffset = MouseOffset + PropSpace + ObjSpace;
     Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
-    Render->drawText(string("Pos: (") + to_string(Drn->Pos.x) + " cm, " + to_string(Drn->Pos.y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
+    Render->drawText(string("Pos: (") + to_string(Drn->Pos.X) + " cm, " + to_string(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
     Render->drawText(string("Angle: ") + to_string(rad_to_deg(Drn->Angle)), {Indent, DroneOffset + PropSpace * 2}, BGColor);
 
     // Laser info
@@ -217,7 +217,7 @@ void Simulator::drawInfoBox() {
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + to_string(Drn->sonar.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + to_string(Drn->Sonar.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
 
     // Block to cm meter

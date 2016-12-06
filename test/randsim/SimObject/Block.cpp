@@ -2,11 +2,11 @@
 #include "Simulator.h"
 
 Block::Block(Vector2D Pos, BlockType Type) : SimObject(Pos), Type(Type) {
-    min.x = Pos.x - (Size / 2);
-    min.y = Pos.y - (Size / 2);
+    Min.X = Pos.X - (Size / 2);
+    Min.Y = Pos.Y - (Size / 2);
 
-    max.x = Pos.x + (Size / 2);
-    max.y = Pos.y + (Size / 2);
+    Max.X = Pos.X + (Size / 2);
+    Max.Y = Pos.Y + (Size / 2);
 }
 
 void Block::draw() {
@@ -21,7 +21,7 @@ void Block::draw() {
             Sim->Render->setColor({0, 0, 255});
             break;
     }
-    Sim->Render->drawRectRel({Pos.x - Size / 2, Pos.x - Size / 2}, Size, Size);
+    Sim->Render->drawRectRel({Min.X, Min.Y}, Size, Size);
 }
 
 void Block::update() {
@@ -32,36 +32,36 @@ bool Block::intersection(Ray ray, Vector2D& res) {
     Vector2D T1;
     Vector2D T2;
 
-    if (ray.direction.x == 0) {
-        if (ray.origin.x < min.x || ray.origin.x > max.x) {
+    if (ray.direction.X == 0) {
+        if (ray.origin.X < Min.X || ray.origin.X > Max.X) {
             return false;
         }
-    } else if (ray.direction.y == 0) {
-        if (ray.origin.y < min.y || ray.origin.y > max.y) {
+    } else if (ray.direction.Y == 0) {
+        if (ray.origin.Y < Min.Y || ray.origin.Y > Max.Y) {
             return false;
         }
     }
 
-    T1.x = (min.x - ray.origin.x) / ray.direction.x;
-    T1.y = (min.y - ray.origin.y) / ray.direction.y;
+    T1.X = (Min.X - ray.origin.X) / ray.direction.X;
+    T1.Y = (Min.Y - ray.origin.Y) / ray.direction.Y;
 
-    T2.x = (max.x - ray.origin.x) / ray.direction.x;
-    T2.y = (max.y - ray.origin.y) / ray.direction.y;
+    T2.X = (Max.X - ray.origin.X) / ray.direction.X;
+    T2.Y = (Max.Y - ray.origin.Y) / ray.direction.Y;
 
-    if (T1.x > T2.x) {
-        std::swap(T1.x, T2.x);
+    if (T1.X > T2.X) {
+        std::swap(T1.X, T2.X);
     }
 
-    if (T1.y > T2.y) {
-        std::swap(T1.x, T2.x);
+    if (T1.Y > T2.Y) {
+        std::swap(T1.X, T2.X);
     }
 
-    if (T1.x > T1.y || T2.y > T1.x) {
+    if (T1.X > T1.Y || T2.Y > T1.X) {
         return false;
     }
 
-    res.x = T1.x;
-    res.y = T2.x;
+    res.X = T1.X;
+    res.Y = T2.X;
 
     return true;
 }
