@@ -5,6 +5,7 @@
 #include "Renderer.h"
 #include "Vector2D.h"
 #include "sonar/sonar.h"
+#include "laser/laser.h"
 
 class Simulator;
 

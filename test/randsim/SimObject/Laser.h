@@ -2,9 +2,14 @@
 
 #include <vector>
 
+#include "Block.h"
+
 class Laser {
 public:
-    //laser_t Laser;
+    laser_t Laser;
     std::vector<Ray> rays;
+
+    Laser(uint32_t, double, double, double);
+    void calcDist(std::vector<Block>);
 };
 

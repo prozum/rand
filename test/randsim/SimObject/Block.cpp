@@ -32,21 +32,21 @@ bool Block::intersection(Ray ray, Vector2D& res) {
     Vector2D T1;
     Vector2D T2;
 
-    if (ray.direction.X == 0) {
-        if (ray.origin.X < Min.X || ray.origin.X > Max.X) {
+    if (ray.Direction.X == 0) {
+        if (ray.Origin.X < Min.X || ray.Origin.X > Max.X) {
             return false;
         }
-    } else if (ray.direction.Y == 0) {
-        if (ray.origin.Y < Min.Y || ray.origin.Y > Max.Y) {
+    } else if (ray.Direction.Y == 0) {
+        if (ray.Origin.Y < Min.Y || ray.Origin.Y > Max.Y) {
             return false;
         }
     }
 
-    T1.X = (Min.X - ray.origin.X) / ray.direction.X;
-    T1.Y = (Min.Y - ray.origin.Y) / ray.direction.Y;
+    T1.X = (Min.X - ray.Origin.X) / ray.Direction.X;
+    T1.Y = (Min.Y - ray.Origin.Y) / ray.Direction.Y;
 
-    T2.X = (Max.X - ray.origin.X) / ray.direction.X;
-    T2.Y = (Max.Y - ray.origin.Y) / ray.direction.Y;
+    T2.X = (Max.X - ray.Origin.X) / ray.Direction.X;
+    T2.Y = (Max.Y - ray.Origin.Y) / ray.Direction.Y;
 
     if (T1.X > T2.X) {
         std::swap(T1.X, T2.X);

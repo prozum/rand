@@ -9,7 +9,7 @@ extern "C" {
 #include <cmath>
 #include <iostream>
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), Sonar(57, 15.0) { }
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), Sonar(Pos, 57, 0.0, 15.0, 220) { }
 
 void Drone::draw() {
     // Drone
