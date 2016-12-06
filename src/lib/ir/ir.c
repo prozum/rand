@@ -1,5 +1,25 @@
 #include "ir/ir.h"
+#include "core/io.h"
+#include "kalman/kalman.h"
+#include <math.h>
 
+//The IR is placed on an 8-bit pin
+#define IR_MAX_INPUT 255
+#define TOP_PIN 2
+#define BOTTOM_PIN 0
+
+/*
+ * the output value that represent the maximum and minimum distances
+ * at which translation to centimeters are acceptably accurate.
+ */
+#define MAX_DISTANCE_RAW_VALUE 68
+#define MIN_DISTANCE_RAW_VALUE 323
+#define MAX_DISTANCE 80
+#define MIN_DISTANCE 14
+
+/**
+ * As all output values of the IR sensor that can be accurately translated are within a margin of 256
+ */
 uint8_t IR_to_cm[256] =
         {
                 19, 19, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 17,
@@ -27,9 +47,18 @@ ir_t *IR_init(apin_t pin) {
     ir->pin = pin;
 }
 
-void IR_read(ir_t *ir) {
-    uint8_t IR_value = analog_read(ir->pin);
-    ir->value = IR_to_cm[IR_value];
+/**
+ * Reads the distance measured by an IR sensor and translates it to centimeters
+ * @param the IR sensor used
+ * @return The distance in centimeters. Always in the interval 14-80cm.
+ */
+uint16_t IR_read(ir_t *ir) {
+    uint16_t value = analog_read(ir->pin);
+
+    if(value >= MIN_DISTANCE_RAW_VALUE)  return MIN_DISTANCE;
+    if(value <= MAX_DISTANCE_RAW_VALUE)  return MAX_DISTANCE;
+
+    return IR_to_cm[(uint8_t)value];
 }
 
 /*
