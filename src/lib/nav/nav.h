@@ -35,10 +35,6 @@
 #define TOP_READING 2
 #define BOTTOM_READING 3
 
-typedef struct position_s {
-    /*Fill here*/
-} position_t;
-
 typedef struct rep_s{
     fc_t *fc;
     laser_t *laser;
@@ -52,49 +48,43 @@ typedef struct rep_s{
  * this type defines that task.
  */
 typedef enum task_e{
-    idle,
-    turnleft,
-    turnaround,
-    turnright,
-    moveforward,
-    moveup,
-    movedown,
-    searching
+    IDLE,
+    TURNLEFT,
+    TURNAROUND,
+    TURNRIGHT,
+    MOVEFORWARD,
+    MOVEUP,
+    MOVEDOWN,
+    SEARCHING
 }task_t;
 
 typedef struct state_s{
-    uint8_t AWallF      : 1; //wall within 40cm in front
-    uint8_t AWallR      : 1; //wall within 40cm on the right
-    uint8_t AWallL      : 1; //wall within 40cm on the left
+    uint8_t AWallF      : 1; //WALL within 40cm in front
+    uint8_t AWallR      : 1; //WALL within 40cm on the right
+    uint8_t AWallL      : 1; //WALL within 40cm on the left
     uint8_t AWinF       : 1; //window within 40cm in front
     uint8_t AWinR       : 1; //window within 40cm on the right
     uint8_t AWinL       : 1; //window within 40cm on the left
     uint8_t AGround     : 1; //floor within 40cm below
     uint8_t ACeiling    : 1; //ceiling within 40cm above
+    uint8_t BlockedF    : 1; //there is either a window or WALL in front
+    uint8_t BlockedL    : 1; //either a window or WALL on the left
+    uint8_t BlockedR    : 1; //either a window or WALL on the right
 }state_t;
 
-void update_state(state_t *state, rep_t *rep);
+void update_state(state_t state, rep_t *rep);
 
 typedef struct nav_s{
-    state_t *state;
-    uint8_t *timer;
+    state_t state;
+    uint16_t timer;
     task_t task;
-    uint16_t *angle;
+    uint16_t angle;
+    uint8_t posx;
+    uint8_t posy;
+    uint16_t val;
 }nav_t;
 
-kalman_state *kalman_filters[SENSOR_FILTERS];
-kalman_state_matrix *datafusion_filters[DATAFUSION_UNITS];
-
-position_t *positioning_init(float a[SENSOR_FILTERS], float r[SENSOR_FILTERS],
-                             float A[DATAFUSION_FILTERS], float B[DATAFUSION_FILTERS]);
-
-void positioning_calibrate(position_t *position, float sensor_initial_readings[SENSOR_FILTERS],
-                           float df_initial_readings[2*DATAFUSION_FILTERS]);
-
-void positioning_calculate(position_t *position, float sensor_readings[SENSOR_FILTERS],
-                           float df_readings[2 * DATAFUSION_FILTERS]);
-
-void update_u_k();
+void init_nav(nav_t *nav);
 
 void navigation(rep_t *rep, nav_t *nav);
 
@@ -108,15 +98,27 @@ uint8_t CheckAWinL(rep_t *rep);
 uint8_t CheckAWinR(rep_t *rep);
 uint8_t CheckAGround(rep_t *rep);
 uint8_t CheckACeiling(rep_t *rep);
+uint8_t CheckBlockedF(state_t state);
+uint8_t CheckBlockedR(state_t state);
+uint8_t CheckBlockedL(state_t state);
 
-void onIdle();
-void onTurnleft();
-void onTurnright();
-void onTurnaround();
-void onMoveforward();
-void onMoveup();
-void onMovedown();
-void onSearching();
+void onIdle(rep_t *rep, nav_t *nav);
+void onTurnleft(rep_t *rep, nav_t *nav);
+void onTurnright(rep_t *rep, nav_t *nav);
+void onTurnaround(rep_t *rep, nav_t *nav);
+void onMoveforward(rep_t *rep, nav_t *nav);
+void onMoveup(rep_t *rep, nav_t *nav);
+void onMovedown(rep_t *rep, nav_t *nav);
+void onSearching(rep_t *rep, nav_t *nav);
+
+void Idle(rep_t *rep, nav_t *nav);
+void Turnleft(rep_t *rep, nav_t *nav);
+void Turnright(rep_t *rep, nav_t *nav);
+void Turnaround(rep_t *rep, nav_t *nav);
+void Moveforward(rep_t *rep, nav_t *nav);
+void Moveup(rep_t *rep, nav_t *nav);
+void Movedown(rep_t *rep, nav_t *nav);
+void Searching(rep_t *rep, nav_t *nav);
 
 
 #endif //RAND_POSITIONING_H

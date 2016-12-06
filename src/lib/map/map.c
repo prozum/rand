@@ -56,37 +56,24 @@ void map_show()
     for (y = 0; y < map_height; y++) {
         uart_putchar('|');
         for (x = 0; x < map_width; x++) {
-            if(map_read(x,y) == unvisited) {
-                uart_putchar(' ');
-            }else if(map_read(x,y) == visited) {
-                uart_putchar('\'');
-            }else if(map_read(x,y) == wall) {
-                uart_putchar('#');
-            }else if(map_read(x,y) == transparent) {
-                uart_putchar('¤');
+            switch (map_read(x, y)) {
+                case UNVISITED:
+                    uart_putchar(' ');
+                    break;
+                case VISITED:
+                    uart_putchar('\'');
+                    break;
+                case WALL:
+                    uart_putchar('#');
+                    break;
+                case TRANSPARENT:
+                    uart_putchar('&');
+                    break;
+                default:
+                    ERROR("Unrecognized character");
             }
         }
         uart_putchar('|');
         uart_putchar('\n');
     }
-}
-
-void begin_mapping()
-{
-    eeprom_write(0, 1);
-    uint8_t value = eeprom_read(0);
-
-#if MOCK
-#include <stdio.h>
-    printf("blabla %d\n", value);
-#endif
-
-  //  for (int i = 0; i < EEPROM_SIZE; i++)
-   // {
-        /* insert logic that uses the sensors to find a wall*/
-
-        /* insert logic that converts real distance to pixel distance */
-
-        /* insert logic that writes the distance into the eeprom bit per bit */
-   // }
 }
