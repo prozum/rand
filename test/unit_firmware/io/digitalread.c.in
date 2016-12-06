@@ -6,6 +6,8 @@
 int main()
 {
     if (digital_read(@PIN_ID@) == @PIN_VAL@) {
-
+        return 0;
     }
+
+    while (1);
 }
