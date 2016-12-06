@@ -35,10 +35,6 @@
 #define TOP_READING 2
 #define BOTTOM_READING 3
 
-typedef struct position_s {
-    /*Fill here*/
-} position_t;
-
 typedef struct rep_s{
     fc_t *fc;
     laser_t *laser;
@@ -89,20 +85,6 @@ typedef struct nav_s{
 }nav_t;
 
 void init_nav(nav_t *nav);
-
-kalman_state *kalman_filters[SENSOR_FILTERS];
-kalman_state_matrix *datafusion_filters[DATAFUSION_UNITS];
-
-position_t *positioning_init(float a[SENSOR_FILTERS], float r[SENSOR_FILTERS],
-                             float A[DATAFUSION_FILTERS], float B[DATAFUSION_FILTERS]);
-
-void positioning_calibrate(position_t *position, float sensor_initial_readings[SENSOR_FILTERS],
-                           float df_initial_readings[2*DATAFUSION_FILTERS]);
-
-void positioning_calculate(position_t *position, float sensor_readings[SENSOR_FILTERS],
-                           float df_readings[2 * DATAFUSION_FILTERS]);
-
-void update_u_k();
 
 void navigation(rep_t *rep, nav_t *nav);
 

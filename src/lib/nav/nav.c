@@ -1,47 +1,5 @@
 #include "nav.h"
 
-position_t *positioning_init(float a[SENSOR_FILTERS], float r[SENSOR_FILTERS],
-                             float A[DATAFUSION_FILTERS], float B[DATAFUSION_FILTERS]) {
-    int i;
-    for (i = 0; i < SENSOR_FILTERS; ++i) {
-        kalman_filters[i] = kalman_init(a[i], r[i], SENDER_BOARD);
-    }
-    for (i = 0; i < DATAFUSION_FILTERS; ++i) {
-        /*todo: FIND A BETTER SOLUTION!*/
-        float C[2][2] = {{1, 0}, {1, 0}};
-        float R[2][2] = {{1, 0}, {0, 1}};
-
-        datafusion_filters[i] = kalman_datafusion_init(A[i], B[DATAFUSION_FILTERS], SENDER_BOARD, C, R);
-    }
-
-    position_t *position = malloc(sizeof(position_t));
-    if(!position)
-        ERROR("Failed to allocate space for position field.");
-
-    return position;
-}
-
-void positioning_calibrate(position_t *position, float sensor_initial_readings[SENSOR_FILTERS],
-                           float df_init_readings[2 * SENSOR_FILTERS]) {
-    int i;
-    for (i = 0; i < DATAFUSION_FILTERS; ++i) {
-        kalman_datafusion_calibrate(datafusion_filters[i], df_init_readings[2*i], df_init_readings[2*i + 1]);
-    }
-
-    for (i = 0; i < SENSOR_FILTERS; ++i) {
-        kalman_calibrate(kalman_filters[i], sensor_initial_readings[i]);
-    }
-
-    positioning_calculate(position, sensor_initial_readings, df_init_readings);
-}
-
-void positioning_calculate(position_t *position, float sensor_readings[SENSOR_FILTERS],
-                           float df_readings[DATAFUSION_FILTERS * 2]) {
-
-    //recent_position = calculated_position; something like this
-}
-
-
 uint8_t CheckAWallF(rep_t *rep){
     if((rep->sonar->valid) == 1 && (rep->sonar->value <= 40 || rep->laser->front_value <= 40)){
         return 1;
