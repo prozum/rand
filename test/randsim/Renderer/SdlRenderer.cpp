@@ -33,7 +33,7 @@ bool SdlRenderer::init() {
         std::cout << " Failed to initialize TTF : " << SDL_GetError() << std::endl;
         return false;
     }
-    
+
     // Load font
     std::string path = std::string(SDL_GetBasePath()) + string("Fonts/Ubuntu-C.ttf");
     Font = TTF_OpenFont(path.c_str(), 26);
@@ -98,8 +98,8 @@ void SdlRenderer::drawCircleRel(Dot Center, int Radius) {
     filledCircleRGBA(Renderer, (Uint16)relX(Center.X), (Uint16)relY(Center.Y), (Uint16)rel(Radius), CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 
-void SdlRenderer::drawText(std::string Text, Dot Pos) {
-    auto TextSurface = TTF_RenderText_Shaded(Font, Text.c_str(), CurColor, {0, 0, 0});
+void SdlRenderer::drawText(std::string Text, Dot Pos, Color BG) {
+    auto TextSurface = TTF_RenderText_Shaded(Font, Text.c_str(), CurColor, {(Uint8)BG.R, (Uint8)BG.B, (Uint8)BG.G, 0});
     auto TextTexture = SDL_CreateTextureFromSurface(Renderer, TextSurface);
     SDL_Rect Quad = {Pos.X, Pos.Y, TextSurface->w, TextSurface->h};
 
@@ -108,7 +108,7 @@ void SdlRenderer::drawText(std::string Text, Dot Pos) {
     SDL_DestroyTexture(TextTexture);
 
 }
-void SdlRenderer::drawTextRel(std::string Text, Dot Pos) {}
+void SdlRenderer::drawTextRel(std::string Text, Dot Pos, Color Background) {}
 
 void SdlRenderer::drawPie(Dot Center, int Radius, int Start, int End) {
     filledPieRGBA(Renderer, Center.X, Center.Y, Radius, Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);

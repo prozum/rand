@@ -14,9 +14,9 @@
 #endif
 
 typedef struct sonar_s {
-    dpin_t trig;
-    dpin_t echo;
-    uint8_t valid; // flag to check if latest value is valid
+    dpin_t trig;    // trigger pin
+    dpin_t echo;    // receive pin
+    uint8_t valid;  // flag to check if latest value is valid
     uint16_t value; // latest reading in cm
 } sonar_t;
 

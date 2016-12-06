@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Dot(500, 500), 100);
+    Drn = make_unique<Drone>(Dot(500, 500), 50);
 
 }
 
@@ -66,9 +66,9 @@ int Simulator::run() {
                     }
                     break;
                 case SDL_MOUSEWHEEL:
-                    Render->Zoom += Event.wheel.y * 0.1;
-                    if (Render->Zoom < 0.1)
-                        Render->Zoom = 0.1;
+                    Render->Zoom += Event.wheel.y * 0.2;
+                    if (Render->Zoom < 0.2)
+                        Render->Zoom = 0.2;
                     if (Render->Zoom > 10)
                         Render->Zoom = 10;
                     break;
@@ -147,7 +147,7 @@ void Simulator::drawBlockGrid() {
 
     for (int i = 1; i <= HLines; ++i) {
         int LineY = i * BlockSize;
-        if ((i + FirstBoldY) % 2)
+        if ((i + FirstBoldY) % 4)
             Render->drawLine({0, LineY}, {Width, LineY});
         else {
             Render->drawLine({0, LineY - 1}, {Width, LineY - 1});
@@ -160,7 +160,7 @@ void Simulator::drawBlockGrid() {
     int FirstBoldX = Render->Offset.X % (Block::Size * 2) ? 0 : 1;
     for (int i = 1; i <= VLines; ++i) {
         int LineX = i * BlockSize;
-        if ((i + FirstBoldX) % 2)
+        if ((i + FirstBoldX) % 4)
             Render->drawLine({LineX, 0}, {LineX, Height});
         else {
             Render->drawLine({LineX - 1, 0}, {LineX - 1, Height});
@@ -172,36 +172,53 @@ void Simulator::drawBlockGrid() {
 }
 
 void Simulator::drawInfoBox() {
-    int Height = int(Render->WinHeight * 0.5);
+    int Height = int(Render->WinHeight * 0.6);
     int Width = Height / 2;
 
     Dot Pos = {int(Render->WinWidth - Width), int(Render->WinHeight - Height)};
-    int MarginX = 10, MarginY = 10;
+    int MarginX = 25, MarginY = 25;
     int OffsetX = Pos.X + MarginX, OffsetY = Pos.Y + MarginY;
-    int Indent = OffsetX + 20;
-    int ObjSpace = 80;
-    int PropSpace = 40;
+
+    // Design constants
+    const int Indent = OffsetX + 20;
+    const int ObjSpace = 40;
+    const int PropSpace = 40;
 
     // Draw backgound
-    Render->setColor({25, 25, 25});
+    Color BGColor = {35, 35, 35};
+    Render->setColor(BGColor);
     Render->drawRect(Pos, int(Width), int(Height));
 
+    // Text color
     Render->setColor({255, 255, 255}, 100);
 
     // Mouse info
     int MouseOffset = OffsetY;
-    Render->drawText(string("Mouse: "), {OffsetX, MouseOffset});
+    Render->drawText(string("Mouse: "), {OffsetX, MouseOffset}, BGColor);
 
     // Mouse pos
     int MouseX, MouseY;
     SDL_GetMouseState(&MouseX, &MouseY);
-    Render->drawText(string("Pos : (") + to_string(Render->iRelX(MouseX)) + " cm, " + to_string(Render->iRelY(MouseY)) + " cm)", {Indent, MouseOffset + PropSpace});
+    Render->drawText(string("Pos : (") + to_string(Render->iRelX(MouseX)) + " cm, " + to_string(Render->iRelY(MouseY)) + " cm)", {Indent, MouseOffset + PropSpace}, BGColor);
 
     // Drone info
-    int DroneOffset = OffsetY + ObjSpace;
-    Render->drawText(string("Drone:"), {OffsetX, DroneOffset});
-    Render->drawText(string("Pos: (") + to_string(Drn->Pos.X) + " cm, " + to_string(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace});
-    Render->drawText(string("Angle: ") + to_string(rad_to_deg(Drn->Angle)), {Indent, DroneOffset + PropSpace * 2});
+    int DroneOffset = MouseOffset + PropSpace + ObjSpace;
+    Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
+    Render->drawText(string("Pos: (") + to_string(Drn->Pos.X) + " cm, " + to_string(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
+    Render->drawText(string("Angle: ") + to_string(rad_to_deg(Drn->Angle)), {Indent, DroneOffset + PropSpace * 2}, BGColor);
+
+    // Laser info
+    int LaserOffset = DroneOffset + PropSpace * 2 + ObjSpace;
+    Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
+    Render->drawText(string("Front: ") + to_string(rad_to_deg(Drn->Laser.front_value)) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Left: ")  + to_string(rad_to_deg(Drn->Laser.left_value )) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Right: ") + to_string(rad_to_deg(Drn->Laser.right_value)) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
+
+    // Sonar info
+    int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
+    Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
+    Render->drawText(string("Front: ") + to_string(rad_to_deg(Drn->Sonar.value)) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+
 
     // Block to cm meter
     int MeterHeight = Render->WinHeight * 0.1;
@@ -212,6 +229,6 @@ void Simulator::drawInfoBox() {
     Render->drawLine({OffsetX + 20, MeterTopY}, {OffsetX + 20, MeterBotY});
     Render->drawLine({OffsetX + 21, MeterTopY}, {OffsetX + 21, MeterBotY});
     Render->drawLine({OffsetX + 10, MeterBotY}, {OffsetX + 30, MeterBotY});
-    Render->drawText(to_string(Render->iRel(MeterHeight)) + string("cm"), {OffsetX + 30, MeterTopY + MeterHeight / 2 - 15});
+    Render->drawText(to_string(Render->iRel(MeterHeight)) + string("cm"), {OffsetX + 30, MeterTopY + MeterHeight / 2 - 15}, BGColor);
 }
 

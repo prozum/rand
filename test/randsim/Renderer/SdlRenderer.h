@@ -30,13 +30,13 @@ public:
     void drawRect(Dot Pos, int Width, int Height);
     void drawCircle(Dot Center, int Radius);
     void drawPie(Dot Center, int Radius, int Start, int End);
-    void drawText(std::string Text, Dot Pos);
+    void drawText(std::string Text, Dot Pos, Color BG = {0, 0, 0});
 
     // Relative
     void drawLineRel(Dot Start, Dot End);
     void drawRectRel(Dot Pos, int Width, int Height);
     void drawCircleRel(Dot Center, int Radius);
     void drawPieRel(Dot Center, int Radius, int Start, int End);
-    void drawTextRel(std::string Text, Dot Pos);
+    void drawTextRel(std::string Text, Dot Pos, Color Background = {0, 0, 0});
 };
 

@@ -11,8 +11,8 @@
 #define IR_MAX_INPUT 255
 
 typedef struct ir_s {
-    apin_t pin;
-    uint8_t value;
+    apin_t pin;    // receive pin
+    uint8_t value; // latest reading in cm
 } ir_t;
 
 ir_t *IR_init(apin_t pin);
