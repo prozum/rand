@@ -117,3 +117,15 @@ void SdlRenderer::drawPie(Dot Center, int Radius, int Start, int End) {
 void SdlRenderer::drawPieRel(Dot Center, int Radius, int Start, int End) {
     filledPieRGBA(Renderer, relX(Center.X), relY(Center.Y), rel(Radius), Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
+
+void SdlRenderer::initMinimap(int Width, int Height) {
+    MinimapWidth = Width;
+    MinimapHeight = Height;
+
+    auto Texture = SDL_CreateTexture(Renderer, 0, 0, MinimapWidth, MinimapWidth);
+    SDL_SetRenderTarget(Renderer, Texture);
+}
+
+void SdlRenderer::drawMinimapPixel(int X, int Y, Color Color) {
+
+}

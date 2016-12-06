@@ -22,9 +22,9 @@ typedef enum fieldstate_e{
 
 void map_init(uint8_t width, uint8_t height, uint8_t clean);
 
-void map_write(uint8_t x, uint8_t y, uint8_t);
+void map_write(uint8_t x, uint8_t y, fieldstate_t state);
 
-uint8_t map_read(uint8_t x, uint8_t y);
+fieldstate_t map_read(uint8_t x, uint8_t y);
 
 void map_clean();
 

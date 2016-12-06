@@ -51,6 +51,10 @@ public:
     virtual void drawPieRel(Dot Center, int Radius, int Start, int End) = 0;
     virtual void drawTextRel(std::string Text, Dot Pos, Color Background = {0, 0, 0}) = 0;
 
+    // Minimap
+    virtual void initMinimap(int Width, int Height) = 0;
+    virtual void drawMinimapPixel(int X, int Y, Color Color) = 0;
+
     // Relative functions
     inline int rel(int Val) { return int(Val * Zoom); }
     inline int relX(int Val) { return int((Val - Offset.X) * Zoom); }

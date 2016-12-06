@@ -16,9 +16,11 @@ extern "C" {
 #define WALL_CHAR '#'
 #define WINDOW_CHAR '&'
 
+#define YELLOW {255, 255, 0}
+#define BLUE   {0, 0, 255}
+#define BLACK  {0, 0, 0}
 
 class Map : SimObject {
-
 
 public:
     unsigned long Width = 0;

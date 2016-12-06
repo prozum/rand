@@ -17,7 +17,7 @@ void map_init(uint8_t width, uint8_t height, uint8_t clean)
         map_clean();
 }
 
-void map_write(uint8_t x, uint8_t y, uint8_t value)
+void map_write(uint8_t x, uint8_t y, fieldstate_t value)
 {
     uint16_t addr = (y * map_width + x) / FIELDS_PER_BYTE;
     uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;
@@ -30,7 +30,7 @@ void map_write(uint8_t x, uint8_t y, uint8_t value)
     eeprom_write(addr, new_value);
 }
 
-uint8_t map_read(uint8_t x, uint8_t y)
+fieldstate_t map_read(uint8_t x, uint8_t y)
 {
     uint16_t addr = (y * map_width + x) / FIELDS_PER_BYTE;
     uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;;

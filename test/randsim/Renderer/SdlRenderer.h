@@ -16,6 +16,9 @@ class SdlRenderer : public Renderer {
     int MinFrameTime = 1000 / Fps;
     int FrameTime = 0;
 
+    int MinimapWidth;
+    int MinimapHeight;
+
 public:
     bool init();
     ~SdlRenderer();
@@ -38,5 +41,9 @@ public:
     void drawCircleRel(Dot Center, int Radius);
     void drawPieRel(Dot Center, int Radius, int Start, int End);
     void drawTextRel(std::string Text, Dot Pos, Color Background = {0, 0, 0});
+
+    // Minimap
+    void initMinimap(int Width, int Height);
+    void drawMinimapPixel(int X, int Y, Color Color);
 };
 
