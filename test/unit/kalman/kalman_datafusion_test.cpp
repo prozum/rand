@@ -63,11 +63,10 @@ void KalmanDatafusionTest::KalmanDFInit_ValidStateRNull_StateInitializedWithRone
 }
 
 
-void sensor_setup(kalman_state_matrix *state, laser_t *z_0_laser, sonar_t *z_0_sonar, uint8_t laser_valid, uint8_t sonar_valid,
+void sensor_setup(kalman_state_matrix *state, laser_t *z_0_laser, sonar_t *z_0_sonar, uint8_t sonar_valid,
                   uint16_t laser_reading, uint16_t sonar_reading) {
 
     z_0_laser->front_value = laser_reading;
-    z_0_laser->valid = laser_valid;
 
     z_0_sonar->value = sonar_reading;
     z_0_sonar->valid = sonar_valid;
@@ -85,7 +84,7 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToB
     laser_t *z_0_laser = laser_init(USB_TX);
     sonar_t *z_0_sonar = sonar_init(P2 ,P1);
 
-    sensor_setup(state, z_0_laser, z_0_sonar, 1, 1, 300, 300);
+    sensor_setup(state, z_0_laser, z_0_sonar, 1, 300, 300);
     state->x_k = 60;
     kalman_datafusion_calibrate(state, z_0_laser->front_value, z_0_sonar->value);
     float diff = abs(state->x_k - z_0_laser->front_value);
@@ -157,7 +156,6 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev
     state->x_k = x_prev;
     laser_t *z_laser = laser_init(USB_TX);
     z_laser->front_value = 120;
-    z_laser->valid = 1;
     sonar_t *z_sonar = sonar_init(P0, P1);
     z_sonar->value = 120;
     z_sonar->valid = 1;
@@ -172,7 +170,6 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxpre
 
     const float a = 1;
     const float b = 0.6;
-    const float p_0 = 4;
 
     state = kalman_datafusion_init(a, b, SENDER_BOARD, C, R);
 
@@ -181,7 +178,7 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxpre
     laser_t *z_laser = laser_init(USB_TX);
     z_laser->front_value = 300;
     sonar_t *z_sonar = sonar_init(P0, P1);
-    z_sonar->value = 300; //300cm
+    z_sonar->value = 300;
     kalman_datafusion_filter(state, z_laser->front_value, z_sonar->value);
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", state->x_k > x_prev);

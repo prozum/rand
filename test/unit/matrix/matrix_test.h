@@ -12,6 +12,7 @@
 
 extern "C" {
 #include "matrix/matrix.h"
+#include "libfixmath/fix16.h"
 };
 
 class MatrixTest : public CppUnit::TestCase {

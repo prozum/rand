@@ -9,7 +9,7 @@
 #include "lib/sonar/sonar.h"
 #include "lib/ir/ir.h"
 #include "lib/laser/laser.h"
-#include "lib/positioning/positioning.h"
+#include "lib/nav/nav.h"
 
 #define ONE_MS 63 // defines 1 millisecond
 #define ONE_AND_A_HALF_MS 94 // defines 1.5 millisecond
