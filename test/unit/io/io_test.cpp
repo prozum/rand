@@ -240,9 +240,7 @@ void IOTest::ReadPin_Pin0ReadLOW_ExpectLOW() {
     Tools::avr_set_state(avr, PORTD_, PIN0, LOW);
     Tools::avr_step(avr, STEPS);
 
-    avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int) cpu_Stopped, avr->state);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
 void IOTest::ReadPin_Pin7ReadLOW_ExpectLOW() {
@@ -252,9 +250,7 @@ void IOTest::ReadPin_Pin7ReadLOW_ExpectLOW() {
     Tools::avr_set_state(avr, PORTD_, PIN7, LOW);
     Tools::avr_step(avr, STEPS);
 
-    avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int) cpu_Stopped, avr->state);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
 void IOTest::ReadPin_Pin8ReadLOW_ExpectLOW() {
@@ -264,9 +260,7 @@ void IOTest::ReadPin_Pin8ReadLOW_ExpectLOW() {
     Tools::avr_set_state(avr, PORTB_, PIN0, LOW);
     Tools::avr_step(avr, STEPS);
 
-    avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int) cpu_Stopped, avr->state);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
 void IOTest::ReadPin_Pin13ReadLOW_ExpectLOW() {
@@ -276,9 +270,7 @@ void IOTest::ReadPin_Pin13ReadLOW_ExpectLOW() {
     Tools::avr_set_state(avr, PORTB_, PIN5, LOW);
     Tools::avr_step(avr, STEPS);
 
-    avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int) cpu_Stopped, avr->state);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
 void IOTest::ReadPin_Pin0ReadHIGH_ExpectHIGH() {
@@ -288,9 +280,7 @@ void IOTest::ReadPin_Pin0ReadHIGH_ExpectHIGH() {
     Tools::avr_set_state(avr, DDRD_, PIN0, INPUT);
     Tools::avr_step(avr, STEPS);
 
-    avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 1, (int)state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
 void IOTest::ReadPin_Pin7ReadHIGH_ExpectHIGH() {
@@ -300,9 +290,7 @@ void IOTest::ReadPin_Pin7ReadHIGH_ExpectHIGH() {
     Tools::avr_set_state(avr, PORTD_, PIN7, LOW);
     Tools::avr_step(avr, STEPS);
 
-    avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int) cpu_Stopped, avr->state);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
 void IOTest::ReadPin_Pin8ReadHIGH_ExpectHIGH() {
@@ -312,9 +300,7 @@ void IOTest::ReadPin_Pin8ReadHIGH_ExpectHIGH() {
     Tools::avr_set_state(avr, PORTB_, PIN0, HIGH);
     Tools::avr_step(avr, STEPS);
 
-    //avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int) cpu_Crashed, avr->state);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
 void IOTest::ReadPin_Pin13ReadHIGH_ExpectHIGH() {
@@ -324,8 +310,6 @@ void IOTest::ReadPin_Pin13ReadHIGH_ExpectHIGH() {
     Tools::avr_set_state(avr, PORTB_, PIN5, LOW);
     Tools::avr_step(avr, STEPS);
 
-    avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
-
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int) cpu_Stopped, avr->state);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
 
