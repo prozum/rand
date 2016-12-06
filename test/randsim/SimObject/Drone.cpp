@@ -30,18 +30,19 @@ void Drone::draw() {
 }
 
 void Drone::update() {
-    calcSonarDist();
+    calcLaserDist();
+    //calcSonarDist();
+
     rep_t rep;
     nav_t nav; //don't know what to do with this
     init_rep(&FC, &Laser, &Sonar, &IrTop, &IrBottom, &rep);
 
     navigation(&rep, &nav);
 
-    //Pos.X += 1;
-    Pos.Y = 525;
-    Pos.X = 500;
+    Pos.Y = 112;
+    Pos.X = 112;
 
-    Angle = Angle + 0.01;
+    Angle = Angle + 0.05;
     if (Angle > M_PI * 2)
         Angle = 0;
 
@@ -77,7 +78,7 @@ void Drone::calcSonarDist() {
         }
 
         std::cout << "Block: x: " << B.Pos.X << " y: " << B.Pos.Y << std::endl;
-        std::cout << "Drone: x: " <<    Pos.X << " y: " <<    Pos.Y << std::endl;
+        std::cout << "Drone: x: " <<   Pos.X << " y: " <<   Pos.Y << std::endl;
         std::cout << "X1: " << X1 << " Y1: " << Y1 << std::endl;
         std::cout << "X2: " << X2 << " Y2: " << Y2 << std::endl;
         Dist = sqrt(X1 * X1 + Y1 * Y1);
@@ -89,6 +90,47 @@ void Drone::calcSonarDist() {
         std::cout << "Start Angle: " << StartAngle << " End Angle: " << EndAngle << std::endl;
         std::cout << "Angle: " << Angle << std::endl;
         std::cout << "Found: " << (Angle < StartAngle && Angle > EndAngle) << std::endl;
+    //}
+}
+
+void Drone::calcLaserDist() {
+
+    int Radius = Size/2;
+    auto B = Sim->Blocks[0];
+
+    int LRange = 400;
+
+
+    int MaxDist = 2200;
+    double DeltaX, DeltaY, Dist;
+    int X1, X2, Y1, Y2;
+    double StartAngle, EndAngle;
+    int HalfBlock = Block::Size / 2;
+
+    //for (auto B : Sim->Blocks) {
+    X1 = abs(B.Pos.X - HalfBlock - Pos.X);
+    X2 = abs(B.Pos.X + HalfBlock - Pos.X);
+
+    Y1 = abs(B.Pos.Y - HalfBlock - Pos.Y);
+    Y2 = abs(B.Pos.Y + HalfBlock - Pos.Y);
+
+    DeltaX = abs(B.Pos.X - Pos.X);
+    DeltaY = abs(B.Pos.Y - Pos.Y);
+
+    // Distance
+    std::cout << "Block: x: " << B.Pos.X << " y: " << B.Pos.Y << std::endl;
+    std::cout << "Drone: x: " <<    Pos.X << " y: " <<    Pos.Y << std::endl;
+    std::cout << "X1: " << X1 << " Y1: " << Y1 << std::endl;
+    std::cout << "X2: " << X2 << " Y2: " << Y2 << std::endl;
+    Dist = sqrt(DeltaX * DeltaX + DeltaY * DeltaY);
+    Laser.front_value = Dist;
+
+
+    StartAngle = atan((abs(DeltaX) - Block::Size / 2) / (abs(DeltaX) + Block::Size / 2));
+    EndAngle =   M_PI / 2 - atan((abs(DeltaY) - Block::Size / 2) / (abs(DeltaY) + Block::Size / 2));
+    std::cout << "Start Angle: " << StartAngle << " End Angle: " << EndAngle << std::endl;
+    std::cout << "Angle: " << Angle << std::endl;
+    std::cout << "Found: " << (Angle < StartAngle && Angle > EndAngle) << std::endl;
     //}
 }
 

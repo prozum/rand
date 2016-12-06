@@ -56,14 +56,21 @@ void map_show()
     for (y = 0; y < map_height; y++) {
         uart_putchar('|');
         for (x = 0; x < map_width; x++) {
-            if(map_read(x,y) == unvisited) {
-                uart_putchar(' ');
-            }else if(map_read(x,y) == visited) {
-                uart_putchar('\'');
-            }else if(map_read(x,y) == wall) {
-                uart_putchar('#');
-            }else if(map_read(x,y) == transparent) {
-                uart_putchar('¤');
+            switch (map_read(x, y)) {
+                case unvisited:
+                    uart_putchar(' ');
+                    break;
+                case visited:
+                    uart_putchar('\'');
+                    break;
+                case wall:
+                    uart_putchar('#');
+                    break;
+                case transparent:
+                    uart_putchar('&');
+                    break;
+                default:
+                    ERROR("Unrecognized character");
             }
         }
         uart_putchar('|');

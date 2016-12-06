@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Dot(500, 500), 50);
+    Drn = make_unique<Drone>(Dot(75, 75), 50);
 
 }
 
@@ -140,7 +140,7 @@ void Simulator::drawBlockGrid() {
 
     int HLines = Height / BlockSize;
     int VLines = Width / BlockSize;
-    int FirstBoldY = Render->Offset.Y % (Block::Size * 2) ? 0 : 1;
+    int FirstBoldY = Render->Offset.Y % (Block::Size * 4) ? 0 : 1;
 
     Render->setColor({0, 0, 0});
 
@@ -157,7 +157,7 @@ void Simulator::drawBlockGrid() {
     }
 
 
-    int FirstBoldX = Render->Offset.X % (Block::Size * 2) ? 0 : 1;
+    int FirstBoldX = Render->Offset.X % (Block::Size * 4) ? 0 : 1;
     for (int i = 1; i <= VLines; ++i) {
         int LineX = i * BlockSize;
         if ((i + FirstBoldX) % 4)
@@ -210,14 +210,14 @@ void Simulator::drawInfoBox() {
     // Laser info
     int LaserOffset = DroneOffset + PropSpace * 2 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
-    Render->drawText(string("Front: ") + to_string(rad_to_deg(Drn->Laser.front_value)) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
-    Render->drawText(string("Left: ")  + to_string(rad_to_deg(Drn->Laser.left_value )) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
-    Render->drawText(string("Right: ") + to_string(rad_to_deg(Drn->Laser.right_value)) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
+    Render->drawText(string("Front: ") + to_string(Drn->Laser.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Left: ")  + to_string(Drn->Laser.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Right: ") + to_string(Drn->Laser.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
 
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + to_string(rad_to_deg(Drn->Sonar.value)) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + to_string(Drn->Sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
 
     // Block to cm meter
