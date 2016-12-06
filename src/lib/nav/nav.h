@@ -18,6 +18,7 @@
 #include "kalman/kalman_datafusion.h"
 #include "kalman/kalman.h"
 #include "core/log.h"
+#include "map/map.h"
 
 #define FRONT_a 0.99
 #define SIDE_a 1
@@ -51,6 +52,7 @@ typedef struct rep_s{
  * this type defines that task.
  */
 typedef enum task_e{
+    idle,
     turnleft,
     turnaround,
     turnright,
@@ -71,12 +73,12 @@ typedef struct state_s{
     uint8_t ACeiling    : 1; //ceiling within 40cm above
 }state_t;
 
-void update_state(state_t *state);
+void update_state(state_t *state, rep_t *rep);
 
 typedef struct nav_s{
     state_t *state;
     uint8_t *timer;
-    task_t *task;
+    task_t task;
     uint16_t *angle;
 }nav_t;
 
@@ -105,7 +107,17 @@ uint8_t CheckAWinF(rep_t *rep);
 uint8_t CheckAWinL(rep_t *rep);
 uint8_t CheckAWinR(rep_t *rep);
 uint8_t CheckAGround(rep_t *rep);
-uint8_t CheckAWCeiling(rep_t *rep);
+uint8_t CheckACeiling(rep_t *rep);
+
+void onIdle();
+void onTurnleft();
+void onTurnright();
+void onTurnaround();
+void onMoveforward();
+void onMoveup();
+void onMovedown();
+void onSearching();
+
 
 #endif //RAND_POSITIONING_H
 
