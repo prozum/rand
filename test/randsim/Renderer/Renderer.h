@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cmath>
+#include <sstream>
 
 #include "Vector2D.h"
 

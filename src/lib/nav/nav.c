@@ -1,7 +1,7 @@
 #include "nav.h"
 
-uint8_t CheckAWallF(rep_t *rep){
-    if((rep->sonar->valid) == 1 && (rep->sonar->value <= 40 || rep->laser->front_value <= 40)){
+uint8_t CheckAWallF(rep_t *rep, state_t state){
+    if((rep->sonar->valid) == 1 && (rep->sonar->value <= 40 || rep->laser->front_value <= 40) && isSonarReliable(rep, state)){
         return 1;
     }
     return 0;
@@ -37,8 +37,8 @@ uint8_t CheckACeiling(rep_t *rep) {
     return 0;
 }
 
-uint8_t CheckAWinF(rep_t *rep) {
-    if (rep->sonar->valid && rep->laser->left_value >= 60 && rep->sonar->value <= 40) {
+uint8_t CheckAWinF(rep_t *rep, state_t state) {
+    if (rep->sonar->valid && rep->laser->left_value >= 60 && rep->sonar->value <= 40 && isSonarReliable(rep, state)) {
         return 1;
     }
     return 0;
@@ -82,10 +82,10 @@ uint8_t CheckBlockedL(state_t state){
 void update_state(state_t state, rep_t *rep){
     state.ACeiling = CheckACeiling(rep);
     state.AGround =  CheckAGround(rep);
-    state.AWallF = CheckAWallF(rep);
+    state.AWallF = CheckAWallF(rep, state);
     state.AWallL = CheckAWallL(rep);
     state.AWallR = CheckAWallR(rep);
-    state.AWinF = CheckAWinF(rep);
+    state.AWinF = CheckAWinF(rep, state);
     state.AWinL = CheckAWinL(rep);
     state.AWinR = CheckAWinR(rep);
     state.BlockedF = CheckBlockedF(state);
@@ -253,6 +253,24 @@ void Movedown(rep_t *rep, nav_t *nav){
 void Searching(rep_t *rep, nav_t *nav){
     //todo: needs implementing
     nav->task = SEARCHING;
+}
+
+uint8_t isSonarReliable(rep_t *rep, state_t state){
+    /* finds the distance to the wall the drone is following 
+     * if blockedR returns 0, then the wall is to the left, otherwise the right
+     * if the wall is on the left distToWall receives the distance to left, otherwise right */
+    fix16_t distToWall = fix16_from_int(state.BlockedR ? rep->laser->left_value : rep->laser->right_value);
+    
+    /* find the distance to the wall with a 15 degree angle from front view */
+    fix16_t calcSonarDistToWall = fix16_mul(distToWall/fix16_sin(75), fix16_sin(90));
+
+    /* if the measured value compared to the calculated value is less or equal to the allowed deviation of the sensor */
+    if (fix16_abs(calcSonarDistToWall - rep->sonar->value <= SONAR_DEVIATION))
+    {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 
