@@ -15,17 +15,12 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), Son
     FC.duty->MID_FC_DUTY = 1 * FC_OFFSET;
     FC.duty->MAX_FC_DUTY = 2 * FC_OFFSET;
 
-    //Pos.X += 1;
-    Pos.X = 112.5;
-    Pos.Y = -137.5;
+
 
     //Makes sure the drone starts in a non-moving state
     rotate_stop(&FC);
     move_stop(&FC);
 
-    //Testing:
-    counter = 0;
-    move_right(&FC);
 }
 
 void Drone::draw() {

@@ -43,7 +43,7 @@ bool Minimap::loadMap(string Path) {
                 map_write(X++, Y, WALL);
                 break;
             case CHAR_TRANSPARENT:
-                map_write(X++, Y, TRANSPARENT);
+                map_write(X++, Y, WINDOW);
                 break;
             case '\n':
                 Y++;
@@ -69,7 +69,7 @@ void Minimap::draw() {
     auto BlockSize = Vector2D(ceil(MapWidth / MAP_WIDTH), ceil(MapHeight / MAP_HEIGHT));
     //Sim->Render->setColor({0, 255, 255});
     //Sim->Render->drawRect(Vector2D(WinWidth - WinHeight * 0.3, 0.0), Vector2D(WinHeight * 0.3, WinHeight * 0.3));
-    map_show();
+    //map_show();
 
     Sim->Render->setColor(WHITE);
     Sim->Render->drawRect({WinWidth - MapWidth, 0.0}, {MapWidth, MapHeight});
@@ -97,7 +97,7 @@ void Minimap::draw() {
                     Sim->Render->setColor(BLACK);
                     Sim->Render->drawRect({realX, realY}, BlockSize);
                     break;
-                case TRANSPARENT:
+                case WINDOW:
                     Sim->Render->setColor(BLUE);
                     Sim->Render->drawRect({realX, realY}, BlockSize);
                     break;

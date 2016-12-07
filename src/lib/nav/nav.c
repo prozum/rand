@@ -58,39 +58,39 @@ uint8_t CheckAWinR(rep_t *rep) {
     return 0;
 }
 
-uint8_t CheckBlockedF(state_t state){
-    if(state.AWallF || state.AWinF){
+uint8_t CheckBlockedF(state_t *state){
+    if(state->AWallF || state->AWinF){
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckBlockedR(state_t state){
-    if(state.AWallR || state.AWinR){
+uint8_t CheckBlockedR(state_t *state){
+    if(state->AWallR || state->AWinR){
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckBlockedL(state_t state){
-    if(state.AWallL || state.AWinL){
+uint8_t CheckBlockedL(state_t *state){
+    if(state->AWallL || state->AWinL){
         return 1;
     }
     return 0;
 }
 
-void update_state(state_t state, rep_t *rep){
-    state.ACeiling = CheckACeiling(rep);
-    state.AGround =  CheckAGround(rep);
-    state.AWallF = CheckAWallF(rep, state);
-    state.AWallL = CheckAWallL(rep);
-    state.AWallR = CheckAWallR(rep);
-    state.AWinF = CheckAWinF(rep, state);
-    state.AWinL = CheckAWinL(rep);
-    state.AWinR = CheckAWinR(rep);
-    state.BlockedF = CheckBlockedF(state);
-    state.BlockedL = CheckBlockedL(state);
-    state.BlockedR = CheckBlockedR(state);
+void update_state(state_t *state, rep_t *rep){
+    state->ACeiling = CheckACeiling(rep);
+    state->AGround =  CheckAGround(rep);
+    state->AWallF = CheckAWallF(rep, *state);
+    state->AWallL = CheckAWallL(rep);
+    state->AWallR = CheckAWallR(rep);
+    state->AWinF = CheckAWinF(rep, *state);
+    state->AWinL = CheckAWinL(rep);
+    state->AWinR = CheckAWinR(rep);
+    state->BlockedF = CheckBlockedF(state);
+    state->BlockedL = CheckBlockedL(state);
+    state->BlockedR = CheckBlockedR(state);
 }
 
 void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep){
@@ -105,8 +105,8 @@ void init_nav(nav_t *nav){
     nav->task = IDLE;
     nav->val = 0;
     nav->angle = 0;
-    nav->posx = 0;
-    nav->posy = 0;
+    nav->posx = 32;
+    nav->posy = 32;
 
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
@@ -120,10 +120,10 @@ void init_nav(nav_t *nav){
  */
 void navigation(rep_t *rep, nav_t *nav){ //:todo make rep and nav one unit
 
-    update_state(nav->state, rep);
-
+    update_state(&nav->state, rep);
     //what were we doing?
     task_t currenttask = nav->task;
+    //printf("Task: %d\n", currenttask);
     switch(currenttask){
         case IDLE: onIdle(rep, nav); break;
         case TURNLEFT: onTurnleft(rep, nav); break;
@@ -161,10 +161,10 @@ void onIdle(rep_t *rep, nav_t *nav) {
             if (state.BlockedL)
                 Turnaround(rep, nav);
             else
-                Turnleft(rep,nav);
+                Turnleft(rep,nav, FULL_TURN);
         }
         else
-            Turnright(rep, nav);
+            Turnright(rep, nav, FULL_TURN);
     }
     else
         Moveforward(rep, nav);
@@ -173,31 +173,53 @@ void onIdle(rep_t *rep, nav_t *nav) {
 void onTurnleft(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
+     * Set angle aswell, on finished turning maybe?
      */
+    //todo:Udkommenter dette når gyro er implementeret.
+    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+    if(nav->val == 0){
+        move_stop(rep->fc);
+        nav->task = IDLE;
+    }
 }
 
 void onTurnright(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
+     * Set angle aswell, on finished turning maybe?
      */
+    //todo:Udkommenter dette når gyro er implementeret.
+    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+
+    if(nav->val == 0){
+        move_stop(rep->fc);
+        nav->task = IDLE;
+    }
 }
 
 void onTurnaround(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
+     * Set angle aswell, on finished turning maybe?
+     * nav-val er her mængden af grader der skal drejes.
      */
+
+    //todo:Udkommenter dette når gyro er implementeret.
+    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+    if(nav->val == 0){
+        move_stop(rep->fc);
+        nav->task = IDLE;
+    }
 }
 
 void onMoveforward(rep_t *rep, nav_t *nav){
-    /* Check AWallF and if no then using nav->val is possible to avoid moving too far without drawing on the map'
+    /* Check AWallF and if no then using nav->val is possible to avoid moving too far without drawing on the map
      * or simply draw on the map here
      * In either case set task to IDLE or start new one when done.
      */
 
     if ((nav->state.AWallF || nav->state.AWinF) && (rep->laser->front_value <= MIN_RANGE || rep->sonar->value <= MIN_RANGE) && isSonarReliable(rep, nav->state)) {
-        fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
         fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
-        
         if (rep->laser->front_value > (rep->sonar->value + MIN_DIFF_LASER_SONAR))
             map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WINDOW);
         else
@@ -211,7 +233,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
         
         map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
-    
+
     if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE)
     {
         fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
@@ -219,59 +241,78 @@ void onMoveforward(rep_t *rep, nav_t *nav){
         
         map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
+
+    if(nav->val > 0)
+        nav->val = nav->val - (uint16_t )(rep->fc->vel->y/10); //todo: Change this please. The idea is that nav->val is as the remaining amount of cm needed to be moved. And rep->fc->vel-y / 10 is the amount of cm moved since last period
+    if(nav->state.AWallF){
+        move_stop(rep->fc);
+        nav->val = 0;
+        nav->task = IDLE;
+    }
 }
 
 void onMoveup(rep_t *rep, nav_t *nav){
-    /* Check ACeiling if no then maybe nav->val
-     *
+    /*
+     * Bare flyt indtil vi har nået loftet?
      */
+    if (nav->state.ACeiling){
+        move_stop(rep->fc);
+        nav->task = IDLE;
+    }
 }
 
 void onMovedown(rep_t *rep, nav_t *nav){
     /* Check AGround if no then maybe nav->val
-     *
+     * Bare flyt indtil vi har nået jorden?
      */
+    if(nav->state.AGround){
+        move_stop(rep->fc);
+    }
 }
 
 void onSearching(rep_t *rep, nav_t *nav){
-    /* Haven't the foggiest
+    /*
+     * Kode til at align med væg??
      * Set to IDLE
      */
 }
 
 //These functions run whenever a new task is assigned
 void Idle(rep_t *rep, nav_t *nav) {
-    //move_stop(rep->fc); todo: uncomment when FC is initialized
+    move_stop(rep->fc);
     nav->task = IDLE;
 }
 
-void Turnleft(rep_t *rep, nav_t *nav){
-    //rotate_left(rep->fc);
+void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees){
+    rotate_left(rep->fc);
+    nav->val = degrees;
     nav->task = TURNLEFT;
 }
 
-void Turnright(rep_t *rep, nav_t *nav){
-    //rotate_right(rep->fc);
+void Turnright(rep_t *rep, nav_t *nav, uint8_t degrees){
+    rotate_right(rep->fc);
+    nav->val = degrees;
     nav->task = TURNRIGHT;
 }
 
 void Turnaround(rep_t *rep, nav_t *nav){
-    //rotate_right(rep->fc); //todo: Must happen two times
+    rotate_right(rep->fc); //todo: Must happen two times
+    nav->val = 180; //Complete turnaround
     nav->task = TURNRIGHT;
 }
 
 void Moveforward(rep_t *rep, nav_t *nav){
-    //move_forward(rep->fc);
+    move_forward(rep->fc);
     nav->task = MOVEFORWARD;
 }
 
 void Moveup(rep_t *rep, nav_t *nav){
-    //move_up(rep->fc);
+    move_up(rep->fc);
     nav->task = MOVEUP;
 }
 
 void Movedown(rep_t *rep, nav_t *nav){
-    //move_down(rep->fc);
+    move_down(rep->fc);
     nav->task = MOVEDOWN;
 }
 
