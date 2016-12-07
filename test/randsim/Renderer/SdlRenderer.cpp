@@ -61,10 +61,13 @@ void SdlRenderer::clear() {
 void SdlRenderer::update() {
     SDL_RenderPresent(Renderer);
 
-    if ((SDL_GetTicks() - FrameTime) < MinFrameTime)
-        SDL_Delay(MinFrameTime - (SDL_GetTicks() - FrameTime));
+    auto FrameTime = SDL_GetTicks() - LastTime;
+    if (FrameTime < MinFrameTime)
+        SDL_Delay(MinFrameTime - FrameTime);
 
-    FrameTime = SDL_GetTicks();
+    Fps = 1000 / FrameTime;
+
+    LastTime = SDL_GetTicks();
 }
 
 void SdlRenderer::setColor(Color C, int Alpha) {

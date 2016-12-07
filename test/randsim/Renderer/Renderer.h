@@ -39,6 +39,8 @@ public:
     float Zoom = 1.0;
     Vector2D Offset = {-500, 500};
 
+    int Fps;
+
     virtual bool init() = 0;
 
     virtual void clear() = 0;

@@ -263,5 +263,8 @@ void Simulator::drawInfoBox() {
     Render->drawLine({OffsetX + 21, MeterTopY}, {OffsetX + 21, MeterBotY});
     Render->drawLine({OffsetX + 10, MeterBotY}, {OffsetX + 30, MeterBotY});
     Render->drawText(DoubleToStr(Render->iRel(MeterHeight)) + string("cm"), {OffsetX + 30, MeterTopY + MeterHeight / 2 - 15}, BGColor);
+
+    // FPS
+    Render->drawText(string("FPS: ")+ to_string(Render->Fps), {Render->WinWidth - 60, Render->WinHeight - 35}, BGColor);
 }
 
