@@ -199,7 +199,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
         fix16_t y_offset = fix16_mul(fix16_sin(nav->angle), fix16_from_int(rep->laser->front_value));
         
         if (rep->laser->front_value > (rep->sonar->value + MIN_DIFF_LASER_SONAR))
-            map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WINDOW);
+            map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), TRANSPARENT);
         else
             map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
