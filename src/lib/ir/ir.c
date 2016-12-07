@@ -45,6 +45,7 @@ ir_t *IR_init(apin_t pin) {
     ir_t *ir = malloc(sizeof(ir_t));
 
     ir->pin = pin;
+    ir->value = 0;
 }
 
 /**

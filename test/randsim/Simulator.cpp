@@ -14,8 +14,10 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(125, -150), 50);
+    Drn = make_unique<Drone>(Vector2D(500, -315), 50);
     Map = make_unique<Minimap>();
+
+    frameStartTime = 0;
 }
 
 Simulator::~Simulator() {
@@ -37,6 +39,10 @@ int Simulator::run() {
     }
 
     while (true) {
+        DeltaTime_Millis = frameStartTime - SDL_GetTicks();
+
+        frameStartTime = SDL_GetTicks();
+        printf("Delta-time: %d\n", DeltaTime_Millis);
         while (SDL_PollEvent(&Event) == 1) {
             switch (Event.type) {
                 case SDL_QUIT:
@@ -201,9 +207,9 @@ void Simulator::drawInfoBox() {
     int OffsetX = Pos.X + MarginX, OffsetY = Pos.Y + MarginY;
 
     // Design constants
-    const int Indent = OffsetX + 20;
+    const int Indent = OffsetX + 10;
     const int ObjSpace = 40;
-    const int PropSpace = 40;
+    const int PropSpace = 20;
 
     // Draw backgound
     Color BGColor = {35, 35, 35};
@@ -226,10 +232,11 @@ void Simulator::drawInfoBox() {
     int DroneOffset = MouseOffset + PropSpace + ObjSpace;
     Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
     Render->drawText(string("Pos: (") + DoubleToStr(Drn->Pos.X) + " cm, " + DoubleToStr(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
-    Render->drawText(string("Angle: ") + DoubleToStr(RadToDeg(Drn->Angle)), {Indent, DroneOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Angle: ") + DoubleToStr(RadToDeg(Drn->Angle) + ','), {Indent, DroneOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Height: ") + DoubleToStr(Drn->Height) + " cm", {Indent, DroneOffset + PropSpace * 3}, BGColor);
 
     // Laser info
-    int LaserOffset = DroneOffset + PropSpace * 2 + ObjSpace;
+    int LaserOffset = DroneOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
     Render->drawText(string("Front: ") + DoubleToStr(Drn->Laser.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
     Render->drawText(string("Left: ")  + DoubleToStr(Drn->Laser.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
@@ -239,6 +246,12 @@ void Simulator::drawInfoBox() {
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
     Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+
+    //IR info
+    int IROffset = SonarOffset + PropSpace + ObjSpace;
+    Render->drawText(string("IR:"), {OffsetX, IROffset}, BGColor);
+    Render->drawText(string("Bottom: ") + DoubleToStr(Drn->IrBottom.value), {Indent, IROffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Top: ") + DoubleToStr(Drn->IrTop.value), {Indent, IROffset + PropSpace * 2}, BGColor);
 
     // Block to cm meter
     int MeterHeight = Block::Size * 4;

@@ -1,10 +1,11 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Angle(0), Size(Size), SonarModule(Pos, 57, 0.0, 15.0, 220), height(0) {
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), SonarModule(Pos, 57, 0.0, 15.0, 220), Height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
     IrTop = *IR_init(A0);
     IrBottom = *IR_init(A1);
+    IrBottom.value = 80;
     Laser = *laser_init(TX1);
 
     init_nav(&NavigationStruct);
@@ -15,12 +16,10 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Angle(0), Size(Size), Son
     FC.duty->MID_FC_DUTY = 1 * FC_OFFSET;
     FC.duty->MAX_FC_DUTY = 2 * FC_OFFSET;
 
-
-
     //Makes sure the drone starts in a non-moving state
     rotate_stop(&FC);
     move_stop(&FC);
-
+    TimeCounter = 0;
 }
 
 void Drone::draw() {
@@ -30,23 +29,29 @@ void Drone::draw() {
 
     // Direction line
     Sim->Render->setColor({255, 0, 0});
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(sin(Angle) * Size / 2), Pos.Y + int(cos(Angle) * Size / 2)});
+    Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * Size / 2), Pos.Y + int(sin(Angle) * Size / 2)});
 
     // Sonar
     Sim->Render->setColor({255, 0, 0}, 100);
-    //Sim->Render->drawPieRel(Pos, 500, int(rad_to_deg(Angle) - 7.5), int(rad_to_deg(Angle) + 7.5));
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(sin(Angle) * 500), Pos.Y + int(cos(Angle) * 500)});
+    Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
+    Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
 
     // Laser
     Sim->Render->setColor({0, 0, 255}, 100);
-    //Sim->Render->drawPieRel(Pos, 400, int(rad_to_deg(Angle) - 135), int(rad_to_deg(Angle) + 135));
+    Sim->Render->drawPieRel(Pos, 400, int(RadToDeg (-Angle) - 135), int(RadToDeg(-Angle) + 135));
 }
 
 void Drone::update() {
+    TimeCounter += Sim->DeltaTime_Millis;
     //calcLaserDist();
     //calcSonarDist();
 
-    /* //Uncomment to make the drone fly in a box-shape
+    //Uncomment to make the drone fly in a box-shape
+    /*if(counter == 0) {
+        move_stop(&FC);
+        rotate_right(&FC);
+    }
+
     if(counter == 100) {
         move_stop(&FC);
         move_left(&FC);
@@ -64,27 +69,33 @@ void Drone::update() {
         move_back(&FC);
         counter = 0;
     }
-    counter++;
-    */
+    counter++;*/
 
-    /*Uncomment here to move in circles
-    if(counter % 10 == 0) {
+    //Uncomment here to move in circles
+    /*if(counter % 1 == 0) {
         rotate_right(&FC);
     }
     else
         rotate_stop(&FC);
-    counter++;
-    */
+    counter++;*/
 
     SonarModule.calcDist(Sim->Blocks);
-    updateFromFC();
 
-    navigation(&WorldRepresentation, &NavigationStruct);
+    if(TimeCounter > PERIOD) {
+        navigation(&WorldRepresentation, &NavigationStruct);
+        TimeCounter = 0;
+    }
+
+    updateFromFC();
 }
 
-double calculateVelocity(uint8_t direction_value, float SPEED) {
+double calculateVelocity(uint8_t direction_value, const float SPEED) {
     double dv_f = (double) direction_value;
     return (dv_f - FC_OFFSET) * SPEED;
+}
+
+float Drone::calculateAcceleration(float prev_vel, float new_vel) {
+    return (new_vel - prev_vel) / (Sim->DeltaTime_Millis / 1000);
 }
 
 void Drone::updateRotation(uint16_t yaw_value) {
@@ -93,33 +104,36 @@ void Drone::updateRotation(uint16_t yaw_value) {
     Angle = Angle + rotationVelocity;
     if (Angle > M_PI * 2)
         Angle = 0;
+
+    //Update gyro with deg/sec
+    FC.gyro = RadToDeg(rotationVelocity);
 }
 
 void Drone::updateStrafe(uint16_t roll_value) {
     double strafeVelocity = calculateVelocity(roll_value, STRAFE_SPEED);
-    double orthogAngle = -Angle + NINETY_DEGREES_IN_RAD + ROTATION_OFFSET;
+    double orthogAngle = Angle + NINETY_DEGREES_IN_RAD + ROTATION_OFFSET;
 
     Pos.X += strafeVelocity * cos(orthogAngle);
     Pos.Y += strafeVelocity * sin(orthogAngle);
+
+    float prev_vel = FC.vel->x;
+    FC.acc->x = calculateAcceleration(prev_vel, strafeVelocity);
+    FC.vel->x = strafeVelocity;
 }
 
 void Drone::updateFrontal(uint16_t pitch_value) {
     //Calculate the direction of movement
     double moveVelocity = -calculateVelocity(pitch_value, MOVEMENT_SPEED);
 
-    double conv_angle = -Angle + ROTATION_OFFSET;
+    double conv_angle = Angle + ROTATION_OFFSET;
 
     //Calculate the new position of the drone
     Pos.X += cos(conv_angle) * moveVelocity;
     Pos.Y += sin(conv_angle) * moveVelocity;
-}
 
-void updateAndCap(float altitudeVelocity, ir_t *ir) {
-    ir->value += altitudeVelocity;
-    if(ir->value > IR_MAX_DIST_CM)
-        ir->value = IR_MAX_DIST_CM;
-    else if (ir->value < IR_MIN_DIST_CM)
-        ir->value = IR_MIN_DIST_CM;
+    float prev_vel = FC.vel->y;
+    FC.acc->y = calculateAcceleration(prev_vel, moveVelocity);
+    FC.vel->y = moveVelocity;
 }
 
 void Drone::updateHeight(uint16_t throttle_value) {
@@ -127,9 +141,26 @@ void Drone::updateHeight(uint16_t throttle_value) {
     double altitudeVelocity = calculateVelocity(throttle_value, ALTITUDE_SPEED);
 
     //Update height field and IR-sensors
-    height += altitudeVelocity;
-    updateAndCap(altitudeVelocity, &IrBottom);
-    updateAndCap(altitudeVelocity, &IrTop);
+    Height += altitudeVelocity;
+    uint16_t dist_to_floor = Height;
+    if(dist_to_floor >= IR_MAX_DIST_CM)
+        IrBottom.value = IR_MAX_DIST_CM;
+    else if (dist_to_floor < IR_MIN_DIST_CM)
+        IrBottom.value = IR_MIN_DIST_CM;
+    else
+        IrBottom.value = dist_to_floor;
+
+    uint16_t dist_to_ceil = ROOM_HEIGHT - Height;
+    if(dist_to_ceil >= IR_MAX_DIST_CM)
+        IrTop.value = IR_MAX_DIST_CM;
+    else if (dist_to_ceil < IR_MIN_DIST_CM)
+        IrTop.value = IR_MIN_DIST_CM;
+    else
+        IrTop.value = dist_to_ceil;
+
+    float prev_vel = FC.vel->z;
+    FC.acc->z = calculateAcceleration(prev_vel, altitudeVelocity);
+    FC.vel->z = altitudeVelocity;
 }
 
 void Drone::updateFromFC() {

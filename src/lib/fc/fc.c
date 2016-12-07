@@ -4,6 +4,7 @@
 void init_fc(fc_t *fc, serial_t serial, uint16_t ms)
 {
     fc->acc = (acceleration_t *)malloc(sizeof(acceleration_t));
+    fc->vel = (velocity_t *) malloc(sizeof(velocity_t));
     fc->duty = (duty_t *)malloc(sizeof(duty_t));
     fc->serial = serial;
 

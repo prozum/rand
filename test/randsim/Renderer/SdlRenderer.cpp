@@ -36,7 +36,7 @@ bool SdlRenderer::init() {
 
     // Load font
     std::string path = std::string(SDL_GetBasePath()) + string("Fonts/Ubuntu-C.ttf");
-    Font = TTF_OpenFont(path.c_str(), 26);
+    Font = TTF_OpenFont(path.c_str(), 18);
     if (Font == nullptr)
     {
         std::cout << " Failed to load font : " << SDL_GetError() << std::endl;

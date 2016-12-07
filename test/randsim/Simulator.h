@@ -3,6 +3,9 @@
 #include <memory>
 #include <vector>
 
+//The room is 300 cm high
+#define ROOM_HEIGHT 300
+
 class Renderer;
 class Block;
 class Drone;
@@ -17,6 +20,8 @@ public:
     std::unique_ptr<Minimap> Map;
     std::vector<Block> Blocks;
 
+    unsigned int DeltaTime_Millis;
+
     Simulator();
     ~Simulator();
 
@@ -28,4 +33,7 @@ public:
 
     void drawBlockGrid();
     void drawInfoBox();
+
+private:
+    unsigned int frameStartTime;
 };

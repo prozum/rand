@@ -14,15 +14,16 @@ extern "C" {
 #define ROTATION_SPEED 0.05
 #define STRAFE_SPEED 1 //defines speed in the left, right direction
 #define MOVEMENT_SPEED 1 //defines speed in forward, backward directoin
-#define ALTITUDE_SPEED 1 //defines speed in up/down direction
+#define ALTITUDE_SPEED 0.5 //defines speed in up/down direction
 
 #define FC_OFFSET 1
-#define ROTATION_OFFSET -NINETY_DEGREES_IN_RAD
+#define ROTATION_OFFSET M_PI
 
 class Drone : public SimObject {
 public:
     double Angle;   // Angle in radians
     double Size;       // Size in cm
+    double Height;
 
     Sonar SonarModule;
     fc_t FC;
@@ -46,6 +47,7 @@ private:
     void updateHeight(uint16_t throttle_value);
     void updateFromFC();
 
-    float height;
-    uint16_t counter;
+    float calculateAcceleration(float prev_vel, float new_vel);
+
+    uint8_t TimeCounter;
 };
