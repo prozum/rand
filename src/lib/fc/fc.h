@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include "libfixmath/fix16.h"
 
 #include "sonar/sonar.h"
 #include "laser/laser.h"
@@ -11,15 +12,15 @@
 #include "core/io.h"
 
 typedef struct acceleration_s {
-    float x; // left/right
-    float y; // forward/backwards
-    float z; // up/down
+    fix16_t x; // left/right
+    fix16_t  y; // forward/backwards
+    fix16_t  z; // up/down
 } acceleration_t;
 
 typedef struct velocity_s {
-    float x; // left/right
-    float y; // forward/backwards
-    float z; // up/down
+    fix16_t  x; // left/right
+    fix16_t  y; // forward/backwards
+    fix16_t  z; // up/down
 } velocity_t;
 
 typedef struct duty_s {
@@ -39,7 +40,7 @@ typedef struct fc_s {
     uint16_t pitch;
     uint16_t roll;
     uint16_t throttle;
-    uint16_t gyro; //Rotation Velocity
+    fix16_t gyro; //Rotation Velocity
 } fc_t;
 
 // ms = value of 1 ms
