@@ -2,13 +2,12 @@
 #define RAND_IR_H
 
 #include <math.h>
-
-
 #include "core/io.h"
 #include "kalman/kalman.h"
 
 //The IR is placed on an 8-bit pin
-#define IR_MAX_INPUT 255
+#define IR_MAX_DIST_CM 80
+#define IR_MIN_DIST_CM 0
 
 typedef struct ir_s {
     apin_t pin;    // receive pin

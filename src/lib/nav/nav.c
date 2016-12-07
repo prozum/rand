@@ -135,7 +135,7 @@ void navigation(rep_t *rep, nav_t *nav){ //:todo make rep and nav one unit
         case SEARCHING: onSearching(rep, nav); break;
         default: printf("Invalid task!"); break;
     }
-    printf("THE STATE IS: %d\n", nav->state);
+    //printf("THE STATE IS: %d\n", nav->state);
 }
 
 /**
