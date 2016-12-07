@@ -5,6 +5,7 @@ if (NOT CPPUNIT_FOUND)
     message(FATAL_ERROR "Please install CppUnit development files")
 endif ()
 
+#Mangler sådan, at Ubuntu-C.ttf og map.txt bliver kopieret over i randsim.app
 
 # Includes
 include_directories(common simavr simavr/cores simavr/sim simavr/sim/avr)

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cmath>
+#include <sstream>
 
 #include "Vector2D.h"
 
@@ -25,6 +26,8 @@ inline double RadToDeg(double Radians) {
 inline double DegToRad(double Degrees) {
     return 1.0/180.0 * Degrees * M_PI;
 }
+
+#define NINETY_DEGREES_IN_RAD 0.5 * M_PI
 
 // String functions
 std::string DoubleToStr(double Double, int Precision = 5);

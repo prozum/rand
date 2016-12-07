@@ -10,7 +10,13 @@
 
 #define DATAFUSION_FILTERS 1
 #define SENSOR_FILTERS 4
-#define MIN_RANGE 40
+#define MIN_RANGE 60
+
+#define SONAR_DEG 15
+#define PERPENDICULAR 90
+
+#define SONAR_DEVIATION 5
+#define MIN_DIFF_LASER_SONAR 30
 
 #include <stdint.h>
 
@@ -91,10 +97,10 @@ void navigation(rep_t *rep, nav_t *nav);
 
 void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep);
 
-uint8_t CheckAWallF(rep_t *rep);
+uint8_t CheckAWallF(rep_t *rep, state_t state);
 uint8_t CheckAWallL(rep_t *rep);
 uint8_t CheckAWallR(rep_t *rep);
-uint8_t CheckAWinF(rep_t *rep);
+uint8_t CheckAWinF(rep_t *rep, state_t state);
 uint8_t CheckAWinL(rep_t *rep);
 uint8_t CheckAWinR(rep_t *rep);
 uint8_t CheckAGround(rep_t *rep);
@@ -111,6 +117,7 @@ void onMoveforward(rep_t *rep, nav_t *nav);
 void onMoveup(rep_t *rep, nav_t *nav);
 void onMovedown(rep_t *rep, nav_t *nav);
 void onSearching(rep_t *rep, nav_t *nav);
+uint8_t isSonarReliable(rep_t *rep, state_t state);
 
 void Idle(rep_t *rep, nav_t *nav);
 void Turnleft(rep_t *rep, nav_t *nav);
