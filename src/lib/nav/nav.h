@@ -19,6 +19,7 @@
 #include "kalman/kalman.h"
 #include "core/log.h"
 #include "map/map.h"
+#include "libfixmath/fix16.h"
 
 #define FRONT_a 0.99
 #define SIDE_a 1
