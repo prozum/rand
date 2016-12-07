@@ -12,7 +12,6 @@ private:
     double Span;
     uint32_t RayCount;
     Vector2D Pos;
-    void update(Vector2D&, double);
 public:
     sonar_t SonarStruct;
     std::vector<Ray> Rays;
