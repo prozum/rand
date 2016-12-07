@@ -20,8 +20,8 @@ Vector2D Vector2D::operator-(const Vector2D &Arg) {
 }
 
 void Vector2D::compose(double Length, double Angle) {
-    this->X = cos(Angle) * Length;
-    this->Y = sin(Angle) * Length;
+    X = cos(Angle) * Length;
+    Y = sin(Angle) * Length;
 }
 
 double Vector2D::determinant(Vector2D& V) {

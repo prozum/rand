@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(500, -315), 50);
+    Drn = make_unique<Drone>(Vector2D(500, -500), 50);
     Map = make_unique<Minimap>();
 
     frameStartTime = 0;
@@ -122,7 +122,7 @@ bool Simulator::loadMap(string Path) {
     }
 
     double X = Block::Size / 2;
-    double Y = - Block::Size / 2;
+    double Y = Block::Size / 2;
     char C;
     while ((C = File.get()) != EOF) {
         switch (C) {
