@@ -1,6 +1,6 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), SonarModule(Pos, 57, 0.0, 15.0, 220), Height(0) {
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), SonarModule(Pos, 57, DegToRad(0), DegToRad(15), 220), Height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
     IrTop = *IR_init(A0);
@@ -78,8 +78,7 @@ void Drone::update() {
     else
         rotate_stop(&FC);
     counter++;*/
-
-    SonarModule.calcDist(Sim->Blocks);
+    SonarModule.calcDist(Sim->Blocks, Pos, Angle);
 
     if(TimeCounter > PERIOD) {
         navigation(&WorldRepresentation, &NavigationStruct);

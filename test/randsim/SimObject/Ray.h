@@ -12,4 +12,5 @@ public:
 
     Vector2D Origin;
     Vector2D Direction;
+    Vector2D Inverted;
 };

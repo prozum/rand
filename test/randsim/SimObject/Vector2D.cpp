@@ -35,3 +35,7 @@ double Vector2D::dot(Vector2D &V) {
 double Vector2D::length() {
     return sqrt(pow(X, 2) + pow(Y, 2));
 }
+
+Vector2D Vector2D::invert() {
+    return Vector2D(1 / X, 1 / Y);
+}
