@@ -195,8 +195,8 @@ void onMoveforward(rep_t *rep, nav_t *nav){
      */
 
     if ((nav->state.AWallF || nav->state.AWinF) && (rep->laser->front_value <= MIN_RANGE || rep->sonar->value <= MIN_RANGE) && isSonarReliable(rep, nav->state)) {
-        fix16_t x_offset = fix16_mul(fix16_cos(nav->angle), fix16_from_int(rep->laser->front_value));
-        fix16_t y_offset = fix16_mul(fix16_sin(nav->angle), fix16_from_int(rep->laser->front_value));
+        fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
+        fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
         
         if (rep->laser->front_value > (rep->sonar->value + MIN_DIFF_LASER_SONAR))
             map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WINDOW);
@@ -206,16 +206,16 @@ void onMoveforward(rep_t *rep, nav_t *nav){
 
     if (nav->state.AWallR && rep->laser->right_value <= MIN_RANGE)
     {
-        fix16_t x_offset = fix16_mul(fix16_cos(nav->angle + DRONE_RIGHT_SIDE), fix16_from_int(rep->laser->right_value));
-        fix16_t y_offset = fix16_mul(fix16_sin(nav->angle + DRONE_RIGHT_SIDE), fix16_from_int(rep->laser->right_value));
+        fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_RIGHT_SIDE)), fix16_from_int(rep->laser->right_value));
+        fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle + DRONE_RIGHT_SIDE)), fix16_from_int(rep->laser->right_value));
         
         map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
     
     if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE)
     {
-        fix16_t x_offset = fix16_mul(fix16_cos(nav->angle + DRONE_LEFT_SIDE), fix16_from_int(rep->laser->left_value));
-        fix16_t y_offset = fix16_mul(fix16_sin(nav->angle + DRONE_LEFT_SIDE), fix16_from_int(rep->laser->left_value));
+        fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
+        fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
         
         map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
@@ -290,7 +290,7 @@ uint8_t isSonarReliable(rep_t *rep, state_t state){
     fix16_t calcSonarDistToWall = fix16_mul(distToWall/fix16_sin(fix16_from_float(fix16_rad_to_deg(SONAR_DEG))), fix16_sin(fix16_from_float(fix16_rad_to_deg(PERPENDICULAR))));
 
     /* if the measured value compared to the calculated value is less or equal to the allowed deviation of the sensor */
-    if (fix16_abs(calcSonarDistToWall - rep->sonar->value <= SONAR_DEVIATION) && rep->sonar->valid)
+    if (fix16_abs(calcSonarDistToWall - fix16_from_int(rep->sonar->value) <= fix16_from_int(SONAR_DEVIATION)) && rep->sonar->valid)
     {
         return 1;
     } else {
