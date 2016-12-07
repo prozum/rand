@@ -16,6 +16,10 @@ inline double RadToDeg(double Radians) {
     return Radians * (180.0 / M_PI);
 }
 
+inline double DegToRad(double Degrees) {
+    return 1.0/180.0 * Degrees * M_PI;
+}
+
 // String functions
 std::string DoubleToStr(double Double, int Precision = 5);
 
