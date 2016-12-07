@@ -227,11 +227,11 @@ void Simulator::drawInfoBox() {
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->Sonar.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
 
     // Block to cm meter
-    int MeterHeight = Block::Size * 8;
+    int MeterHeight = Block::Size * 4;
     int MeterTopY = Render->WinHeight - MeterHeight - MarginY;
     int MeterBotY =  Render->WinHeight - MarginY;
     Render->drawLine({OffsetX + 10, MeterTopY}, {OffsetX + 30, MeterTopY});

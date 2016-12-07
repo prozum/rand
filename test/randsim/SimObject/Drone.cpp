@@ -9,10 +9,14 @@ extern "C" {
 #include <cmath>
 #include <iostream>
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), Sonar(Pos, 57, 0.0, 15.0, 220) { }
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), SonarModule(Pos, 57, 0.0, 15.0, 220) {
+    init_nav(&NavigationStruct);
+    init_rep(&FC, &Laser, &(SonarModule.sonar), &IrTop, &IrBottom, &WorldRepresentation);
+}
 
 void Drone::draw() {
     // Drone
+    Sim->Render->setColor({0, 0, 0});
     Sim->Render->drawCircleRel(Pos, Size / 2);
 
     // Direction line
@@ -33,18 +37,13 @@ void Drone::update() {
     //calcLaserDist();
     //calcSonarDist();
 
-    rep_t rep;
-    nav_t nav; //don't know what to do with this
-    init_nav(&nav);
-    init_rep(&FC, &Laser, &(Sonar.sonar), &IrTop, &IrBottom, &rep);
-
-    Sonar.calcDist(Sim->Blocks);
+    SonarModule.calcDist(Sim->Blocks);
 
     //Pos.X += 1;
     Pos.X = 112.5;
     Pos.Y = -137.5;
 
-    navigation(&rep, &nav);
+    //navigation(&rep, &nav);
 
     Angle = Angle + 0.05;
     if (Angle > M_PI * 2)

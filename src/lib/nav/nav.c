@@ -114,7 +114,9 @@ void init_nav(nav_t *nav){
 }
 
 /**
- * This function is called by the scheduler every period
+ * Main function of the navigation unit - entry-point for the scheduler
+ * @param rep
+ * @param nav
  */
 void navigation(rep_t *rep, nav_t *nav){ //:todo make rep and nav one unit
 

@@ -6,7 +6,7 @@
 
 class Laser {
 public:
-    laser_t Laser;
+    laser_t LaserStruct;
     std::vector<Ray> rays;
 
     Laser(uint32_t, double, double, double);
