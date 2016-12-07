@@ -39,6 +39,7 @@ typedef struct fc_s {
     uint16_t pitch;
     uint16_t roll;
     uint16_t throttle;
+    uint16_t gyro; //Rotation Velocity
 } fc_t;
 
 // ms = value of 1 ms

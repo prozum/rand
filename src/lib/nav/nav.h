@@ -1,6 +1,7 @@
 #ifndef RAND_POSITIONING_H
 #define RAND_POSITIONING_H
 
+#define FULL_TURN 90
 #define MAX_NEGATIVE_ACCELERATION 0
 #define NO_ACCELERATION 1
 #define MAX_POSITIVE_ACCELERATION 2
@@ -81,7 +82,7 @@ typedef struct state_s{
     uint8_t BlockedR    : 1; //either a window or WALL on the right
 }state_t;
 
-void update_state(state_t state, rep_t *rep);
+void update_state(state_t *state, rep_t *rep);
 
 typedef struct nav_s{
     state_t state;
@@ -107,9 +108,9 @@ uint8_t CheckAWinL(rep_t *rep);
 uint8_t CheckAWinR(rep_t *rep);
 uint8_t CheckAGround(rep_t *rep);
 uint8_t CheckACeiling(rep_t *rep);
-uint8_t CheckBlockedF(state_t state);
-uint8_t CheckBlockedR(state_t state);
-uint8_t CheckBlockedL(state_t state);
+uint8_t CheckBlockedF(state_t *state);
+uint8_t CheckBlockedR(state_t *state);
+uint8_t CheckBlockedL(state_t *state);
 
 void onIdle(rep_t *rep, nav_t *nav);
 void onTurnleft(rep_t *rep, nav_t *nav);
@@ -122,8 +123,8 @@ void onSearching(rep_t *rep, nav_t *nav);
 uint8_t isSonarReliable(rep_t *rep, state_t state);
 
 void Idle(rep_t *rep, nav_t *nav);
-void Turnleft(rep_t *rep, nav_t *nav);
-void Turnright(rep_t *rep, nav_t *nav);
+void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees);
+void Turnright(rep_t *rep, nav_t *nav, uint8_t degrees);
 void Turnaround(rep_t *rep, nav_t *nav);
 void Moveforward(rep_t *rep, nav_t *nav);
 void Moveup(rep_t *rep, nav_t *nav);

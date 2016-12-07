@@ -25,7 +25,13 @@ void map_write(uint8_t x, uint8_t y, fieldstate_t value)
     uint8_t new_value = eeprom_read(addr); //load the byte to be read from
 
     uint8_t mask = FULL_FIELD << offset * FIELD_SIZE; //safety mask
-    new_value = (new_value & ~(mask)) | ((value << offset) & mask);
+
+    if(value){
+        new_value |= FIELD_SIZE << offset;
+    }
+    else{
+        new_value &= ~(FIELD_SIZE << offset);
+    }
 
     eeprom_write(addr, new_value);
 }
@@ -66,7 +72,7 @@ void map_show()
                 case WALL:
                     uart_putchar(CHAR_WALL);
                     break;
-                case TRANSPARENT:
+                case WINDOW:
                     uart_putchar(CHAR_TRANSPARENT);
                     break;
                 default:

@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(75, 75), 50);
+    Drn = make_unique<Drone>(Vector2D(125, -150), 50);
     Map = make_unique<Minimap>();
 }
 
@@ -92,7 +92,7 @@ void Simulator::drawObjects() {
     drawBlockGrid();
 
     for (auto B : Blocks) {
-        //B.draw();
+        B.draw();
     }
 
     Drn->draw();
