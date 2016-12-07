@@ -29,39 +29,38 @@ void Block::update() {
 }
 
 bool Block::intersection(Ray ray, Vector2D& res) {
-    Vector2D T1;
-    Vector2D T2;
+
+    double tminx, tmaxx, tminy, tmaxy;
 
     if (ray.Direction.X == 0) {
-        if (ray.Origin.X < Min.X || ray.Origin.X > Max.X) {
-            return false;
+        if (Min.X > ray.Origin.X && Max.X < ray.Origin.X) {
+            auto t1 = fabs(Min.Y - ray.Origin.Y);
+            auto t2 = fabs(Max.Y - ray.Origin.Y);
+            res.X = ray.Origin.X;
+            res.Y = ray.Origin.Y - std::min(t1, t2);
+
         }
     } else if (ray.Direction.Y == 0) {
-        if (ray.Origin.Y < Min.Y || ray.Origin.Y > Max.Y) {
-            return false;
+        if (Min.Y > ray.Origin.Y && Max.Y < ray.Origin.Y) {
+            auto t1 = fabs(Min.X - ray.Origin.X);
+            auto t2 = fabs(Max.X - ray.Origin.X);
+            res.X = ray.Origin.X - std::min(t1, t2);
+            res.Y = ray.Origin.Y;
         }
     }
 
-    T1.X = (Min.X - ray.Origin.X) / ray.Direction.X;
-    T1.Y = (Min.Y - ray.Origin.Y) / ray.Direction.Y;
+    tminx = (Min.X - ray.Origin.X) / ray.Direction.X;
+    tminy = (Min.Y - ray.Origin.Y) / ray.Direction.Y;
 
-    T2.X = (Max.X - ray.Origin.X) / ray.Direction.X;
-    T2.Y = (Max.Y - ray.Origin.Y) / ray.Direction.Y;
+    tmaxx = (Max.X - ray.Origin.X) / ray.Direction.X;
+    tmaxy = (Max.Y - ray.Origin.Y) / ray.Direction.Y;
 
-    if (T1.X > T2.X) {
-        std::swap(T1.X, T2.X);
-    }
+    if ((tminx > tmaxy) || (tminy > tmaxy)) return false;
 
-    if (T1.Y > T2.Y) {
-        std::swap(T1.X, T2.X);
-    }
+    if (tminy > tminx) tminx = tminy;
+    if (tmaxy < tmaxx) tmaxx = tmaxy;
 
-    if (T1.X > T1.Y || T2.Y > T1.X) {
-        return false;
-    }
-
-    res.X = T1.X;
-    res.Y = T2.X;
+    res = ray.Direction * (tminx < 0 ? tmaxx : tminx);
 
     return true;
 }
