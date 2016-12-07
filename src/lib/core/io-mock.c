@@ -174,9 +174,8 @@ char *get_write_buffer(tx_t pin) {
  * @param pin
  */
 void clear_write_buffer(tx_t pin) {
-    int i = 0;
     //Run through the whole buffer
-    for (i; i < SERIAL_BUFFER_SIZE; ++i) {
+    for (int i = 0; i < SERIAL_BUFFER_SIZE; ++i) {
         //Clear deallocate the string if it was allocated.
         if (serial_buffer[pin][i]) {
             free(serial_buffer[pin][i]);

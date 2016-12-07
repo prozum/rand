@@ -1,6 +1,6 @@
 #include "Ray.h"
 
-Ray::Ray(Vector2D Origin, double Length, double Angle) : Origin(Origin), length(Length), angle(Angle) {
+Ray::Ray(Vector2D Origin, double Length, double Angle) : length(Length), angle(Angle), Origin(Origin) {
     update(Angle);
 }
 

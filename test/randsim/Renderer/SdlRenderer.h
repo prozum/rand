@@ -16,11 +16,6 @@ class SdlRenderer : public Renderer {
     int MinFrameTime = 1000 / Fps;
     int FrameTime = 0;
 
-    // Minimap
-    int MinimapWidth;
-    int MinimapHeight;
-    SDL_Texture *MinimapTexture;
-
 public:
     bool init();
     ~SdlRenderer();

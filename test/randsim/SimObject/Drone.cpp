@@ -1,6 +1,6 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), SonarModule(Pos, 57, 0.0, 15.0, 220), height(0) {
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Angle(0), Size(Size), SonarModule(Pos, 57, 0.0, 15.0, 220), height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
     IrTop = *IR_init(A0);
