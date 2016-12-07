@@ -7,14 +7,14 @@
 
 class Sonar {
 private:
-    double length;
-    double angle;
-    double span;
-    uint32_t ray_count;
-    Vector2D pos;
+    double Length;
+    double Angle;
+    double Span;
+    uint32_t RayCount;
+    Vector2D Pos;
 public:
-    sonar_t sonar;
-    std::vector<Ray> rays;
+    sonar_t SonarStruct;
+    std::vector<Ray> Rays;
 
     Sonar(Vector2D Start, uint32_t RayCount, double Angle, double Span, double Length);
     void calcDist(std::vector<Block>);

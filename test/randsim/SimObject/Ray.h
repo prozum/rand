@@ -3,8 +3,8 @@
 #include "Vector2D.h"
 
 class Ray {
-    double length;
-    double angle;
+    double Length;
+    double Angle;
     void update(double Angle);
 public:
     Ray(Vector2D Origin, double Angle, double Length);

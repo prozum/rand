@@ -245,7 +245,7 @@ void Simulator::drawInfoBox() {
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.SonarStruct.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
     //IR info
     int IROffset = SonarOffset + PropSpace + ObjSpace;

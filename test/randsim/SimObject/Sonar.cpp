@@ -1,38 +1,38 @@
 #include "Sonar.h"
 
 Sonar::Sonar(Vector2D Start, uint32_t RayCount, double Angle, double Span, double Length)
-        : length(length), angle(Angle), span(Span), ray_count(RayCount) {
+        : Length(Length), Angle(Angle), Span(Span), RayCount(RayCount) {
 
-    double resolution = Span / (double)RayCount;
-    double startAngle = Angle + (span/2);
+    double Resolution = Span / (double)RayCount;
+    double StartAngle = Angle + (Span/2);
 
     for (int i = 0; i < RayCount; ++i) {
-        rays.push_back(Ray(Start, Length, Angle + startAngle + (i * resolution)));
+        Rays.push_back(Ray(Start, Length, Angle + StartAngle + (i * Resolution)));
     }
 }
 
-void Sonar::calcDist(std::vector<Block> blocks) {
-    Vector2D res;
-    double tmp_dist;
-    double dist = -INFINITY;
-    this->sonar.valid = 0;
+void Sonar::calcDist(std::vector<Block> Blocks) {
+    Vector2D Res;
+    double TmpDist;
+    double Dist = -INFINITY;
+    this->SonarStruct.valid = 0;
 
-    for (auto b : blocks) {
-        for (auto r : rays) {
-            bool intersects = b.intersection(r, res);
-            tmp_dist = res.length();
-            if (intersects && tmp_dist < length) {
-                dist = std::max(tmp_dist, dist);
-                this->sonar.valid = 1;
+    for (auto Block : Blocks) {
+        for (auto Ray : Rays) {
+            bool Intersects = Block.intersection(Ray, Res);
+            TmpDist = Res.length();
+            if (Intersects && TmpDist < Length) {
+                Dist = std::max(TmpDist, Dist);
+                SonarStruct.valid = 1;
             }
         }
     }
 
-    this->sonar.value = (uint16_t)dist;
+    SonarStruct.value = (uint16_t)Dist;
 }
 
 void Sonar::update(Vector2D& Origin, double Angle) {
-    for (auto r : rays) {
-        r.update(Origin, Angle);
+    for (auto Ray : Rays) {
+        Ray.update(Origin, Angle);
     }
 }
