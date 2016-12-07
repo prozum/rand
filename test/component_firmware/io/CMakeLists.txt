@@ -1,4 +1,4 @@
-generate_avr_firmware(PIN0AND7_PINMODE_OUTPUT
+generate_avr_firmware(PIN0AND7-PINMODE-OUTPUT
         TEST
         BOARD uno
         LIBS core

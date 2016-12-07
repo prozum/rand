@@ -20,6 +20,7 @@ pkg_search_module(SDL2GFX REQUIRED SDL2_gfx>=1.0.0)
 file(COPY "Fonts" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 #file(COPY "map.txt" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 configure_file(map.txt map.txt COPYONLY)
+configure_file(minimap.txt minimap.txt COPYONLY)
 
 # Add mock definitions
 add_definitions(-DMOCK)

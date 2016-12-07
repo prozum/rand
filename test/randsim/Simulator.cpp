@@ -32,6 +32,10 @@ int Simulator::run() {
         return 1;
     }
 
+    if (!Map->loadMap(string(SDL_GetBasePath()) + "minimap.txt")) {
+        return 1;
+    }
+
     while (true) {
         while (SDL_PollEvent(&Event) == 1) {
             switch (Event.type) {
@@ -88,7 +92,7 @@ void Simulator::drawObjects() {
     drawBlockGrid();
 
     for (auto B : Blocks) {
-        B.draw();
+        //B.draw();
     }
 
     Drn->draw();
@@ -102,22 +106,29 @@ void Simulator::updateObjects() {
 }
 
 bool Simulator::loadMap(string Path) {
-    ifstream File(Path, ifstream::in);
+    ifstream File;
+
+    // Open file
+    File.open(Path);
+    if (!File.is_open()) {
+        cout << "Couldn't open file: " << Path << endl;
+        return false;
+    }
 
     double X = Block::Size / 2;
     double Y = - Block::Size / 2;
     char C;
     while ((C = File.get()) != EOF) {
         switch (C) {
-            case WALL_CHAR:
+            case CHAR_WALL:
                 Blocks.push_back(Block({X, Y}, BlockType::Wall));
                 X += Block::Size;
                 break;
-            case WINDOW_CHAR:
+            case CHAR_TRANSPARENT:
                 Blocks.push_back(Block({X, Y}, BlockType::Window));
                 X += Block::Size;
                 break;
-            case AIR_CHAR:
+            case CHAR_UNVISITED:
                 X += Block::Size;
                 break;
             case '\n':
@@ -125,7 +136,7 @@ bool Simulator::loadMap(string Path) {
                 X = Block::Size / 2;
                 break;
             default:
-                cout << "Wrong character in file: '" << C << "'";
+                cout << "Wrong character in file: '" << C << "'" << endl;
                 return false;
         }
     }
@@ -197,7 +208,7 @@ void Simulator::drawInfoBox() {
     // Draw backgound
     Color BGColor = {35, 35, 35};
     Render->setColor(BGColor);
-    Render->drawRect(Pos, int(Width), int(Height));
+    Render->drawRect(Pos, Vector2D(Width, Height));
 
     // Text color
     Render->setColor({255, 255, 255}, 100);
@@ -228,7 +239,6 @@ void Simulator::drawInfoBox() {
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
     Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
-
 
     // Block to cm meter
     int MeterHeight = Block::Size * 4;

@@ -21,7 +21,7 @@ void Block::draw() {
             Sim->Render->setColor({0, 0, 255});
             break;
     }
-    Sim->Render->drawRectRel({Min.X, Min.Y}, Size, Size);
+    Sim->Render->drawRectRel({Min.X, Min.Y}, {Size, Size});
 }
 
 void Block::update() {

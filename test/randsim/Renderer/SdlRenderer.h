@@ -16,8 +16,10 @@ class SdlRenderer : public Renderer {
     int MinFrameTime = 1000 / Fps;
     int FrameTime = 0;
 
+    // Minimap
     int MinimapWidth;
     int MinimapHeight;
+    SDL_Texture *MinimapTexture;
 
 public:
     bool init();
@@ -30,21 +32,17 @@ public:
 
     // Fixed
     void drawLine(Vector2D Start, Vector2D End);
-    void drawRect(Vector2D Pos, int Width, int Height);
+    void drawRect(Vector2D Pos, Vector2D Size);
     void drawCircle(Vector2D Center, int Radius);
     void drawPie(Vector2D Center, int Radius, int Start, int End);
     void drawText(std::string Text, Vector2D Pos, Color BG = {0, 0, 0});
+    void drawPixel(Vector2D Pos);
 
     // Relative
     void drawLineRel(Vector2D Start, Vector2D End);
-    void drawRectRel(Vector2D Pos, int Width, int Height);
+    void drawRectRel(Vector2D Pos, Vector2D Size);
     void drawCircleRel(Vector2D Center, int Radius);
     void drawPieRel(Vector2D Center, int Radius, int Start, int End);
     void drawTextRel(std::string Text, Vector2D Pos, Color Background = {0, 0, 0});
-
-
-    // Minimap
-    void initMinimap(int Width, int Height);
-    void drawMinimapPixel(int X, int Y, Color Color);
 };
 
