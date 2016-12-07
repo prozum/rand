@@ -30,3 +30,9 @@ void Sonar::calcDist(std::vector<Block> blocks) {
 
     this->sonar.value = (uint16_t)dist;
 }
+
+void Sonar::update(Vector2D& Origin, double Angle) {
+    for (auto r : rays) {
+        r.update(Origin, Angle);
+    }
+}
