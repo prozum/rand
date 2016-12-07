@@ -203,6 +203,22 @@ void onMoveforward(rep_t *rep, nav_t *nav){
         else
             map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
+
+    if (nav->state.AWallR && rep->laser->right_value <= MIN_RANGE)
+    {
+        fix16_t x_offset = fix16_mul(fix16_cos(nav->angle + DRONE_RIGHT_SIDE), fix16_from_int(rep->laser->right_value));
+        fix16_t y_offset = fix16_mul(fix16_sin(nav->angle + DRONE_RIGHT_SIDE), fix16_from_int(rep->laser->right_value));
+        
+        map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
+    }
+    
+    if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE)
+    {
+        fix16_t x_offset = fix16_mul(fix16_cos(nav->angle + DRONE_LEFT_SIDE), fix16_from_int(rep->laser->left_value));
+        fix16_t y_offset = fix16_mul(fix16_sin(nav->angle + DRONE_LEFT_SIDE), fix16_from_int(rep->laser->left_value));
+        
+        map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
+    }
 }
 
 void onMoveup(rep_t *rep, nav_t *nav){
