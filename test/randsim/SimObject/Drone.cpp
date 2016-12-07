@@ -106,7 +106,7 @@ void Drone::updateRotation(uint16_t yaw_value) {
         Angle = 0;
 
     //Update gyro with deg/sec
-    FC.gyro = RadToDeg(rotationVelocity);
+    FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));
 }
 
 void Drone::updateStrafe(uint16_t roll_value) {
@@ -117,8 +117,8 @@ void Drone::updateStrafe(uint16_t roll_value) {
     Pos.Y += strafeVelocity * sin(orthogAngle);
 
     float prev_vel = FC.vel->x;
-    FC.acc->x = calculateAcceleration(prev_vel, strafeVelocity);
-    FC.vel->x = strafeVelocity;
+    FC.acc->x = fix16_from_float(calculateAcceleration(prev_vel, strafeVelocity));
+    FC.vel->x = fix16_from_dbl(strafeVelocity);
 }
 
 void Drone::updateFrontal(uint16_t pitch_value) {
@@ -132,8 +132,8 @@ void Drone::updateFrontal(uint16_t pitch_value) {
     Pos.Y += sin(conv_angle) * moveVelocity;
 
     float prev_vel = FC.vel->y;
-    FC.acc->y = calculateAcceleration(prev_vel, moveVelocity);
-    FC.vel->y = moveVelocity;
+    FC.acc->y = fix16_from_float(calculateAcceleration(prev_vel, moveVelocity));
+    FC.vel->y = fix16_from_dbl(moveVelocity);
 }
 
 void Drone::updateHeight(uint16_t throttle_value) {
@@ -159,8 +159,8 @@ void Drone::updateHeight(uint16_t throttle_value) {
         IrTop.value = dist_to_ceil;
 
     float prev_vel = FC.vel->z;
-    FC.acc->z = calculateAcceleration(prev_vel, altitudeVelocity);
-    FC.vel->z = altitudeVelocity;
+    FC.acc->z = fix16_from_float(calculateAcceleration(prev_vel, altitudeVelocity));
+    FC.vel->z = fix16_from_dbl(altitudeVelocity);
 }
 
 void Drone::updateFromFC() {
