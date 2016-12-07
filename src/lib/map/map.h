@@ -17,7 +17,7 @@ typedef enum fieldstate_e{
     UNVISITED = 0,
     VISITED = 1,
     WALL = 2,
-    TRANSPARENT = 3
+    WINDOW = 3
 }fieldstate_t;
 
 void map_init(uint8_t width, uint8_t height, uint8_t clean);

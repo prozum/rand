@@ -10,9 +10,14 @@
 
 #define DATAFUSION_FILTERS 1
 #define SENSOR_FILTERS 4
-#define MIN_RANGE 40
+#define MIN_RANGE 60
+
+#define SONAR_DEG 15
+#define PERPENDICULAR 90
 
 #define SONAR_DEVIATION 5
+#define MIN_DIFF_LASER_SONAR 30
+
 #include <stdint.h>
 
 #include "fc/fc.h"
