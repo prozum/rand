@@ -48,21 +48,15 @@ void set_arm(fc_t *fc);
 void set_disarm(fc_t *fc);
 
 void rotate_left(fc_t *fc);
-
 void rotate_right(fc_t *fc);
-
 void rotate_stop(fc_t *fc);
 
 void move_left(fc_t *fc);
-
 void move_right(fc_t *fc);
-
 void move_forward(fc_t *fc);
-
 void move_back(fc_t *fc);
 
 void move_up(fc_t *fc);
-
 void move_down(fc_t *fc);
 
 void move_stop(fc_t *fc);
