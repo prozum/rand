@@ -12,12 +12,19 @@ struct Color {
     int B;
 };
 
+#define WHITE  {255, 255, 255}
+#define YELLOW {255, 255,   0}
+#define RED    {255,   0,   0}
+#define GREEN  {0,   255,   0}
+#define BLUE   {0,     0, 255}
+#define BLACK  {0,     0,   0}
+
 inline double RadToDeg(double Radians) {
     return Radians * (180.0 / M_PI);
 }
 
 inline double DegToRad(double Degrees) {
-    return 1.0/180.0 * Degrees * M_PI;
+    return (Degrees / 180.0) * M_PI;
 }
 
 #define NINETY_DEGREES_IN_RAD 0.5 * M_PI
@@ -41,21 +48,18 @@ public:
 
     // Fixed
     virtual void drawLine(Vector2D Start, Vector2D End) = 0;
-    virtual void drawRect(Vector2D Pos, int Width, int Height) = 0;
+    virtual void drawRect(Vector2D Pos, Vector2D Size) = 0;
     virtual void drawCircle(Vector2D Center, int Radius) = 0;
     virtual void drawPie(Vector2D Center, int Radius, int Start, int End) = 0;
     virtual void drawText(std::string Text, Vector2D Pos, Color Background = {0, 0, 0}) = 0;
+    virtual void drawPixel(Vector2D Pos) = 0;
 
     // Relative
     virtual void drawLineRel(Vector2D Start, Vector2D End) = 0;
-    virtual void drawRectRel(Vector2D Pos, int Width, int Height) = 0;
+    virtual void drawRectRel(Vector2D Pos, Vector2D Size) = 0;
     virtual void drawCircleRel(Vector2D Center, int Radius) = 0;
     virtual void drawPieRel(Vector2D Center, int Radius, int Start, int End) = 0;
     virtual void drawTextRel(std::string Text, Vector2D Pos, Color Background = {0, 0, 0}) = 0;
-
-    // Minimap
-    virtual void initMinimap(int Width, int Height) = 0;
-    virtual void drawMinimapPixel(int X, int Y, Color Color) = 0;
 
     // Relative functions
     inline int rel(double Val) { return int(Val * Zoom); }

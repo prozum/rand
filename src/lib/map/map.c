@@ -58,16 +58,16 @@ void map_show()
         for (x = 0; x < map_width; x++) {
             switch (map_read(x, y)) {
                 case UNVISITED:
-                    uart_putchar(' ');
+                    uart_putchar(CHAR_UNVISITED);
                     break;
                 case VISITED:
-                    uart_putchar('\'');
+                    uart_putchar(CHAR_VISITED);
                     break;
                 case WALL:
-                    uart_putchar('#');
+                    uart_putchar(CHAR_WALL);
                     break;
                 case TRANSPARENT:
-                    uart_putchar('&');
+                    uart_putchar(CHAR_TRANSPARENT);
                     break;
                 default:
                     ERROR("Unrecognized character");

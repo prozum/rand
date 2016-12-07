@@ -81,13 +81,13 @@ void SdlRenderer::drawLineRel(Vector2D Start, Vector2D End) {
     SDL_RenderDrawLine(Renderer, relX(Start.X), relY(Start.Y), relX(End.X), relY(End.Y));
 }
 
-void SdlRenderer::drawRect(Vector2D Pos, int Width, int Height) {
-    const SDL_Rect Rect = {int(Pos.X), int(Pos.Y), Width, Height};
+void SdlRenderer::drawRect(Vector2D Pos, Vector2D Size) {
+    const SDL_Rect Rect = {int(Pos.X), int(Pos.Y), int(Size.X), int(Size.Y)};
     SDL_RenderFillRect(Renderer, &Rect);
 }
 
-void SdlRenderer::drawRectRel(Vector2D Pos, int Width, int Height) {
-    const SDL_Rect Rect = {relX(Pos.X), relY(Pos.Y), rel(Width), rel(Height)};
+void SdlRenderer::drawRectRel(Vector2D Pos, Vector2D Size) {
+    const SDL_Rect Rect = {relX(Pos.X), relY(Pos.Y), rel(Size.X), rel(Size.Y)};
     SDL_RenderFillRect(Renderer, &Rect);
 }
 
@@ -118,16 +118,7 @@ void SdlRenderer::drawPieRel(Vector2D Center, int Radius, int Start, int End) {
     filledPieRGBA(Renderer, relX(Center.X), relY(Center.Y), rel(Radius), Start, End, CurColor.r, CurColor.g, CurColor.b, CurColor.a);
 }
 
-
-void SdlRenderer::initMinimap(int Width, int Height) {
-    MinimapWidth = Width;
-    MinimapHeight = Height;
-
-    auto Texture = SDL_CreateTexture(Renderer, 0, 0, MinimapWidth, MinimapWidth);
-    SDL_SetRenderTarget(Renderer, Texture);
-}
-
-void SdlRenderer::drawMinimapPixel(int X, int Y, Color Color) {
-
+void SdlRenderer::drawPixel(Vector2D Pos) {
+    SDL_RenderDrawPoint(Renderer, Pos.X, Pos.Y);
 }
 
