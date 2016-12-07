@@ -24,7 +24,7 @@ inline double RadToDeg(double Radians) {
 }
 
 inline double DegToRad(double Degrees) {
-    return 1.0/180.0 * Degrees * M_PI;
+    return (Degrees / 180.0) * M_PI;
 }
 
 #define NINETY_DEGREES_IN_RAD 0.5 * M_PI
