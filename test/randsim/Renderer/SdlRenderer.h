@@ -12,9 +12,8 @@ class SdlRenderer : public Renderer {
     TTF_Font *Font;
     SDL_Color CurColor = {0, 0, 0, 0};
 
-    int Fps = 60;
-    int MinFrameTime = 1000 / Fps;
-    int FrameTime = 0;
+    float MinFrameTime = 1000 / 60;
+    int LastTime = 0;
 
 public:
     bool init();

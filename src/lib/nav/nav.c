@@ -1,4 +1,5 @@
 #include "nav.h"
+#include "../task.h"
 
 uint8_t CheckAWallF(rep_t *rep, state_t state){
     if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) && isSonarReliable(rep, state)){
@@ -108,6 +109,11 @@ void init_nav(nav_t *nav){
     nav->posx = 32;
     nav->posy = 32;
     nav->previousDistanceToWall = 0;
+
+    //Assmumes drone to start in the middle of the room.
+    nav->posx = UINT16_MAX / 2;
+    nav->posy = UINT16_MAX / 2;
+
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
     nav->timer = 0;
@@ -133,6 +139,7 @@ void navigation(rep_t *rep, nav_t *nav){ //:todo make rep and nav one unit
         case MOVEUP: onMoveup(rep, nav); break;
         case MOVEDOWN: onMovedown(rep, nav); break;
         case SEARCHING: onSearching(rep, nav); break;
+        case ALIGNING: onAligning(rep, nav); break;
         default: printf("Invalid task!"); break;
     }
     //printf("THE STATE IS: %d\n", nav->state);
@@ -170,13 +177,20 @@ void onIdle(rep_t *rep, nav_t *nav) {
         Moveforward(rep, nav);
 }
 
+void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
+    fix16_t result = fix16_sub(*nav_val, fix16_div(velocity, fix16_from_int(PERIODS_PER_SEC)));
+    if(fix16_to_int(result) < 0)
+        *nav_val = fix16_from_int(0);
+    else
+        *nav_val = result;
+}
 void onTurnleft(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
      * Set angle aswell, on finished turning maybe?
      */
-    //todo:Udkommenter dette når gyro er implementeret.
-    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+
+    update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -188,11 +202,12 @@ void onTurnright(rep_t *rep, nav_t *nav){
      * if done then set task to IDLE or start new one.
      * Set angle aswell, on finished turning maybe?
      */
-    //todo:Udkommenter dette når gyro er implementeret.
-    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
 
-    if(nav->val == 0){
+    update_nav_value(&nav->val, rep->fc->gyro);
+
+    if(fix16_to_int(nav->val) == 0){
         move_stop(rep->fc);
+        printf("I have finished my right turn\n");
         nav->task = IDLE;
     }
 }
@@ -203,9 +218,7 @@ void onTurnaround(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      * nav-val er her mængden af grader der skal drejes.
      */
-
-    //todo:Udkommenter dette når gyro er implementeret.
-    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+    update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -278,6 +291,12 @@ void onSearching(rep_t *rep, nav_t *nav){
      */
 }
 
+void onAligning(rep_t *rep, nav_t *nav){
+    /*
+     * Align med en væg, så vi følger den præcis
+     */
+}
+
 //These functions run whenever a new task is assigned
 void Idle(rep_t *rep, nav_t *nav) {
     move_stop(rep->fc);
@@ -286,19 +305,19 @@ void Idle(rep_t *rep, nav_t *nav) {
 
 void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees){
     rotate_left(rep->fc);
-    nav->val = degrees;
+    nav->val = fix16_from_int(degrees);
     nav->task = TURNLEFT;
 }
 
 void Turnright(rep_t *rep, nav_t *nav, uint8_t degrees){
     rotate_right(rep->fc);
-    nav->val = degrees;
+    nav->val = fix16_from_int(degrees);
     nav->task = TURNRIGHT;
 }
 
 void Turnaround(rep_t *rep, nav_t *nav){
     rotate_right(rep->fc); //todo: Must happen two times
-    nav->val = 180; //Complete turnaround
+    nav->val = fix16_from_int(180); //Complete turnaround
     nav->task = TURNRIGHT;
 }
 
@@ -322,12 +341,23 @@ void Searching(rep_t *rep, nav_t *nav){
     nav->task = SEARCHING;
 }
 
+void Aligning(rep_t *rep, nav_t *nav){
+    //todo: needs implementing
+}
+
+void Map_set_point(nav_t *nav, uint8_t x, uint8_t y,fieldstate_t field){
+}
+
+fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y){
+    return UNVISITED;
+}
+
 uint8_t isSonarReliable(rep_t *rep, state_t state){
-    /* finds the distance to the wall the drone is following 
+    /* finds the distance to the wall the drone is following
      * if blockedR returns 0, then the wall is to the left, otherwise the right
      * if the wall is on the left distToWall receives the distance to left, otherwise right */
     fix16_t distToWall = fix16_from_int(state.BlockedR ? rep->laser->left_value : rep->laser->right_value);
-    
+
     /* find the distance to the wall with a 15 degree angle from front view */
     fix16_t calcSonarDistToWall = fix16_mul(distToWall/fix16_sin(fix16_from_float(fix16_rad_to_deg(SONAR_DEG))), fix16_sin(fix16_from_float(fix16_rad_to_deg(PERPENDICULAR))));
 

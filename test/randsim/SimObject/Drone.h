@@ -18,6 +18,7 @@ extern "C" {
 
 #define FC_OFFSET 1
 #define ROTATION_OFFSET M_PI
+#define NAV_UPDATE_TIME 100
 
 class Drone : public SimObject {
 public:
@@ -48,5 +49,5 @@ private:
 
     float calculateAcceleration(float prev_vel, float new_vel);
 
-    uint8_t TimeCounter;
+    unsigned int LastNavUpdate;
 };

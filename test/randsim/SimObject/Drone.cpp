@@ -1,6 +1,6 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), SonarModule(Pos, 57, DegToRad(0), DegToRad(15), 220), Height(0) {
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), SonarModule(Pos, 57, Angle, DegToRad(15), 220), Height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
     IrTop = *IR_init(A0);
@@ -19,7 +19,7 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), 
     //Makes sure the drone starts in a non-moving state
     rotate_stop(&FC);
     move_stop(&FC);
-    TimeCounter = 0;
+    LastNavUpdate = 0;
 }
 
 void Drone::draw() {
@@ -32,17 +32,17 @@ void Drone::draw() {
     Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * Size / 2), Pos.Y + int(sin(Angle) * Size / 2)});
 
     // Sonar
-    Sim->Render->setColor({255, 0, 0}, 100);
-    Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
+    SonarModule.draw();
+    //Sim->Render->setColor({255, 0, 0}, 100);
+    //Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
+    //Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
 
     // Laser
-    Sim->Render->setColor({0, 0, 255}, 100);
-    Sim->Render->drawPieRel(Pos, 400, int(RadToDeg (-Angle) - 135), int(RadToDeg(-Angle) + 135));
+    //Sim->Render->setColor({0, 0, 255}, 100);
+    //Sim->Render->drawPieRel(Pos, 400, int(RadToDeg (-Angle) - 135), int(RadToDeg(-Angle) + 135));
 }
 
 void Drone::update() {
-    TimeCounter += Sim->DeltaTime_Millis;
 
     //Uncomment to make the drone fly in a box-shape
     /*if(counter == 0) {
@@ -77,15 +77,16 @@ void Drone::update() {
         rotate_stop(&FC);
     counter++;*/
 
+    //rotate_left(&FC);
+
     SonarModule.calcDist(Sim->Blocks, Pos, Angle);
 
-    if(TimeCounter > PERIOD) {
-        navigation(&WorldRepresentation, &NavigationStruct);
-        TimeCounter = 0;
+    if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
+        //navigation(&WorldRepresentation, &NavigationStruct);
+        LastNavUpdate = Sim->Time;
     }
-
+    rotate_right(&FC);
     updateFromFC();
-
 }
 
 double calculateVelocity(uint8_t direction_value, const float SPEED) {
@@ -94,18 +95,19 @@ double calculateVelocity(uint8_t direction_value, const float SPEED) {
 }
 
 float Drone::calculateAcceleration(float prev_vel, float new_vel) {
-    return (new_vel - prev_vel) / (Sim->DeltaTime_Millis / 1000);
+    return (new_vel - prev_vel) / (Sim->DeltaTime / 1000);
 }
 
 void Drone::updateRotation(uint16_t yaw_value) {
     //Check rotation and update, 1 means right, -1 means left and 0 means no rotation
-    double rotationVelocity = calculateVelocity(yaw_value, ROTATION_SPEED);
+    double rotationVelocity = -calculateVelocity(yaw_value, ROTATION_SPEED);
     Angle = Angle + rotationVelocity;
     if (Angle > M_PI * 2)
         Angle = 0;
 
     //Update gyro with deg/sec
-    FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));
+    //FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));
+    FC.gyro = fix16_from_dbl(RadToDeg(ROTATION_SPEED * 100));
 }
 
 void Drone::updateStrafe(uint16_t roll_value) {

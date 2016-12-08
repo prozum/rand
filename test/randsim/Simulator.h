@@ -20,7 +20,8 @@ public:
     std::unique_ptr<Minimap> Map;
     std::vector<Block> Blocks;
 
-    unsigned int DeltaTime_Millis;
+    unsigned int Time;
+    unsigned int DeltaTime;
 
     Simulator();
     ~Simulator();

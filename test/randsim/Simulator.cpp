@@ -14,9 +14,11 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(500, -500), 50);
+    Drn = make_unique<Drone>(Vector2D(100.0, -112.5), 50);
     Map = make_unique<Minimap>();
 
+    Time = 0;
+    DeltaTime = 10;
     frameStartTime = 0;
 }
 
@@ -39,10 +41,6 @@ int Simulator::run() {
     }
 
     while (true) {
-        DeltaTime_Millis = frameStartTime - SDL_GetTicks();
-
-        frameStartTime = SDL_GetTicks();
-        //printf("Delta-time: %d\n", DeltaTime_Millis);
         while (SDL_PollEvent(&Event) == 1) {
             switch (Event.type) {
                 case SDL_QUIT:
@@ -87,8 +85,8 @@ int Simulator::run() {
 
         Render->clear();
 
-        drawObjects();
         updateObjects();
+        drawObjects();
 
         Render->update();
     }
@@ -97,7 +95,7 @@ int Simulator::run() {
 void Simulator::drawObjects() {
     drawBlockGrid();
 
-    for (auto B : Blocks) {
+    for (auto &B : Blocks) {
         B.draw();
     }
 
@@ -109,6 +107,7 @@ void Simulator::drawObjects() {
 
 void Simulator::updateObjects() {
     Drn->update();
+    Time += DeltaTime;
 }
 
 bool Simulator::loadMap(string Path) {
@@ -159,7 +158,7 @@ void Simulator::drawBlockGrid() {
     int HLines = WinHeight / RelBlockSize;
     int VLines = WinWidth / RelBlockSize;
 
-    Render->setColor({0, 0, 0});
+    Render->setColor(BLACK);
 
     for (int i = 1; i <= HLines; ++i) {
         int CorY = i * RelBlockSize;
@@ -171,11 +170,11 @@ void Simulator::drawBlockGrid() {
             Render->drawLine({0, CorY}, {WinWidth, CorY});
             Render->drawLine({0, CorY + 1}, {WinWidth, CorY + 1});
         } else {
-            Render->setColor({255, 0, 0});
+            Render->setColor(RED);
             Render->drawLine({0, CorY - 1}, {WinWidth, CorY - 1});
             Render->drawLine({0, CorY}, {WinWidth, CorY});
             Render->drawLine({0, CorY + 1}, {WinWidth, CorY + 1});
-            Render->setColor({0, 0, 0});
+            Render->setColor(BLACK);
         }
     }
 
@@ -189,11 +188,11 @@ void Simulator::drawBlockGrid() {
             Render->drawLine({CorX, 0}, {CorX, WinHeight});
             Render->drawLine({CorX + 1, 0}, {CorX + 1, WinHeight});
         } else {
-            Render->setColor({255, 0, 0});
+            Render->setColor(RED);
             Render->drawLine({CorX - 1, 0}, {CorX - 1, WinHeight});
             Render->drawLine({CorX, 0}, {CorX, WinHeight});
             Render->drawLine({CorX + 1, 0}, {CorX + 1, WinHeight});
-            Render->setColor({0, 0, 0});
+            Render->setColor(BLACK);
         }
     }
 }
@@ -263,5 +262,8 @@ void Simulator::drawInfoBox() {
     Render->drawLine({OffsetX + 21, MeterTopY}, {OffsetX + 21, MeterBotY});
     Render->drawLine({OffsetX + 10, MeterBotY}, {OffsetX + 30, MeterBotY});
     Render->drawText(DoubleToStr(Render->iRel(MeterHeight)) + string("cm"), {OffsetX + 30, MeterTopY + MeterHeight / 2 - 15}, BGColor);
+
+    // FPS
+    Render->drawText(string("FPS: ")+ to_string(Render->Fps), {Render->WinWidth - 60, Render->WinHeight - 35}, BGColor);
 }
 

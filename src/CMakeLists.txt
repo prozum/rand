@@ -3,4 +3,4 @@ add_subdirectory(lib)
 generate_avr_firmware(main
         BOARD uno
         SRCS main.c task.c
-        LIBS core fc sonar laser ir nav kalman matrix)
+        LIBS core fc sonar laser ir nav kalman matrix map)

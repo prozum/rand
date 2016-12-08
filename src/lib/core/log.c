@@ -135,7 +135,7 @@ void ERROR(const char *msg) {
 #endif //!MOCK
     //TODO: Add code for safely landing drone
 #if MOCK
-    //printf("%s%s\n", "ERROR: ", msg);
+    printf("%s%s\n", "ERROR: ", msg);
 #endif //MOCK
 }
 

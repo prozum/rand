@@ -16,6 +16,7 @@ public:
 
     Vector2D Pos;
 
+    SimObject();
     SimObject(Vector2D Pos);
     static void setDefaultSimulator(Simulator *Sim);
 

@@ -1,5 +1,5 @@
-#ifndef RAND_POSITIONING_H
-#define RAND_POSITIONING_H
+#ifndef RAND_NAV_H
+#define RAND_NAV_H
 
 #define FULL_TURN 90
 #define MAX_NEGATIVE_ACCELERATION 0
@@ -20,6 +20,7 @@
 
 #define SENSOR_DEVIATION 5
 #define MIN_DIFF_LASER_SONAR 30
+#define GRID_SIZE 25 //width/height of a map field in cm
 
 #include <stdint.h>
 
@@ -30,20 +31,18 @@
 #include "map/map.h"
 #include "libfixmath/fix16.h"
 
-#define FRONT_a 0.99
-#define SIDE_a 1
-#define TOP_BOT_a 1
-#define SONAR_r 1
-#define LASER_r 1
-#define IR_r 1
-#define KALMAN_b 0 //We do not take the control signal into account as of now.
-#define PERIOD 100 //The time between calls of the navigator.
+#define PERIOD_MILLIS 100 //The time between calls of the navigator.
+#define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 
 #define FRONT_READING 0
 #define LEFT_READING 0
 #define RIGHT_READING 1
 #define TOP_READING 2
 #define BOTTOM_READING 3
+
+typedef struct position_s {
+    /*Fill here*/
+} position_t;
 
 typedef struct rep_s{
     fc_t *fc;
@@ -65,7 +64,8 @@ typedef enum task_e{
     MOVEFORWARD,
     MOVEUP,
     MOVEDOWN,
-    SEARCHING
+    SEARCHING,
+    ALIGNING
 }task_t;
 
 typedef enum side_e{
@@ -89,6 +89,7 @@ typedef struct state_s{
 
 void update_state(state_t *state, rep_t *rep);
 
+#define ANGLE_RESOLUTION 0.01 //means that each degree is split in 100
 typedef struct nav_s{
     state_t state;
     uint16_t timer;
@@ -126,6 +127,7 @@ void onMoveforward(rep_t *rep, nav_t *nav);
 void onMoveup(rep_t *rep, nav_t *nav);
 void onMovedown(rep_t *rep, nav_t *nav);
 void onSearching(rep_t *rep, nav_t *nav);
+void onAligning(rep_t *rep, nav_t *nav);
 uint8_t isSonarReliable(rep_t *rep, state_t state);
 uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav);
 void drawMap (rep_t *rep, nav_t *nav);
@@ -139,7 +141,10 @@ void Moveup(rep_t *rep, nav_t *nav);
 void Movedown(rep_t *rep, nav_t *nav);
 void Searching(rep_t *rep, nav_t *nav);
 
+void Map_set_point(nav_t *nav, uint8_t x, uint8_t y, fieldstate_t field);
+fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y);
 
-#endif //RAND_POSITIONING_H
+
+#endif //RAND_NAV_H
 
 
