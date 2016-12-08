@@ -7,7 +7,7 @@ Laser::Laser(Vector2D Origin, double Length, double Angle)
         Rays.push_back(Ray(Origin, Length, Angle));
     }
 
-    LaserStruct = *laser_init(TX1);
+    Struct = *laser_init(TX1);
 }
 
 void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle) {
