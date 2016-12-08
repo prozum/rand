@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(250.0, -200.5), 50);
+    Drn = make_unique<Drone>(Vector2D(50.0, -112.5), 50);
     Map = make_unique<Minimap>();
 
     Time = 0;
@@ -231,7 +231,7 @@ void Simulator::drawInfoBox() {
     int DroneOffset = MouseOffset + PropSpace + ObjSpace;
     Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
     Render->drawText(string("Pos: (") + DoubleToStr(Drn->Pos.X) + " cm, " + DoubleToStr(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
-    Render->drawText(string("Angle: ") + DoubleToStr(RadToDeg(Drn->Angle) + ','), {Indent, DroneOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Angle: ") + DoubleToStr(RadToDeg(Drn->Angle)) + ",", {Indent, DroneOffset + PropSpace * 2}, BGColor);
     Render->drawText(string("Height: ") + DoubleToStr(Drn->Height) + " cm", {Indent, DroneOffset + PropSpace * 3}, BGColor);
 
     // Laser info
