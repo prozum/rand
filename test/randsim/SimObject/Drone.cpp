@@ -100,13 +100,14 @@ float Drone::calculateAcceleration(float prev_vel, float new_vel) {
 
 void Drone::updateRotation(uint16_t yaw_value) {
     //Check rotation and update, 1 means right, -1 means left and 0 means no rotation
-    double rotationVelocity = calculateVelocity(yaw_value, ROTATION_SPEED);
+    double rotationVelocity = -calculateVelocity(yaw_value, ROTATION_SPEED);
     Angle = Angle + rotationVelocity;
     if (Angle > M_PI * 2)
         Angle = 0;
 
     //Update gyro with deg/sec
-    FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));
+    //FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));
+    FC.gyro = fix16_from_dbl(RadToDeg(ROTATION_SPEED * 100));
 }
 
 void Drone::updateStrafe(uint16_t roll_value) {
