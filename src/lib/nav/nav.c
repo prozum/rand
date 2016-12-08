@@ -241,7 +241,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
             diffWall = fix16_from_int(rep->laser->right_value - nav->previousDistanceToWall);
         }
         
-        degreesToTurn = fix16_asin(fix16_div(directionDistance,fix16_mul(fix16_sin(PERPENDICULAR), diffWall)));
+        degreesToTurn = fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance,fix16_mul(fix16_sin(PERPENDICULAR), diffWall))));
         
         if (diffWall < 0 && nav->state.BlockedL){
             Turnright(rep, nav, degreesToTurn);
