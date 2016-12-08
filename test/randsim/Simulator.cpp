@@ -40,9 +40,9 @@ int Simulator::run() {
 
     while (true) {
         DeltaTime_Millis = frameStartTime - SDL_GetTicks();
-
         frameStartTime = SDL_GetTicks();
         //printf("Delta-time: %d\n", DeltaTime_Millis);
+
         while (SDL_PollEvent(&Event) == 1) {
             switch (Event.type) {
                 case SDL_QUIT:

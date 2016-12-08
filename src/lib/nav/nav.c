@@ -107,9 +107,9 @@ void init_nav(nav_t *nav){
     nav->val = 0;
     nav->angle = 0;
 
-    //Start in the middle of the map
-    nav->posx = MAP_WIDTH/2;
-    nav->posy = MAP_HEIGHT/2;
+    //Assmumes drone to start in the middle of the room.
+    nav->posx = UINT16_MAX / 2;
+    nav->posy = UINT16_MAX / 2;
 
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
@@ -173,13 +173,17 @@ void onIdle(rep_t *rep, nav_t *nav) {
         Moveforward(rep, nav);
 }
 
+/*void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
+    fix16_t result = fix16_min(*nav_val, fix16_div(velocity, fix16_from_int(PERIODS_PER_SEC)));
+    *nav_val = result;
+}*/
 void onTurnleft(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
      * Set angle aswell, on finished turning maybe?
      */
     //todo:Udkommenter dette når gyro er implementeret.
-    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;

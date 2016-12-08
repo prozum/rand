@@ -31,14 +31,8 @@
 #include "map/map.h"
 #include "libfixmath/fix16.h"
 
-#define FRONT_a 0.99
-#define SIDE_a 1
-#define TOP_BOT_a 1
-#define SONAR_r 1
-#define LASER_r 1
-#define IR_r 1
-#define KALMAN_b 0 //We do not take the control signal into account as of now.
-#define PERIOD 100 //The time between calls of the navigator.
+#define PERIOD_MILLIS 100 //The time between calls of the navigator.
+#define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 
 #define FRONT_READING 0
 #define LEFT_READING 0
@@ -89,13 +83,14 @@ typedef struct state_s{
 
 void update_state(state_t *state, rep_t *rep);
 
+#define ANGLE_RESOLUTION 0.01 //means that each degree is split in 100
 typedef struct nav_s{
     state_t state;
     uint16_t timer;
     task_t task;
-    uint16_t angle;
-    int8_t posx;
-    int8_t posy;
+    uint16_t angle; //
+    uint16_t posx; //x-position in room (NOT on the pixel-grid)
+    uint16_t posy; //y-position in room (NOT on the pixel-grid)
     uint16_t val;
 }nav_t;
 

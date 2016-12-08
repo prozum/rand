@@ -79,7 +79,7 @@ void Drone::update() {
 
     SonarModule.calcDist(Sim->Blocks, Pos, Angle);
 
-    if(TimeCounter > PERIOD) {
+    if(TimeCounter > PERIOD_MILLIS) {
         navigation(&WorldRepresentation, &NavigationStruct);
         TimeCounter = 0;
     }
