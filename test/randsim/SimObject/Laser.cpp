@@ -20,18 +20,29 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
     for (auto &B : Blocks) {
         Intersects = B.intersection(Rays[0], Res);
         TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) LaserStruct.left_value = Res.length();
-        else LaserStruct.left_value = 2200;
+        if (Intersects && TmpDist <= Length) {
+            LaserStruct.left_value = Res.length();
+        } else {
+            LaserStruct.left_value = 2200;
+        }
 
         Intersects = B.intersection(Rays[1], Res);
         TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) LaserStruct.front_value = Res.length();
-        else LaserStruct.front_value = 2200;
+        if (Intersects && TmpDist <= Length) {
+            LaserStruct.front_value = Res.length();
+        }
+        else {
+            LaserStruct.front_value = 2200;
+        }
 
         Intersects = B.intersection(Rays[2], Res);
         TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) LaserStruct.right_value = Res.length();
-        else LaserStruct.right_value = 2200;
+        if (Intersects && TmpDist <= Length) {
+            LaserStruct.right_value = Res.length();
+        }
+        else {
+            LaserStruct.right_value = 2200;
+        }
     }
 }
 
