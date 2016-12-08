@@ -22,6 +22,6 @@ public:
 
     void draw();
     void update();
-    bool intersection(Ray ray, Vector2D& res);
+    bool intersection(Ray Ray, Vector2D& res);
 };
 

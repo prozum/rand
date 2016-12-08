@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(500, -315), 50);
+    Drn = make_unique<Drone>(Vector2D(500, -500), 50);
     Map = make_unique<Minimap>();
 
     frameStartTime = 0;
@@ -42,7 +42,7 @@ int Simulator::run() {
         DeltaTime_Millis = frameStartTime - SDL_GetTicks();
 
         frameStartTime = SDL_GetTicks();
-        printf("Delta-time: %d\n", DeltaTime_Millis);
+        //printf("Delta-time: %d\n", DeltaTime_Millis);
         while (SDL_PollEvent(&Event) == 1) {
             switch (Event.type) {
                 case SDL_QUIT:
@@ -122,7 +122,7 @@ bool Simulator::loadMap(string Path) {
     }
 
     double X = Block::Size / 2;
-    double Y = - Block::Size / 2;
+    double Y = Block::Size / 2;
     char C;
     while ((C = File.get()) != EOF) {
         switch (C) {
@@ -245,7 +245,7 @@ void Simulator::drawInfoBox() {
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.sonar.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.SonarStruct.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
     //IR info
     int IROffset = SonarOffset + PropSpace + ObjSpace;

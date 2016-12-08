@@ -1,6 +1,6 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), SonarModule(Pos, 57, 0.0, 15.0, 220), Height(0) {
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), SonarModule(Pos, 57, DegToRad(0), DegToRad(15), 220), Height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
     IrTop = *IR_init(A0);
@@ -9,7 +9,7 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), Son
     Laser = *laser_init(TX1);
 
     init_nav(&NavigationStruct);
-    init_rep(&FC, &Laser, &(SonarModule.sonar), &IrTop, &IrBottom, &WorldRepresentation);
+    init_rep(&FC, &Laser, &(SonarModule.SonarStruct), &IrTop, &IrBottom, &WorldRepresentation);
 
     //Set FC duties to simplify movement for this simulation
     FC.duty->MIN_FC_DUTY = 0 * FC_OFFSET;
@@ -43,8 +43,6 @@ void Drone::draw() {
 
 void Drone::update() {
     TimeCounter += Sim->DeltaTime_Millis;
-    //calcLaserDist();
-    //calcSonarDist();
 
     //Uncomment to make the drone fly in a box-shape
     /*if(counter == 0) {
@@ -79,7 +77,7 @@ void Drone::update() {
         rotate_stop(&FC);
     counter++;*/
 
-    SonarModule.calcDist(Sim->Blocks);
+    SonarModule.calcDist(Sim->Blocks, Pos, Angle);
 
     if(TimeCounter > PERIOD) {
         navigation(&WorldRepresentation, &NavigationStruct);
@@ -87,6 +85,7 @@ void Drone::update() {
     }
 
     updateFromFC();
+
 }
 
 double calculateVelocity(uint8_t direction_value, const float SPEED) {
@@ -106,7 +105,7 @@ void Drone::updateRotation(uint16_t yaw_value) {
         Angle = 0;
 
     //Update gyro with deg/sec
-    FC.gyro = RadToDeg(rotationVelocity);
+    FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));
 }
 
 void Drone::updateStrafe(uint16_t roll_value) {
@@ -117,8 +116,8 @@ void Drone::updateStrafe(uint16_t roll_value) {
     Pos.Y += strafeVelocity * sin(orthogAngle);
 
     float prev_vel = FC.vel->x;
-    FC.acc->x = calculateAcceleration(prev_vel, strafeVelocity);
-    FC.vel->x = strafeVelocity;
+    FC.acc->x = fix16_from_float(calculateAcceleration(prev_vel, strafeVelocity));
+    FC.vel->x = fix16_from_dbl(strafeVelocity);
 }
 
 void Drone::updateFrontal(uint16_t pitch_value) {
@@ -132,8 +131,8 @@ void Drone::updateFrontal(uint16_t pitch_value) {
     Pos.Y += sin(conv_angle) * moveVelocity;
 
     float prev_vel = FC.vel->y;
-    FC.acc->y = calculateAcceleration(prev_vel, moveVelocity);
-    FC.vel->y = moveVelocity;
+    FC.acc->y = fix16_from_float(calculateAcceleration(prev_vel, moveVelocity));
+    FC.vel->y = fix16_from_dbl(moveVelocity);
 }
 
 void Drone::updateHeight(uint16_t throttle_value) {
@@ -159,8 +158,8 @@ void Drone::updateHeight(uint16_t throttle_value) {
         IrTop.value = dist_to_ceil;
 
     float prev_vel = FC.vel->z;
-    FC.acc->z = calculateAcceleration(prev_vel, altitudeVelocity);
-    FC.vel->z = altitudeVelocity;
+    FC.acc->z = fix16_from_float(calculateAcceleration(prev_vel, altitudeVelocity));
+    FC.vel->z = fix16_from_dbl(altitudeVelocity);
 }
 
 void Drone::updateFromFC() {
@@ -169,158 +168,3 @@ void Drone::updateFromFC() {
     updateStrafe(FC.roll);
     updateHeight(FC.throttle);
 }
-
-/*
-void Drone::calcSonarDist() {
-    int HalfBlock = Block::Size / 2;
-
-    auto leftSonarAngle = Angle + 0.13;
-    auto rightSonarAngle = Angle - 0.13;
-
-    double closest = 0;
-
-    for (auto B : Sim->Blocks) {
-        if (Pos.X >= B.Pos.X + HalfBlock &&
-            Pos.Y >= B.Pos.Y + HalfBlock) {
-            auto bTopAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y - HalfBlock);
-            auto bMidAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
-            auto bBotAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
-
-            if (bTopAngle <= rightSonarAngle && bMidAngle >= rightSonarAngle &&
-                bBotAngle >= leftSonarAngle && bMidAngle <= leftSonarAngle) {
-                auto d = calcDist(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
-                if (closest == 0 || (d > closest && d <= 220)) {
-                    closest = d;
-                }
-            } else if (bTopAngle > rightSonarAngle &&
-                       bMidAngle >= leftSonarAngle) {
-                auto d = calcDist(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
-                if (closest == 0 || (d > closest && d <= 220)) {
-                    closest = d;
-                }
-            } else if (bBotAngle > leftSonarAngle &&
-                       bMidAngle <= rightSonarAngle) {
-                auto d = calcDist(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
-                if (closest == 0 || (d > closest && d <= 220)) {
-                    closest = d;
-                }
-            } else {
-                break;
-            }
-        } else if (Pos.X <= B.Pos.X - HalfBlock &&
-                   Pos.Y >= B.Pos.Y + HalfBlock) {
-            auto bTopAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y - HalfBlock);
-            auto bMidAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
-            auto bBotAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
-
-            if (bTopAngle >= leftSonarAngle && bMidAngle <= bTopAngle &&
-                bBotAngle <= rightSonarAngle && bMidAngle >= rightSonarAngle) {
-                auto d = calcDist(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
-                if (closest == 0 || (d > closest && d <= 220)) {
-                    closest = d;
-                }
-            } else if (bTopAngle > rightSonarAngle &&
-                       bMidAngle >= leftSonarAngle) {
-                auto d = calcDist(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
-                if (closest == 0 || (d > closest && d <= 220)) {
-                    closest = d;
-                }
-            } else if (bBotAngle > leftSonarAngle &&
-                       bMidAngle <= rightSonarAngle) {
-                auto d = calcDist(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
-                if (closest == 0 || (d > closest && d <= 220)) {
-                    closest = d;
-                }
-            } else {
-                break;
-            }
-        } else if (Pos.X <= B.Pos.X - HalfBlock &&
-                   Pos.Y >= B.Pos.Y - HalfBlock) {
-            auto bTopAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y - HalfBlock);
-            auto bMidAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y - HalfBlock);
-            auto bBotAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
-
-        } else if (Pos.X <= B.Pos.X + HalfBlock &&
-                   Pos.Y >= B.Pos.Y - HalfBlock) {
-            auto bTopAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y - HalfBlock);
-            auto bMidAngle = calcAngle(B.Pos.X + HalfBlock, B.Pos.Y + HalfBlock);
-            auto bBotAngle = calcAngle(B.Pos.X - HalfBlock, B.Pos.Y + HalfBlock);
-
-        } else if (Pos.X >= B.Pos.X - HalfBlock &&
-                   Pos.X <= B.Pos.X + HalfBlock &&
-                   Pos.Y >= B.Pos.Y + HalfBlock) {
-
-        } else if (Pos.X <= B.Pos.X - HalfBlock &&
-                   Pos.Y >= B.Pos.Y - HalfBlock &&
-                   Pos.Y <= B.Pos.Y + HalfBlock) {
-
-        } else if (Pos.X >= B.Pos.X - HalfBlock &&
-                   Pos.X <= B.Pos.X + HalfBlock &&
-                   Pos.Y <= B.Pos.Y - HalfBlock) {
-
-        } else if (Pos.X >= B.Pos.X + HalfBlock &&
-                   Pos.Y >= B.Pos.Y - HalfBlock &&
-                   Pos.Y <= B.Pos.Y + HalfBlock) {
-
-        }
-
-        std::cout << "Block: x: " << B.Pos.X << " y: " << B.Pos.Y << std::endl;
-        std::cout << "Drone: x: " <<   Pos.X << " y: " <<   Pos.Y << std::endl;
-        std::cout << "X1: " << X1 << " Y1: " << Y1 << std::endl;
-        std::cout << "X2: " << X2 << " Y2: " << Y2 << std::endl;
-        Dist = sqrt(X1 * X1 + Y1 * Y1);
-        std::cout << "Delta: " << Dist << std::endl;
-
-
-        StartAngle = atan((abs(DeltaX) - Block::Size / 2) / (abs(DeltaX) + Block::Size / 2));
-        EndAngle =   M_PI / 2 - atan((abs(DeltaY) - Block::Size / 2) / (abs(DeltaY) + Block::Size / 2));
-        std::cout << "Start Angle: " << StartAngle << " End Angle: " << EndAngle << std::endl;
-        std::cout << "Angle: " << Angle << std::endl;
-        std::cout << "Found: " << (Angle < StartAngle && Angle > EndAngle) << std::endl;
-    //}
-    }
-}
- */
-
-/*
-void Drone::calcLaserDist() {
-
-    int Radius = Size/2;
-    auto B = Sim->Blocks[0];
-
-    int LRange = 400;
-
-
-    int MaxDist = 2200;
-    double DeltaX, DeltaY, Dist;
-    int X1, X2, Y1, Y2;
-    double StartAngle, EndAngle;
-    int HalfBlock = Block::Size / 2;
-
-    //for (auto B : Sim->Blocks) {
-    X1 = abs(B.Pos.X - HalfBlock - Pos.X);
-    X2 = abs(B.Pos.X + HalfBlock - Pos.X);
-
-    Y1 = abs(B.Pos.Y - HalfBlock - Pos.Y);
-    Y2 = abs(B.Pos.Y + HalfBlock - Pos.Y);
-
-    DeltaX = abs(B.Pos.X - Pos.X);
-    DeltaY = abs(B.Pos.Y - Pos.Y);
-
-    // Distance
-    std::cout << "Block: x: " << B.Pos.X << " y: " << B.Pos.Y << std::endl;
-    std::cout << "Drone: x: " <<    Pos.X << " y: " <<    Pos.Y << std::endl;
-    std::cout << "X1: " << X1 << " Y1: " << Y1 << std::endl;
-    std::cout << "X2: " << X2 << " Y2: " << Y2 << std::endl;
-    Dist = sqrt(DeltaX * DeltaX + DeltaY * DeltaY);
-    Laser.front_value = Dist;
-
-
-    StartAngle = atan((abs(DeltaX) - Block::Size / 2) / (abs(DeltaX) + Block::Size / 2));
-    EndAngle =   M_PI / 2 - atan((abs(DeltaY) - Block::Size / 2) / (abs(DeltaY) + Block::Size / 2));
-    std::cout << "Start Angle: " << StartAngle << " End Angle: " << EndAngle << std::endl;
-    std::cout << "Angle: " << Angle << std::endl;
-    std::cout << "Found: " << (Angle < StartAngle && Angle > EndAngle) << std::endl;
-    //}
-}
-*/

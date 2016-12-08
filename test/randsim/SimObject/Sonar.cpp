@@ -1,30 +1,41 @@
 #include "Sonar.h"
 
-Sonar::Sonar(Vector2D Start, uint32_t RayCount, double Angle, double Span, double Length) : angle(Angle), span(Span), ray_count(RayCount) {
+Sonar::Sonar(Vector2D Start, uint32_t RayCount, double Angle, double Span, double Length)
+        : Length(Length), Angle(Angle), Span(Span), RayCount(RayCount) {
 
-    double resolution = Span / (double)RayCount;
-    double startAngle = Angle + (span/2);
+    double Resolution = Span / (double)RayCount;
+    double StartAngle = Angle + (Span/2);
 
     for (int i = 0; i < RayCount; ++i) {
-        rays.push_back(Ray(Start, Length, Angle + startAngle + (i * resolution)));
+        Rays.push_back(Ray(Start, Length, Angle + StartAngle + (i * Resolution)));
     }
 }
 
-void Sonar::calcDist(std::vector<Block> blocks) {
-    Vector2D vec;
-    uint32_t dist = UINT32_MAX;
-    this->sonar.valid = 0;
+void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle) {
+    Vector2D Res;
+    double TmpDist = INFINITY;
+    double Dist = INFINITY;
+    this->SonarStruct.valid = 0;
 
-    for (auto b : blocks) {
-        for (auto r : rays) {
-            auto res = b.intersection(r, vec);
+    update(Origin, Angle);
 
-            if (res) {
-                dist = (uint32_t)vec.length();
-                this->sonar.valid = 1;
+    for (auto &Block : Blocks) {
+        for (auto &Ray : Rays) {
+            bool Intersects = Block.intersection(Ray, Res);
+            TmpDist = Res.length();
+            if (Intersects && TmpDist <= Length) {
+                Dist = std::min(TmpDist, Dist);
+                //printf("%lf\n", Dist);
+                SonarStruct.valid = 1;
             }
         }
     }
 
-    this->sonar.value = (uint16_t)dist;
+    SonarStruct.value = (uint16_t)Dist;
+}
+
+void Sonar::update(Vector2D& Origin, double Angle) {
+    for (auto &Ray : Rays) {
+        Ray.update(Origin, Angle);
+    }
 }
