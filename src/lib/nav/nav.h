@@ -92,7 +92,7 @@ typedef struct nav_s{
     uint16_t angle;
     uint16_t posx;
     uint16_t posy;
-    uint8_t previousDistanceToWall;
+    uint16_t previousDistanceToWall;
     fix16_t val;
 }nav_t;
 
