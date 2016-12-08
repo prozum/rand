@@ -95,9 +95,13 @@ float Drone::calculateAcceleration(float prev_vel, float new_vel) {
     return (new_vel - prev_vel) / (Sim->DeltaTime / 1000);
 }
 
+float calculateStep(const float SPEED, float deltaTime) {
+    return SPEED * (deltaTime / 1000.0f);
+}
+
 void Drone::updateRotation(uint16_t yaw_value) {
     //Check rotation and update, 1 means right, -1 means left and 0 means no rotation
-    double rotationVelocity = -calculateVelocity(yaw_value, ROTATION_SPEED);
+    double rotationVelocity = -calculateVelocity(yaw_value, calculateStep(ROTATION_SPEED, Sim->DeltaTime));
     Angle = Angle + rotationVelocity;
     if (Angle >= M_PI * 2)
         Angle = Angle - M_PI * 2;
@@ -110,7 +114,7 @@ void Drone::updateRotation(uint16_t yaw_value) {
 }
 
 void Drone::updateStrafe(uint16_t roll_value) {
-    double strafeVelocity = calculateVelocity(roll_value, STRAFE_SPEED);
+    double strafeVelocity = calculateVelocity(roll_value, calculateStep(STRAFE_SPEED, Sim->DeltaTime));
     double orthogAngle = Angle + NINETY_DEGREES_IN_RAD + ROTATION_OFFSET;
 
     Pos.X += strafeVelocity * cos(orthogAngle);
@@ -123,7 +127,7 @@ void Drone::updateStrafe(uint16_t roll_value) {
 
 void Drone::updateFrontal(uint16_t pitch_value) {
     //Calculate the direction of movement
-    double moveVelocity = -calculateVelocity(pitch_value, MOVEMENT_SPEED);
+    double moveVelocity = -calculateVelocity(pitch_value, calculateStep(MOVEMENT_SPEED, Sim->DeltaTime));
 
     double conv_angle = Angle + ROTATION_OFFSET;
 
@@ -138,7 +142,7 @@ void Drone::updateFrontal(uint16_t pitch_value) {
 
 void Drone::updateHeight(uint16_t throttle_value) {
     //Calculate the altitude velocity based on input from FC
-    double altitudeVelocity = calculateVelocity(throttle_value, ALTITUDE_SPEED);
+    double altitudeVelocity = calculateVelocity(throttle_value, calculateStep(ALTITUDE_SPEED, Sim->DeltaTime));
 
     //Update height field and IR-sensors
     Height += altitudeVelocity;

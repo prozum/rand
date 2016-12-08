@@ -234,9 +234,11 @@ void onMoveforward(rep_t *rep, nav_t *nav){
         
         if (nav->state.BlockedL){
             diffWall = fix16_from_int(rep->laser->left_value - nav->previousDistanceToWall);
+            nav->previousDistanceToWall = rep->laser->left_value;
         }
         else if (nav->state.BlockedR){
             diffWall = fix16_from_int(rep->laser->right_value - nav->previousDistanceToWall);
+            nav->previousDistanceToWall = rep->laser->right_value;
         }
         
         degreesToTurn = fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance,fix16_mul(fix16_sin(PERPENDICULAR), diffWall))));
@@ -369,34 +371,28 @@ uint8_t isSonarReliable(rep_t *rep, state_t state){
     }
 }
 
+
+#define MIN_TAKEACITON_RANGE 20
 uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav){
     
-    if(nav->previousDistanceToWall == 0){
-        nav->previousDistanceToWall = rep->laser->right_value;
-        return 0;
-    }
-        
-    
     if (nav->state.BlockedR){
-        if (nav->previousDistanceToWall != rep->laser->right_value){
-            
-            if(nav->previousDistanceToWall == 0){
-                nav->previousDistanceToWall = rep->laser->right_value;
-                return 0;
-            }
-            
+        
+        if(nav->previousDistanceToWall == 0){
             nav->previousDistanceToWall = rep->laser->right_value;
             return 0;
         }
+        
+        if (nav->previousDistanceToWall != rep->laser->right_value){
+            return 0;
+        }
     } else if (nav->state.BlockedL){
-        if (nav->previousDistanceToWall != rep->laser->left_value){
-            
-            if(nav->previousDistanceToWall == 0){
-                nav->previousDistanceToWall = rep->laser->left_value;
-                return 0;
-            }
-            
+        
+        if(nav->previousDistanceToWall == 0){
             nav->previousDistanceToWall = rep->laser->left_value;
+            return 0;
+        }
+        
+        if (nav->previousDistanceToWall != rep->laser->left_value){
             return 0;
         }
     }
