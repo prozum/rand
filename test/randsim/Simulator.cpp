@@ -121,7 +121,7 @@ bool Simulator::loadMap(string Path) {
     }
 
     double X = Block::Size / 2;
-    double Y = Block::Size / 2;
+    double Y = - Block::Size / 2;
     char C;
     while ((C = File.get()) != EOF) {
         switch (C) {
