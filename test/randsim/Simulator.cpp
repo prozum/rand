@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(100.0, -112.5), 50);
+    Drn = make_unique<Drone>(Vector2D(250.0, -200.5), 50);
     Map = make_unique<Minimap>();
 
     Time = 0;

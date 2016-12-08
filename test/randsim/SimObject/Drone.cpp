@@ -87,10 +87,10 @@ void Drone::update() {
     LaserModule.calcDist(Sim->Blocks, Pos, Angle);
 
     if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
-        //navigation(&WorldRepresentation, &NavigationStruct);
+        navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
-    rotate_right(&FC);
+    //rotate_right(&FC);
     updateFromFC();
 }
 
