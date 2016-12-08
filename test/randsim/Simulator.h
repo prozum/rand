@@ -10,11 +10,13 @@ class Renderer;
 class Block;
 class Drone;
 class Minimap;
+class BlockBuilder;
 
 class Simulator {
 
 public:
     std::unique_ptr<Renderer> Render;
+    std::unique_ptr<BlockBuilder> BBuilder;
 
     std::unique_ptr<Drone> Drn;
     std::unique_ptr<Minimap> Map;

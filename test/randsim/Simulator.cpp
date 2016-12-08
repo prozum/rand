@@ -3,6 +3,7 @@
 #include "Simulator.h"
 #include "Minimap.h"
 #include "SdlRenderer.h"
+#include "BlockBuilder.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -11,9 +12,12 @@
 
 using namespace std;
 
-Simulator::Simulator() {
+Simulator::Simulator()  {
     SimObject::setDefaultSimulator(this);
+
     Render = make_unique<SdlRenderer>();
+    BBuilder = make_unique<BlockBuilder>(*this);
+
     Drn = make_unique<Drone>(Vector2D(50.0, -112.5), 50);
     Map = make_unique<Minimap>();
 
@@ -42,6 +46,8 @@ int Simulator::run() {
 
     while (true) {
         while (SDL_PollEvent(&Event) == 1) {
+            BBuilder->handleEvent(Event);
+
             switch (Event.type) {
                 case SDL_QUIT:
                     return 0;
@@ -93,11 +99,10 @@ int Simulator::run() {
 }
 
 void Simulator::drawObjects() {
-    drawBlockGrid();
-
     for (auto &B : Blocks) {
         B.draw();
     }
+    drawBlockGrid();
 
     Drn->draw();
 
@@ -237,8 +242,8 @@ void Simulator::drawInfoBox() {
     // Laser info
     int LaserOffset = DroneOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.Struct.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
-    Render->drawText(string("Left: ")  + DoubleToStr(Drn->LaserModule.Struct.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Left: ")  + DoubleToStr(Drn->LaserModule.Struct.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.Struct.front_value) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
     Render->drawText(string("Right: ") + DoubleToStr(Drn->LaserModule.Struct.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
 
     // Sonar info
@@ -251,6 +256,11 @@ void Simulator::drawInfoBox() {
     Render->drawText(string("IR:"), {OffsetX, IROffset}, BGColor);
     Render->drawText(string("Bottom: ") + DoubleToStr(Drn->IrBottom.value), {Indent, IROffset + PropSpace * 1}, BGColor);
     Render->drawText(string("Top: ") + DoubleToStr(Drn->IrTop.value), {Indent, IROffset + PropSpace * 2}, BGColor);
+
+    // Block info
+    int BlockOffset = IROffset + PropSpace * 2 + ObjSpace;
+    Render->drawText(string("Block:"), {OffsetX, BlockOffset}, BGColor);
+    Render->drawText(string("Count: ") + to_string(Blocks.size()), {Indent, BlockOffset + PropSpace * 1}, BGColor);
 
     // Block to cm meter
     int MeterHeight = Block::Size * 4;
