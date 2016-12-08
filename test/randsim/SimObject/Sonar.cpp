@@ -22,12 +22,11 @@ void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle)
             TmpDist = Res.length();
             if (Intersects && TmpDist <= Length) {
                 Dist = std::min(TmpDist, Dist);
+                SonarStruct.value = (uint16_t)Dist;
                 SonarStruct.valid = 1;
             }
         }
     }
-
-    SonarStruct.value = (uint16_t)Dist;
 }
 
 void Sonar::update(Vector2D& Origin, double Angle) {
