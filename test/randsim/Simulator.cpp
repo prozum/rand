@@ -237,16 +237,16 @@ void Simulator::drawInfoBox() {
     // Laser info
     int LaserOffset = DroneOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.LaserStruct.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
-    Render->drawText(string("Left: ")  + DoubleToStr(Drn->LaserModule.LaserStruct.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
-    Render->drawText(string("Right: ") + DoubleToStr(Drn->LaserModule.LaserStruct.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.Struct.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Left: ")  + DoubleToStr(Drn->LaserModule.Struct.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Right: ") + DoubleToStr(Drn->LaserModule.Struct.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
 
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Sonar:"), {OffsetX, SonarOffset}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.SonarStruct.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->SonarModule.Struct.value) + " cm", {Indent, SonarOffset + PropSpace * 1}, BGColor);
 
-    //IR info
+    // IR info
     int IROffset = SonarOffset + PropSpace + ObjSpace;
     Render->drawText(string("IR:"), {OffsetX, IROffset}, BGColor);
     Render->drawText(string("Bottom: ") + DoubleToStr(Drn->IrBottom.value), {Indent, IROffset + PropSpace * 1}, BGColor);

@@ -12,7 +12,7 @@ extern "C" {
 #include "Simulator.h"
 #include "Laser.h"
 
-#define ROTATION_SPEED 0.1
+#define ROTATION_SPEED 0.01
 #define STRAFE_SPEED 1 //defines speed in the left, right direction
 #define MOVEMENT_SPEED 1 //defines speed in forward, backward directoin
 #define ALTITUDE_SPEED 0.5 //defines speed in up/down direction

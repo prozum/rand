@@ -7,7 +7,7 @@ Laser::Laser(Vector2D Origin, double Length, double Angle)
         Rays.push_back(Ray(Origin, Length, Angle));
     }
 
-    LaserStruct = *laser_init(TX1);
+    Struct = *laser_init(TX1);
 }
 
 void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle) {
@@ -20,18 +20,18 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
     for (auto &B : Blocks) {
         Intersects = B.intersection(Rays[0], Res);
         TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) LaserStruct.left_value = Res.length();
-        else LaserStruct.left_value = 2200;
+        if (Intersects && TmpDist <= Length) Struct.left_value = Res.length();
+        else Struct.left_value = 2200;
 
         Intersects = B.intersection(Rays[1], Res);
         TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) LaserStruct.front_value = Res.length();
-        else LaserStruct.front_value = 2200;
+        if (Intersects && TmpDist <= Length) Struct.front_value = Res.length();
+        else Struct.front_value = 2200;
 
         Intersects = B.intersection(Rays[2], Res);
         TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) LaserStruct.right_value = Res.length();
-        else LaserStruct.right_value = 2200;
+        if (Intersects && TmpDist <= Length) Struct.right_value = Res.length();
+        else Struct.right_value = 2200;
     }
 }
 

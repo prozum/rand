@@ -17,7 +17,7 @@ private:
     void update(Vector2D Origin, double Angle);
 public:
     std::vector<Ray> Rays;
-    laser_t LaserStruct;
+    laser_t Struct;
 
     Laser(Vector2D Origin, double Length, double Angle);
     void calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle);

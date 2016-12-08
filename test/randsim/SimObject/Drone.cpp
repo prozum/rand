@@ -11,7 +11,7 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI),
     IrBottom.value = 80;
 
     init_nav(&NavigationStruct);
-    init_rep(&FC, &LaserModule.LaserStruct, &SonarModule.SonarStruct, &IrTop, &IrBottom, &WorldRepresentation);
+    init_rep(&FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop, &IrBottom, &WorldRepresentation);
 
     //Set FC duties to simplify movement for this simulation
     FC.duty->MIN_FC_DUTY = 0 * FC_OFFSET;
@@ -36,14 +36,6 @@ void Drone::draw() {
     // Modules
     SonarModule.draw();
     LaserModule.draw();
-    //LaserModule.
-    //Sim->Render->setColor({255, 0, 0}, 100);
-    //Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
-    //Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
-
-    // Laser
-    //Sim->Render->setColor({0, 0, 255}, 100);
-    //Sim->Render->drawPieRel(Pos, 400, int(RadToDeg (-Angle) - 135), int(RadToDeg(-Angle) + 135));
 }
 
 void Drone::update() {
@@ -87,10 +79,10 @@ void Drone::update() {
     LaserModule.calcDist(Sim->Blocks, Pos, Angle);
 
     if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
-        navigation(&WorldRepresentation, &NavigationStruct);
+        //navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
-    //rotate_right(&FC);
+    rotate_right(&FC);
     updateFromFC();
 }
 
@@ -107,9 +99,9 @@ void Drone::updateRotation(uint16_t yaw_value) {
     //Check rotation and update, 1 means right, -1 means left and 0 means no rotation
     double rotationVelocity = -calculateVelocity(yaw_value, ROTATION_SPEED);
     Angle = Angle + rotationVelocity;
-    if (Angle > M_PI * 2)
+    if (Angle >= M_PI * 2)
         Angle = Angle - M_PI * 2;
-    else if (Angle < 0)
+    else if (Angle <= 0)
         Angle = Angle + M_PI * 2;
 
     //Update gyro with deg/sec
