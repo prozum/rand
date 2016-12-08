@@ -1,10 +1,13 @@
 #include "Laser.h"
 
-Laser::Laser(Vector2D& Origin, double Length, double Angle)
+Laser::Laser(Vector2D Origin, double Length, double Angle)
         : Pos(Origin), Length(Length), Angle(Angle) {
+
     for (int i = 0; i < 3; ++i) {
-        Rays.push_back(Ray(Origin, Angle, Length));
+        Rays.push_back(Ray(Origin, Length, Angle));
     }
+
+    LaserStruct = *laser_init(TX1);
 }
 
 void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle) {
@@ -32,12 +35,14 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
     }
 }
 
-void Laser::update(Vector2D& Origin, double Angle) {
-    Rays[0].update(Origin, Angle - (M_PI / 2));
+void Laser::update(Vector2D Origin, double Angle) {
+    Rays[0].update(Origin, Angle + (M_PI / 2));
     Rays[1].update(Origin, Angle);
-    Rays[2].update(Origin, Angle + (M_PI / 2));
+    Rays[2].update(Origin, Angle - (M_PI / 2));
 }
 
 void Laser::draw() {
-
+    for (auto &Ray : Rays) {
+        Ray.draw();
+    }
 }

@@ -106,13 +106,11 @@ void init_nav(nav_t *nav){
     nav->task = IDLE;
     nav->val = 0;
     nav->angle = 0;
-    nav->posx = 32;
-    nav->posy = 32;
     nav->previousDistanceToWall = 0;
 
     //Assmumes drone to start in the middle of the room.
-    nav->posx = UINT16_MAX / 2;
-    nav->posy = UINT16_MAX / 2;
+    nav->posx = 800;
+    nav->posy = 800;
 
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
@@ -174,7 +172,7 @@ void onIdle(rep_t *rep, nav_t *nav) {
             Turnright(rep, nav, FULL_TURN);
     }
     else
-        Moveforward(rep, nav);
+        Moveforward(rep, nav, fix16_from_int(25));
 }
 
 void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
@@ -184,13 +182,14 @@ void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
     else
         *nav_val = result;
 }
+
 void onTurnleft(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
      * Set angle aswell, on finished turning maybe?
      */
 
-    update_nav_value(nav->val, rep->fc->gyro);
+    update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -203,11 +202,10 @@ void onTurnright(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      */
 
-    update_nav_value(nav->val, rep->fc->gyro);
+    update_nav_value(&nav->val, rep->fc->gyro);
 
     if(fix16_to_int(nav->val) == 0){
         move_stop(rep->fc);
-        printf("I have finished my right turn\n");
         nav->task = IDLE;
     }
 }
@@ -218,7 +216,7 @@ void onTurnaround(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      * nav-val er her mængden af grader der skal drejes.
      */
-    update_nav_value(nav->val, rep->fc->gyro);
+    update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -230,7 +228,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
      * or simply draw on the map here
      * In either case set task to IDLE or start new one when done.
      */
-    
+
     if(!checkAllignmentToWall(rep, nav)){
         fix16_t diffWall = 0, directionDistance = rep->fc->vel->y * fix16_from_int(PERIOD_MILLIS), degreesToTurn = 0;
         
@@ -241,26 +239,27 @@ void onMoveforward(rep_t *rep, nav_t *nav){
             diffWall = fix16_from_int(rep->laser->right_value - nav->previousDistanceToWall);
         }
         
-        degreesToTurn = fix16_asin(fix16_div(directionDistance,fix16_mul(fix16_sin(PERPENDICULAR), diffWall)));
+        degreesToTurn = fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance,fix16_mul(fix16_sin(PERPENDICULAR), diffWall))));
         
         if (diffWall < 0 && nav->state.BlockedL){
-            Turnright(rep, nav, degreesToTurn);
+            Turnright(rep, nav, fix16_to_int(degreesToTurn));
         } else if (diffWall < 0 && nav->state.BlockedR) {
-            Turnleft(rep, nav, degreesToTurn);
+            Turnleft(rep, nav, fix16_to_int(degreesToTurn));
         } else if (diffWall > 0 && nav->state.BlockedL) {
-            Turnleft(rep, nav, degreesToTurn);
+            Turnleft(rep, nav, fix16_to_int(degreesToTurn));
         } else if (diffWall > 0 && nav->state.BlockedR) {
-            Turnright(rep, nav, degreesToTurn);
+            Turnright(rep, nav, fix16_to_int(degreesToTurn));
         }
     }
-        
+
     drawMap(rep, nav);
 
     if(nav->val > 0)
-        nav->val = nav->val - (uint16_t )(rep->fc->vel->y/10); //todo: Change this please. The idea is that nav->val is as the remaining amount of cm needed to be moved. And rep->fc->vel-y / 10 is the amount of cm moved since last period
+        update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->state.AWallF){
         move_stop(rep->fc);
         nav->val = 0;
+        nav->posx+= 25;
         nav->task = IDLE;
     }
 }
@@ -321,7 +320,7 @@ void Turnaround(rep_t *rep, nav_t *nav){
     nav->task = TURNRIGHT;
 }
 
-void Moveforward(rep_t *rep, nav_t *nav){
+void Moveforward(rep_t *rep, nav_t *nav, fix16_t distance){
     move_forward(rep->fc);
     nav->task = MOVEFORWARD;
 }
