@@ -24,8 +24,8 @@ void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle)
             bool Intersects = Block.intersection(Ray, Res);
             TmpDist = Res.length();
             if (Intersects && TmpDist <= Length) {
+                printf("%lf, %lf\n", Res.X + Ray.Origin.X, Res.Y + Ray.Origin.Y);
                 Dist = std::min(TmpDist, Dist);
-                //printf("%lf\n", Dist);
                 SonarStruct.valid = 1;
             }
         }
