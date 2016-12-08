@@ -1,5 +1,5 @@
-#ifndef RAND_POSITIONING_H
-#define RAND_POSITIONING_H
+#ifndef RAND_NAV_H
+#define RAND_NAV_H
 
 #define FULL_TURN 90
 #define MAX_NEGATIVE_ACCELERATION 0
@@ -20,6 +20,7 @@
 
 #define SONAR_DEVIATION 5
 #define MIN_DIFF_LASER_SONAR 30
+#define GRID_SIZE 25 //width/height of a map field in cm
 
 #include <stdint.h>
 
@@ -44,6 +45,10 @@
 #define RIGHT_READING 1
 #define TOP_READING 2
 #define BOTTOM_READING 3
+
+typedef struct position_s {
+    /*Fill here*/
+} position_t;
 
 typedef struct rep_s{
     fc_t *fc;
@@ -89,8 +94,8 @@ typedef struct nav_s{
     uint16_t timer;
     task_t task;
     uint16_t angle;
-    uint8_t posx;
-    uint8_t posy;
+    int8_t posx;
+    int8_t posy;
     uint16_t val;
 }nav_t;
 
@@ -131,7 +136,10 @@ void Moveup(rep_t *rep, nav_t *nav);
 void Movedown(rep_t *rep, nav_t *nav);
 void Searching(rep_t *rep, nav_t *nav);
 
+void Map_set_point(nav_t *nav, uint8_t x, uint8_t y, fieldstate_t field);
+fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y);
 
-#endif //RAND_POSITIONING_H
+
+#endif //RAND_NAV_H
 
 
