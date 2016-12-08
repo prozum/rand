@@ -29,7 +29,7 @@ class KalmanDatafusionTest : public CppUnit::TestCase {
     CPPUNIT_TEST_SUITE_END();
 private:
     matrix_t *R, *C;
-    void assert(kalman_state_matrix *state, const float a, const float b, const float p_0);
+    void assert(kalman_state_matrix *state, const fix16_t a, const fix16_t b, const fix16_t p_0);
 public:
     void setUp();
     void tearDown();

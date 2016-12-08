@@ -11,6 +11,10 @@
 #include <stdlib.h>
 #include <cmath>
 
+extern "C" {
+#include "libfixmath/fix16.h"
+}
+
 class KalmanTest : public CppUnit::TestCase {
         CPPUNIT_TEST_SUITE(KalmanTest);
         CPPUNIT_TEST(KalmanInit_ValidParams_ExpectValidStateMalloced);

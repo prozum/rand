@@ -141,7 +141,7 @@ bool Simulator::loadMap(string Path) {
                 X = Block::Size / 2;
                 break;
             default:
-                cout << "Wrong character in file: '" << C << "'" << endl;
+                cout << "Wrong character in file: '" << C << "'" << ", " << Path << endl;
                 return false;
         }
     }

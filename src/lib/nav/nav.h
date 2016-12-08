@@ -20,7 +20,6 @@
 
 #define SENSOR_DEVIATION 5
 #define MIN_DIFF_LASER_SONAR 30
-#define GRID_SIZE 25 //width/height of a map field in cm
 
 #include <stdint.h>
 
@@ -34,11 +33,7 @@
 #define PERIOD_MILLIS 100 //The time between calls of the navigator.
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 
-#define FRONT_READING 0
-#define LEFT_READING 0
-#define RIGHT_READING 1
-#define TOP_READING 2
-#define BOTTOM_READING 3
+#define MAP_MIDDLE UINT16_MAX / 2
 
 typedef struct position_s {
     /*Fill here*/
@@ -95,8 +90,8 @@ typedef struct nav_s{
     uint16_t timer;
     task_t task;
     uint16_t angle;
-    uint8_t posx;
-    uint8_t posy;
+    uint16_t posx;
+    uint16_t posy;
     uint8_t previousDistanceToWall;
     fix16_t val;
 }nav_t;
@@ -144,6 +139,7 @@ void Searching(rep_t *rep, nav_t *nav);
 void Map_set_point(nav_t *nav, uint8_t x, uint8_t y, fieldstate_t field);
 fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y);
 
+static pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord);
 
 #endif //RAND_NAV_H
 

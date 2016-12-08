@@ -403,36 +403,73 @@ uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav){
     
     return 1;
 }
-
-void drawMap (rep_t *rep, nav_t *nav){
-    
-    if ((nav->state.AWallF || nav->state.AWinF) && (rep->laser->front_value <= MIN_RANGE || rep->sonar->value <= MIN_RANGE) && isSonarReliable(rep, nav->state)) {
-        fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
-        fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
-        
-        if (rep->laser->front_value > (rep->sonar->value + MIN_DIFF_LASER_SONAR))
-            map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WINDOW);
-        else
-            map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
+//Defines the lowest and highest accepted world-position on the internal drone map
+#define LOWEST_Y_ORG (MAP_MIDDLE) - (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
+#define HIGHEST_Y_ORG (MAP_MIDDLE) + (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
+#define LOWEST_X_ORG (MAP_MIDDLE) - (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
+#define HIGHEST_X_ORG (MAP_MIDDLE) + (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
+pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord) {
+    if(x_coord < LOWEST_X_ORG || x_coord > HIGHEST_X_ORG) {
+        WARNING(SENDER_MAP, "align_to_pixel: x-coord out of bounds");
     }
-    
-    if (nav->state.AWallR && rep->laser->right_value <= MIN_RANGE)
-    {
-        fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_RIGHT_SIDE)), fix16_from_int(rep->laser->right_value));
-        fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle + DRONE_RIGHT_SIDE)), fix16_from_int(rep->laser->right_value));
-        
-        map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
-    }
-    
-    if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE)
-    {
-        fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
-        fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
-        
-        map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
+    if(y_coord < LOWEST_Y_ORG || y_coord > HIGHEST_Y_ORG) {
+        WARNING(SENDER_MAP, "align_to_pixel: y-coord out of bounds");
     }
 
+    uint8_t x_pixel = (x_coord - LOWEST_X_ORG) / CENTIMETERS_PR_PIXEL;
+    uint8_t y_pixel = (y_coord - LOWEST_Y_ORG) / CENTIMETERS_PR_PIXEL;
+
+    pixel_coord_t coord = { .x = x_pixel, .y = y_pixel};
+    return coord;
 }
 
+fix16_t fix_rad_angle(int16_t degrees) {
+    return fix16_deg_to_rad(fix16_from_int(ANGLE_RESOLUTION * degrees));
+}
 
+void draw_front(rep_t *rep, nav_t *nav, fieldstate_t state) {
+    //Calculate the x-offset with cos(angle) * laser
+    fix16_t x_offset = fix16_mul(fix16_cos(fix_rad_angle(nav->angle)),
+                                 fix16_from_int(rep->laser->front_value));
+    //Calculate the y-offset with sin(angle) * laser
+    fix16_t y_offset = fix16_mul(fix16_sin(fix_rad_angle(nav->angle)),
+                                 fix16_from_int(rep->laser->front_value));
+    //And convert to pixel-coord
+    pixel_coord_t pix_win = align_to_pixel(nav->posx + x_offset, nav->posy + y_offset);
 
+    map_write(pix_win.x, pix_win.y, state);
+}
+
+void draw_side(rep_t *rep, nav_t *nav, const int16_t SIDE_OFFSET, fieldstate_t state) {
+    //Calculate the x-offset with cos(angle) * laser
+    fix16_t x_offset = fix16_mul(fix16_cos(fix_rad_angle(nav->angle + SIDE_OFFSET)),
+                                 fix16_from_int(rep->laser->right_value));
+    //Calculate the y-offset with sin(angle) * laser
+    fix16_t y_offset = fix16_mul(fix16_sin(fix_rad_angle(nav->angle + SIDE_OFFSET)),
+                                 fix16_from_int(rep->laser->right_value));
+    //And convert to pixel-coord
+    pixel_coord_t pix_obst = align_to_pixel(nav->posx + x_offset, nav->posy + y_offset);
+
+    map_write(pix_obst.x, pix_obst.y, state);
+}
+
+void drawMap (rep_t *rep, nav_t *nav){
+    uint16_t mes_diff = rep->laser->front_value - rep->sonar->value;
+    //Draw map in direct front of the drone
+    if(mes_diff > WINDOW_RECON_THRESHOLD) {
+        draw_front(rep, nav, WINDOW);
+    }
+    else if (rep->laser->front_value == rep->sonar->value) {
+        draw_front(rep, nav, WALL);
+    }
+
+    if (nav->state.AWallR && rep->laser->right_value <= MIN_RANGE)
+    {
+        draw_side(rep, nav, DRONE_RIGHT_SIDE, WALL);
+    }
+
+    if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE)
+    {
+        draw_side(rep, nav, DRONE_LEFT_SIDE, WALL);
+    }
+}

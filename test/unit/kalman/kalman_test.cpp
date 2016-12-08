@@ -9,30 +9,30 @@ CPPUNIT_TEST_SUITE_REGISTRATION(KalmanTest);
 void KalmanTest::KalmanInit_ValidParams_ExpectValidStateMalloced() {
     kalman_state *NullState = NULL;
 
-    float a = 1, r = 10;
+    fix16_t a = fix16_from_int(1), r = fix16_from_int(10);
 
     NullState = kalman_init(a, r, SENDER_BOARD);
 
     CPPUNIT_ASSERT_MESSAGE("The state was initialized against expectation.", NullState != NULL);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The r value was not set correctly.", r, NullState->r);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The a value was not set correctly.", a, NullState->a);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The u_k value was not set to 0.", 0.0f, NullState->u_k);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The g_k value was not set to 0.", 0.0f, NullState->g_k);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The p_k value must be > than 0.", 10.0f, NullState->p_k);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The x_k value was not set to 0.", 0.0f, NullState->x_k);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The u_k value was not set to 0.", fix16_from_float(0.0f), NullState->u_k);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The g_k value was not set to 0.", fix16_from_float(0.0f), NullState->g_k);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The p_k value must be > than 0.", fix16_from_float(10.0f), NullState->p_k);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The x_k value was not set to 0.", fix16_from_float(0.0f), NullState->x_k);
 }
 
 void KalmanTest::KalmanRun_NullStateValidParam_ExpectStateStillNull() {
     kalman_state *state = NULL;
 
-    kalman_run(state, 10);
+    kalman_run(state, fix16_from_int(10));
 
     CPPUNIT_ASSERT_MESSAGE("The kalman_state was initialized against expectation", state == NULL);
 }
 
 void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev() {
     kalman_state *state;
-    float a = 1, r = 1, z_k = 10, x_prev = 4;
+    float a = fix16_from_int(1), r = fix16_from_int(1), z_k = fix16_from_int(10), x_prev = fix16_from_int(4);
     state = kalman_init(a, r, SENDER_BOARD);
     state->x_k = x_prev;
 
@@ -44,7 +44,7 @@ void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev() {
 
 void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev() {
     kalman_state *state;
-    float a = 1, r = 1, z_k = 4, x_prev = 10;
+    fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_k = fix16_from_int(4), x_prev = fix16_from_int(10);
     state = kalman_init(a, r, SENDER_BOARD);
     state->x_k = x_prev;
 
@@ -55,8 +55,8 @@ void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev() {
 
 void KalmanTest::KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0() {
     kalman_state *state;
-    float a = 1, r = 1, z_0 = 6;
-    float x_k = 10;
+    fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_0 = fix16_from_int(6);
+    fix16_t x_k = fix16_from_int(10);
     state = kalman_init(a, r, SENDER_BOARD);
     state->x_k = x_k;
     kalman_calibrate(state, z_0);
