@@ -232,7 +232,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
      */
     
     if(!checkAllignmentToWall(rep, nav)){
-        fix16_t diffWall = 0, directionDistance = rep->fc->vel->y * fix16_from_int(PERIOD), degreesToTurn = 0;
+        fix16_t diffWall = 0, directionDistance = rep->fc->vel->y * fix16_from_int(PERIOD_MILLIS), degreesToTurn = 0;
         
         if (nav->state.BlockedL){
             diffWall = fix16_from_int(rep->laser->left_value - nav->previousDistanceToWall);

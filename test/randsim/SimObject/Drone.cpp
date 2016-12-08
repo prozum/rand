@@ -1,12 +1,14 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), SonarModule(Pos, 57, Angle, DegToRad(15), 220), Height(0) {
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI),
+                                       SonarModule(Pos, 57, Angle, DegToRad(15), 220),
+                                       LaserModule(Pos, 220.0, Angle),
+                                       Height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
     IrTop = *IR_init(A0);
     IrBottom = *IR_init(A1);
     IrBottom.value = 80;
-    Laser = *laser_init(TX1);
 
     init_nav(&NavigationStruct);
     init_rep(&FC, &Laser, &(SonarModule.SonarStruct), &IrTop, &IrBottom, &WorldRepresentation);
@@ -33,6 +35,7 @@ void Drone::draw() {
 
     // Sonar
     SonarModule.draw();
+    //LaserModule.
     //Sim->Render->setColor({255, 0, 0}, 100);
     //Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
     //Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
