@@ -64,7 +64,8 @@ typedef enum task_e{
     MOVEFORWARD,
     MOVEUP,
     MOVEDOWN,
-    SEARCHING
+    SEARCHING,
+    ALIGNING
 }task_t;
 
 typedef struct state_s{
@@ -91,7 +92,7 @@ typedef struct nav_s{
     uint16_t angle; //
     uint16_t posx; //x-position in room (NOT on the pixel-grid)
     uint16_t posy; //y-position in room (NOT on the pixel-grid)
-    uint16_t val;
+    fix16_t val;
 }nav_t;
 
 void init_nav(nav_t *nav);
@@ -120,6 +121,7 @@ void onMoveforward(rep_t *rep, nav_t *nav);
 void onMoveup(rep_t *rep, nav_t *nav);
 void onMovedown(rep_t *rep, nav_t *nav);
 void onSearching(rep_t *rep, nav_t *nav);
+void onAligning(rep_t *rep, nav_t *nav);
 uint8_t isSonarReliable(rep_t *rep, state_t state);
 
 void Idle(rep_t *rep, nav_t *nav);

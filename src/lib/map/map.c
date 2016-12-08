@@ -21,8 +21,14 @@ void map_write(uint8_t x, uint8_t y, fieldstate_t value)
 {
     uint16_t addr = (y * map_width + x) / FIELDS_PER_BYTE;
     uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;
+    uint8_t  new_value = 0;
 
-    uint8_t new_value = eeprom_read(addr); //load the byte to be read from
+    if(addr < 4096)
+        new_value = eeprom_read(addr); //load the byte to be read from
+    else {
+        ERROR("Address value out of bounds!");
+        return;
+    }
 
    // uint8_t mask = FULL_FIELD << offset * FIELD_SIZE; //safety mask
 

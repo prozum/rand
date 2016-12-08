@@ -136,6 +136,7 @@ void navigation(rep_t *rep, nav_t *nav){ //:todo make rep and nav one unit
         case MOVEUP: onMoveup(rep, nav); break;
         case MOVEDOWN: onMovedown(rep, nav); break;
         case SEARCHING: onSearching(rep, nav); break;
+        case ALIGNING: onAligning(rep, nav); break;
         default: printf("Invalid task!"); break;
     }
     //printf("THE STATE IS: %d\n", nav->state);
@@ -173,17 +174,20 @@ void onIdle(rep_t *rep, nav_t *nav) {
         Moveforward(rep, nav);
 }
 
-/*void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
-    fix16_t result = fix16_min(*nav_val, fix16_div(velocity, fix16_from_int(PERIODS_PER_SEC)));
-    *nav_val = result;
-}*/
+void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
+    fix16_t result = fix16_sub(*nav_val, fix16_div(velocity, fix16_from_int(PERIODS_PER_SEC)));
+    if(fix16_to_int(result) < 0)
+        *nav_val = fix16_from_int(0);
+    else
+        *nav_val = result;
+}
 void onTurnleft(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
      * Set angle aswell, on finished turning maybe?
      */
-    //todo:Udkommenter dette når gyro er implementeret.
 
+    update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -195,11 +199,12 @@ void onTurnright(rep_t *rep, nav_t *nav){
      * if done then set task to IDLE or start new one.
      * Set angle aswell, on finished turning maybe?
      */
-    //todo:Udkommenter dette når gyro er implementeret.
-    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
 
-    if(nav->val == 0){
+    update_nav_value(&nav->val, rep->fc->gyro);
+
+    if(fix16_to_int(nav->val) == 0){
         move_stop(rep->fc);
+        printf("I have finished my right turn\n");
         nav->task = IDLE;
     }
 }
@@ -210,9 +215,7 @@ void onTurnaround(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      * nav-val er her mængden af grader der skal drejes.
      */
-
-    //todo:Udkommenter dette når gyro er implementeret.
-    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+    update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -228,7 +231,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
     if ((nav->state.AWallF || nav->state.AWinF) && (rep->laser->front_value <= MIN_RANGE || rep->sonar->value <= MIN_RANGE) && isSonarReliable(rep, nav->state)) {
         fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
         fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
-
+        
         if (rep->laser->front_value > (rep->sonar->value + MIN_DIFF_LASER_SONAR))
             map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WINDOW);
         else
@@ -247,7 +250,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
     {
         fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
         fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
-
+        
         map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
 
@@ -286,6 +289,12 @@ void onSearching(rep_t *rep, nav_t *nav){
      */
 }
 
+void onAligning(rep_t *rep, nav_t *nav){
+    /*
+     * Align med en væg, så vi følger den præcis
+     */
+}
+
 //These functions run whenever a new task is assigned
 void Idle(rep_t *rep, nav_t *nav) {
     move_stop(rep->fc);
@@ -294,19 +303,19 @@ void Idle(rep_t *rep, nav_t *nav) {
 
 void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees){
     rotate_left(rep->fc);
-    nav->val = degrees;
+    nav->val = fix16_from_int(degrees);
     nav->task = TURNLEFT;
 }
 
 void Turnright(rep_t *rep, nav_t *nav, uint8_t degrees){
     rotate_right(rep->fc);
-    nav->val = degrees;
+    nav->val = fix16_from_int(degrees);
     nav->task = TURNRIGHT;
 }
 
 void Turnaround(rep_t *rep, nav_t *nav){
     rotate_right(rep->fc); //todo: Must happen two times
-    nav->val = 180; //Complete turnaround
+    nav->val = fix16_from_int(180); //Complete turnaround
     nav->task = TURNRIGHT;
 }
 
@@ -328,6 +337,10 @@ void Movedown(rep_t *rep, nav_t *nav){
 void Searching(rep_t *rep, nav_t *nav){
     //todo: needs implementing
     nav->task = SEARCHING;
+}
+
+void Aligning(rep_t *rep, nav_t *nav){
+    //todo: needs implementing
 }
 
 void Map_set_point(nav_t *nav, uint8_t x, uint8_t y,fieldstate_t field){
