@@ -1,4 +1,5 @@
 #include "nav.h"
+#include "../task.h"
 
 uint8_t CheckAWallF(rep_t *rep, state_t state){
     if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) && isSonarReliable(rep, state)){
@@ -105,8 +106,10 @@ void init_nav(nav_t *nav){
     nav->task = IDLE;
     nav->val = 0;
     nav->angle = 0;
-    nav->posx = 32;
-    nav->posy = 32;
+
+    //Assmumes drone to start in the middle of the room.
+    nav->posx = UINT16_MAX / 2;
+    nav->posy = UINT16_MAX / 2;
 
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
@@ -170,13 +173,17 @@ void onIdle(rep_t *rep, nav_t *nav) {
         Moveforward(rep, nav);
 }
 
+/*void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
+    fix16_t result = fix16_min(*nav_val, fix16_div(velocity, fix16_from_int(PERIODS_PER_SEC)));
+    *nav_val = result;
+}*/
 void onTurnleft(rep_t *rep, nav_t *nav){
     /* Check if done turning through nav->val
      * if done then set task to IDLE or start new one.
      * Set angle aswell, on finished turning maybe?
      */
     //todo:Udkommenter dette når gyro er implementeret.
-    // nav->val = nav->val - (rep->fc->gyro / 10) //Gyro giver angles/s så vi /10 for at få det i angles/period
+
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -221,7 +228,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
     if ((nav->state.AWallF || nav->state.AWinF) && (rep->laser->front_value <= MIN_RANGE || rep->sonar->value <= MIN_RANGE) && isSonarReliable(rep, nav->state)) {
         fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
         fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle)), fix16_from_int(rep->laser->front_value));
-        
+
         if (rep->laser->front_value > (rep->sonar->value + MIN_DIFF_LASER_SONAR))
             map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WINDOW);
         else
@@ -232,7 +239,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
     {
         fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_RIGHT_SIDE)), fix16_from_int(rep->laser->right_value));
         fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle + DRONE_RIGHT_SIDE)), fix16_from_int(rep->laser->right_value));
-        
+
         map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
 
@@ -240,7 +247,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
     {
         fix16_t x_offset = fix16_mul(fix16_cos(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
         fix16_t y_offset = fix16_mul(fix16_sin(fix16_from_int(nav->angle + DRONE_LEFT_SIDE)), fix16_from_int(rep->laser->left_value));
-        
+
         map_write(nav->posx+fix16_to_int(x_offset), nav->posy+fix16_to_int(y_offset), WALL);
     }
 
@@ -323,12 +330,19 @@ void Searching(rep_t *rep, nav_t *nav){
     nav->task = SEARCHING;
 }
 
+void Map_set_point(nav_t *nav, uint8_t x, uint8_t y,fieldstate_t field){
+}
+
+fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y){
+    return UNVISITED;
+}
+
 uint8_t isSonarReliable(rep_t *rep, state_t state){
-    /* finds the distance to the wall the drone is following 
+    /* finds the distance to the wall the drone is following
      * if blockedR returns 0, then the wall is to the left, otherwise the right
      * if the wall is on the left distToWall receives the distance to left, otherwise right */
     fix16_t distToWall = fix16_from_int(state.BlockedR ? rep->laser->left_value : rep->laser->right_value);
-    
+
     /* find the distance to the wall with a 15 degree angle from front view */
     fix16_t calcSonarDistToWall = fix16_mul(distToWall/fix16_sin(fix16_from_float(fix16_rad_to_deg(SONAR_DEG))), fix16_sin(fix16_from_float(fix16_rad_to_deg(PERPENDICULAR))));
 

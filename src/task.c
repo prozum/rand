@@ -7,6 +7,7 @@ void init_not_timed() {
     top_ir = IR_init(IR_TOP_PIN);
     bottom_ir = IR_init(IR_BOTTOM_PIN);
     task_init_fc();
+    map_init(MAP_WIDTH,MAP_HEIGHT,CLEAN); //Init map and clean it
     /*Maybe some error-checking here*/
 
     float a[SENSOR_FILTERS];
