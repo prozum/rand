@@ -12,7 +12,7 @@ class SdlRenderer : public Renderer {
     TTF_Font *Font;
     SDL_Color CurColor = {0, 0, 0, 0};
 
-    int MinFrameTime = 1000 / 60;
+    float MinFrameTime = 1000 / 60;
     int LastTime = 0;
 
 public:

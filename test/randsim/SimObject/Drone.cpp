@@ -19,7 +19,7 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), 
     //Makes sure the drone starts in a non-moving state
     rotate_stop(&FC);
     move_stop(&FC);
-    TimeCounter = 0;
+    LastNavUpdate = 0;
 }
 
 void Drone::draw() {
@@ -42,7 +42,6 @@ void Drone::draw() {
 }
 
 void Drone::update() {
-    TimeCounter += Sim->DeltaTime_Millis;
 
     //Uncomment to make the drone fly in a box-shape
     /*if(counter == 0) {
@@ -79,9 +78,9 @@ void Drone::update() {
 
     SonarModule.calcDist(Sim->Blocks, Pos, Angle);
 
-    if(TimeCounter > PERIOD) {
+    if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
         navigation(&WorldRepresentation, &NavigationStruct);
-        TimeCounter = 0;
+        LastNavUpdate = Sim->Time;
     }
 
     updateFromFC();
@@ -94,7 +93,7 @@ double calculateVelocity(uint8_t direction_value, const float SPEED) {
 }
 
 float Drone::calculateAcceleration(float prev_vel, float new_vel) {
-    return (new_vel - prev_vel) / (Sim->DeltaTime_Millis / 1000);
+    return (new_vel - prev_vel) / (Sim->DeltaTime / 1000);
 }
 
 void Drone::updateRotation(uint16_t yaw_value) {

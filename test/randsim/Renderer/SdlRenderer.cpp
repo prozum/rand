@@ -65,7 +65,7 @@ void SdlRenderer::update() {
     if (FrameTime < MinFrameTime)
         SDL_Delay(MinFrameTime - FrameTime);
 
-    Fps = 1000 / FrameTime;
+    Fps = 1000 / (SDL_GetTicks() - LastTime);
 
     LastTime = SDL_GetTicks();
 }
