@@ -19,4 +19,5 @@ public:
     Sonar(Vector2D Origin, uint32_t RayCount, double Angle, double Span, double Length);
     void calcDist(std::vector<Block> &, Vector2D&, double);
     void update(Vector2D&, double);
+    void draw();
 };

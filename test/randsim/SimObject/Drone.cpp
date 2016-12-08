@@ -32,6 +32,7 @@ void Drone::draw() {
     Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * Size / 2), Pos.Y + int(sin(Angle) * Size / 2)});
 
     // Sonar
+    SonarModule.draw();
     //Sim->Render->setColor({255, 0, 0}, 100);
     //Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
     //Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
@@ -75,6 +76,8 @@ void Drone::update() {
     else
         rotate_stop(&FC);
     counter++;*/
+
+    //rotate_left(&FC);
 
     SonarModule.calcDist(Sim->Blocks, Pos, Angle);
 

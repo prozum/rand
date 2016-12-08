@@ -29,7 +29,7 @@ void Block::update() {
 }
 
 bool Block::intersection(Ray Ray, Vector2D &res) {
-
+/*
     double tx1 = (Min.X - Ray.Origin.X) * Ray.Inverted.X;
     double tx2 = (Max.X - Ray.Origin.X) * Ray.Inverted.X;
 
@@ -47,9 +47,9 @@ bool Block::intersection(Ray Ray, Vector2D &res) {
     res = Ray.Direction * tmin;
 
     return tmax > std::max(tmin, 0.0);
+    */
 
 
-    /*
     double tmin = (Min.X - Ray.Origin.X) * Ray.Inverted.X;
     double tmax = (Max.X - Ray.Origin.X) * Ray.Inverted.X;
 
@@ -72,5 +72,4 @@ bool Block::intersection(Ray Ray, Vector2D &res) {
 
 
     return true;
-     */
 }

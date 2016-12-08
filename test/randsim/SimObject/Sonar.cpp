@@ -18,7 +18,6 @@ void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle)
 
     for (auto &Block : Blocks) {
         for (auto &Ray : Rays) {
-            Ray.draw();
             bool Intersects = Block.intersection(Ray, Res);
             TmpDist = Res.length();
             if (Intersects && TmpDist <= Length) {
@@ -34,9 +33,15 @@ void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle)
 
 void Sonar::update(Vector2D& Origin, double Angle) {
     double Resolution = Span / (double)RayCount;
-    double StartAngle = Angle + (Span/2);
+    double StartAngle = Angle - (Span/2);
 
     for (int i = 0; i < RayCount; ++i) {
-        Rays[i].update(Origin, Angle + StartAngle + (i * Resolution));
+        Rays[i].update(Origin, StartAngle + (i * Resolution));
+    }
+}
+
+void Sonar::draw() {
+    for (auto &Ray : Rays) {
+        Ray.draw();
     }
 }
