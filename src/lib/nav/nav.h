@@ -131,7 +131,7 @@ void Idle(rep_t *rep, nav_t *nav);
 void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees);
 void Turnright(rep_t *rep, nav_t *nav, uint8_t degrees);
 void Turnaround(rep_t *rep, nav_t *nav);
-void Moveforward(rep_t *rep, nav_t *nav);
+void Moveforward(rep_t *rep, nav_t *nav, fix16_t distance);
 void Moveup(rep_t *rep, nav_t *nav);
 void Movedown(rep_t *rep, nav_t *nav);
 void Searching(rep_t *rep, nav_t *nav);

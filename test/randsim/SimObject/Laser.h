@@ -4,12 +4,23 @@
 
 #include "Block.h"
 
-class Laser {
-public:
-    laser_t LaserStruct;
-    std::vector<Ray> rays;
+extern "C" {
+#include "laser/laser.h"
+}
 
-    Laser(uint32_t, double, double, double);
-    void calcDist(std::vector<Block>);
+class Laser {
+private:
+    double Length;
+    double Angle;
+    Vector2D Pos;
+
+    void update(Vector2D Origin, double Angle);
+public:
+    std::vector<Ray> Rays;
+    laser_t LaserStruct;
+
+    Laser(Vector2D Origin, double Length, double Angle);
+    void calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle);
+    void draw();
 };
 

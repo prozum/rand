@@ -14,7 +14,7 @@ using namespace std;
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
     Render = make_unique<SdlRenderer>();
-    Drn = make_unique<Drone>(Vector2D(100.0, -112.5), 50);
+    Drn = make_unique<Drone>(Vector2D(250.0, -200.5), 50);
     Map = make_unique<Minimap>();
 
     Time = 0;
@@ -237,9 +237,9 @@ void Simulator::drawInfoBox() {
     // Laser info
     int LaserOffset = DroneOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->Laser.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
-    Render->drawText(string("Left: ")  + DoubleToStr(Drn->Laser.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
-    Render->drawText(string("Right: ") + DoubleToStr(Drn->Laser.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.LaserStruct.front_value) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
+    Render->drawText(string("Left: ")  + DoubleToStr(Drn->LaserModule.LaserStruct.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Right: ") + DoubleToStr(Drn->LaserModule.LaserStruct.right_value) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
 
     // Sonar info
     int SonarOffset = LaserOffset + PropSpace * 3 + ObjSpace;
