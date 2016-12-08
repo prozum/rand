@@ -10,6 +10,7 @@ extern "C" {
 #include "Sonar.h"
 #include "Vector2D.h"
 #include "Simulator.h"
+#include "Laser.h"
 
 #define ROTATION_SPEED 0.002
 #define STRAFE_SPEED 1 //defines speed in the left, right direction
@@ -27,8 +28,8 @@ public:
     double Height;
 
     Sonar SonarModule;
+    Laser LaserModule;
     fc_t FC;
-    laser_t Laser;
     ir_t IrTop;
     ir_t IrBottom;
 

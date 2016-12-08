@@ -5,6 +5,10 @@
 
 #include "Block.h"
 
+extern "C" {
+#include "sonar/sonar.h"
+}
+
 class Sonar {
 private:
     double Length;
