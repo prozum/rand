@@ -21,7 +21,7 @@ void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle)
             bool Intersects = Block.intersection(Ray, Res);
             TmpDist = Res.length();
             if (Intersects && TmpDist <= Length) {
-                Dist = std::min(Struct.value, (uint16_t) std::min(TmpDist, Dist));
+                Dist = std::min(Struct.value * 1.0, std::min(TmpDist, Dist));
                 Struct.value = (uint16_t)Dist;
                 Struct.valid = 1;
             }

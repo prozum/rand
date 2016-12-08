@@ -21,19 +21,19 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
         Intersects = B.intersection(Rays[0], Res);
         if (Intersects) {
             TmpDist = Res.length();
-            Struct.left_value = std::min(Struct.left_value, (uint16_t)TmpDist);
+            Struct.left_value = std::min(Struct.left_value * 1.0, TmpDist);
         }
 
         Intersects = B.intersection(Rays[1], Res);
         if (Intersects) {
             TmpDist = Res.length();
-            Struct.front_value = std::min(Struct.front_value, (uint16_t)TmpDist);
+            Struct.front_value = std::min(Struct.front_value * 1.0, TmpDist);
         }
 
         Intersects = B.intersection(Rays[2], Res);
         if (Intersects) {
             TmpDist = Res.length();
-            Struct.right_value = std::min(Struct.right_value, (uint16_t)TmpDist);
+            Struct.right_value = std::min(Struct.right_value * 1.0, TmpDist);
         }
     }
 
