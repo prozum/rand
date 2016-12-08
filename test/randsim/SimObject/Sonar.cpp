@@ -1,13 +1,10 @@
 #include "Sonar.h"
 
-Sonar::Sonar(Vector2D Start, uint32_t RayCount, double Angle, double Span, double Length)
+Sonar::Sonar(Vector2D Origin, uint32_t RayCount, double Angle, double Span, double Length)
         : Length(Length), Angle(Angle), Span(Span), RayCount(RayCount) {
 
-    double Resolution = Span / (double)RayCount;
-    double StartAngle = Angle + (Span/2);
-
     for (int i = 0; i < RayCount; ++i) {
-        Rays.push_back(Ray(Start, Length, Angle + StartAngle + (i * Resolution)));
+        Rays.push_back(Ray(Origin, Length, Angle));
     }
 }
 
@@ -21,6 +18,7 @@ void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle)
 
     for (auto &Block : Blocks) {
         for (auto &Ray : Rays) {
+            Ray.draw();
             bool Intersects = Block.intersection(Ray, Res);
             TmpDist = Res.length();
             if (Intersects && TmpDist <= Length) {
@@ -35,7 +33,10 @@ void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle)
 }
 
 void Sonar::update(Vector2D& Origin, double Angle) {
-    for (auto &Ray : Rays) {
-        Ray.update(Origin, Angle);
+    double Resolution = Span / (double)RayCount;
+    double StartAngle = Angle + (Span/2);
+
+    for (int i = 0; i < RayCount; ++i) {
+        Rays[i].update(Origin, Angle + StartAngle + (i * Resolution));
     }
 }

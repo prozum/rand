@@ -1,6 +1,6 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0), SonarModule(Pos, 57, DegToRad(0), DegToRad(15), 220), Height(0) {
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI), SonarModule(Pos, 57, Angle, DegToRad(15), 220), Height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
     IrTop = *IR_init(A0);
@@ -32,13 +32,13 @@ void Drone::draw() {
     Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * Size / 2), Pos.Y + int(sin(Angle) * Size / 2)});
 
     // Sonar
-    Sim->Render->setColor({255, 0, 0}, 100);
-    Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
+    //Sim->Render->setColor({255, 0, 0}, 100);
+    //Sim->Render->drawPieRel(Pos, 500, int(RadToDeg(-Angle) - 7.5), int(RadToDeg(-Angle) + 7.5));
+    //Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * 500), Pos.Y + int(sin(Angle) * 500)});
 
     // Laser
-    Sim->Render->setColor({0, 0, 255}, 100);
-    Sim->Render->drawPieRel(Pos, 400, int(RadToDeg (-Angle) - 135), int(RadToDeg(-Angle) + 135));
+    //Sim->Render->setColor({0, 0, 255}, 100);
+    //Sim->Render->drawPieRel(Pos, 400, int(RadToDeg (-Angle) - 135), int(RadToDeg(-Angle) + 135));
 }
 
 void Drone::update() {
@@ -79,12 +79,11 @@ void Drone::update() {
     SonarModule.calcDist(Sim->Blocks, Pos, Angle);
 
     if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
-        navigation(&WorldRepresentation, &NavigationStruct);
+        //navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
 
-    updateFromFC();
-
+    //updateFromFC();
 }
 
 double calculateVelocity(uint8_t direction_value, const float SPEED) {

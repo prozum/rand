@@ -29,26 +29,27 @@ void Block::update() {
 }
 
 bool Block::intersection(Ray Ray, Vector2D &res) {
-    /*
-    double t1 = (Min.X - Ray.Origin.X) * Ray.Inverted.X;
-    double t2 = (Max.X - Ray.Origin.X) * Ray.Inverted.X;
 
-    double tmin = std::min(t1, t2);
-    double tmax = std::max(t1, t2);
+    double tx1 = (Min.X - Ray.Origin.X) * Ray.Inverted.X;
+    double tx2 = (Max.X - Ray.Origin.X) * Ray.Inverted.X;
 
-    t1 = (Min.Y - Ray.Origin.Y) * Ray.Inverted.Y;
-    t2 = (Max.Y - Ray.Origin.Y) * Ray.Inverted.Y;
+    double tmin = std::min(tx1, tx2);
+    double tmax = std::max(tx1, tx2);
 
-    tmin = std::max(tmin, std::min(t1, t2));
-    tmax = std::min(tmax, std::max(t1, t2));
+    double ty1 = (Min.Y - Ray.Origin.Y) * Ray.Inverted.Y;
+    double ty2 = (Max.Y - Ray.Origin.Y) * Ray.Inverted.Y;
+
+    tmin = std::max(tmin, std::min(ty1, ty2));
+    tmax = std::min(tmax, std::max(ty1, ty2));
 
     //printf("%f, %lf\n", res.X, res.Y);
 
     res = Ray.Direction * tmin;
 
     return tmax > std::max(tmin, 0.0);
-    */
 
+
+    /*
     double tmin = (Min.X - Ray.Origin.X) * Ray.Inverted.X;
     double tmax = (Max.X - Ray.Origin.X) * Ray.Inverted.X;
 
@@ -69,5 +70,7 @@ bool Block::intersection(Ray Ray, Vector2D &res) {
     res.X = Ray.Direction.X * tmin;
     res.Y = Ray.Direction.Y * tymin;
 
+
     return true;
+     */
 }
