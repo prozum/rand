@@ -18,7 +18,7 @@
 #define DRONE_RIGHT_SIDE 270
 #define DRONE_LEFT_SIDE 90
 
-#define SONAR_DEVIATION 5
+#define SENSOR_DEVIATION 5
 #define MIN_DIFF_LASER_SONAR 30
 
 #include <stdint.h>
@@ -68,6 +68,11 @@ typedef enum task_e{
     SEARCHING
 }task_t;
 
+typedef enum side_e{
+    right = 0,
+    left = 1
+}side_t;
+
 typedef struct state_s{
     uint8_t AWallF      : 1; //WALL within 40cm in front
     uint8_t AWallR      : 1; //WALL within 40cm on the right
@@ -91,6 +96,7 @@ typedef struct nav_s{
     uint16_t angle;
     uint8_t posx;
     uint8_t posy;
+    uint8_t previousDistanceToWall;
     uint16_t val;
 }nav_t;
 
@@ -121,6 +127,8 @@ void onMoveup(rep_t *rep, nav_t *nav);
 void onMovedown(rep_t *rep, nav_t *nav);
 void onSearching(rep_t *rep, nav_t *nav);
 uint8_t isSonarReliable(rep_t *rep, state_t state);
+uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav);
+void drawMap (rep_t *rep, nav_t *nav);
 
 void Idle(rep_t *rep, nav_t *nav);
 void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees);
