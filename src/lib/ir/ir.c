@@ -46,6 +46,8 @@ ir_t *IR_init(apin_t pin) {
 
     ir->pin = pin;
     ir->value = 0;
+    
+    return ir;
 }
 
 /**
@@ -65,7 +67,7 @@ uint16_t IR_read(ir_t *ir) {
 /*
  * SAVED FOR ANOTHER TIME; DO NOT DELETE
  * /
-/*
+ *
 float IR_top_to_meters() {
     return 7881.82 * pow(IR_top_state.x_k, -1.086);
 }
