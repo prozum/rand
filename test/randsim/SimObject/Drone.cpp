@@ -103,7 +103,9 @@ void Drone::updateRotation(uint16_t yaw_value) {
     double rotationVelocity = -calculateVelocity(yaw_value, ROTATION_SPEED);
     Angle = Angle + rotationVelocity;
     if (Angle > M_PI * 2)
-        Angle = 0;
+        Angle = Angle - M_PI * 2;
+    else if (Angle < 0)
+        Angle = Angle + M_PI * 2;
 
     //Update gyro with deg/sec
     //FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));

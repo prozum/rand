@@ -18,7 +18,7 @@
 #define DRONE_RIGHT_SIDE 270
 #define DRONE_LEFT_SIDE 90
 
-#define SONAR_DEVIATION 5
+#define SENSOR_DEVIATION 5
 #define MIN_DIFF_LASER_SONAR 30
 #define GRID_SIZE 25 //width/height of a map field in cm
 
@@ -68,6 +68,11 @@ typedef enum task_e{
     ALIGNING
 }task_t;
 
+typedef enum side_e{
+    right = 0,
+    left = 1
+}side_t;
+
 typedef struct state_s{
     uint8_t AWallF      : 1; //WALL within 40cm in front
     uint8_t AWallR      : 1; //WALL within 40cm on the right
@@ -89,10 +94,11 @@ typedef struct nav_s{
     state_t state;
     uint16_t timer;
     task_t task;
-    uint16_t angle; //
-    uint16_t posx; //x-position in room (NOT on the pixel-grid)
-    uint16_t posy; //y-position in room (NOT on the pixel-grid)
-    fix16_t val;
+    uint16_t angle;
+    uint8_t posx;
+    uint8_t posy;
+    uint8_t previousDistanceToWall;
+    uint16_t val;
 }nav_t;
 
 void init_nav(nav_t *nav);
@@ -123,6 +129,8 @@ void onMovedown(rep_t *rep, nav_t *nav);
 void onSearching(rep_t *rep, nav_t *nav);
 void onAligning(rep_t *rep, nav_t *nav);
 uint8_t isSonarReliable(rep_t *rep, state_t state);
+uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav);
+void drawMap (rep_t *rep, nav_t *nav);
 
 void Idle(rep_t *rep, nav_t *nav);
 void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees);
