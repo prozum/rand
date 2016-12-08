@@ -85,8 +85,8 @@ void Drone::update() {
         //navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
-
-    //updateFromFC();
+    rotate_right(&FC);
+    updateFromFC();
 }
 
 double calculateVelocity(uint8_t direction_value, const float SPEED) {
