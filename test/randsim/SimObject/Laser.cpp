@@ -19,31 +19,27 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
 
     for (auto &B : Blocks) {
         Intersects = B.intersection(Rays[0], Res);
-        TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) {
-            Struct.left_value = Res.length();
-        } else {
-            Struct.left_value = 2200;
+        if (Intersects) {
+            TmpDist = Res.length();
+            Struct.left_value = std::min(Struct.left_value, (uint16_t)TmpDist);
         }
 
         Intersects = B.intersection(Rays[1], Res);
-        TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) {
-            Struct.front_value = Res.length();
-        }
-        else {
-            Struct.front_value = 2200;
+        if (Intersects) {
+            TmpDist = Res.length();
+            Struct.front_value = std::min(Struct.front_value, (uint16_t)TmpDist);
         }
 
         Intersects = B.intersection(Rays[2], Res);
-        TmpDist = Res.length();
-        if (Intersects && TmpDist <= Length) {
-            Struct.right_value = Res.length();
-        }
-        else {
-            Struct.right_value = 2200;
+        if (Intersects) {
+            TmpDist = Res.length();
+            Struct.right_value = std::min(Struct.right_value, (uint16_t)TmpDist);
         }
     }
+
+    if (Struct.left_value > Length) Struct.left_value = LASER_MAX_DISTANCE_M * 100;
+    if (Struct.left_value > Length) Struct.front_value = LASER_MAX_DISTANCE_M * 100;
+    if (Struct.left_value > Length) Struct.right_value = LASER_MAX_DISTANCE_M * 100;
 }
 
 void Laser::update(Vector2D Origin, double Angle) {
