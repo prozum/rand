@@ -38,8 +38,8 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
     }
 
     if (Struct.left_value > Length) Struct.left_value = LASER_MAX_DISTANCE_M * 100;
-    if (Struct.left_value > Length) Struct.front_value = LASER_MAX_DISTANCE_M * 100;
-    if (Struct.left_value > Length) Struct.right_value = LASER_MAX_DISTANCE_M * 100;
+    if (Struct.front_value > Length) Struct.front_value = LASER_MAX_DISTANCE_M * 100;
+    if (Struct.right_value > Length) Struct.right_value = LASER_MAX_DISTANCE_M * 100;
 }
 
 void Laser::update(Vector2D Origin, double Angle) {
