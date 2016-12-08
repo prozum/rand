@@ -11,7 +11,7 @@ extern "C" {
 #include "Vector2D.h"
 #include "Simulator.h"
 
-#define ROTATION_SPEED 0.002
+#define ROTATION_SPEED 0.1
 #define STRAFE_SPEED 1 //defines speed in the left, right direction
 #define MOVEMENT_SPEED 1 //defines speed in forward, backward directoin
 #define ALTITUDE_SPEED 0.5 //defines speed in up/down direction

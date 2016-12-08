@@ -14,24 +14,24 @@
 typedef struct kalman_matrix_state_s {
     log_sender source_components;
 
-    float a; //How much we assume the next measurement differs from the previous one
-    float b; //Weight of control-input in next estimate
+    fix16_t a; //How much we assume the next measurement differs from the previous one
+    fix16_t b; //Weight of control-input in next estimate
     matrix_t *C; //Noise scale constant[]
     matrix_t *R; //variance of sensor, i.e. how much a measurement tends to differ from the actual [][]
 
-    float u_k; //Control signal
+    fix16_t u_k; //Control signal
     matrix_t *z_k; //Current observation []
     matrix_t *G_k; //kalman gain vector   []
-    float p_k; //prediction error matrix
+    fix16_t p_k; //prediction error matrix
 
-    float x_k; //State variable
+    fix16_t x_k; //State variable
 
 } kalman_state_matrix;
 
-kalman_state_matrix *kalman_datafusion_init (float a, float b, log_sender component,
+kalman_state_matrix *kalman_datafusion_init (fix16_t a, fix16_t b, log_sender component,
                              matrix_t *C, matrix_t *R);
-void kalman_datafusion_filter (kalman_state_matrix *state, float z_laser, float z_sonar);
-void kalman_datafusion_calibrate (kalman_state_matrix *state, float z_0_laser, float z_0_sonar);
+void kalman_datafusion_filter (kalman_state_matrix *state, fix16_t z_laser, fix16_t z_sonar);
+void kalman_datafusion_calibrate (kalman_state_matrix *state, fix16_t z_0_laser, fix16_t z_0_sonar);
 
 #endif //RAND_KALMAN_DF_H
 

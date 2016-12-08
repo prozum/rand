@@ -3,11 +3,11 @@
 
 #include "core/io.h"
 
-#define MAX_MAP_SIZE EEPROM_SIZE * 4
-
 #define FIELDS_PER_BYTE 4
+#define MAX_MAP_SIZE EEPROM_SIZE * FIELDS_PER_BYTE
 #define FULL_FIELD 3 // for bit masking (11 in binary)
 #define FIELD_SIZE 2
+#define CENTIMETERS_PR_PIXEL 25
 
 #define CHAR_UNVISITED ' '
 #define CHAR_VISITED '\''
@@ -24,6 +24,10 @@ typedef enum fieldstate_e{
     WALL = 2,
     WINDOW = 3
 }fieldstate_t;
+
+typedef struct pixel_coord_s {
+    uint8_t x, y;
+} pixel_coord_t;
 
 void map_init(uint8_t width, uint8_t height, uint8_t clean);
 

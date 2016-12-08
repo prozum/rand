@@ -2,7 +2,7 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(KalmanDatafusionTest);
 
-void KalmanDatafusionTest::assert(kalman_state_matrix *state, const float a, const float b, const float p_0) {
+void KalmanDatafusionTest::assert(kalman_state_matrix *state, const fix16_t a, const fix16_t b, const fix16_t p_0) {
     CPPUNIT_ASSERT_MESSAGE("The state was not initialized", state != NULL);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("a-value not set in state", a, state->a);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("b-value not set in state", b, state->b);

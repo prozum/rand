@@ -27,7 +27,7 @@ inline double DegToRad(double Degrees) {
     return (Degrees / 180.0) * M_PI;
 }
 
-#define NINETY_DEGREES_IN_RAD 0.5 * M_PI
+#define NINETY_DEGREES_IN_RAD M_PI_2
 
 // String functions
 std::string DoubleToStr(double Double, int Precision = 5);
