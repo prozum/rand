@@ -190,7 +190,7 @@ void onTurnleft(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      */
 
-    update_nav_value(&nav->val, rep->fc->gyro);
+    update_nav_value(nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -203,7 +203,7 @@ void onTurnright(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      */
 
-    update_nav_value(&nav->val, rep->fc->gyro);
+    update_nav_value(nav->val, rep->fc->gyro);
 
     if(fix16_to_int(nav->val) == 0){
         move_stop(rep->fc);
@@ -218,7 +218,7 @@ void onTurnaround(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      * nav-val er her mængden af grader der skal drejes.
      */
-    update_nav_value(&nav->val, rep->fc->gyro);
+    update_nav_value(nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
