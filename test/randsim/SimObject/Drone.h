@@ -30,7 +30,6 @@ public:
     Sonar SonarModule;
     Laser LaserModule;
     fc_t FC;
-    laser_t Laser;
     ir_t IrTop;
     ir_t IrBottom;
 
