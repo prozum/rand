@@ -11,18 +11,21 @@ Sonar::Sonar(Vector2D Start, uint32_t RayCount, double Angle, double Span, doubl
     }
 }
 
-void Sonar::calcDist(std::vector<Block> Blocks) {
+void Sonar::calcDist(std::vector<Block> &Blocks, Vector2D& Origin, double Angle) {
     Vector2D Res;
-    double TmpDist;
-    double Dist = -INFINITY;
+    double TmpDist = INFINITY;
+    double Dist = INFINITY;
     this->SonarStruct.valid = 0;
 
-    for (auto Block : Blocks) {
-        for (auto Ray : Rays) {
+    update(Origin, Angle);
+
+    for (auto &Block : Blocks) {
+        for (auto &Ray : Rays) {
             bool Intersects = Block.intersection(Ray, Res);
             TmpDist = Res.length();
-            if (Intersects && TmpDist < Length) {
-                Dist = std::max(TmpDist, Dist);
+            if (Intersects && TmpDist <= Length) {
+                Dist = std::min(TmpDist, Dist);
+                //printf("%lf\n", Dist);
                 SonarStruct.valid = 1;
             }
         }
@@ -32,7 +35,7 @@ void Sonar::calcDist(std::vector<Block> Blocks) {
 }
 
 void Sonar::update(Vector2D& Origin, double Angle) {
-    for (auto Ray : Rays) {
+    for (auto &Ray : Rays) {
         Ray.update(Origin, Angle);
     }
 }
