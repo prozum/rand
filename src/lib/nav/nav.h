@@ -29,6 +29,7 @@
 #include "core/log.h"
 #include "map/map.h"
 #include "libfixmath/fix16.h"
+#include "../task.h"
 
 #define PERIOD_MILLIS 100 //The time between calls of the navigator.
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
@@ -135,7 +136,7 @@ void Searching(rep_t *rep, nav_t *nav);
 void Map_set_point(nav_t *nav, uint8_t x, uint8_t y, fieldstate_t field);
 fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y);
 
-static pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord);
+pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord);
 
 #endif //RAND_NAV_H
 

@@ -16,7 +16,7 @@ extern "C" {
 };
 
 class MatrixTest : public CppUnit::TestCase {
-        CPPUNIT_TEST_SUITE(MatrixTest);
+    CPPUNIT_TEST_SUITE(MatrixTest);
         CPPUNIT_TEST(matrix_get_1x1_ExpectCorrect);
         CPPUNIT_TEST(matrix_get_1x2_ExpectCorrect);
         CPPUNIT_TEST(matrix_get_2x1_ExpectCorrect);
@@ -51,7 +51,7 @@ class MatrixTest : public CppUnit::TestCase {
 
         CPPUNIT_TEST(inv_mat_ValidMatrix_ExpectCorrect);
         CPPUNIT_TEST(inv_mat_InvalidMatrix_ExpectError);
-        CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE_END();
 private:
     matrix_t *ma1, *ma2, *ma3, *ma4, *vec, *vecEmpty;
 
