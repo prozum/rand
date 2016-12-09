@@ -236,11 +236,15 @@ void Simulator::drawInfoBox() {
     int DroneOffset = MouseOffset + PropSpace + ObjSpace;
     Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
     Render->drawText(string("Pos: (") + DoubleToStr(Drn->Pos.X) + " cm, " + DoubleToStr(Drn->Pos.Y) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
-    Render->drawText(string("Angle: ") + DoubleToStr(RadToDeg(Drn->Angle)) + ",", {Indent, DroneOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Angle: ") + DoubleToStr(RadToDeg(Drn->Angle)) + " deg", {Indent, DroneOffset + PropSpace * 2}, BGColor);
     Render->drawText(string("Height: ") + DoubleToStr(Drn->Height) + " cm", {Indent, DroneOffset + PropSpace * 3}, BGColor);
+    Render->drawText(string("Pitch: ") + DoubleToStr(fix16_to_float(Drn->FC.vel->y)) + " cm", {Indent, DroneOffset + PropSpace * 4}, BGColor);
+    Render->drawText(string("Roll: ") + DoubleToStr(fix16_to_float(Drn->FC.vel->x)) + " cm", {Indent, DroneOffset + PropSpace * 5}, BGColor);
+    Render->drawText(string("Throttle: ") + DoubleToStr(fix16_to_float(Drn->FC.vel->z)) + " cm", {Indent, DroneOffset + PropSpace * 6}, BGColor);
+    Render->drawText(string("Yaw: ") + DoubleToStr(fix16_to_float(Drn->FC.gyro)) + " deg", {Indent, DroneOffset + PropSpace * 7}, BGColor);
 
     // Laser info
-    int LaserOffset = DroneOffset + PropSpace * 3 + ObjSpace;
+    int LaserOffset = DroneOffset + PropSpace * 7 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
     Render->drawText(string("Left: ")  + DoubleToStr(Drn->LaserModule.Struct.left_value ) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
     Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.Struct.front_value) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);

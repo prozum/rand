@@ -26,11 +26,11 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI),
 
 void Drone::draw() {
     // Drone
-    Sim->Render->setColor({0, 0, 0});
+    Sim->Render->setColor(BLACK);
     Sim->Render->drawCircleRel(Pos, Size / 2);
 
     // Direction line
-    Sim->Render->setColor({255, 0, 0});
+    Sim->Render->setColor(RED);
     Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * Size / 2), Pos.Y + int(sin(Angle) * Size / 2)});
 
     // Modules
@@ -39,42 +39,6 @@ void Drone::draw() {
 }
 
 void Drone::update() {
-
-    //Uncomment to make the drone fly in a box-shape
-    /*if(counter == 0) {
-        move_stop(&FC);
-        rotate_right(&FC);
-    }
-
-    if(counter == 100) {
-        move_stop(&FC);
-        move_left(&FC);
-    }
-    else if(counter == 200) {
-        move_stop(&FC);
-        move_forward(&FC);
-    }
-    else if (counter == 300) {
-        move_stop(&FC);
-        move_right(&FC);
-    }
-    else if (counter == 400) {
-        move_stop(&FC);
-        move_back(&FC);
-        counter = 0;
-    }
-    counter++;*/
-
-    //Uncomment here to move in circles
-    /*if(counter % 1 == 0) {
-        rotate_right(&FC);
-    }
-    else
-        rotate_stop(&FC);
-    counter++;*/
-
-    //rotate_left(&FC);
-
     SonarModule.calcDist(Sim->Blocks, Pos, Angle);
     LaserModule.calcDist(Sim->Blocks, Pos, Angle);
 
@@ -82,94 +46,99 @@ void Drone::update() {
         //navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
+    move_forward(&FC);
+    move_right(&FC);
+    move_up(&FC);
     rotate_right(&FC);
     updateFromFC();
 }
 
-double calculateVelocity(uint8_t direction_value, const float SPEED) {
-    double dv_f = (double) direction_value;
-    return (dv_f - FC_OFFSET) * SPEED;
+double Drone::calcAcceleration(double PrevVel, double NewVel) {
+    return (NewVel - PrevVel) / (Sim->DeltaTime / MS_PR_SEC);
 }
 
-float Drone::calculateAcceleration(float prev_vel, float new_vel) {
-    return (new_vel - prev_vel) / (Sim->DeltaTime / 1000);
+double Drone::calcVelocity(double DirectionValue, const double Speed) {
+    return (DirectionValue - FC_OFFSET) * Speed;
 }
 
-float calculateStep(const float SPEED, float deltaTime) {
-    return SPEED * (deltaTime / 1000.0f);
+double Drone::calcDistance(const double Speed, double DeltaTime) {
+    return Speed * (DeltaTime / MS_PR_SEC);
 }
 
-void Drone::updateRotation(uint16_t yaw_value) {
+void Drone::updateYaw(uint16_t YawValue) {
     //Check rotation and update, 1 means right, -1 means left and 0 means no rotation
-    double rotationVelocity = -calculateVelocity(yaw_value, calculateStep(ROTATION_SPEED, Sim->DeltaTime));
-    Angle = Angle + rotationVelocity;
+    double YawVelocity = calcVelocity(YawValue, ROTATION_SPEED);
+    double YawDistance = calcDistance(YawVelocity, Sim->DeltaTime);
+
+    Angle += YawDistance;
     if (Angle >= M_PI * 2)
-        Angle = Angle - M_PI * 2;
+        Angle -= M_PI * 2;
     else if (Angle <= 0)
-        Angle = Angle + M_PI * 2;
+        Angle += M_PI * 2;
 
     //Update gyro with deg/sec
-    //FC.gyro = fix16_from_dbl(RadToDeg(rotationVelocity));
-    FC.gyro = fix16_from_dbl(RadToDeg(ROTATION_SPEED * 100));
+    FC.gyro = fix16_from_dbl(RadToDeg(YawVelocity));
 }
 
-void Drone::updateStrafe(uint16_t roll_value) {
-    double strafeVelocity = calculateVelocity(roll_value, calculateStep(STRAFE_SPEED, Sim->DeltaTime));
-    double orthogAngle = Angle + NINETY_DEGREES_IN_RAD + ROTATION_OFFSET;
+void Drone::updateRoll(uint16_t RollValue) {
+    double RollVelocity = calcVelocity(RollValue, STRAFE_SPEED);
+    double RollDistance = calcDistance(RollVelocity, Sim->DeltaTime);
+    //double OrthogAngle = Angle + NINETY_DEGREES_IN_RAD + ROTATION_OFFSET;
+    double OrthogAngle = Angle + NINETY_DEGREES_IN_RAD;
 
-    Pos.X += strafeVelocity * cos(orthogAngle);
-    Pos.Y += strafeVelocity * sin(orthogAngle);
+    Pos.X += cos(OrthogAngle) * RollDistance;
+    Pos.Y += sin(OrthogAngle) * RollDistance;
 
-    float prev_vel = FC.vel->x;
-    FC.acc->x = fix16_from_float(calculateAcceleration(prev_vel, strafeVelocity));
-    FC.vel->x = fix16_from_dbl(strafeVelocity);
+    float PrevVel = FC.vel->x;
+    FC.acc->x = fix16_from_dbl(calcAcceleration(PrevVel, RollVelocity));
+    FC.vel->x = fix16_from_dbl(RollVelocity);
 }
 
-void Drone::updateFrontal(uint16_t pitch_value) {
+void Drone::updatePitch(uint16_t PitchValue) {
     //Calculate the direction of movement
-    double moveVelocity = -calculateVelocity(pitch_value, calculateStep(MOVEMENT_SPEED, Sim->DeltaTime));
-
-    double conv_angle = Angle + ROTATION_OFFSET;
+    double PitchVelocity = calcVelocity(PitchValue, MOVEMENT_SPEED);
+    double PitchDistance = calcDistance(PitchVelocity, Sim->DeltaTime);
 
     //Calculate the new position of the drone
-    Pos.X += cos(conv_angle) * moveVelocity;
-    Pos.Y += sin(conv_angle) * moveVelocity;
+    Pos.X += cos(Angle) * PitchDistance;
+    Pos.Y += sin(Angle) * PitchDistance;
 
-    float prev_vel = FC.vel->y;
-    FC.acc->y = fix16_from_float(calculateAcceleration(prev_vel, moveVelocity));
-    FC.vel->y = fix16_from_dbl(moveVelocity);
+    float PrevVel = FC.vel->y;
+    FC.acc->y = fix16_from_dbl(calcAcceleration(PrevVel, PitchVelocity));
+    FC.vel->y = fix16_from_dbl(PitchVelocity);
 }
 
-void Drone::updateHeight(uint16_t throttle_value) {
+void Drone::updateThrottle(uint16_t ThrottleValue) {
     //Calculate the altitude velocity based on input from FC
-    double altitudeVelocity = calculateVelocity(throttle_value, calculateStep(ALTITUDE_SPEED, Sim->DeltaTime));
+    double ThrottleVelocity = calcVelocity(ThrottleValue, ALTITUDE_SPEED);
+    double ThrottleDistance = calcDistance(ThrottleVelocity, Sim->DeltaTime);
 
     //Update height field and IR-sensors
-    Height += altitudeVelocity;
-    uint16_t dist_to_floor = Height;
-    if(dist_to_floor >= IR_MAX_DIST_CM)
+    Height += ThrottleDistance;
+    uint16_t DistToFloor = Height;
+    if(DistToFloor >= IR_MAX_DIST_CM)
         IrBottom.value = IR_MAX_DIST_CM;
-    else if (dist_to_floor < IR_MIN_DIST_CM)
+    else if (DistToFloor < IR_MIN_DIST_CM)
         IrBottom.value = IR_MIN_DIST_CM;
     else
-        IrBottom.value = dist_to_floor;
+        IrBottom.value = DistToFloor;
 
-    uint16_t dist_to_ceil = ROOM_HEIGHT - Height;
-    if(dist_to_ceil >= IR_MAX_DIST_CM)
+    uint16_t DistToCeil = ROOM_HEIGHT - Height;
+    if(DistToCeil >= IR_MAX_DIST_CM)
         IrTop.value = IR_MAX_DIST_CM;
-    else if (dist_to_ceil < IR_MIN_DIST_CM)
+    else if (DistToCeil < IR_MIN_DIST_CM)
         IrTop.value = IR_MIN_DIST_CM;
     else
-        IrTop.value = dist_to_ceil;
+        IrTop.value = DistToCeil;
 
-    float prev_vel = FC.vel->z;
-    FC.acc->z = fix16_from_float(calculateAcceleration(prev_vel, altitudeVelocity));
-    FC.vel->z = fix16_from_dbl(altitudeVelocity);
+    float PrevVel = FC.vel->z;
+    FC.acc->z = fix16_from_dbl(calcAcceleration(PrevVel, ThrottleVelocity));
+    FC.vel->z = fix16_from_dbl(ThrottleVelocity);
 }
 
 void Drone::updateFromFC() {
-    updateRotation(FC.yaw);
-    updateFrontal(FC.pitch);
-    updateStrafe(FC.roll);
-    updateHeight(FC.throttle);
+    updateYaw(FC.yaw);
+    updatePitch(FC.pitch);
+    updateRoll(FC.roll);
+    updateThrottle(FC.throttle);
 }

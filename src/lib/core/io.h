@@ -22,6 +22,8 @@ extern const uint16_t port_to_input[];
 #include "m1280.h"
 #endif
 
+#define MS_PR_SEC 1000
+
 typedef enum pin_mode_e {
     INPUT = 0,
     OUTPUT = 1
