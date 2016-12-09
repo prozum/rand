@@ -9,7 +9,7 @@
 
 #define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
 
-#if !MOCK
+#ifndef MOCK
 #include <avr/io.h>
 #endif
 

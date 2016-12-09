@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#if !MOCK
+#ifndef MOCK
 extern const uint16_t port_to_input[];
 
 #include <avr/io.h>

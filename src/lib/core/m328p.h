@@ -15,7 +15,7 @@ typedef enum reg_e {
 } reg_t;
 
 
-#if !MOCK
+#ifndef MOCK
 #define BAUD 9600
 
 #include <util/setbaud.h>
