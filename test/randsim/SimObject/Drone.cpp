@@ -73,7 +73,7 @@ void Drone::updateYaw(uint16_t YawValue) {
         Angle += M_PI * 2;
 
     //Update gyro with deg/sec
-    FC.gyro = fix16_from_dbl(RadToDeg(YawVelocity));
+    FC.gyro = fix16_from_dbl(RadToDeg(abs(YawVelocity)));
 }
 
 void Drone::updateRoll(uint16_t RollValue) {

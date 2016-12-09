@@ -43,7 +43,6 @@ sonar_t *sonar;
 laser_t *laser;
 ir_t *top_ir;
 ir_t *bottom_ir;
-position_t *recent_position;
 fc_t *fc;
 
 void task_timer_setup();

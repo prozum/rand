@@ -35,10 +35,6 @@
 
 #define MAP_MIDDLE UINT16_MAX / 2
 
-typedef struct position_s {
-    /*Fill here*/
-} position_t;
-
 typedef struct rep_s{
     fc_t *fc;
     laser_t *laser;
