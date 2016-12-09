@@ -19,7 +19,7 @@
 #define TWO_MS 125 // defines 2 millisecond
 #define MAJOR_CYCLE 6250 // 100 ms
 #define MINOR_CYCLE 1125
-#define SCHEUDLER_OVERFLOW (MAJOR_CYCLE + ONE_MS) // 100 ms + 1 ms
+#define SCHEDULER_OVERFLOW (MAJOR_CYCLE + ONE_MS) // 100 ms + 1 ms
 
 #define TIMER_TICK_TO_MILIS(x) ((x) / ONE_MS)
 
