@@ -13,7 +13,7 @@ extern "C" {
 #include "Laser.h"
 
 // All speeds are measured in cm (or rads)/sec
-#define ROTATION_SPEED 3.0
+#define ROTATION_SPEED M_PI/2
 #define STRAFE_SPEED   20.0 // Defines speed in the left, right direction
 #define MOVEMENT_SPEED 20.0 // Defines speed in forward, backward direction
 #define ALTITUDE_SPEED 10.0 // Defines speed in up/down direction
