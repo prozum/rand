@@ -29,7 +29,6 @@
 #include "core/log.h"
 #include "map/map.h"
 #include "libfixmath/fix16.h"
-#include "../task.h"
 
 #define PERIOD_MILLIS 100 //The time between calls of the navigator.
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS

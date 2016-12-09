@@ -1,4 +1,5 @@
 #include "nav.h"
+#include "../task.h"
 
 uint8_t CheckAWallF(rep_t *rep, state_t state){
     if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) && isSonarReliable(rep, state)){
