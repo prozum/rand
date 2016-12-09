@@ -1,5 +1,4 @@
 #include "nav.h"
-#include "../task.h"
 
 uint8_t CheckAWallF(rep_t *rep, state_t state){
     if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) && isSonarReliable(rep, state)){
@@ -405,15 +404,33 @@ uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav){
 #define LOWEST_X_ORG (MAP_MIDDLE) - (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
 #define HIGHEST_X_ORG (MAP_MIDDLE) + (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
 pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord) {
-    if(x_coord < LOWEST_X_ORG || x_coord > HIGHEST_X_ORG) {
-        WARNING(SENDER_MAP, "align_to_pixel: x-coord out of bounds");
-    }
-    if(y_coord < LOWEST_Y_ORG || y_coord > HIGHEST_Y_ORG) {
-        WARNING(SENDER_MAP, "align_to_pixel: y-coord out of bounds");
-    }
+    uint8_t x_pixel, y_pixel;
 
-    uint8_t x_pixel = (x_coord - LOWEST_X_ORG) / CENTIMETERS_PR_PIXEL;
-    uint8_t y_pixel = (y_coord - LOWEST_Y_ORG) / CENTIMETERS_PR_PIXEL;
+    uint16_t y_low = (uint16_t) LOWEST_Y_ORG;
+    uint16_t x_low = (uint16_t) LOWEST_X_ORG;
+
+    if(x_coord < LOWEST_X_ORG)
+    {
+        WARNING(SENDER_MAP, "align_to_pixel: x-coord out of bounds");
+        x_pixel = 0;
+    }
+    else if (x_coord > HIGHEST_X_ORG) {
+        WARNING(SENDER_MAP, "align_to_pixel: x-coord out of bounds");
+        x_pixel = MAP_HEIGHT;
+    }
+    else
+        x_pixel =(x_coord - y_low) / CENTIMETERS_PR_PIXEL;
+
+    if(y_coord < LOWEST_Y_ORG) {
+        WARNING(SENDER_MAP, "align_to_pixel: y-coord out of bounds");
+        y_pixel = 0;
+    }
+    else if(y_coord > HIGHEST_Y_ORG) {
+        WARNING(SENDER_MAP, "align_to_pixel: y-coord out of bounds");
+        y_pixel = MAP_WIDTH;
+    }
+    else
+        y_pixel = (y_coord - x_low) / CENTIMETERS_PR_PIXEL;
 
     pixel_coord_t coord = { .x = x_pixel, .y = y_pixel};
     return coord;

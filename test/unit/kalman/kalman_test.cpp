@@ -44,18 +44,20 @@ void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev() {
 
 void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev() {
     kalman_state *state;
-    fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_k = fix16_from_int(4), x_prev = fix16_from_int(10);
+    fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_k = fix16_from_int(400), x_prev = fix16_from_int(200);
     state = kalman_init(a, r, SENDER_BOARD);
     state->x_k = x_prev;
 
     kalman_run(state, z_k);
 
-    CPPUNIT_ASSERT_MESSAGE("The x_k value was supposed to increase.", state->x_k < x_prev);
+    std::string msg = "x_k was supposed to increase. x_k = " + std::to_string(fix16_to_float(state->x_k)) +
+            ", x_prev = " + std::to_string(fix16_to_float(x_prev));
+    CPPUNIT_ASSERT_MESSAGE(msg, state->x_k > x_prev);
 }
 
 void KalmanTest::KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0() {
     kalman_state *state;
-    fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_0 = fix16_from_int(6);
+    fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_0 = fix16_from_int(60);
     fix16_t x_k = fix16_from_int(10);
     state = kalman_init(a, r, SENDER_BOARD);
     state->x_k = x_k;
@@ -63,5 +65,7 @@ void KalmanTest::KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0() {
 
     float absDiff = std::abs(state->x_k - state->z_k);
 
-    CPPUNIT_ASSERT_MESSAGE("x_k should be close to z_0.", absDiff < r);
+    std::string msg = "x_k should be close to z_0, x_k = " + std::to_string(fix16_to_float(state->x_k)) + ", z_0 = "
+                      + std::to_string(fix16_to_float(z_0));
+    CPPUNIT_ASSERT_MESSAGE(msg, absDiff < r);
 }

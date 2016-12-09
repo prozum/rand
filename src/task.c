@@ -27,7 +27,7 @@ void task_timer_setup()
 
     // set prescaler of 256
     TCCR1B |= (1 << CS12);
-    ICR1 = OVERFLOW;
+    ICR1 = SCHEDULER_OVERFLOW;
 
     // enable interrupts
     sei();
