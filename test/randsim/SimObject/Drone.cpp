@@ -66,7 +66,7 @@ void Drone::updateYaw(uint16_t YawValue) {
     double YawVelocity = calcVelocity(YawValue, ROTATION_SPEED);
     double YawDistance = calcDistance(YawVelocity, Sim->DeltaTime);
 
-    Angle += YawDistance;
+    Angle -= YawDistance;
     if (Angle >= M_PI * 2)
         Angle -= M_PI * 2;
     else if (Angle <= 0)
