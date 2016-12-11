@@ -12,7 +12,7 @@ urgent chan run;
 
 clock time;</declaration>
 	<template>
-		<name x="5" y="5">TASK</name>
+		<name x="5" y="5">SENSOR</name>
 		<parameter>const id_t id, const int T, const int C</parameter>
 		<declaration>// Place local declarations here.
 clock t, c;</declaration>
@@ -163,11 +163,11 @@ system PrA, PrB, PrC, PrD, PrE, CPU;
 
 */
 
-SonarTask = TASK(1, 100, 10);
-LaserTask = TASK(2,100,5);
+SonarTask = SENSOR(1, 100, 10);
+LaserTask = SENSOR(2,100,5);
+IRBottomTask = SENSOR(4,100,2);
+IRTopTask = SENSOR(5,100,2);
 PWMTask = PWM(3,20,2);
-IRBottomTask = TASK(4,100,2);
-IRTopTask = TASK(5,100,2);
 
 system SonarTask, LaserTask, PWMTask, IRBottomTask, IRTopTask, CPU;</system>
 	<queries>
