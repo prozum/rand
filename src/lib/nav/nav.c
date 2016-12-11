@@ -1,8 +1,18 @@
 #include "nav.h"
 #include "../task.h"
 
-fix16_t fix_rad_angle(int16_t degrees) {
-    return fix16_deg_to_rad(fix16_from_int(ANGLE_RESOLUTION * degrees));
+/**
+ * Convert from the angle representation of this project (100th subdivisions of each angle) to dix16 radians
+ * @param degrees_100th the angle in 100th subdivisions of an angle
+ * @return the degree in fix16 radians
+ */
+fix16_t fix_rad_angle(uint16_t degrees_100th) {
+    if(degrees_100th >= (uint16_t) 360 * INV_ANGLE_RESOLUTION) {
+        WARNING(SENDER_MAP, "fix_rad_angle: Angle > 360 degrees");
+        return fix16_from_int(-1);
+    }
+
+    return fix16_deg_to_rad(fix16_from_int(ANGLE_RESOLUTION * degrees_100th));
 }
 
 /**
@@ -22,18 +32,21 @@ fix16_t calculate_y_distance (uint16_t angle, fix16_t distance) {
  * @return the distance on the x-axis
  */
 fix16_t calculate_x_distance (uint16_t angle, fix16_t distance) {
-    return fix16_mul(fix16_cos(fix_rad_angle(angle)), distance);
+    fix16_t cos_angle = fix16_cos(fix_rad_angle(angle));
+    return fix16_mul(cos_angle, distance);
 }
 
 void update_angle(nav_t *nav, fix16_t degrees) {
-    nav->angle = nav->angle + fix16_to_int(fix16_mul(degrees, INV_ANGLE_RESOLUTION));
-    if(nav->angle > 360 * INV_ANGLE_RESOLUTION) {
-        nav->angle = nav->angle % 360 * INV_ANGLE_RESOLUTION;
+    //Must use a 32-bit int here, because degrees may be between -36000 and 36000
+    int32_t converted_degrees = fix16_to_int(degrees) * INV_ANGLE_RESOLUTION;
+    int32_t resulting_angle = (int32_t) nav->angle + converted_degrees;
+    if(resulting_angle >= (uint16_t) 360 * INV_ANGLE_RESOLUTION) {
+        resulting_angle = resulting_angle % 360 * INV_ANGLE_RESOLUTION;
     }
-    //The angle counter has underflown, reset it
-    else if(nav->angle > 60000) {
-        nav->angle = nav->angle + 360 * INV_ANGLE_RESOLUTION;
+    else if(resulting_angle < 0) {
+        resulting_angle = resulting_angle + 360 * INV_ANGLE_RESOLUTION;
     }
+    nav->angle = (uint16_t) resulting_angle;
 }
 
 uint8_t CheckAWallF(rep_t *rep, state_t state){
@@ -212,7 +225,7 @@ void onIdle(rep_t *rep, nav_t *nav) {
 
 void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
     fix16_t result = fix16_sub(*nav_val, fix16_div(velocity, fix16_from_int(PERIODS_PER_SEC)));
-    if(fix16_to_int(result) < 0)
+    if(result < 0)
         *nav_val = fix16_from_int(0);
     else
         *nav_val = result;
@@ -273,7 +286,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
                                                                                     fix16_from_int(PERIODS_PER_SEC))));
     nav->posy = nav->posy + fix16_to_int(calculate_y_distance(nav->angle, fix16_div(rep->fc->vel->y,
                                                                                     fix16_from_int(PERIODS_PER_SEC))));
-    draw_visited(nav);
+    map_set_position(nav, VISITED);
 
     if(!checkAllignmentToWall(rep, nav)){
         fix16_t diffWall = 0, directionDistance = rep->fc->vel->y * fix16_from_int(PERIOD_MILLIS), degreesToTurn = 0;
@@ -392,11 +405,24 @@ void Aligning(rep_t *rep, nav_t *nav){
     //todo: needs implementing
 }
 
-void Map_set_point(nav_t *nav, uint8_t x, uint8_t y,fieldstate_t field){
+void map_set_point(uint8_t x, uint8_t y,fieldstate_t field){
+    map_write(x, y, field);
 }
 
-fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y){
-    return UNVISITED;
+void map_set_position(nav_t *nav, fieldstate_t field) {
+    pixel_coord_t pixel = align_to_pixel(nav->posx, nav->posy);
+
+    map_write(pixel.x, pixel.y, field);
+}
+
+fieldstate_t map_check_point(uint8_t x, uint8_t y){
+    return map_read(x, y);
+}
+
+fieldstate_t map_check_position(nav_t *nav) {
+    pixel_coord_t pixel = align_to_pixel(nav->posx, nav->posy);
+
+    return map_read(pixel.x, pixel.y);
 }
 
 uint8_t isSonarReliable(rep_t *rep, state_t state){
@@ -417,8 +443,6 @@ uint8_t isSonarReliable(rep_t *rep, state_t state){
     }
 }
 
-
-#define MIN_TAKEACITON_RANGE 20
 uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav){
     
     if (nav->state.BlockedR){
@@ -466,7 +490,7 @@ pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord) {
         x_pixel = MAP_HEIGHT;
     }
     else
-        x_pixel =(x_coord - y_low) / CENTIMETERS_PR_PIXEL;
+        x_pixel = (x_coord - y_low) / CENTIMETERS_PR_PIXEL;
 
     if(y_coord < LOWEST_Y_ORG) {
         WARNING(SENDER_MAP, "align_to_pixel: y-coord out of bounds");
@@ -503,12 +527,6 @@ void draw_side(rep_t *rep, nav_t *nav, const int16_t SIDE_OFFSET, fieldstate_t s
     pixel_coord_t pix_obst = align_to_pixel(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
 
     map_write(pix_obst.x, pix_obst.y, state);
-}
-
-void draw_visited(nav_t *nav) {
-    pixel_coord_t pixel_coord = align_to_pixel(nav->posx, nav->posy);
-
-    map_write(pixel_coord.x, pixel_coord.y, VISITED);
 }
 
 void drawMap (rep_t *rep, nav_t *nav){

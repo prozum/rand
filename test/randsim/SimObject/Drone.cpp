@@ -1,6 +1,6 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI),
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0),
                                        SonarModule(Pos, 57, Angle, DegToRad(15), 220),
                                        LaserModule(Pos, 400.0, Angle),
                                        Height(0) {

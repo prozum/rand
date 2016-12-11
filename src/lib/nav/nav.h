@@ -129,11 +129,17 @@ void Moveup(rep_t *rep, nav_t *nav);
 void Movedown(rep_t *rep, nav_t *nav);
 void Searching(rep_t *rep, nav_t *nav);
 
-void Map_set_point(nav_t *nav, uint8_t x, uint8_t y, fieldstate_t field);
-fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y);
+void map_set_point(uint8_t x, uint8_t y, fieldstate_t field);
+void map_set_position(nav_t *nav, fieldstate_t field);
+fieldstate_t map_check_point(uint8_t x, uint8_t y);
+fieldstate_t map_check_position(nav_t *nav);
 
 pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord);
-void draw_visited(nav_t *nav);
+
+fix16_t fix_rad_angle(uint16_t degrees_100th);
+fix16_t calculate_y_distance(uint16_t degrees_100th, fix16_t distance);
+fix16_t calculate_x_distance(uint16_t degrees_100th, fix16_t distance);
+void update_angle(nav_t *nav, fix16_t degrees);
 
 #endif //RAND_NAV_H
 
