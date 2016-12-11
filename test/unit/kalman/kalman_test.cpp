@@ -66,6 +66,6 @@ void KalmanTest::KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0() {
     float absDiff = std::abs(state->x_k - state->z_k);
 
     std::string msg = "x_k should be close to z_0, x_k = " + std::to_string(fix16_to_float(state->x_k)) + ", z_0 = "
-                      + std::to_string(fix16_to_float(z_0));
+                      + std::to_string(fix16_to_float(z_0)) + ", r = " + std::to_string(fix16_to_float(state->r));
     CPPUNIT_ASSERT_MESSAGE(msg, absDiff < r);
 }
