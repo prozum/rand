@@ -1,6 +1,41 @@
 #include "nav.h"
 #include "../task.h"
 
+fix16_t fix_rad_angle(int16_t degrees) {
+    return fix16_deg_to_rad(fix16_from_int(ANGLE_RESOLUTION * degrees));
+}
+
+/**
+ * Calculates the distance on the y-axis given an angle and a distance
+ * @param angle in 1/100 degrees
+ * @param distance in cm
+ * @return the distance on the y-axis
+ */
+fix16_t calculate_y_distance (uint16_t angle, fix16_t distance) {
+    return fix16_mul(fix16_sin(fix_rad_angle(angle)), distance);
+}
+
+/**
+ * Calculates the distance on the x-axis given an angle a distance
+ * @param angle in 1/100 degrees
+ * @param distance in cm
+ * @return the distance on the x-axis
+ */
+fix16_t calculate_x_distance (uint16_t angle, fix16_t distance) {
+    return fix16_mul(fix16_cos(fix_rad_angle(angle)), distance);
+}
+
+void update_angle(nav_t *nav, fix16_t degrees) {
+    nav->angle = nav->angle + fix16_to_int(fix16_mul(degrees, INV_ANGLE_RESOLUTION));
+    if(nav->angle > 360 * INV_ANGLE_RESOLUTION) {
+        nav->angle = nav->angle % 360 * INV_ANGLE_RESOLUTION;
+    }
+    //The angle counter has underflown, reset it
+    else if(nav->angle > 60000) {
+        nav->angle = nav->angle + 360 * INV_ANGLE_RESOLUTION;
+    }
+}
+
 uint8_t CheckAWallF(rep_t *rep, state_t state){
     if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) && isSonarReliable(rep, state)){
         return 1;
@@ -109,8 +144,8 @@ void init_nav(nav_t *nav){
     nav->previousDistanceToWall = 0;
 
     //Assmumes drone to start in the middle of the room.
-    nav->posx = 800;
-    nav->posy = 800;
+    nav->posx = MAP_MIDDLE;
+    nav->posy = MAP_MIDDLE;
 
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
@@ -189,6 +224,8 @@ void onTurnleft(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      */
 
+    update_angle(nav, fix16_div(rep->fc->gyro, PERIODS_PER_SEC));
+
     update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
         move_stop(rep->fc);
@@ -202,8 +239,9 @@ void onTurnright(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      */
 
-    update_nav_value(&nav->val, rep->fc->gyro);
+    update_angle(nav, - fix16_div(rep->fc->gyro, PERIODS_PER_SEC));
 
+    update_nav_value(&nav->val, rep->fc->gyro);
     if(fix16_to_int(nav->val) == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -216,8 +254,10 @@ void onTurnaround(rep_t *rep, nav_t *nav){
      * Set angle aswell, on finished turning maybe?
      * nav-val er her mængden af grader der skal drejes.
      */
+
     update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
+        update_angle(nav, fix16_from_int(180));
         move_stop(rep->fc);
         nav->task = IDLE;
     }
@@ -228,6 +268,12 @@ void onMoveforward(rep_t *rep, nav_t *nav){
      * or simply draw on the map here
      * In either case set task to IDLE or start new one when done.
      */
+    //calculate the current position from the current position and angle
+    nav->posx = nav->posx + fix16_to_int(calculate_x_distance(nav->angle, fix16_div(rep->fc->vel->y,
+                                                                                    fix16_from_int(PERIODS_PER_SEC))));
+    nav->posy = nav->posy + fix16_to_int(calculate_y_distance(nav->angle, fix16_div(rep->fc->vel->y,
+                                                                                    fix16_from_int(PERIODS_PER_SEC))));
+    draw_visited(nav);
 
     if(!checkAllignmentToWall(rep, nav)){
         fix16_t diffWall = 0, directionDistance = rep->fc->vel->y * fix16_from_int(PERIOD_MILLIS), degreesToTurn = 0;
@@ -261,7 +307,7 @@ void onMoveforward(rep_t *rep, nav_t *nav){
     if(nav->state.AWallF){
         move_stop(rep->fc);
         nav->val = 0;
-        nav->posx+= 25;
+
         nav->task = IDLE;
     }
 }
@@ -437,53 +483,52 @@ pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord) {
     return coord;
 }
 
-fix16_t fix_rad_angle(int16_t degrees) {
-    return fix16_deg_to_rad(fix16_from_int(ANGLE_RESOLUTION * degrees));
-}
-
 void draw_front(rep_t *rep, nav_t *nav, fieldstate_t state) {
     //Calculate the x-offset with cos(angle) * laser
-    fix16_t x_offset = fix16_mul(fix16_cos(fix_rad_angle(nav->angle)),
-                                 fix16_from_int(rep->laser->front_value));
+    fix16_t x_offset = calculate_x_distance(nav->angle, fix16_from_int(rep->laser->front_value));
     //Calculate the y-offset with sin(angle) * laser
-    fix16_t y_offset = fix16_mul(fix16_sin(fix_rad_angle(nav->angle)),
-                                 fix16_from_int(rep->laser->front_value));
+    fix16_t y_offset = calculate_y_distance(nav->angle, fix16_from_int(rep->laser->front_value));
+
     //And convert to pixel-coord
-    pixel_coord_t pix_win = align_to_pixel(nav->posx + x_offset, nav->posy + y_offset);
+    pixel_coord_t pix_win = align_to_pixel(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
 
     map_write(pix_win.x, pix_win.y, state);
 }
 
 void draw_side(rep_t *rep, nav_t *nav, const int16_t SIDE_OFFSET, fieldstate_t state) {
-    //Calculate the x-offset with cos(angle) * laser
-    fix16_t x_offset = fix16_mul(fix16_cos(fix_rad_angle(nav->angle + SIDE_OFFSET)),
-                                 fix16_from_int(rep->laser->right_value));
-    //Calculate the y-offset with sin(angle) * laser
-    fix16_t y_offset = fix16_mul(fix16_sin(fix_rad_angle(nav->angle + SIDE_OFFSET)),
-                                 fix16_from_int(rep->laser->right_value));
+    fix16_t x_offset = calculate_x_distance(nav->angle, fix16_from_int(rep->laser->right_value));
+    fix16_t y_offset = calculate_y_distance(nav->angle, fix16_from_int(rep->laser->right_value));
+
     //And convert to pixel-coord
-    pixel_coord_t pix_obst = align_to_pixel(nav->posx + x_offset, nav->posy + y_offset);
+    pixel_coord_t pix_obst = align_to_pixel(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
 
     map_write(pix_obst.x, pix_obst.y, state);
 }
 
+void draw_visited(nav_t *nav) {
+    pixel_coord_t pixel_coord = align_to_pixel(nav->posx, nav->posy);
+
+    map_write(pixel_coord.x, pixel_coord.y, VISITED);
+}
+
 void drawMap (rep_t *rep, nav_t *nav){
-    uint16_t mes_diff = rep->laser->front_value - rep->sonar->value;
-    //Draw map in direct front of the drone
-    if(mes_diff > WINDOW_RECON_THRESHOLD) {
-        draw_front(rep, nav, WINDOW);
-    }
-    else if (rep->laser->front_value == rep->sonar->value) {
-        draw_front(rep, nav, WALL);
-    }
 
-    if (nav->state.AWallR && rep->laser->right_value <= MIN_RANGE)
-    {
-        draw_side(rep, nav, DRONE_RIGHT_SIDE, WALL);
-    }
+    if((rep->sonar->value < MIN_RANGE || rep->laser->front_value <=MIN_RANGE)
+       && rep->laser->front_value != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
+        uint16_t mes_diff = abs(rep->laser->front_value - rep->sonar->value);
+        //Draw map in direct front of the drone
+        if (mes_diff > WINDOW_RECON_THRESHOLD) {
+            draw_front(rep, nav, WINDOW);
+        } else {
+            draw_front(rep, nav, WALL);
+        }
 
-    if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE)
-    {
-        draw_side(rep, nav, DRONE_LEFT_SIDE, WALL);
+        if (nav->state.AWallR && rep->laser->right_value <= MIN_RANGE) {
+            draw_side(rep, nav, DRONE_RIGHT_SIDE, WALL);
+        }
+
+        if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE) {
+            draw_side(rep, nav, DRONE_LEFT_SIDE, WALL);
+        }
     }
 }

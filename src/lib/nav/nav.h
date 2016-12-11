@@ -6,11 +6,7 @@
 #define NO_ACCELERATION 1
 #define MAX_POSITIVE_ACCELERATION 2
 //This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
-#define WINDOW_RECON_THRESHOLD 0.5
-#define MIN_SAFE_DIST 0.4
-
-#define DATAFUSION_FILTERS 1
-#define SENSOR_FILTERS 4
+#define WINDOW_RECON_THRESHOLD 50
 #define MIN_RANGE 60
 
 #define SONAR_DEG 15
@@ -81,6 +77,7 @@ typedef struct state_s{
 void update_state(state_t *state, rep_t *rep);
 
 #define ANGLE_RESOLUTION 0.01 //means that each degree is split in 100
+#define INV_ANGLE_RESOLUTION 100 //One degree is 100 steps on the scale
 typedef struct nav_s{
     state_t state;
     uint16_t timer;
@@ -136,6 +133,7 @@ void Map_set_point(nav_t *nav, uint8_t x, uint8_t y, fieldstate_t field);
 fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y);
 
 pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord);
+void draw_visited(nav_t *nav);
 
 #endif //RAND_NAV_H
 
