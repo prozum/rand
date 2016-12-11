@@ -42,19 +42,21 @@ void kalman_run(kalman_state *state, fix16_t z_k) {
     state->g_k = fix16_div(state->p_k, fix16_add(state->p_k, state->r));
 
     // x̂_k = x̂_k + g_k * (z_k − x̂_k)
-    state->x_k = fix16_mul(fix16_add(state->x_k, state->g_k), fix16_add(state->z_k, state->x_k));
+    state->x_k = fix16_add(state->x_k, fix16_mul(state->g_k, fix16_sub(state->z_k, state->x_k)));
 
     // p_k = (1 − g_k) * p_k
-    state->p_k = fix16_mul(fix16_sub(1, state->g_k), state->p_k);
-    state->p_k = (1 - state->g_k) * state->p_k;
+    state->p_k = fix16_mul(fix16_sub(fix16_from_int(1), state->g_k), state->p_k);
 }
 
 void kalman_calibrate(kalman_state *initial_state, fix16_t z_0) {
     uint8_t calibration_done = 0;
+
+    //Run the filter until the difference between first reading and estimated value
+    //is less than the covariance of the sensor
     while (!calibration_done) {
         kalman_run(initial_state, z_0);
 
-        fix16_t diff = fix16_sub(initial_state->x_k, z_0);
+        fix16_t diff = fix16_abs(fix16_sub(initial_state->x_k, z_0));
 
         if (diff <= initial_state->r)
             calibration_done = 1;

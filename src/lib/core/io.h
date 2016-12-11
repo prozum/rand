@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#if !MOCK
+#ifndef MOCK
 extern const uint16_t port_to_input[];
 
 #include <avr/io.h>
@@ -21,6 +21,8 @@ extern const uint16_t port_to_input[];
 #elif defined (__AVR_ATmega1280__)
 #include "m1280.h"
 #endif
+
+#define MS_PR_SEC 1000
 
 typedef enum pin_mode_e {
     INPUT = 0,

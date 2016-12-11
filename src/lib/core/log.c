@@ -90,7 +90,7 @@ void LOG(log_sender sender, const char *msg) {
  * @param msg  is the warning to log
  */
 void WARNING(log_sender sender, const char *msg) {
-#if !MOCK
+#ifndef MOCK
     if (!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
         strcpy(tmp, msg);
@@ -109,7 +109,7 @@ void WARNING(log_sender sender, const char *msg) {
  * @param msg is the error to log
  */
 void SERIOUS_WARNING(log_sender sender, const char *msg) {
-#if !MOCK
+#ifndef MOCK
     if (!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
         strcpy(tmp, msg);
@@ -127,7 +127,7 @@ void SERIOUS_WARNING(log_sender sender, const char *msg) {
  * @param msg is the error to log.
  */
 void ERROR(const char *msg) {
-#if !MOCK
+#ifndef MOCK
     char cpy[strlen(msg) + PREFIX_SIZE];
     strcpy(cpy, msg);
 

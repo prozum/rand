@@ -130,10 +130,10 @@ void kalman_datafusion_filter(kalman_state_matrix *state, fix16_t z_laser, fix16
 
 void kalman_datafusion_calibrate(kalman_state_matrix *state, fix16_t z_0_laser, fix16_t z_0_sonar) {
     //Declare variables for average variance of sensors, readings and a flag to indicate if the calibration is done.
-    fix16_t diff = 0;
-    uint8_t calibrated = 0;
+    fix16_t diff;
+    uint8_t calibrated = fix16_from_int(0);
     fix16_t avg = fix16_div (fix16_add(z_0_laser, z_0_sonar), fix16_from_int(2));
-    fix16_t r_avg = 0;
+    fix16_t r_avg = fix16_from_int(0);
 
     int i, j;
     for (i = 0; i < DATAFUSION_UNITS; ++i) {
@@ -141,7 +141,7 @@ void kalman_datafusion_calibrate(kalman_state_matrix *state, fix16_t z_0_laser, 
             r_avg = fix16_add(r_avg, matrix_get(state->R, i, j));
         }
     }
-    r_avg = fix16_div(r_avg, fix16_mul(2, DATAFUSION_UNITS));
+    r_avg = fix16_div(r_avg, fix16_mul(fix16_from_int(2), fix16_from_int(DATAFUSION_UNITS)));
 
     //Run the filter until the value is lower than the average variance.
     while(!calibrated) {

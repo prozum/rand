@@ -6,11 +6,7 @@
 #define NO_ACCELERATION 1
 #define MAX_POSITIVE_ACCELERATION 2
 //This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
-#define WINDOW_RECON_THRESHOLD 0.5
-#define MIN_SAFE_DIST 0.4
-
-#define DATAFUSION_FILTERS 1
-#define SENSOR_FILTERS 4
+#define WINDOW_RECON_THRESHOLD 50
 #define MIN_RANGE 60
 
 #define SONAR_DEG 15
@@ -34,10 +30,6 @@
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 
 #define MAP_MIDDLE UINT16_MAX / 2
-
-typedef struct position_s {
-    /*Fill here*/
-} position_t;
 
 typedef struct rep_s{
     fc_t *fc;
@@ -85,6 +77,7 @@ typedef struct state_s{
 void update_state(state_t *state, rep_t *rep);
 
 #define ANGLE_RESOLUTION 0.01 //means that each degree is split in 100
+#define INV_ANGLE_RESOLUTION 100 //One degree is 100 steps on the scale
 typedef struct nav_s{
     state_t state;
     uint16_t timer;
@@ -136,10 +129,17 @@ void Moveup(rep_t *rep, nav_t *nav);
 void Movedown(rep_t *rep, nav_t *nav);
 void Searching(rep_t *rep, nav_t *nav);
 
-void Map_set_point(nav_t *nav, uint8_t x, uint8_t y, fieldstate_t field);
-fieldstate_t Map_Check_point(nav_t nav, uint8_t x, uint8_t y);
+void map_set_point(uint8_t x, uint8_t y, fieldstate_t field);
+void map_set_position(nav_t *nav, fieldstate_t field);
+fieldstate_t map_check_point(uint8_t x, uint8_t y);
+fieldstate_t map_check_position(nav_t *nav);
 
-static pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord);
+pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord);
+
+fix16_t fix_rad_angle(uint16_t degrees_100th);
+fix16_t calculate_y_distance(uint16_t degrees_100th, fix16_t distance);
+fix16_t calculate_x_distance(uint16_t degrees_100th, fix16_t distance);
+void update_angle(nav_t *nav, fix16_t degrees);
 
 #endif //RAND_NAV_H
 

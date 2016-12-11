@@ -19,7 +19,7 @@
 #define TWO_MS 125 // defines 2 millisecond
 #define MAJOR_CYCLE 6250 // 100 ms
 #define MINOR_CYCLE 1125
-#define OVERFLOW (MAJOR_CYCLE + ONE_MS) // 100 ms + 1 ms
+#define SCHEDULER_OVERFLOW (MAJOR_CYCLE + ONE_MS) // 100 ms + 1 ms
 
 #define TIMER_TICK_TO_MILIS(x) ((x) / ONE_MS)
 
@@ -43,7 +43,6 @@ sonar_t *sonar;
 laser_t *laser;
 ir_t *top_ir;
 ir_t *bottom_ir;
-position_t *recent_position;
 fc_t *fc;
 
 void task_timer_setup();

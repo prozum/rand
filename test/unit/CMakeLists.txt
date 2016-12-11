@@ -12,8 +12,9 @@ add_executable(unit-tests main.cpp
         kalman/kalman_datafusion_test.cpp
         log/log_test.cpp
         matrix/matrix_test.cpp
+        nav/nav_test.cpp
         )
 
 add_test_dependencies(unit-tests)
 
-target_link_libraries(unit-tests common core sonar kalman matrix laser libfixmath ${CPPUNIT_LIBRARIES})
+target_link_libraries(unit-tests common core sonar kalman matrix laser libfixmath nav ${CPPUNIT_LIBRARIES})

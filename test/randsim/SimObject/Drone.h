@@ -12,11 +12,11 @@ extern "C" {
 #include "Simulator.h"
 #include "Laser.h"
 
-//All speeds are measured in cm (or rads)/sec
-#define ROTATION_SPEED 3.0
-#define STRAFE_SPEED 1.0 //defines speed in the left, right direction
-#define MOVEMENT_SPEED 7.0 //defines speed in forward, backward directoin
-#define ALTITUDE_SPEED 10.0 //defines speed in up/down direction
+// All speeds are measured in cm (or rads)/sec
+#define ROTATION_SPEED M_PI/2
+#define STRAFE_SPEED   20.0 // Defines speed in the left, right direction
+#define MOVEMENT_SPEED 20.0 // Defines speed in forward, backward direction
+#define ALTITUDE_SPEED 10.0 // Defines speed in up/down direction
 
 #define FC_OFFSET 1
 #define ROTATION_OFFSET M_PI
@@ -24,8 +24,8 @@ extern "C" {
 
 class Drone : public SimObject {
 public:
-    double Angle;   // Angle in radians
-    double Size;       // Size in cm
+    double Angle;    // Angle in radians
+    double Size;     // Size in cm
     double Height;
 
     Sonar SonarModule;
@@ -43,13 +43,15 @@ public:
     void update();
 
 private:
-    void updateRotation(uint16_t yaw_value);
-    void updateStrafe(uint16_t roll_value);
-    void updateFrontal(uint16_t pitch_value);
-    void updateHeight(uint16_t throttle_value);
+    void updateYaw(uint16_t YawValue);
+    void updateRoll(uint16_t RollValue);
+    void updatePitch(uint16_t PitchValue);
+    void updateThrottle(uint16_t ThrottleValue);
     void updateFromFC();
 
-    float calculateAcceleration(float prev_vel, float new_vel);
+    double calcAcceleration(double PrevVel, double NewVel);
+    double calcVelocity(double DirectionValue, const double Speed);
+    double calcDistance(const double Speed, double DeltaTime);
 
     unsigned int LastNavUpdate;
 };
