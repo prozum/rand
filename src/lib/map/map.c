@@ -30,14 +30,8 @@ void map_write(uint8_t x, uint8_t y, fieldstate_t value)
         return;
     }
 
-   // uint8_t mask = FULL_FIELD << offset * FIELD_SIZE; //safety mask
-
-    if(value){
-        new_value |= FIELD_SIZE << offset;
-    }
-    else{
-        new_value &= ~(FIELD_SIZE << offset);
-    }
+    new_value |= 0b11 << offset;
+    new_value &= ~(value << offset);
 
     eeprom_write(addr, new_value);
 }
@@ -45,11 +39,11 @@ void map_write(uint8_t x, uint8_t y, fieldstate_t value)
 fieldstate_t map_read(uint8_t x, uint8_t y)
 {
     uint16_t addr = (y * map_width + x) / FIELDS_PER_BYTE;
-    uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;;
+    uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;
 
     uint8_t value = eeprom_read(addr);
 
-    return (value >> (offset)) & FULL_FIELD;
+    return (value >> (offset)) & 0b11;
 }
 
 void map_clean()
