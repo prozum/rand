@@ -23,15 +23,15 @@ void map_write(uint8_t x, uint8_t y, fieldstate_t value)
     uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;
     uint8_t  new_value = 0;
 
-    if(addr < EEPROM_SIZE)
-        new_value = eeprom_read(addr); //load the byte to be read from
-    else {
+    if(addr >= EEPROM_SIZE) {
         ERROR("Write address value out of bounds!");
         return;
     }
+    // Load the byte to be read from
+    new_value = eeprom_read(addr);
 
-    new_value |= 0b11 << offset;
-    new_value &= ~(value << offset);
+    new_value &= ~(0b11 << offset);
+    new_value |= value << offset;
 
     eeprom_write(addr, new_value);
 }
@@ -43,7 +43,7 @@ fieldstate_t map_read(uint8_t x, uint8_t y)
 
     uint8_t value = eeprom_read(addr);
 
-    return (value >> (offset)) & 0b11;
+    return (value >> offset) & 0b11;
 }
 
 void map_clean()

@@ -118,62 +118,67 @@ fix16_t fix16_tan(fix16_t inAngle)
 
 fix16_t fix16_asin(fix16_t x)
 {
-	if((x > fix16_one)
-		|| (x < -fix16_one))
-		return 0;
-
-	fix16_t out;
-	out = (fix16_one - fix16_mul(x, x));
-	out = fix16_div(x, fix16_sqrt(out));
-	out = fix16_atan(out);
-	return out;
+	fix16_t negate = fix16_from_float(x < 0);
+	x = fix16_abs(x);
+	fix16_t ret = fix16_from_dbl(-0.0187293);
+	ret = fix16_mul(ret, x);
+	ret = fix16_add(ret, fix16_from_dbl(0.0742610));
+	ret = fix16_mul(ret, x);
+	ret = fix16_sub(ret, fix16_from_dbl(0.2121144));
+	ret = fix16_mul(ret, x);
+	ret = fix16_add(ret, fix16_from_dbl(1.5707288));
+	ret = fix16_sub(
+			fix16_mul(
+					fix16_pi,
+					fix16_from_float(0.5)),
+			fix16_mul(
+					fix16_sqrt(fix16_sub(fix16_from_float(1.0), x)),
+					ret));
+	return fix16_sub(ret, fix16_mul(fix16_from_int(2), fix16_mul(negate, ret)));
 }
 
 fix16_t fix16_acos(fix16_t x)
 {
-	return ((fix16_pi >> 1) - fix16_asin(x));
+	fix16_t negate = fix16_from_float(x < 0);
+	x = fix16_abs(x);
+	fix16_t ret = fix16_from_dbl(-0.0187293);
+	ret = fix16_mul(ret, x);
+	ret = fix16_add(ret, fix16_from_dbl(0.0742610));
+	ret = fix16_mul(ret, x);
+	ret = fix16_sub(ret, fix16_from_dbl(0.2121144));
+	ret = fix16_mul(ret, x);
+	ret = fix16_add(ret, fix16_from_dbl(1.5707288));
+
+	ret = fix16_mul(ret, fix16_sqrt(fix16_sub(fix16_from_float(1.0), x)));
+	ret = fix16_sub(ret, fix16_mul(fix16_mul(fix16_from_int(2), negate), ret));
+	return fix16_add(fix16_mul(negate, fix16_pi), ret);
 }
 
 fix16_t fix16_atan2(fix16_t inY , fix16_t inX)
 {
-	fix16_t abs_inY, mask, angle, r, r_3;
+	fix16_t t0, t1, t2, t3, t4;
 
-	#ifndef FIXMATH_NO_CACHE
-	uintptr_t hash = (inX ^ inY);
-	hash ^= hash >> 20;
-	hash &= 0x0FFF;
-	if((_fix16_atan_cache_index[0][hash] == inX) && (_fix16_atan_cache_index[1][hash] == inY))
-		return _fix16_atan_cache_value[hash];
-	#endif
+	t3 = fix16_abs(inX);
+	t1 = fix16_abs(inY);
+	t0 = fix16_max(t3, t1);
+	t1 = fix16_min(t3, t1);
+	t3 = fix16_div(fix16_from_int(1), t0);
+	t3 = fix16_mul(t1, t3);
 
-	/* Absolute inY */
-	mask = (inY >> (sizeof(fix16_t)*CHAR_BIT-1));
-	abs_inY = (inY + mask) ^ mask;
+	t4 = fix16_mul(t3, t3);
+	t0 = fix16_sub(fix16_from_int(0), fix16_from_dbl(0.013480470));
+	t0 = fix16_add(fix16_mul(t0, t4), fix16_from_dbl(0.057477314));
+	t0 = fix16_sub(fix16_mul(t0, t4), fix16_from_dbl(0.121239071));
+	t0 = fix16_add(fix16_mul(t0, t4), fix16_from_dbl(0.195635925));
+	t0 = fix16_sub(fix16_mul(t0, t4), fix16_from_dbl(0.332994597));
+	t0 = fix16_add(fix16_mul(t0, t4), fix16_from_dbl(0.999995630));
+	t3 = fix16_mul(t0, t3);
 
-	if (inX >= 0)
-	{
-		r = fix16_div( (inX - abs_inY), (inX + abs_inY));
-		r_3 = fix16_mul(fix16_mul(r, r),r);
-		angle = fix16_mul(0x00003240 , r_3) - fix16_mul(0x0000FB50,r) + PI_DIV_4;
-	} else {
-		r = fix16_div( (inX + abs_inY), (abs_inY - inX));
-		r_3 = fix16_mul(fix16_mul(r, r),r);
-		angle = fix16_mul(0x00003240 , r_3)
-			- fix16_mul(0x0000FB50,r)
-			+ THREE_PI_DIV_4;
-	}
-	if (inY < 0)
-	{
-		angle = -angle;
-	}
+	t3 = (fix16_abs(inY) > fix16_abs(inX)) ? fix16_from_dbl(1.570796327) - t3 : t3;
+	t3 = (inX < 0) ?  fix16_from_dbl(3.141592654) - t3 : t3;
+	t3 = (inY < 0) ? -t3 : t3;
 
-	#ifndef FIXMATH_NO_CACHE
-	_fix16_atan_cache_index[0][hash] = inX;
-	_fix16_atan_cache_index[1][hash] = inY;
-	_fix16_atan_cache_value[hash] = angle;
-	#endif
-
-	return angle;
+	return t3;
 }
 
 fix16_t fix16_atan(fix16_t x)

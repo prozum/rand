@@ -10,10 +10,10 @@ enum class BlockType {
 };
 
 class Block : public SimObject {
-    BlockType Type;
 
 public:
     static constexpr double Size = 25;
+    BlockType Type;
 
     Vector2D Min;
     Vector2D Max;
