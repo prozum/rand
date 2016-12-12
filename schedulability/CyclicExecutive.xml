@@ -6,13 +6,15 @@ const int N=6;
 typedef int [1,N] id_t;
 
 bool pwm = false;
+int sensors = 4;
+const int sensor_count = 4;
 
 chan ready, release;
 urgent chan run;
 
 clock time;</declaration>
 	<template>
-		<name x="5" y="5">SENSOR</name>
+		<name>NAVIGATION</name>
 		<parameter>const id_t id, const int T, const int C</parameter>
 		<declaration>// Place local declarations here.
 clock t, c;</declaration>
@@ -38,6 +40,7 @@ t&lt;=T</label>
 			<target ref="id3"/>
 			<label kind="guard" x="-306" y="-17">c==C</label>
 			<label kind="synchronisation" x="-314" y="8">release!</label>
+			<label kind="assignment" x="-433" y="25">sensors = sensor_count</label>
 			<nail x="-255" y="136"/>
 			<nail x="-255" y="-136"/>
 		</transition>
@@ -56,7 +59,7 @@ t&lt;=T</label>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id1"/>
-			<label kind="guard" x="-153" y="51">pwm==true</label>
+			<label kind="guard" x="-170" y="51">sensors &gt;= 0</label>
 			<label kind="synchronisation" x="-102" y="68">run?</label>
 			<label kind="assignment" x="-102" y="85">c=0</label>
 		</transition>
@@ -68,30 +71,88 @@ t&lt;=T</label>
 		</transition>
 	</template>
 	<template>
+		<name x="5" y="5">SENSOR</name>
+		<parameter>const id_t id, const int T, const int C</parameter>
+		<declaration>// Place local declarations here.
+clock t, c;</declaration>
+		<location id="id4" x="68" y="68">
+			<name x="85" y="59">ERR</name>
+		</location>
+		<location id="id5" x="-68" y="136">
+			<name x="-51" y="136">Running</name>
+			<label kind="invariant" x="-51" y="153">c&lt;=C &amp;&amp;
+t&lt;=T</label>
+		</location>
+		<location id="id6" x="-68" y="0">
+			<name x="-127" y="-8">Ready</name>
+			<label kind="invariant" x="-127" y="8">t&lt;=T</label>
+		</location>
+		<location id="id7" x="-68" y="-136">
+			<name x="-78" y="-170">Idle</name>
+			<label kind="invariant" x="-51" y="-144">t&lt;=T</label>
+		</location>
+		<init ref="id6"/>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id7"/>
+			<label kind="guard" x="-306" y="-8">c==C</label>
+			<label kind="synchronisation" x="-314" y="8">release!</label>
+			<label kind="assignment" x="-237" y="136">sensors = sensors-1</label>
+			<nail x="-255" y="136"/>
+			<nail x="-255" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="guard" x="25" y="110">t==T</label>
+			<nail x="68" y="136"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="guard" x="17" y="-25">t==T</label>
+			<nail x="68" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-187" y="51">pwm==true &amp;&amp;
+sensors&gt;0</label>
+			<label kind="synchronisation" x="-102" y="34">run?</label>
+			<label kind="assignment" x="-102" y="85">c=0</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-51" y="-119">t==T</label>
+			<label kind="assignment" x="-51" y="-42">t=0</label>
+		</transition>
+	</template>
+	<template>
 		<name>PWM</name>
 		<parameter>const id_t id, const int T, const int C</parameter>
 		<declaration>// Place local declarations here.
 clock t, c;</declaration>
-		<location id="id4" x="-51" y="-119">
+		<location id="id8" x="-51" y="-119">
 			<name x="-61" y="-153">Idle</name>
 			<label kind="invariant" x="-34" y="-127">t&lt;=T</label>
 		</location>
-		<location id="id5" x="85" y="85">
+		<location id="id9" x="85" y="85">
 			<name x="102" y="76">ERR</name>
 		</location>
-		<location id="id6" x="-51" y="153">
+		<location id="id10" x="-51" y="153">
 			<name x="-34" y="153">Running</name>
 			<label kind="invariant" x="-34" y="170">c&lt;=C &amp;&amp;
 t&lt;=T</label>
 		</location>
-		<location id="id7" x="-51" y="17">
+		<location id="id11" x="-51" y="17">
 			<name x="-110" y="9">Ready</name>
 			<label kind="invariant" x="-110" y="25">t&lt;=T</label>
 		</location>
-		<init ref="id7"/>
+		<init ref="id11"/>
 		<transition>
-			<source ref="id6"/>
-			<target ref="id4"/>
+			<source ref="id10"/>
+			<target ref="id8"/>
 			<label kind="guard" x="-297" y="0">c==C</label>
 			<label kind="synchronisation" x="-306" y="25">release!</label>
 			<label kind="assignment" x="-331" y="51">pwm = true</label>
@@ -100,50 +161,50 @@ t&lt;=T</label>
 			<nail x="-229" y="-119"/>
 		</transition>
 		<transition>
-			<source ref="id6"/>
-			<target ref="id5"/>
+			<source ref="id10"/>
+			<target ref="id9"/>
 			<label kind="guard" x="85" y="153">t==T</label>
 			<nail x="85" y="153"/>
 		</transition>
 		<transition>
-			<source ref="id7"/>
-			<target ref="id5"/>
+			<source ref="id11"/>
+			<target ref="id9"/>
 			<label kind="guard" x="76" y="0">t==T</label>
 			<nail x="85" y="17"/>
 		</transition>
 		<transition>
-			<source ref="id7"/>
-			<target ref="id6"/>
+			<source ref="id11"/>
+			<target ref="id10"/>
 			<label kind="synchronisation" x="-42" y="76">run?</label>
 			<label kind="assignment" x="-42" y="93">c=0,
 pwm=false</label>
 		</transition>
 		<transition>
-			<source ref="id4"/>
-			<target ref="id7"/>
+			<source ref="id8"/>
+			<target ref="id11"/>
 			<label kind="guard" x="-34" y="-102">t==T</label>
 			<label kind="assignment" x="-34" y="-25">t=0</label>
 		</transition>
 	</template>
 	<template>
 		<name>CPU</name>
-		<location id="id8" x="-102" y="34">
+		<location id="id12" x="-102" y="34">
 			<name x="-112" y="0">USED</name>
 		</location>
-		<location id="id9" x="-102" y="-102">
+		<location id="id13" x="-102" y="-102">
 			<name x="-112" y="-136">IDLE</name>
 		</location>
-		<init ref="id9"/>
+		<init ref="id13"/>
 		<transition>
-			<source ref="id8"/>
-			<target ref="id9"/>
+			<source ref="id12"/>
+			<target ref="id13"/>
 			<label kind="synchronisation" x="-246" y="-42">release?</label>
 			<nail x="-170" y="34"/>
 			<nail x="-170" y="-102"/>
 		</transition>
 		<transition>
-			<source ref="id9"/>
-			<target ref="id8"/>
+			<source ref="id13"/>
+			<target ref="id12"/>
 			<label kind="synchronisation" x="-25" y="-51">run!</label>
 			<nail x="-34" y="-102"/>
 			<nail x="-34" y="34"/>
@@ -163,22 +224,23 @@ system PrA, PrB, PrC, PrD, PrE, CPU;
 
 */
 
-SonarTask = SENSOR(1, 100, 10);
-LaserTask = SENSOR(2,100,5);
-IRBottomTask = SENSOR(4,100,2);
-IRTopTask = SENSOR(5,100,2);
-PWMTask = PWM(3,20,2);
+PWMTask =        PWM(1,20,2);
+SonarTask =      SENSOR(2, 100, 10);
+LaserTask =      SENSOR(3,100,5);
+IRBottomTask =   SENSOR(4,100,2);
+IRTopTask =      SENSOR(5,100,2);
+NavigationTask = NAVIGATION(6, 100, 10);
 
-system SonarTask, LaserTask, PWMTask, IRBottomTask, IRTopTask, CPU;</system>
+system PWMTask, SonarTask, LaserTask, IRBottomTask, IRTopTask, NavigationTask, CPU;</system>
 	<queries>
 		<query>
-			<formula>E[] not (SonarTask.ERR and LaserTask.ERR and PWMTask.ERR and IRBottomTask.ERR and IRTopTask.ERR)
+			<formula>E[] not (SonarTask.ERR and LaserTask.ERR and PWMTask.ERR and IRBottomTask.ERR and IRTopTask.ERR and NavigationTask.ERR)
 			</formula>
 			<comment>
 			</comment>
 		</query>
 		<query>
-			<formula>E&lt;&gt; SonarTask.Ready and LaserTask.Ready and PWMTask.Ready and IRBottomTask.Ready and IRTopTask.Ready and  SonarTask.t==0 and LaserTask.t==0 and PWMTask.t==0 and IRBottomTask.t==0 and IRTopTask.t==0 and time&gt;0
+			<formula>E&lt;&gt; SonarTask.Ready and LaserTask.Ready and PWMTask.Ready and IRBottomTask.Ready and IRTopTask.Ready and NavigationTask.Ready and SonarTask.t==0 and LaserTask.t==0 and PWMTask.t==0 and IRBottomTask.t==0 and IRTopTask.t==0 and NavigationTask.t==0 and time&gt;0
 			</formula>
 			<comment>
 			</comment>
