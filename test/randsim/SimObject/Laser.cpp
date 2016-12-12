@@ -21,6 +21,10 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
     update(Origin, Angle);
 
     for (auto &B : Blocks) {
+        // Laser cannot sense windows
+        if (B.Type == BlockType::Window)
+            continue;
+
         Intersects = B.intersection(Rays[0], Res);
         if (Intersects) Struct.left_value = std::min(Struct.left_value, (uint16_t)Res.length());
 
