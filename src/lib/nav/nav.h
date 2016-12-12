@@ -96,8 +96,6 @@ typedef struct search_s{
     uint16_t closedset_size;
     uint16_t openset_size;
     pixel_coord_t goal;
-
-
 }search_t;
 
 typedef enum set_e{

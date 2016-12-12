@@ -46,14 +46,14 @@ fix16_t calculate_x_distance (uint16_t angle, fix16_t distance) {
 void update_angle(nav_t *nav, fix16_t degrees) {
     //Must use a 32-bit int here, because degrees may be between -36000 and 36000
     int32_t converted_degrees = fix16_to_int(degrees) * INV_ANGLE_RESOLUTION;
-    int32_t resulting_angle = (int32_t) nav->angle + converted_degrees;
-    if(resulting_angle >= (uint16_t) 360 * INV_ANGLE_RESOLUTION) {
-        resulting_angle = resulting_angle % 360 * INV_ANGLE_RESOLUTION;
+    int32_t res_angle = (int32_t) nav->angle + converted_degrees;
+    if(res_angle >= (uint16_t) 360 * INV_ANGLE_RESOLUTION) {
+        res_angle %= 360 * INV_ANGLE_RESOLUTION;
     }
-    else if(resulting_angle < 0) {
-        resulting_angle = resulting_angle + 360 * INV_ANGLE_RESOLUTION;
+    else if(res_angle < 0) {
+        res_angle += 360 * INV_ANGLE_RESOLUTION;
     }
-    nav->angle = (uint16_t) resulting_angle;
+    nav->angle = (uint16_t) res_angle;
 }
 
 uint8_t CheckAWallF(rep_t *rep, state_t state){
@@ -227,7 +227,11 @@ void onIdle(rep_t *rep, nav_t *nav) {
 }
 
 void onTurning(rep_t *rep, nav_t *nav){
-    update_angle(nav, - fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
+    // Ugly workaround since rotation direction cannot be read from gyro
+    if (rep->fc->yaw == rep->fc->duty->MIN_FC_DUTY)
+        update_angle(nav, fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
+    else
+        update_angle(nav, - fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
 
     update_nav_value(&nav->val, rep->fc->gyro);
     if(fix16_to_int(nav->val) == 0){
@@ -624,7 +628,7 @@ void drawMap (rep_t *rep, nav_t *nav){
         draw_front(rep, nav, WALL);
     }
 
-    if((rep->sonar->value < MIN_RANGE || rep->laser->front_value <=MIN_RANGE)
+    if((rep->sonar->value < MIN_RANGE || rep->laser->front_value <= MIN_RANGE)
        && rep->laser->front_value != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
         uint16_t mes_diff = abs(rep->laser->front_value - rep->sonar->value);
         //Draw map in direct front of the drone
