@@ -44,6 +44,8 @@ laser_t *laser;
 ir_t *top_ir;
 ir_t *bottom_ir;
 fc_t *fc;
+search_t *search_data;
+
 
 void task_timer_setup();
 

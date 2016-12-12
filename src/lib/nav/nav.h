@@ -8,6 +8,7 @@
 //This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
 #define WINDOW_RECON_THRESHOLD 50
 #define MIN_RANGE 60
+#define LASER_MAX_DISTANCE_CM 2200
 
 #define SONAR_DEG 15
 #define PERPENDICULAR 90
@@ -77,6 +78,32 @@ typedef struct state_s{
 void update_state(state_t *state, rep_t *rep);
 
 #define ANGLE_RESOLUTION 0.01 //means that each degree is split in 100
+
+typedef struct search_node_s search_node_t;
+
+struct search_node_s{
+    pixel_coord_t pos;
+    search_node_t *parent;
+    uint8_t gscore;
+    uint8_t fscore;
+    uint8_t valid;
+};
+
+typedef struct search_s{
+    search_node_t *closed_set;
+    search_node_t *open_set;
+    uint16_t closedset_size;
+    uint16_t openset_size;
+    pixel_coord_t goal;
+
+
+}search_t;
+
+typedef enum set_e{
+    OPEN,
+    CLOSED
+}set_t;
+
 #define INV_ANGLE_RESOLUTION 100 //One degree is 100 steps on the scale
 typedef struct nav_s{
     state_t state;
@@ -87,6 +114,7 @@ typedef struct nav_s{
     uint16_t posy;
     int16_t previousDistanceToWall;
     fix16_t val;
+    search_t search_data;
 }nav_t;
 
 void init_nav(nav_t *nav);
@@ -137,6 +165,15 @@ fix16_t fix_rad_angle(uint16_t degrees_100th);
 fix16_t calculate_y_distance(uint16_t degrees_100th, fix16_t distance);
 fix16_t calculate_x_distance(uint16_t degrees_100th, fix16_t distance);
 void update_angle(nav_t *nav, fix16_t degrees);
+
+void init_search(search_t *search);
+void findpath(nav_t *nav, pixel_coord_t goal);
+void addnode(search_t *list, search_node_t node, set_t set);
+void close_node(search_t *list, search_node_t *node);
+void add_neighbours(search_t *list, search_node_t *node);
+uint8_t estimate(search_node_t *node, pixel_coord_t pos);
+search_node_t lowestf(search_t *search);
+
 
 #endif //RAND_NAV_H
 
