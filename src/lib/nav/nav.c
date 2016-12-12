@@ -471,6 +471,15 @@ void draw_side(rep_t *rep, nav_t *nav, const int16_t SIDE_OFFSET, fieldstate_t s
 }
 
 void drawMap (rep_t *rep, nav_t *nav){
+    uint16_t mes_diff = rep->laser->front_value - rep->sonar->value;
+    
+    //Draw map in direct front of the drone
+    if(mes_diff > WINDOW_RECON_THRESHOLD) {
+        draw_front(rep, nav, WINDOW);
+    }
+    else if (rep->laser->front_value == rep->sonar->value) {
+        draw_front(rep, nav, WALL);
+    }
 
     if((rep->sonar->value < MIN_RANGE || rep->laser->front_value <=MIN_RANGE)
        && rep->laser->front_value != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
