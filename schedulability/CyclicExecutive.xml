@@ -2,12 +2,15 @@
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
-const int N=6;
+const int N=7;
 typedef int [1,N] id_t;
 
+const int minor_cycle = 320000;
+const int major_cycle = 1600000;
+
 bool pwm = false;
-int sensors = 4;
-const int sensor_count = 4;
+int sensors = N-2;
+const int sensor_count = N-2;
 
 chan ready, release;
 urgent chan run;
@@ -38,8 +41,8 @@ t&lt;=T</label>
 		<transition>
 			<source ref="id1"/>
 			<target ref="id3"/>
-			<label kind="guard" x="-306" y="-17">c==C</label>
-			<label kind="synchronisation" x="-314" y="8">release!</label>
+			<label kind="guard" x="-314" y="-8">c==C</label>
+			<label kind="synchronisation" x="-322" y="8">release!</label>
 			<label kind="assignment" x="-433" y="25">sensors = sensor_count</label>
 			<nail x="-255" y="136"/>
 			<nail x="-255" y="-136"/>
@@ -59,15 +62,16 @@ t&lt;=T</label>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id1"/>
-			<label kind="guard" x="-170" y="51">sensors &gt;= 0</label>
-			<label kind="synchronisation" x="-102" y="68">run?</label>
-			<label kind="assignment" x="-102" y="85">c=0</label>
+			<label kind="guard" x="-195" y="51">sensors == 0 &amp;&amp;
+pwm == true</label>
+			<label kind="synchronisation" x="-119" y="85">run?</label>
+			<label kind="assignment" x="-119" y="102">c=0</label>
 		</transition>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
-			<label kind="guard" x="-51" y="-119">t==T</label>
-			<label kind="assignment" x="-51" y="-42">t=0</label>
+			<label kind="guard" x="-59" y="-102">t==T</label>
+			<label kind="assignment" x="-59" y="-85">t=0</label>
 		</transition>
 	</template>
 	<template>
@@ -97,35 +101,35 @@ t&lt;=T</label>
 			<target ref="id7"/>
 			<label kind="guard" x="-306" y="-8">c==C</label>
 			<label kind="synchronisation" x="-314" y="8">release!</label>
-			<label kind="assignment" x="-237" y="136">sensors = sensors-1</label>
+			<label kind="assignment" x="-323" y="25">sensors--</label>
 			<nail x="-255" y="136"/>
 			<nail x="-255" y="-136"/>
 		</transition>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id4"/>
-			<label kind="guard" x="25" y="110">t==T</label>
+			<label kind="guard" x="68" y="136">t==T</label>
 			<nail x="68" y="136"/>
 		</transition>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id4"/>
-			<label kind="guard" x="17" y="-25">t==T</label>
+			<label kind="guard" x="68" y="-17">t==T</label>
 			<nail x="68" y="0"/>
 		</transition>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id5"/>
-			<label kind="guard" x="-187" y="51">pwm==true &amp;&amp;
-sensors&gt;0</label>
-			<label kind="synchronisation" x="-102" y="34">run?</label>
-			<label kind="assignment" x="-102" y="85">c=0</label>
+			<label kind="guard" x="-178" y="76">sensors&gt;0 &amp;&amp;
+pwm == true</label>
+			<label kind="synchronisation" x="-110" y="42">run?</label>
+			<label kind="assignment" x="-110" y="59">c=0</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-51" y="-119">t==T</label>
-			<label kind="assignment" x="-51" y="-42">t=0</label>
+			<label kind="guard" x="-59" y="-110">t==T</label>
+			<label kind="assignment" x="-59" y="-93">t=0</label>
 		</transition>
 	</template>
 	<template>
@@ -176,14 +180,14 @@ t&lt;=T</label>
 			<source ref="id11"/>
 			<target ref="id10"/>
 			<label kind="synchronisation" x="-42" y="76">run?</label>
-			<label kind="assignment" x="-42" y="93">c=0,
-pwm=false</label>
+			<label kind="assignment" x="-42" y="93">c=0</label>
 		</transition>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id11"/>
-			<label kind="guard" x="-34" y="-102">t==T</label>
-			<label kind="assignment" x="-34" y="-25">t=0</label>
+			<label kind="guard" x="-34" y="-110">t==T</label>
+			<label kind="assignment" x="-34" y="-93">t=0,
+pwm=false</label>
 		</transition>
 	</template>
 	<template>
@@ -224,23 +228,28 @@ system PrA, PrB, PrC, PrD, PrE, CPU;
 
 */
 
-PWMTask =        PWM(1,20,2);
-SonarTask =      SENSOR(2, 100, 10);
-LaserTask =      SENSOR(3,100,5);
-IRBottomTask =   SENSOR(4,100,2);
-IRTopTask =      SENSOR(5,100,2);
-NavigationTask = NAVIGATION(6, 100, 10);
+// LaserRightTask = SENSOR(5,major_cycle,242432/3);
+// PWMTask =        PWM(1,minor_cycle,389629);
+// SonarTask =      SENSOR(2, major_cycle,242432);
 
-system PWMTask, SonarTask, LaserTask, IRBottomTask, IRTopTask, NavigationTask, CPU;</system>
+PWMTask        = PWM(1,minor_cycle,50000);
+SonarTask      = SENSOR(2,major_cycle,241551);
+LaserLeftTask  = SENSOR(3,major_cycle,80810);
+LaserFrontTask = SENSOR(4,major_cycle,80810);
+LaserRightTask = SENSOR(5,major_cycle,80810);
+IRTask         = SENSOR(6,major_cycle,98);
+NavigationTask = NAVIGATION(7, major_cycle,150000);
+
+system PWMTask, SonarTask, LaserLeftTask, LaserFrontTask, LaserRightTask, IRTask, NavigationTask, CPU;</system>
 	<queries>
 		<query>
-			<formula>E[] not (SonarTask.ERR and LaserTask.ERR and PWMTask.ERR and IRBottomTask.ERR and IRTopTask.ERR and NavigationTask.ERR)
+			<formula>E[] not (SonarTask.ERR or LaserLeftTask.ERR or LaserFrontTask.ERR or LaserRightTask.ERR or PWMTask.ERR or IRTask.ERR or NavigationTask.ERR)
 			</formula>
 			<comment>
 			</comment>
 		</query>
 		<query>
-			<formula>E&lt;&gt; SonarTask.Ready and LaserTask.Ready and PWMTask.Ready and IRBottomTask.Ready and IRTopTask.Ready and NavigationTask.Ready and SonarTask.t==0 and LaserTask.t==0 and PWMTask.t==0 and IRBottomTask.t==0 and IRTopTask.t==0 and NavigationTask.t==0 and time&gt;0
+			<formula>E&lt;&gt; (SonarTask.Ready and LaserLeftTask.Ready and LaserFrontTask.Ready and LaserRightTask.Ready and PWMTask.Ready and IRTask.Ready and NavigationTask.Ready and SonarTask.t==0 and LaserLeftTask.t==0 and LaserFrontTask.t==0 and LaserRightTask.t==0 and PWMTask.t==0 and IRTask.t==0 and NavigationTask.t==0 and time&gt;0)
 			</formula>
 			<comment>
 			</comment>
