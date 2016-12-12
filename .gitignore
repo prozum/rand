@@ -42,5 +42,5 @@ CMakeLists.txt.user
 # Runtime config files
 map.txt
 
-# Mac stuff
-# .xcodeproj
+# Xcode stuff
+*.xcodeproj
