@@ -54,6 +54,8 @@ dval_t digital_read(dpin_t pin) {
 
 char uart_val;
 
+void uart_init() { }
+
 char uart_getchar() {
     return uart_val;
 }

@@ -8,7 +8,7 @@ void draw_block(uint8_t x, uint8_t y, uint8_t offset, uint8_t size)
 {
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
-            map_write(x + offset + i, y + offset + j, 1);
+            map_write(x + offset + i, y + offset + j, VISITED);
         }
     }
 }
@@ -21,15 +21,12 @@ int main ()
 
     map_init(WIDTH, HEIGHT, 1);
 
-    draw_block(4, 1, 38, 3);
-    draw_block(9, 5, 38, 3);
-    draw_block(1, 9, 38, 3);
-    draw_block(5, 9, 38, 3);
-    draw_block(9, 9, 38, 3);
+    map_write(10, 10, VISITED);
+    printf("val: %d\n", map_read(10, 10));
 
-    while (1) {
-        serial_write_string(SERIAL0, "+-----------------------------------------|EEPROM|-----------------------------------------+\n");
-        map_show();
-        serial_write_string(SERIAL0, "+------------------------------------------------------------------------------------------+\n\n");
-    }
+    serial_write_string(SERIAL0, "+-----------------------------------------|EEPROM|-----------------------------------------+\n");
+    map_show();
+    serial_write_string(SERIAL0, "+------------------------------------------------------------------------------------------+\n\n");
+
+    return 0;
 }
