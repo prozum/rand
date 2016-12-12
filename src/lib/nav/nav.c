@@ -258,15 +258,15 @@ void alignToWall(rep_t *rep, nav_t *nav){
 
     if(diffWall == fix16_from_int(1))
         diffWall = fix16_from_float(1);
-    degreesToTurn = fix16_mul(diffWall, fix16_from_int(2));//fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR)), diffWall))));
+    degreesToTurn = diffWall;  //fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR)), diffWall)))); todo: Insert proper calculation
 
-    if (diffWall < fix16_from_int(0) && rep->laser->left_value < 75){
+    if (diffWall < fix16_from_int(0) && rep->laser->left_value < MIN_RANGE){
         Turnright(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall < fix16_from_int(0) && rep->laser->right_value < 75) {
+    } else if (diffWall < fix16_from_int(0) && rep->laser->right_value < MIN_RANGE) {
         Turnleft(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall > fix16_from_int(0) && rep->laser->left_value < 75) {
+    } else if (diffWall > fix16_from_int(0) && rep->laser->left_value < MIN_RANGE) {
         Turnleft(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall > fix16_from_int(0) && rep->laser->right_value < 75) {
+    } else if (diffWall > fix16_from_int(0) && rep->laser->right_value < MIN_RANGE) {
         Turnright(rep, nav, abs(fix16_to_int(degreesToTurn)));
     }
 }
@@ -390,24 +390,24 @@ uint8_t isSonarReliable(rep_t *rep, state_t state){
 
 uint8_t checkAlignmentToWall(rep_t *rep, nav_t *nav){
     
-    if (rep->laser->right_value < 75){
+    if (rep->laser->right_value < MIN_RANGE){
         
-        if(nav->previousDistanceToWall == 0 && rep->laser->right_value != 2200){
+        if(nav->previousDistanceToWall == 0 && rep->laser->right_value != LASER_MAX_RANGE){
             nav->previousDistanceToWall = rep->laser->right_value;
             return 0;
         }
         
-        if (nav->previousDistanceToWall != rep->laser->right_value && rep->laser->right_value != 2200){
+        if (nav->previousDistanceToWall != rep->laser->right_value && rep->laser->right_value != LASER_MAX_RANGE){
             return 0;
         }
-    } else if (rep->laser->left_value < 75){
+    } else if (rep->laser->left_value < MIN_RANGE){
         
-        if(nav->previousDistanceToWall == 0 && rep->laser->left_value != 2200){
+        if(nav->previousDistanceToWall == 0 && rep->laser->left_value != LASER_MAX_RANGE){
             nav->previousDistanceToWall = rep->laser->left_value;
             return 0;
         }
         
-        if (nav->previousDistanceToWall != rep->laser->left_value && rep->laser->left_value != 2200){
+        if (nav->previousDistanceToWall != rep->laser->left_value && rep->laser->left_value != LASER_MAX_RANGE){
             return 0;
         }
     }
