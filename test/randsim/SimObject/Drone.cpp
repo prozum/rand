@@ -46,6 +46,7 @@ void Drone::update() {
         navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
+    //rotate_right(&FC);
     updateFromFC();
 }
 
@@ -73,7 +74,7 @@ void Drone::updateYaw(uint16_t YawValue) {
         Angle += M_PI * 2;
 
     //Update gyro with deg/sec
-    FC.gyro = fix16_from_dbl(RadToDeg(abs(YawVelocity)));
+    FC.gyro = fix16_from_dbl(RadToDeg(fabs(YawVelocity)));
 }
 
 void Drone::updateRoll(uint16_t RollValue) {

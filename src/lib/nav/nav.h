@@ -12,6 +12,7 @@
 #define SONAR_DEG 15
 #define PERPENDICULAR 90
 #define DRONE_RIGHT_SIDE 270
+#define LASER_MAX_RANGE 2200
 #define DRONE_LEFT_SIDE 90
 
 #define SENSOR_DEVIATION 5
@@ -29,7 +30,9 @@
 #define PERIOD_MILLIS 100 //The time between calls of the navigator.
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 
-#define MAP_MIDDLE UINT16_MAX / 2
+#define MAP_MIDDLE 800
+
+
 
 typedef struct rep_s{
     fc_t *fc;
@@ -45,14 +48,11 @@ typedef struct rep_s{
  */
 typedef enum task_e{
     IDLE,
-    TURNLEFT,
-    TURNAROUND,
-    TURNRIGHT,
+    TURNING,
     MOVEFORWARD,
     MOVEUP,
     MOVEDOWN,
-    SEARCHING,
-    ALIGNING
+    SEARCHING
 }task_t;
 
 typedef enum side_e{
@@ -85,7 +85,7 @@ typedef struct nav_s{
     uint16_t angle;
     uint16_t posx;
     uint16_t posy;
-    uint16_t previousDistanceToWall;
+    int16_t previousDistanceToWall;
     fix16_t val;
 }nav_t;
 
@@ -108,16 +108,13 @@ uint8_t CheckBlockedR(state_t *state);
 uint8_t CheckBlockedL(state_t *state);
 
 void onIdle(rep_t *rep, nav_t *nav);
-void onTurnleft(rep_t *rep, nav_t *nav);
-void onTurnright(rep_t *rep, nav_t *nav);
-void onTurnaround(rep_t *rep, nav_t *nav);
 void onMoveforward(rep_t *rep, nav_t *nav);
 void onMoveup(rep_t *rep, nav_t *nav);
 void onMovedown(rep_t *rep, nav_t *nav);
 void onSearching(rep_t *rep, nav_t *nav);
-void onAligning(rep_t *rep, nav_t *nav);
+void onTurning(rep_t *rep, nav_t *nav);
 uint8_t isSonarReliable(rep_t *rep, state_t state);
-uint8_t checkAllignmentToWall(rep_t *rep, nav_t *nav);
+uint8_t checkAlignmentToWall(rep_t *rep, nav_t *nav);
 void drawMap (rep_t *rep, nav_t *nav);
 
 void Idle(rep_t *rep, nav_t *nav);
