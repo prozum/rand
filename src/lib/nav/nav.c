@@ -170,6 +170,8 @@ void init_nav(nav_t *nav){
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
     nav->timer = 0;
+
+    init_search(&nav->search_data);
 }
 
 /**
@@ -388,11 +390,152 @@ uint8_t isSonarReliable(rep_t *rep, state_t state){
     }
 }
 
+/// This function finds the shortest path to a location.
+/// \param nav
+/// \param x
+/// \param y
+void findpath(nav_t *nav, pixel_coord_t goal){
+    search_t *search = &nav->search_data;
+    search->goal = goal; //todo: maybe set goal elsewhere.
+    search_node_t start;
+    addnode(search, start, OPEN);
+
+    pixel_coord_t startpos = align_to_pixel(nav->posx, nav->posy);
+    start.pos = startpos;
+
+    start.parent = NULL;
+    start.gscore = 0;
+    start.fscore = estimate(&start, goal);
+
+    while(search->open_set > 0){ //todo: schedule the content of this while loop
+        search_node_t *current;
+        *current = lowestf(search);
+        if ((current->pos.x == goal.x) && (current->pos.y == goal.y)){
+            return; //success todo: should return the path to current.
+        }
+        close_node(search, current);
+        add_neighbours(search, current);//add all relevant neighbours to the open set
+    }
+    return; //failure todo: return some sort of failure
+}
+
+void addnode(search_t *list, search_node_t node, set_t set){
+    uint16_t i;
+    uint8_t found;
+
+    if(set == OPEN) {
+        for (i = 0; i < list->openset_size + 1;) {
+            if (!list->open_set[i].valid) {
+                i++;
+            } else {
+                if (set == OPEN) {
+                    node.valid = 1;
+                    list->open_set[list->openset_size++] = node;
+                    return;
+                }
+            }
+        }
+        ERROR("could not add search node, set is broken"); // actual set size does not match variable
+    }else{
+        list->closed_set[list->closedset_size++] = node;
+        return;
+    }
+
+}
+
+void close_node(search_t *list, search_node_t *node){
+    addnode(list, *node, CLOSED);
+    node->valid = 0;
+}
+
+uint8_t is_node_in_set(search_t *list, pixel_coord_t coord, set_t set, search_node_t *foundnode){
+    int i;
+    search_node_t *node;
+    if(set == OPEN){
+        for(i = 0; i < list->openset_size;){
+            *node = list->open_set[i];
+            if(node->valid) {
+                if (list->open_set[i].pos.x == coord.x && list->open_set[i].pos.y == coord.y){
+                    if(foundnode != NULL){
+                        foundnode = &list->open_set[i];
+                    }
+                    return 1;
+                }
+                i++;
+            }
+        }
+    }else{
+        for(i = 0; i < list->openset_size;i++){
+            *node = list->closed_set[i];
+            if (list->closed_set[i].pos.x == coord.x && list->closed_set[i].pos.y == coord.y){
+                if(foundnode != NULL){
+                    foundnode = &list->closed_set[i];
+                }
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+void add_neighbours(search_t *list, search_node_t *node){
+    pixel_coord_t coords[4]; //coords of neighbours
+    coords[0] = node->pos; coords->x--;coords->y--;
+    coords[1] = node->pos; coords->x--;coords->y++;
+    coords[2] = node->pos; coords->x++;coords->y--;
+    coords[3] = node->pos; coords->x++;coords->y++;
+
+    int i;
+    search_node_t foundnode;
+    uint8_t gscore;
+    for(i = 0;i<4;i++){ //for each of the four neighbours
+
+        if(is_node_in_set(list, coords[i], CLOSED, &foundnode)){
+            continue; //ignore this node
+        }
+        gscore = node->gscore+1;
+        if(!is_node_in_set(list,coords[i],OPEN, &foundnode)){
+            //go through statement
+        }else if(gscore >= foundnode.gscore){
+            continue; //not a better path
+        }
+        foundnode.gscore = gscore;
+        foundnode.fscore = estimate(&foundnode, search_data->goal);
+        foundnode.parent = node;
+        addnode(list, foundnode, OPEN);
+    }
+}
+
+uint8_t estimate(search_node_t *node, pixel_coord_t pos) {
+    return (uint8_t) abs((node->pos.x - pos.x) + (node->pos.y - pos.y));
+}
+
+search_node_t lowestf(search_t *search){
+    int i;
+    search_node_t lowest_f;
+    lowest_f.fscore = INT8_MAX;
+    for(i = 0; i < search->openset_size; i--){
+        if(search->open_set[i].fscore <lowest_f.fscore){
+            lowest_f = search->open_set[i];
+        }
+    }
+    return lowest_f;
+}
+
+void init_search(search_t *search){
+    search->openset_size = 0;
+    search->closedset_size = 0;
+    search->open_set = calloc(sizeof(search_node_t), MAP_WIDTH*MAP_HEIGHT);
+    search->closed_set = calloc(sizeof(search_node_t), MAP_WIDTH*MAP_HEIGHT);
+}
+
+
+#define MIN_TAKEACITON_RANGE 20
 uint8_t checkAlignmentToWall(rep_t *rep, nav_t *nav){
-    
-    if (rep->laser->right_value < MIN_RANGE){
-        
-        if(nav->previousDistanceToWall == 0 && rep->laser->right_value != LASER_MAX_RANGE){
+
+    if (nav->state.BlockedR){
+
+        if(nav->previousDistanceToWall == 0){
             nav->previousDistanceToWall = rep->laser->right_value;
             return 0;
         }
@@ -401,7 +544,7 @@ uint8_t checkAlignmentToWall(rep_t *rep, nav_t *nav){
             return 0;
         }
     } else if (rep->laser->left_value < MIN_RANGE){
-        
+
         if(nav->previousDistanceToWall == 0 && rep->laser->left_value != LASER_MAX_RANGE){
             nav->previousDistanceToWall = rep->laser->left_value;
             return 0;
@@ -411,7 +554,7 @@ uint8_t checkAlignmentToWall(rep_t *rep, nav_t *nav){
             return 0;
         }
     }
-    
+
     return 1;
 }
 
@@ -472,7 +615,7 @@ void draw_side(rep_t *rep, nav_t *nav, const int16_t SIDE_OFFSET, fieldstate_t s
 
 void drawMap (rep_t *rep, nav_t *nav){
     uint16_t mes_diff = rep->laser->front_value - rep->sonar->value;
-    
+
     //Draw map in direct front of the drone
     if(mes_diff > WINDOW_RECON_THRESHOLD) {
         draw_front(rep, nav, WINDOW);
