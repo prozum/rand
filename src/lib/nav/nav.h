@@ -77,7 +77,8 @@ typedef struct state_s{
 
 void update_state(state_t *state, rep_t *rep);
 
-#define ANGLE_RESOLUTION 0.01 //means that each degree is split in 100
+#define ANGLE_RESOLUTION 0.01                       // Means that each degree is split in 100
+#define INV_ANGLE_RESOLUTION (1 / ANGLE_RESOLUTION) // One degree is 100 steps on the scale
 
 typedef struct search_node_s search_node_t;
 
@@ -95,8 +96,6 @@ typedef struct search_s{
     uint16_t closedset_size;
     uint16_t openset_size;
     pixel_coord_t goal;
-
-
 }search_t;
 
 typedef enum set_e{

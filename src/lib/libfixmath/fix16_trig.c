@@ -116,6 +116,7 @@ fix16_t fix16_tan(fix16_t inAngle)
 	return fix16_sdiv(fix16_sin(inAngle), fix16_cos(inAngle));
 }
 
+// http://http.developer.nvidia.com/Cg/asin.html
 fix16_t fix16_asin(fix16_t x)
 {
 	fix16_t negate = fix16_from_float(x < 0);
@@ -137,6 +138,7 @@ fix16_t fix16_asin(fix16_t x)
 	return fix16_sub(ret, fix16_mul(fix16_from_int(2), fix16_mul(negate, ret)));
 }
 
+// http://http.developer.nvidia.com/Cg/acos.html
 fix16_t fix16_acos(fix16_t x)
 {
 	fix16_t negate = fix16_from_float(x < 0);
@@ -154,31 +156,32 @@ fix16_t fix16_acos(fix16_t x)
 	return fix16_add(fix16_mul(negate, fix16_pi), ret);
 }
 
+// http://http.developer.nvidia.com/Cg/atan2.html
 fix16_t fix16_atan2(fix16_t inY , fix16_t inX)
 {
-	fix16_t t0, t1, t2, t3, t4;
+	fix16_t t0, t1, t2, t3;
 
-	t3 = fix16_abs(inX);
+	t2 = fix16_abs(inX);
 	t1 = fix16_abs(inY);
-	t0 = fix16_max(t3, t1);
-	t1 = fix16_min(t3, t1);
-	t3 = fix16_div(fix16_from_int(1), t0);
-	t3 = fix16_mul(t1, t3);
+	t0 = fix16_max(t2, t1);
+	t1 = fix16_min(t2, t1);
+	t2 = fix16_div(fix16_from_int(1), t0);
+	t2 = fix16_mul(t1, t2);
 
-	t4 = fix16_mul(t3, t3);
+	t3 = fix16_mul(t2, t2);
 	t0 = fix16_sub(fix16_from_int(0), fix16_from_dbl(0.013480470));
-	t0 = fix16_add(fix16_mul(t0, t4), fix16_from_dbl(0.057477314));
-	t0 = fix16_sub(fix16_mul(t0, t4), fix16_from_dbl(0.121239071));
-	t0 = fix16_add(fix16_mul(t0, t4), fix16_from_dbl(0.195635925));
-	t0 = fix16_sub(fix16_mul(t0, t4), fix16_from_dbl(0.332994597));
-	t0 = fix16_add(fix16_mul(t0, t4), fix16_from_dbl(0.999995630));
-	t3 = fix16_mul(t0, t3);
+	t0 = fix16_add(fix16_mul(t0, t3), fix16_from_dbl(0.057477314));
+	t0 = fix16_sub(fix16_mul(t0, t3), fix16_from_dbl(0.121239071));
+	t0 = fix16_add(fix16_mul(t0, t3), fix16_from_dbl(0.195635925));
+	t0 = fix16_sub(fix16_mul(t0, t3), fix16_from_dbl(0.332994597));
+	t0 = fix16_add(fix16_mul(t0, t3), fix16_from_dbl(0.999995630));
+	t2 = fix16_mul(t0, t2);
 
-	t3 = (fix16_abs(inY) > fix16_abs(inX)) ? fix16_from_dbl(1.570796327) - t3 : t3;
-	t3 = (inX < 0) ?  fix16_from_dbl(3.141592654) - t3 : t3;
-	t3 = (inY < 0) ? -t3 : t3;
+	t2 = (fix16_abs(inY) > fix16_abs(inX)) ? fix16_from_dbl(1.570796327) - t2 : t2;
+	t2 = (inX < 0) ?  fix16_from_dbl(3.141592654) - t2 : t2;
+	t2 = (inY < 0) ? -t2 : t2;
 
-	return t3;
+	return t2;
 }
 
 fix16_t fix16_atan(fix16_t x)

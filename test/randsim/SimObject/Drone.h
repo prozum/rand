@@ -35,7 +35,7 @@ public:
     ir_t IrBottom;
 
     rep_t WorldRepresentation;
-    nav_t NavigationStruct;
+    nav_t NavStruct;
 
     Drone(Vector2D Pos, int Size);
 
