@@ -225,7 +225,7 @@ void onIdle(rep_t *rep, nav_t *nav) {
 }
 
 void onTurning(rep_t *rep, nav_t *nav){
-    update_angle(nav, - fix16_div(rep->fc->gyro, PERIODS_PER_SEC));
+    update_angle(nav, - fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
 
     update_nav_value(&nav->val, rep->fc->gyro);
     if(fix16_to_int(nav->val) == 0){

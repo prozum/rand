@@ -76,8 +76,8 @@ typedef struct state_s{
 
 void update_state(state_t *state, rep_t *rep);
 
-#define ANGLE_RESOLUTION 0.01 //means that each degree is split in 100
-#define INV_ANGLE_RESOLUTION 100 //One degree is 100 steps on the scale
+#define ANGLE_RESOLUTION 0.01                       // Means that each degree is split in 100
+#define INV_ANGLE_RESOLUTION (1 / ANGLE_RESOLUTION) // One degree is 100 steps on the scale
 typedef struct nav_s{
     state_t state;
     uint16_t timer;

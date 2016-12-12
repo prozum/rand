@@ -10,7 +10,7 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0),
     IrBottom = *IR_init(A1);
     IrBottom.value = 80;
 
-    init_nav(&NavigationStruct);
+    init_nav(&NavStruct);
     init_rep(&FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop, &IrBottom, &WorldRepresentation);
 
     //Set FC duties to simplify movement for this simulation
@@ -43,7 +43,7 @@ void Drone::update() {
     LaserModule.calcDist(Sim->Blocks, Pos, Angle);
 
     if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
-        navigation(&WorldRepresentation, &NavigationStruct);
+        navigation(&WorldRepresentation, &NavStruct);
         LastNavUpdate = Sim->Time;
     }
     updateFromFC();
