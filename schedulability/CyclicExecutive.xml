@@ -70,8 +70,8 @@ pwm == true</label>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
-			<label kind="guard" x="-59" y="-102">t==T</label>
-			<label kind="assignment" x="-59" y="-85">t=0</label>
+			<label kind="guard" x="-51" y="-119">t==T</label>
+			<label kind="assignment" x="-51" y="-102">t=0</label>
 		</transition>
 	</template>
 	<template>
@@ -79,17 +79,17 @@ pwm == true</label>
 		<parameter>const id_t id, const int T, const int C</parameter>
 		<declaration>// Place local declarations here.
 clock t, c;</declaration>
-		<location id="id4" x="68" y="68">
-			<name x="85" y="59">ERR</name>
+		<location id="id4" x="170" y="102">
+			<name x="187" y="93">ERR</name>
 		</location>
-		<location id="id5" x="-68" y="136">
-			<name x="-51" y="136">Running</name>
-			<label kind="invariant" x="-51" y="153">c&lt;=C &amp;&amp;
+		<location id="id5" x="-68" y="204">
+			<name x="-51" y="204">Running</name>
+			<label kind="invariant" x="-51" y="221">c&lt;=C &amp;&amp;
 t&lt;=T</label>
 		</location>
 		<location id="id6" x="-68" y="0">
 			<name x="-127" y="-8">Ready</name>
-			<label kind="invariant" x="-127" y="8">t&lt;=T</label>
+			<label kind="invariant" x="-127" y="8">t &lt;= T</label>
 		</location>
 		<location id="id7" x="-68" y="-136">
 			<name x="-78" y="-170">Idle</name>
@@ -99,37 +99,37 @@ t&lt;=T</label>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id7"/>
-			<label kind="guard" x="-306" y="-8">c==C</label>
-			<label kind="synchronisation" x="-314" y="8">release!</label>
-			<label kind="assignment" x="-323" y="25">sensors--</label>
-			<nail x="-255" y="136"/>
-			<nail x="-255" y="-136"/>
+			<label kind="guard" x="-425" y="9">c==C</label>
+			<label kind="synchronisation" x="-433" y="25">release!</label>
+			<label kind="assignment" x="-442" y="42">sensors--</label>
+			<nail x="-365" y="204"/>
+			<nail x="-365" y="-136"/>
 		</transition>
 		<transition>
 			<source ref="id5"/>
 			<target ref="id4"/>
-			<label kind="guard" x="68" y="136">t==T</label>
-			<nail x="68" y="136"/>
+			<label kind="guard" x="161" y="204">t==T</label>
+			<nail x="170" y="204"/>
 		</transition>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id4"/>
-			<label kind="guard" x="68" y="-17">t==T</label>
-			<nail x="68" y="0"/>
+			<label kind="guard" x="161" y="-17">t==T</label>
+			<nail x="170" y="0"/>
 		</transition>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id5"/>
-			<label kind="guard" x="-178" y="76">sensors&gt;0 &amp;&amp;
+			<label kind="guard" x="-178" y="102">sensors&gt;0 &amp;&amp;
 pwm == true</label>
-			<label kind="synchronisation" x="-110" y="42">run?</label>
-			<label kind="assignment" x="-110" y="59">c=0</label>
+			<label kind="synchronisation" x="-102" y="68">run?</label>
+			<label kind="assignment" x="-102" y="85">c=0</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
 			<target ref="id6"/>
-			<label kind="guard" x="-59" y="-110">t==T</label>
-			<label kind="assignment" x="-59" y="-93">t=0</label>
+			<label kind="guard" x="-51" y="-93">t==T</label>
+			<label kind="assignment" x="-51" y="-119">t=0</label>
 		</transition>
 	</template>
 	<template>
@@ -157,12 +157,12 @@ t&lt;=T</label>
 		<transition>
 			<source ref="id10"/>
 			<target ref="id8"/>
-			<label kind="guard" x="-297" y="0">c==C</label>
-			<label kind="synchronisation" x="-306" y="25">release!</label>
-			<label kind="assignment" x="-331" y="51">pwm = true</label>
-			<nail x="-246" y="153"/>
-			<nail x="-246" y="-119"/>
-			<nail x="-229" y="-119"/>
+			<label kind="guard" x="-331" y="0">c==C</label>
+			<label kind="synchronisation" x="-340" y="25">release!</label>
+			<label kind="assignment" x="-365" y="51">pwm = true</label>
+			<nail x="-280" y="153"/>
+			<nail x="-280" y="-119"/>
+			<nail x="-263" y="-119"/>
 		</transition>
 		<transition>
 			<source ref="id10"/>
@@ -173,7 +173,7 @@ t&lt;=T</label>
 		<transition>
 			<source ref="id11"/>
 			<target ref="id9"/>
-			<label kind="guard" x="76" y="0">t==T</label>
+			<label kind="guard" x="85" y="0">t==T</label>
 			<nail x="85" y="17"/>
 		</transition>
 		<transition>
@@ -185,7 +185,7 @@ t&lt;=T</label>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id11"/>
-			<label kind="guard" x="-34" y="-110">t==T</label>
+			<label kind="guard" x="-34" y="-59">t==T</label>
 			<label kind="assignment" x="-34" y="-93">t=0,
 pwm=false</label>
 		</transition>
@@ -233,11 +233,11 @@ system PrA, PrB, PrC, PrD, PrE, CPU;
 // SonarTask =      SENSOR(2, major_cycle,242432);
 
 PWMTask        = PWM(1,minor_cycle,50000);
-SonarTask      = SENSOR(2,major_cycle,241551);
-LaserLeftTask  = SENSOR(3,major_cycle,80810);
-LaserFrontTask = SENSOR(4,major_cycle,80810);
-LaserRightTask = SENSOR(5,major_cycle,80810);
-IRTask         = SENSOR(6,major_cycle,98);
+SonarTask      = SENSOR(2,major_cycle,200000); // 241551
+LaserLeftTask  = SENSOR(3,major_cycle,80000); // 80811
+LaserFrontTask = SENSOR(4,major_cycle,80000);
+LaserRightTask = SENSOR(5,major_cycle,80000);
+IRTask         = SENSOR(6,major_cycle,100); // 98
 NavigationTask = NAVIGATION(7, major_cycle,150000);
 
 system PWMTask, SonarTask, LaserLeftTask, LaserFrontTask, LaserRightTask, IRTask, NavigationTask, CPU;</system>
