@@ -46,7 +46,6 @@ void Drone::update() {
         navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
-    //rotate_right(&FC);
     updateFromFC();
 }
 
