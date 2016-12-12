@@ -18,7 +18,7 @@ Simulator::Simulator()  {
     Render = make_unique<SdlRenderer>();
     BBuilder = make_unique<BlockBuilder>(*this);
 
-    Drn = make_unique<Drone>(Vector2D(50.0, -112.5), 50);
+    Drn = make_unique<Drone>(Vector2D(100.0, -112.5), 50);
     Map = make_unique<Minimap>();
 
     Time = 0;

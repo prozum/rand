@@ -5,8 +5,7 @@
 #include <stdlib.h>
 #include "core/io.h"
 
-#define LASER_MIN_DISTANCE_M 0.02
-#define LASER_MAX_DISTANCE_M 4
+#define LASER_MAX_DISTANCE_CM 2200
 
 typedef struct laser_s {
     tx_t pin; //pin -- maybe not tx_t, I have no idea!

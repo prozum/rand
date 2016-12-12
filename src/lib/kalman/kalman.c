@@ -50,10 +50,13 @@ void kalman_run(kalman_state *state, fix16_t z_k) {
 
 void kalman_calibrate(kalman_state *initial_state, fix16_t z_0) {
     uint8_t calibration_done = 0;
+
+    //Run the filter until the difference between first reading and estimated value
+    //is less than the covariance of the sensor
     while (!calibration_done) {
         kalman_run(initial_state, z_0);
 
-        fix16_t diff = fix16_sub(initial_state->x_k, z_0);
+        fix16_t diff = fix16_abs(fix16_sub(initial_state->x_k, z_0));
 
         if (diff <= initial_state->r)
             calibration_done = 1;

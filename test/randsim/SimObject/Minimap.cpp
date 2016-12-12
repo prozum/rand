@@ -80,7 +80,7 @@ void Minimap::draw() {
 
     for(int X = 0; X < MAP_WIDTH; ++X) {
         for(int Y = 0; Y < MAP_HEIGHT; ++Y) {
-            int Val = map_read(X, Y);
+            fieldstate_t Val = map_read(X, Y);
             auto realX = (WinWidth - MapWidth) + X * BlockSize.X;
             auto realY = Y * BlockSize.Y;
             switch (Val) {

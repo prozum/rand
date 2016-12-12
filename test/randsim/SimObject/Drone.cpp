@@ -1,6 +1,6 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(M_PI),
+Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0),
                                        SonarModule(Pos, 57, Angle, DegToRad(15), 220),
                                        LaserModule(Pos, 400.0, Angle),
                                        Height(0) {
@@ -46,6 +46,7 @@ void Drone::update() {
         navigation(&WorldRepresentation, &NavigationStruct);
         LastNavUpdate = Sim->Time;
     }
+    //rotate_right(&FC);
     updateFromFC();
 }
 
@@ -73,7 +74,7 @@ void Drone::updateYaw(uint16_t YawValue) {
         Angle += M_PI * 2;
 
     //Update gyro with deg/sec
-    FC.gyro = fix16_from_dbl(RadToDeg(abs(YawVelocity)));
+    FC.gyro = fix16_from_dbl(RadToDeg(fabs(YawVelocity)));
 }
 
 void Drone::updateRoll(uint16_t RollValue) {
