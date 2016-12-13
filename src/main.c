@@ -19,24 +19,30 @@ int main ()
         TCNT1 = 0;
 
         task_pulse();
+        task_read_laser_left();
+        task_read_ir();
+        task_read_laser_front();
 
         while (TCNT1 < MINOR_CYCLE);
 
         TCNT1 = 0;
 
         task_pulse();
+        task_read_laser_right();
 
         while (TCNT1 < MINOR_CYCLE);
 
         TCNT1 = 0;
 
         task_pulse();
+        task_read_sonar();
 
         while (TCNT1 < MINOR_CYCLE);
 
         TCNT1 = 0;
 
         task_pulse();
+        task_navigation();
 
         while (TCNT1 < MINOR_CYCLE);
 

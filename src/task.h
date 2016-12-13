@@ -59,7 +59,9 @@ void task_init_fc();
 void task_pulse();
 
 /*sensor tasks*/
-void task_read_laser();
+void task_read_laser_right();
+void task_read_laser_front();
+void task_read_laser_left();
 void task_read_ir();
 void task_read_sonar();
 void task_read_acceleration();

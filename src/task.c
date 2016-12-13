@@ -131,11 +131,6 @@ void task_navigation()
 
 }
 
-void task_read_laser()
-{
-    laser_read_dist(laser);
-}
-
 void task_read_ir()
 {
     IR_read(bottom_ir);
