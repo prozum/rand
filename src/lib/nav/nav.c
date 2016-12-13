@@ -15,8 +15,7 @@
  */
 fix16_t fix_rad_angle(uint16_t degrees_100th) {
     if(degrees_100th >= (uint16_t) 360 * INV_ANGLE_RESOLUTION) {
-        WARNING(SENDER_MAP, "fix_rad_angle: Angle > 360 degrees");
-        return fix16_from_int(-1);
+        degrees_100th %= 360 * INV_ANGLE_RESOLUTION;
     }
 
     return fix16_deg_to_rad(fix16_from_int(ANGLE_RESOLUTION * degrees_100th));
@@ -29,7 +28,8 @@ fix16_t fix_rad_angle(uint16_t degrees_100th) {
  * @return the distance on the y-axis
  */
 fix16_t calculate_y_distance (uint16_t angle, fix16_t distance) {
-    return fix16_mul(fix16_sin(fix_rad_angle(angle)), distance);
+    fix16_t sin_angle = fix16_sin(fix_rad_angle(angle));
+    return fix16_mul(sin_angle, distance);
 }
 
 /**
@@ -66,7 +66,7 @@ uint8_t check_wall_front(rep_t *rep, state_t state){
 
 uint8_t check_wall_left(rep_t *rep) {
     //Check map
-    if (rep->laser->left_value <= MIN_RANGE) {
+    if (rep->laser->val_left <= MIN_RANGE) {
         return 1;
     }
     return 0;
@@ -74,7 +74,7 @@ uint8_t check_wall_left(rep_t *rep) {
 
 uint8_t check_wall_right(rep_t *rep) {
     //Check map
-    if (rep->laser->right_value <= MIN_RANGE) {
+    if (rep->laser->val_right <= MIN_RANGE) {
         return 1;
     }
     return 0;
@@ -95,7 +95,7 @@ uint8_t check_ceiling(rep_t *rep) {
 }
 
 uint8_t check_win_front(rep_t *rep, state_t state) {
-    if (rep->sonar->valid && rep->laser->left_value >= MIN_RANGE && rep->sonar->value <= MIN_RANGE &&
+    if (rep->sonar->valid && rep->laser->val_left >= MIN_RANGE && rep->sonar->value <= MIN_RANGE &&
             is_sonar_reliable(rep, state)) {
         return 1;
     }
@@ -103,14 +103,14 @@ uint8_t check_win_front(rep_t *rep, state_t state) {
 }
 
 uint8_t check_win_left(rep_t *rep) {
-    if (rep->laser->left_value >= MIN_RANGE) {
+    if (rep->laser->val_left >= MIN_RANGE) {
         //Cross reference map and turn to check with sonar if necessary
     }
     return 0;
 }
 
 uint8_t check_win_right(rep_t *rep) {
-    if (rep->laser->right_value >= MIN_RANGE) {
+    if (rep->laser->val_right >= MIN_RANGE) {
         //Cross reference map and turn to check with sonar if necessary
     }
     return 0;
@@ -203,9 +203,9 @@ void navigation(rep_t *rep, nav_t *nav){
     }
 
     if(nav->state.blocked_left)
-        nav->prev_dist_wall = rep->laser->left_value;
+        nav->prev_dist_wall = rep->laser->val_left;
     else if(nav->state.blocked_right){
-        nav->prev_dist_wall = rep->laser->right_value;
+        nav->prev_dist_wall = rep->laser->val_right;
     }
 }
 
@@ -262,25 +262,25 @@ void alignToWall(rep_t *rep, nav_t *nav){
     fix16_t diffWall = 0, directionDistance = fix16_div(rep->fc->vel->y, fix16_from_int(PERIODS_PER_SEC)), degreesToTurn = 0;
 
     if (nav->state.blocked_left){
-        diffWall = fix16_from_int(rep->laser->left_value - nav->prev_dist_wall);
-        nav->prev_dist_wall = rep->laser->left_value;
+        diffWall = fix16_from_int(rep->laser->val_left - nav->prev_dist_wall);
+        nav->prev_dist_wall = rep->laser->val_left;
     }
     else if (nav->state.blocked_right){
-        diffWall = fix16_from_int(rep->laser->right_value - nav->prev_dist_wall);
-        nav->prev_dist_wall = rep->laser->right_value;
+        diffWall = fix16_from_int(rep->laser->val_right - nav->prev_dist_wall);
+        nav->prev_dist_wall = rep->laser->val_right;
     }
 
     if(diffWall == fix16_from_int(1))
         diffWall = fix16_from_float(1);
     degreesToTurn = diffWall;  //fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR)), diffWall)))); todo: Insert proper calculation
 
-    if (diffWall < fix16_from_int(0) && rep->laser->left_value < MIN_RANGE){
+    if (diffWall < fix16_from_int(0) && rep->laser->val_left < MIN_RANGE){
         nav_turn_right(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall < fix16_from_int(0) && rep->laser->right_value < MIN_RANGE) {
+    } else if (diffWall < fix16_from_int(0) && rep->laser->val_right < MIN_RANGE) {
         nav_turn_left(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall > fix16_from_int(0) && rep->laser->left_value < MIN_RANGE) {
+    } else if (diffWall > fix16_from_int(0) && rep->laser->val_left < MIN_RANGE) {
         nav_turn_left(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall > fix16_from_int(0) && rep->laser->right_value < MIN_RANGE) {
+    } else if (diffWall > fix16_from_int(0) && rep->laser->val_right < MIN_RANGE) {
         nav_turn_right(rep, nav, abs(fix16_to_int(degreesToTurn)));
     }
 }
@@ -388,7 +388,7 @@ uint8_t is_sonar_reliable(rep_t *rep, state_t state){
     /* finds the distance to the wall the drone is following
      * if blockedR returns 0, then the wall is to the left, otherwise the right
      * if the wall is on the left distToWall receives the distance to left, otherwise right */
-    fix16_t distToWall = fix16_from_int(state.blocked_right ? rep->laser->left_value : rep->laser->right_value);
+    fix16_t distToWall = fix16_from_int(state.blocked_right ? rep->laser->val_left : rep->laser->val_right);
 
     /* find the distance to the wall with a 15 degree angle from front view */
     fix16_t calcSonarDistToWall = fix16_mul(distToWall/fix16_sin(fix16_from_float(fix16_rad_to_deg(SONAR_DEG))), fix16_sin(fix16_from_float(fix16_rad_to_deg(PERPENDICULAR))));
@@ -409,21 +409,21 @@ uint8_t check_alignment_wall(rep_t *rep, nav_t *nav){
     if (nav->state.blocked_right){
 
         if(nav->prev_dist_wall == 0){
-            nav->prev_dist_wall = rep->laser->right_value;
+            nav->prev_dist_wall = rep->laser->val_right;
             return 0;
         }
         
-        if (nav->prev_dist_wall != rep->laser->right_value && rep->laser->right_value != LASER_MAX_RANGE){
+        if (nav->prev_dist_wall != rep->laser->val_right && rep->laser->val_right != LASER_MAX_RANGE){
             return 0;
         }
-    } else if (rep->laser->left_value < MIN_RANGE){
+    } else if (rep->laser->val_left < MIN_RANGE){
 
-        if(nav->prev_dist_wall == 0 && rep->laser->left_value != LASER_MAX_RANGE){
-            nav->prev_dist_wall = rep->laser->left_value;
+        if(nav->prev_dist_wall == 0 && rep->laser->val_left != LASER_MAX_RANGE){
+            nav->prev_dist_wall = rep->laser->val_left;
             return 0;
         }
         
-        if (nav->prev_dist_wall != rep->laser->left_value && rep->laser->left_value != LASER_MAX_RANGE){
+        if (nav->prev_dist_wall != rep->laser->val_left && rep->laser->val_left != LASER_MAX_RANGE){
             return 0;
         }
     }
@@ -464,11 +464,11 @@ pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord) {
     return coord;
 }
 
-void draw_front(rep_t *rep, nav_t *nav, fieldstate_t state) {
+void draw_front(uint16_t val, nav_t *nav, fieldstate_t state) {
     //Calculate the x-offset with cos(angle) * laser
-    fix16_t x_offset = calculate_x_distance(nav->angle, fix16_from_int(rep->laser->front_value));
+    fix16_t x_offset = calculate_x_distance(nav->angle, fix16_from_int(val));
     //Calculate the y-offset with sin(angle) * laser
-    fix16_t y_offset = calculate_y_distance(nav->angle, fix16_from_int(rep->laser->front_value));
+    fix16_t y_offset = calculate_y_distance(nav->angle, fix16_from_int(val));
 
     //And convert to pixel-coord
     pixel_coord_t pix_win = align_to_pixel(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
@@ -476,9 +476,9 @@ void draw_front(rep_t *rep, nav_t *nav, fieldstate_t state) {
     map_write(pix_win.x, pix_win.y, state);
 }
 
-void draw_side(rep_t *rep, nav_t *nav, const int16_t side_offset, fieldstate_t state) {
-    fix16_t x_offset = calculate_x_distance(nav->angle+side_offset, fix16_from_int(rep->laser->right_value));
-    fix16_t y_offset = calculate_y_distance(nav->angle+side_offset, fix16_from_int(rep->laser->right_value));
+void draw_side(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state) {
+    fix16_t x_offset = calculate_x_distance(nav->angle + side_offset, fix16_from_int(val));
+    fix16_t y_offset = calculate_y_distance(nav->angle + side_offset, fix16_from_int(val));
 
     //And convert to pixel-coord
     pixel_coord_t pix_obst = align_to_pixel(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
@@ -487,32 +487,22 @@ void draw_side(rep_t *rep, nav_t *nav, const int16_t side_offset, fieldstate_t s
 }
 
 void draw_map(rep_t *rep, nav_t *nav){
-    uint16_t mes_diff = rep->laser->front_value - rep->sonar->value;
-
-    //Draw map in direct front of the drone
-    if(mes_diff > WINDOW_RECON_THRESHOLD) {
-        draw_front(rep, nav, WINDOW);
-    }
-    else if (rep->laser->front_value == rep->sonar->value) {
-        draw_front(rep, nav, WALL);
-    }
-
     if((rep->sonar->value < MIN_RANGE || rep->laser->front_value <= MIN_RANGE)
        && rep->laser->front_value != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
         uint16_t mes_diff = abs(rep->laser->front_value - rep->sonar->value);
         //Draw map in direct front of the drone
         if (mes_diff > WINDOW_RECON_THRESHOLD) {
-            draw_front(rep, nav, WINDOW);
+            draw_front(rep->laser->front_value, nav, WINDOW);
         } else {
-            draw_front(rep, nav, WALL);
+            draw_front(rep->laser->front_value, nav, WALL);
         }
     }
 
-    if (nav->state.wall_right && rep->laser->right_value <= MIN_RANGE) {
-        draw_side(rep, nav, DRONE_RIGHT_SIDE, WALL);
+    if (nav->state.wall_right && rep->laser->val_right <= MIN_RANGE) {
+        draw_side(rep->laser->val_right, nav, DRONE_RIGHT_SIDE, WALL);
     }
 
-    if (nav->state.wall_left && rep->laser->left_value <= MIN_RANGE) {
-        draw_side(rep, nav, DRONE_LEFT_SIDE, WALL);
+    if (nav->state.wall_left && rep->laser->val_left <= MIN_RANGE) {
+        draw_side(rep->laser->val_left, nav, DRONE_LEFT_SIDE, WALL);
     }
 }

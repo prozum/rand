@@ -10,8 +10,8 @@
 typedef struct laser_s {
     tx_t pin; //pin -- maybe not tx_t, I have no idea!
     //latests readings in cm
-    uint16_t left_value;
-    uint16_t right_value;
+    uint16_t val_left;
+    uint16_t val_right;
     uint16_t front_value;
 } laser_t;
 

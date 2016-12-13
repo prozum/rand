@@ -4,16 +4,16 @@ laser_t *laser_init(tx_t pin) {
     laser_t *laser = malloc(sizeof(laser_t));
 
     laser->pin = pin;
-    laser->left_value = 0;
-    laser->right_value = 0;
+    laser->val_left = 0;
+    laser->val_right = 0;
     laser->front_value = 0;
 
     return laser;
 }
 
 void set_laser_values(laser_t *laser, float left, float right, float front){
-    laser->left_value = left;
-    laser->right_value = right;
+    laser->val_left = left;
+    laser->val_right = right;
     laser->front_value = front;
 }
 

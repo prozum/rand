@@ -7,7 +7,7 @@
 #define MAX_MAP_SIZE EEPROM_SIZE * FIELDS_PER_BYTE
 #define FULL_FIELD 3 // for bit masking (11 in binary)
 #define FIELD_SIZE 2
-#define CENTIMETERS_PR_PIXEL 25
+#define CENTIMETERS_PR_PIXEL 50
 
 #define CHAR_UNVISITED ' '
 #define CHAR_VISITED '\''

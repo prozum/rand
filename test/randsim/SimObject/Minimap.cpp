@@ -90,7 +90,7 @@ void Minimap::draw() {
                     //Sim->Render->drawPixel({realX, realY});
                     break;
                 case VISITED:
-                    Sim->Render->setColor(YELLOW);
+                    Sim->Render->setColor(GREEN);
                     Sim->Render->drawRect({realX, realY}, BlockSize);
                     break;
                 case WALL:

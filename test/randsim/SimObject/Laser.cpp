@@ -14,9 +14,9 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
     Vector2D Res;
     bool Intersects;
 
-    Struct.left_value = 2200;
+    Struct.val_left = 2200;
     Struct.front_value = 2200;
-    Struct.right_value = 2200;
+    Struct.val_right = 2200;
 
     update(Origin, Angle);
 
@@ -26,18 +26,18 @@ void Laser::calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle)
             continue;
 
         Intersects = B.intersection(Rays[0], Res);
-        if (Intersects) Struct.left_value = std::min(Struct.left_value, (uint16_t)Res.length());
+        if (Intersects) Struct.val_left = std::min(Struct.val_left, (uint16_t)Res.length());
 
         Intersects = B.intersection(Rays[1], Res);
         if (Intersects) Struct.front_value = std::min(Struct.front_value, (uint16_t)Res.length());
 
         Intersects = B.intersection(Rays[2], Res);
-        if (Intersects) Struct.right_value = std::min(Struct.right_value, (uint16_t)Res.length());
+        if (Intersects) Struct.val_right = std::min(Struct.val_right, (uint16_t)Res.length());
     }
 
-    if (Struct.left_value > Length) Struct.left_value = 2200;
+    if (Struct.val_left > Length) Struct.val_left = 2200;
     if (Struct.front_value > Length) Struct.front_value = 2200;
-    if (Struct.right_value > Length) Struct.right_value = 2200;
+    if (Struct.val_right > Length) Struct.val_right = 2200;
 }
 
 void Laser::update(Vector2D Origin, double Angle) {

@@ -32,7 +32,7 @@
 #define PERIOD_MILLIS 100 //The time between calls of the navigator.
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 
-#define MAP_MIDDLE 800
+#define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 2 * CENTIMETERS_PR_PIXEL
 
 #define ANGLE_RESOLUTION 0.01    // Means that each degree is split in 100
 #define INV_ANGLE_RESOLUTION 100 // One degree is 100 steps on the scale
@@ -74,7 +74,6 @@ void on_turning(rep_t *rep, nav_t *nav);
 
 uint8_t is_sonar_reliable(rep_t *rep, state_t state);
 uint8_t check_alignment_wall(rep_t *rep, nav_t *nav);
-void draw_map(rep_t *rep, nav_t *nav);
 
 void nav_idle(rep_t *rep, nav_t *nav);
 void nav_turn_left(rep_t *rep, nav_t *nav, uint8_t degrees);
@@ -96,6 +95,11 @@ fix16_t fix_rad_angle(uint16_t degrees_100th);
 fix16_t calculate_y_distance(uint16_t degrees_100th, fix16_t distance);
 fix16_t calculate_x_distance(uint16_t degrees_100th, fix16_t distance);
 void update_angle(nav_t *nav, fix16_t degrees);
+
+
+void draw_front(uint16_t val, nav_t *nav, fieldstate_t state);
+void draw_side(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state);
+void draw_map(rep_t *rep, nav_t *nav);
 
 #endif //RAND_NAV_H
 
