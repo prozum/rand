@@ -1,5 +1,5 @@
 #include "nav.h"
-#include "../task.h"
+#include "task.h"
 #include <math.h>
 
 //Defines the lowest and highest accepted world-position on the internal drone map
@@ -56,14 +56,15 @@ void update_angle(nav_t *nav, fix16_t degrees) {
     nav->angle = (uint16_t) res_angle;
 }
 
-uint8_t CheckAWallF(rep_t *rep, state_t state){
-    if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) && isSonarReliable(rep, state)){
+uint8_t check_wall_front(rep_t *rep, state_t state){
+    if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) &&
+            is_sonar_reliable(rep, state)){
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckAWallL(rep_t *rep) {
+uint8_t check_wall_left(rep_t *rep) {
     //Check map
     if (rep->laser->left_value <= MIN_RANGE) {
         return 1;
@@ -71,7 +72,7 @@ uint8_t CheckAWallL(rep_t *rep) {
     return 0;
 }
 
-uint8_t CheckAWallR(rep_t *rep) {
+uint8_t check_wall_right(rep_t *rep) {
     //Check map
     if (rep->laser->right_value <= MIN_RANGE) {
         return 1;
@@ -79,74 +80,75 @@ uint8_t CheckAWallR(rep_t *rep) {
     return 0;
 }
 
-uint8_t CheckAGround(rep_t *rep) {
+uint8_t check_ground(rep_t *rep) {
     if (rep->ir_bottom->value <= MIN_RANGE) {
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckACeiling(rep_t *rep) {
+uint8_t check_ceiling(rep_t *rep) {
     if (rep->ir_top->value <= MIN_RANGE) {
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckAWinF(rep_t *rep, state_t state) {
-    if (rep->sonar->valid && rep->laser->left_value >= MIN_RANGE && rep->sonar->value <= MIN_RANGE && isSonarReliable(rep, state)) {
+uint8_t check_win_front(rep_t *rep, state_t state) {
+    if (rep->sonar->valid && rep->laser->left_value >= MIN_RANGE && rep->sonar->value <= MIN_RANGE &&
+            is_sonar_reliable(rep, state)) {
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckAWinL(rep_t *rep) {
+uint8_t check_win_left(rep_t *rep) {
     if (rep->laser->left_value >= MIN_RANGE) {
         //Cross reference map and turn to check with sonar if necessary
     }
     return 0;
 }
 
-uint8_t CheckAWinR(rep_t *rep) {
+uint8_t check_win_right(rep_t *rep) {
     if (rep->laser->right_value >= MIN_RANGE) {
         //Cross reference map and turn to check with sonar if necessary
     }
     return 0;
 }
 
-uint8_t CheckBlockedF(state_t *state){
-    if(state->AWallF || state->AWinF){
+uint8_t check_blocked_front(state_t *state){
+    if(state->wall_front || state->win_front){
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckBlockedR(state_t *state){
-    if(state->AWallR || state->AWinR){
+uint8_t check_blocked_right(state_t *state){
+    if(state->wall_right || state->win_right){
         return 1;
     }
     return 0;
 }
 
-uint8_t CheckBlockedL(state_t *state){
-    if(state->AWallL || state->AWinL){
+uint8_t check_blocked_left(state_t *state){
+    if(state->wall_left || state->win_left){
         return 1;
     }
     return 0;
 }
 
 void update_state(state_t *state, rep_t *rep){
-    state->ACeiling = CheckACeiling(rep);
-    state->AGround =  CheckAGround(rep);
-    state->AWallF = CheckAWallF(rep, *state);
-    state->AWallL = CheckAWallL(rep);
-    state->AWallR = CheckAWallR(rep);
-    state->AWinF = CheckAWinF(rep, *state);
-    state->AWinL = CheckAWinL(rep);
-    state->AWinR = CheckAWinR(rep);
-    state->BlockedF = CheckBlockedF(state);
-    state->BlockedL = CheckBlockedL(state);
-    state->BlockedR = CheckBlockedR(state);
+    state->ceiling = check_ceiling(rep);
+    state->ground = check_ground(rep);
+    state->wall_front = check_wall_front(rep, *state);
+    state->wall_left = check_wall_left(rep);
+    state->wall_right = check_wall_right(rep);
+    state->win_front = check_win_front(rep, *state);
+    state->win_left = check_win_left(rep);
+    state->win_right = check_win_right(rep);
+    state->blocked_front = check_blocked_front(state);
+    state->blocked_left = check_blocked_left(state);
+    state->blocked_right = check_blocked_right(state);
 }
 
 void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep){
@@ -161,7 +163,7 @@ void init_nav(nav_t *nav){
     nav->task = IDLE;
     nav->val = 0;
     nav->angle = 0;
-    nav->previousDistanceToWall = 0;
+    nav->prev_dist_wall = 0;
 
     //Assmumes drone to start in the middle of the room.
     nav->posx = MAP_MIDDLE;
@@ -185,19 +187,25 @@ void navigation(rep_t *rep, nav_t *nav){
     task_t currenttask = nav->task;
 
     switch(currenttask){
-        case IDLE: onIdle(rep, nav); break;
-        case TURNING: onTurning(rep, nav); break;
-        case MOVEFORWARD: onMoveforward(rep, nav); break;
-        case MOVEUP: onMoveup(rep, nav); break;
-        case MOVEDOWN: onMovedown(rep, nav); break;
-        case SEARCHING: onSearching(rep, nav); break;
+        case IDLE:
+            on_idle(rep, nav); break;
+        case TURNING:
+            on_turning(rep, nav); break;
+        case MOVEFORWARD:
+            on_move_forward(rep, nav); break;
+        case MOVEUP:
+            on_move_up(rep, nav); break;
+        case MOVEDOWN:
+            on_move_down(rep, nav); break;
+        case SEARCHING:
+            on_searching(rep, nav); break;
         default: printf("Invalid task!"); break;
     }
 
-    if(nav->state.BlockedL)
-        nav->previousDistanceToWall = rep->laser->left_value;
-    else if(nav->state.BlockedR){
-        nav->previousDistanceToWall = rep->laser->right_value;
+    if(nav->state.blocked_left)
+        nav->prev_dist_wall = rep->laser->left_value;
+    else if(nav->state.blocked_right){
+        nav->prev_dist_wall = rep->laser->right_value;
     }
 }
 
@@ -210,23 +218,23 @@ void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
 }
 
 //These functions run according to the current task being done.
-void onIdle(rep_t *rep, nav_t *nav) {
+void on_idle(rep_t *rep, nav_t *nav) {
     state_t state = nav->state;
-    if (state.BlockedF) {
-        if (state.BlockedR) {
-            if (state.BlockedL)
-                Turnaround(rep, nav);
+    if (state.blocked_front) {
+        if (state.blocked_right) {
+            if (state.blocked_left)
+                nav_turn_around(rep, nav);
             else
-                Turnleft(rep,nav, FULL_TURN);
+                nav_turn_left(rep, nav, FULL_TURN);
         }
         else
-            Turnright(rep, nav, FULL_TURN);
+            nav_turn_right(rep, nav, FULL_TURN);
     }
     else
-        Moveforward(rep, nav, fix16_from_int(25));
+        nav_move_forward(rep, nav, fix16_from_int(25));
 }
 
-void onTurning(rep_t *rep, nav_t *nav){
+void on_turning(rep_t *rep, nav_t *nav){
     // Ugly workaround since rotation direction cannot be read from gyro
     if (rep->fc->yaw == rep->fc->duty->MIN_FC_DUTY)
         update_angle(nav, fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
@@ -253,13 +261,13 @@ void onTurnaround(rep_t *rep, nav_t *nav){
 void alignToWall(rep_t *rep, nav_t *nav){
     fix16_t diffWall = 0, directionDistance = fix16_div(rep->fc->vel->y, fix16_from_int(PERIODS_PER_SEC)), degreesToTurn = 0;
 
-    if (nav->state.BlockedL){
-        diffWall = fix16_from_int(rep->laser->left_value - nav->previousDistanceToWall);
-        nav->previousDistanceToWall = rep->laser->left_value;
+    if (nav->state.blocked_left){
+        diffWall = fix16_from_int(rep->laser->left_value - nav->prev_dist_wall);
+        nav->prev_dist_wall = rep->laser->left_value;
     }
-    else if (nav->state.BlockedR){
-        diffWall = fix16_from_int(rep->laser->right_value - nav->previousDistanceToWall);
-        nav->previousDistanceToWall = rep->laser->right_value;
+    else if (nav->state.blocked_right){
+        diffWall = fix16_from_int(rep->laser->right_value - nav->prev_dist_wall);
+        nav->prev_dist_wall = rep->laser->right_value;
     }
 
     if(diffWall == fix16_from_int(1))
@@ -267,17 +275,17 @@ void alignToWall(rep_t *rep, nav_t *nav){
     degreesToTurn = diffWall;  //fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR)), diffWall)))); todo: Insert proper calculation
 
     if (diffWall < fix16_from_int(0) && rep->laser->left_value < MIN_RANGE){
-        Turnright(rep, nav, abs(fix16_to_int(degreesToTurn)));
+        nav_turn_right(rep, nav, abs(fix16_to_int(degreesToTurn)));
     } else if (diffWall < fix16_from_int(0) && rep->laser->right_value < MIN_RANGE) {
-        Turnleft(rep, nav, abs(fix16_to_int(degreesToTurn)));
+        nav_turn_left(rep, nav, abs(fix16_to_int(degreesToTurn)));
     } else if (diffWall > fix16_from_int(0) && rep->laser->left_value < MIN_RANGE) {
-        Turnleft(rep, nav, abs(fix16_to_int(degreesToTurn)));
+        nav_turn_left(rep, nav, abs(fix16_to_int(degreesToTurn)));
     } else if (diffWall > fix16_from_int(0) && rep->laser->right_value < MIN_RANGE) {
-        Turnright(rep, nav, abs(fix16_to_int(degreesToTurn)));
+        nav_turn_right(rep, nav, abs(fix16_to_int(degreesToTurn)));
     }
 }
 
-void onMoveforward(rep_t *rep, nav_t *nav){
+void on_move_forward(rep_t *rep, nav_t *nav){
     //calculate the current position from the current position and angle
     nav->posx = nav->posx + fix16_to_int(calculate_x_distance(nav->angle, fix16_div(rep->fc->vel->y,
                                                                                     fix16_from_int(PERIODS_PER_SEC))));
@@ -285,73 +293,73 @@ void onMoveforward(rep_t *rep, nav_t *nav){
                                                                                     fix16_from_int(PERIODS_PER_SEC))));
     map_set_position(nav, VISITED);
 
-    if(!checkAlignmentToWall(rep, nav))
+    if(!check_alignment_wall(rep, nav))
         alignToWall(rep, nav);
 
-    drawMap(rep, nav);
+    draw_map(rep, nav);
     if(fix16_to_int(nav->val) > 0 && nav->task == MOVEFORWARD)
         update_nav_value(&nav->val, rep->fc->gyro);
-    if(nav->state.AWallF || fix16_to_int(nav->val) == 0){
+    if(nav->state.wall_front || fix16_to_int(nav->val) == 0){
         move_stop(rep->fc);
         nav->val = 0;
         nav->task = IDLE;
     }
 }
 
-void onMoveup(rep_t *rep, nav_t *nav){
+void on_move_up(rep_t *rep, nav_t *nav){
 
-    if (nav->state.ACeiling){
+    if (nav->state.ceiling){
         move_stop(rep->fc);
         nav->task = IDLE;
     }
 }
 
-void onMovedown(rep_t *rep, nav_t *nav){
+void on_move_down(rep_t *rep, nav_t *nav){
 
-    if(nav->state.AGround){
+    if(nav->state.ground){
         move_stop(rep->fc);
     }
 }
 
-void onSearching(rep_t *rep, nav_t *nav){
+void on_searching(rep_t *rep, nav_t *nav){
 }
 
 //These functions run whenever a new task is assigned
-void Idle(rep_t *rep, nav_t *nav) {
+void nav_idle(rep_t *rep, nav_t *nav) {
     move_stop(rep->fc);
     nav->task = IDLE;
 }
 
-void Turnleft(rep_t *rep, nav_t *nav, uint8_t degrees){
+void nav_turn_left(rep_t *rep, nav_t *nav, uint8_t degrees){
     rotate_left(rep->fc);
     nav->val = fix16_from_int(degrees);
     nav->task = TURNING;
 }
 
-void Turnright(rep_t *rep, nav_t *nav, uint8_t degrees){
+void nav_turn_right(rep_t *rep, nav_t *nav, uint8_t degrees){
     rotate_right(rep->fc);
     nav->val = fix16_from_int(degrees);
     nav->task = TURNING;
 }
 
-void Turnaround(rep_t *rep, nav_t *nav){
+void nav_turn_around(rep_t *rep, nav_t *nav){
     rotate_right(rep->fc);
     nav->val = fix16_from_int(180); //Complete turnaround
     nav->task = TURNING;
 }
 
-void Moveforward(rep_t *rep, nav_t *nav, fix16_t distance){
+void nav_move_forward(rep_t *rep, nav_t *nav, fix16_t distance){
     move_forward(rep->fc);
     nav->val = distance;
     nav->task = MOVEFORWARD;
 }
 
-void Moveup(rep_t *rep, nav_t *nav){
+void nav_move_up(rep_t *rep, nav_t *nav){
     move_up(rep->fc);
     nav->task = MOVEUP;
 }
 
-void Movedown(rep_t *rep, nav_t *nav){
+void nav_move_down(rep_t *rep, nav_t *nav){
     move_down(rep->fc);
     nav->task = MOVEDOWN;
 }
@@ -376,11 +384,11 @@ fieldstate_t map_check_position(nav_t *nav) {
     return map_read(pixel.x, pixel.y);
 }
 
-uint8_t isSonarReliable(rep_t *rep, state_t state){
+uint8_t is_sonar_reliable(rep_t *rep, state_t state){
     /* finds the distance to the wall the drone is following
      * if blockedR returns 0, then the wall is to the left, otherwise the right
      * if the wall is on the left distToWall receives the distance to left, otherwise right */
-    fix16_t distToWall = fix16_from_int(state.BlockedR ? rep->laser->left_value : rep->laser->right_value);
+    fix16_t distToWall = fix16_from_int(state.blocked_right ? rep->laser->left_value : rep->laser->right_value);
 
     /* find the distance to the wall with a 15 degree angle from front view */
     fix16_t calcSonarDistToWall = fix16_mul(distToWall/fix16_sin(fix16_from_float(fix16_rad_to_deg(SONAR_DEG))), fix16_sin(fix16_from_float(fix16_rad_to_deg(PERPENDICULAR))));
@@ -394,174 +402,28 @@ uint8_t isSonarReliable(rep_t *rep, state_t state){
     }
 }
 
-/// This function finds the shortest path to a location.
-/// \param nav
-/// \param x
-/// \param y
-search_node_t* findpath(nav_t *nav){
-    search_t *search = &nav->search_data;
-    if(!search->active){
-        search_node_t start;
-        addnode(search, start, OPEN);
-
-        pixel_coord_t startpos = align_to_pixel(nav->posx, nav->posy);
-        start.pos = startpos;
-
-        start.parent = NULL;
-        start.gscore = 0;
-        start.fscore = estimate(&start, search->goal);
-    }
-    uint8_t i;
-    for(i = 0; i < ALLOWED_SEARCH_ITERATIONS; i++){
-        search_node_t *current;
-        *current = lowestf(search);
-        if(current == NULL){
-            search->active = 0;
-            return NULL; //open set is empty (failure)
-        }
-        if ((current->pos.x == search->goal.x) && (current->pos.y == search->goal.y)){
-            return current; //success
-        }
-        current = close_node(search, current); //current will now point to a node in the closed set
-        add_neighbours(search, current);//estimate and add all relevant neighbours to the open set
-    }
-    return NULL; //no more search iterations allowed, continue searching later
-}
-
-search_node_t* addnode(search_t *list, search_node_t node, set_t set){
-    uint16_t i;
-    uint8_t found;
-
-    if(set == OPEN) {
-        for (i = 0; i < list->openset_size + 1;) {
-            if (!list->open_set[i].valid) {
-                i++;
-            } else {
-                if (set == OPEN) {
-                    node.valid = 1;
-                    list->open_set[list->openset_size++] = node;
-                    return &list->open_set[list->openset_size];
-                }
-            }
-        }
-        ERROR("could not add search node, set is broken"); // actual set size does not match variable
-    }else{
-        list->closed_set[list->closedset_size++] = node;
-        return &list->open_set[list->closedset_size];
-    }
-
-}
-
-search_node_t* close_node(search_t *list, search_node_t *node){
-    node->valid = 0;
-    return addnode(list, *node, CLOSED);
-}
-
-uint8_t is_node_in_set(search_t *list, pixel_coord_t coord, set_t set, search_node_t *foundnode){
-    uint16_t i;
-    search_node_t *node;
-    if(set == OPEN){
-        for(i = 0; i < list->openset_size;){
-            *node = list->open_set[i];
-            if(node->valid) {
-                if (list->open_set[i].pos.x == coord.x && list->open_set[i].pos.y == coord.y){
-                    if(foundnode != NULL){
-                        foundnode = &list->open_set[i];
-                    }
-                    return 1;
-                }
-                i++;
-            }
-        }
-    }else{
-        for(i = 0; i < list->openset_size;i++){
-            *node = list->closed_set[i];
-            if (list->closed_set[i].pos.x == coord.x && list->closed_set[i].pos.y == coord.y){
-                if(foundnode != NULL){
-                    foundnode = &list->closed_set[i];
-                }
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
-void add_neighbours(search_t *list, search_node_t *node){
-    pixel_coord_t coords[4]; //coords of neighbours
-    coords[0] = node->pos; coords->x--;coords->y--;
-    coords[1] = node->pos; coords->x--;coords->y++;
-    coords[2] = node->pos; coords->x++;coords->y--;
-    coords[3] = node->pos; coords->x++;coords->y++;
-
-
-    search_node_t foundnode;
-    uint8_t gscore;
-    uint8_t i;
-    for(i = 0;i<4;i++){ //for each of the four neighbours
-
-        if(is_node_in_set(list, coords[i], CLOSED, &foundnode)){
-            continue; //ignore this node
-        }
-        gscore = node->gscore+1;
-        if(!is_node_in_set(list,coords[i],OPEN, &foundnode)){
-            //go through statement
-        }else if(gscore >= foundnode.gscore){
-            continue; //not a better path
-        }
-        foundnode.gscore = gscore;
-        foundnode.fscore = estimate(&foundnode, search_data->goal);
-        foundnode.parent = node;
-        addnode(list, foundnode, OPEN);
-    }
-}
-
-uint8_t estimate(search_node_t *node, pixel_coord_t pos) {
-    return (uint8_t) abs((node->pos.x - pos.x) + (node->pos.y - pos.y));
-}
-
-search_node_t lowestf(search_t *search){
-    search_node_t lowest_f;
-    lowest_f.fscore = INT8_MAX;
-    uint16_t i;
-    for(i = 0; i < search->openset_size; i--){
-        if(search->open_set[i].fscore <lowest_f.fscore){
-            lowest_f = search->open_set[i];
-        }
-    }
-    return lowest_f;
-}
-
-void init_search(search_t *search){
-    search->openset_size = 0;
-    search->closedset_size = 0;
-    search->open_set = calloc(sizeof(search_node_t), MAP_WIDTH*MAP_HEIGHT);
-    search->closed_set = calloc(sizeof(search_node_t), MAP_WIDTH*MAP_HEIGHT);
-    search->active = 1;
-}
-
 
 #define MIN_TAKEACITON_RANGE 20
-uint8_t checkAlignmentToWall(rep_t *rep, nav_t *nav){
+uint8_t check_alignment_wall(rep_t *rep, nav_t *nav){
 
-    if (nav->state.BlockedR){
+    if (nav->state.blocked_right){
 
-        if(nav->previousDistanceToWall == 0){
-            nav->previousDistanceToWall = rep->laser->right_value;
+        if(nav->prev_dist_wall == 0){
+            nav->prev_dist_wall = rep->laser->right_value;
             return 0;
         }
         
-        if (nav->previousDistanceToWall != rep->laser->right_value && rep->laser->right_value != LASER_MAX_RANGE){
+        if (nav->prev_dist_wall != rep->laser->right_value && rep->laser->right_value != LASER_MAX_RANGE){
             return 0;
         }
     } else if (rep->laser->left_value < MIN_RANGE){
 
-        if(nav->previousDistanceToWall == 0 && rep->laser->left_value != LASER_MAX_RANGE){
-            nav->previousDistanceToWall = rep->laser->left_value;
+        if(nav->prev_dist_wall == 0 && rep->laser->left_value != LASER_MAX_RANGE){
+            nav->prev_dist_wall = rep->laser->left_value;
             return 0;
         }
         
-        if (nav->previousDistanceToWall != rep->laser->left_value && rep->laser->left_value != LASER_MAX_RANGE){
+        if (nav->prev_dist_wall != rep->laser->left_value && rep->laser->left_value != LASER_MAX_RANGE){
             return 0;
         }
     }
@@ -624,7 +486,7 @@ void draw_side(rep_t *rep, nav_t *nav, const int16_t side_offset, fieldstate_t s
     map_write(pix_obst.x, pix_obst.y, state);
 }
 
-void drawMap (rep_t *rep, nav_t *nav){
+void draw_map(rep_t *rep, nav_t *nav){
     uint16_t mes_diff = rep->laser->front_value - rep->sonar->value;
 
     //Draw map in direct front of the drone
@@ -646,11 +508,11 @@ void drawMap (rep_t *rep, nav_t *nav){
         }
     }
 
-    if (nav->state.AWallR && rep->laser->right_value <= MIN_RANGE) {
+    if (nav->state.wall_right && rep->laser->right_value <= MIN_RANGE) {
         draw_side(rep, nav, DRONE_RIGHT_SIDE, WALL);
     }
 
-    if (nav->state.AWallL && rep->laser->left_value <= MIN_RANGE) {
+    if (nav->state.wall_left && rep->laser->left_value <= MIN_RANGE) {
         draw_side(rep, nav, DRONE_LEFT_SIDE, WALL);
     }
 }

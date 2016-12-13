@@ -12,8 +12,8 @@ option(TESTS "Tests" ON)
 option(SERIAL_TARGETS "Serial Targets" OFF)
 option(SIZE_TARGETS "Size Targets" OFF)
 
-include_directories(src/lib)
-avr_include_directories(src/lib)
+include_directories(src src/lib)
+avr_include_directories(src src/lib)
 
 add_subdirectory(src)
 

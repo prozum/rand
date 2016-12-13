@@ -13,7 +13,7 @@
 extern "C" {
 #include "nav/nav.h"
 #include "map/map.h"
-#include "../../../src/task.h"
+#include "task.h"
 }
 
 class NavTest : public CppUnit::TestCase {

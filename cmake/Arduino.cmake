@@ -451,6 +451,9 @@ function(GENERATE_AVR_FIRMWARE INPUT_NAME)
     endif ()
 endfunction()
 
+#=============================================================================#
+# [PUBLIC/USER]
+#=============================================================================#
 function(GET_SOURCES_PATHS VAR_SRCS)
     foreach (SRC ${${VAR_SRCS}})
         if (EXISTS ${SRC})
@@ -466,6 +469,9 @@ function(GET_SOURCES_PATHS VAR_SRCS)
     set(${VAR_SRCS} ${SRCS} PARENT_SCOPE)
 endfunction()
 
+#=============================================================================#
+# [PUBLIC/USER]
+#=============================================================================#
 function(LOAD_TEST_FIRMWARE_DEFINES)
     get_property(DEFINES GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
     get_property(PATHS GLOBAL PROPERTY TEST_FIRMWARE_PATHS)
@@ -479,6 +485,9 @@ function(LOAD_TEST_FIRMWARE_DEFINES)
     endforeach ()
 endfunction()
 
+#=============================================================================#
+# [PUBLIC/USER]
+#=============================================================================#
 function(ADD_TEST_DEPENDENCIES TEST_TARGET)
     get_property(TEST_FWS GLOBAL PROPERTY TEST_FIRMWARE_DEFINES)
 
@@ -489,6 +498,20 @@ function(ADD_TEST_DEPENDENCIES TEST_TARGET)
     endforeach ()
 endfunction()
 
+#=============================================================================#
+# [PUBLIC/USER]
+#=============================================================================#
+function(AVR_INCLUDE_DIRECTORIES)
+    get_property(INC_DIRS DIRECTORY PROPERTY AVR_INCLUDE_DIRECTORIES)
+
+    math(EXPR LENGTH "${ARGC} - 1")
+    foreach (ITER RANGE ${LENGTH})
+        set(FULL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV${ITER}}")
+        list(APPEND INC_DIRS "${FULL_PATH}")
+    endforeach ()
+
+    set_property(GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES ${INC_DIRS})
+endfunction()
 
 #=============================================================================#
 # [PRIVATE/INTERNAL]
@@ -576,17 +599,6 @@ function(GET_AVR_FLAGS COMPILE_FLAGS_VAR BOARD_ID LIBS FOR_LIBRARY)
     set(${COMPILE_FLAGS_VAR} "${COMPILE_FLAGS}" PARENT_SCOPE)
 endfunction()
 
-function(AVR_INCLUDE_DIRECTORIES)
-    get_property(INC_DIRS DIRECTORY PROPERTY AVR_INCLUDE_DIRECTORIES)
-
-    math(EXPR LENGTH "${ARGC} - 1")
-    foreach (ITER RANGE ${LENGTH})
-        set(FULL_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${ARGV${ITER}}")
-        list(APPEND INC_DIRS "${FULL_PATH}")
-    endforeach ()
-
-    set_property(GLOBAL PROPERTY AVR_INCLUDE_DIRECTORIES ${INC_DIRS})
-endfunction()
 
 #=============================================================================#
 # [PRIVATE/INTERNAL]
@@ -842,7 +854,7 @@ function(setup_arduino_upload BOARD_ID TARGET_NAME PORT PROGRAMMER_ID AVRDUDE_FL
     # Add programmer support if defined
     if (PROGRAMMER_ID AND ${PROGRAMMER_ID}.protocol)
         setup_arduino_programmer_burn(${TARGET_NAME} ${BOARD_ID} ${PROGRAMMER_ID} ${PORT} "${AVRDUDE_FLAGS}")
-        setup_arduino_bootloader_burn(${TARGET_NAME} ${BOARD_ID} ${PROGRAMMER_ID} ${PORT} "${AVRDUDE_FLAGS}")
+        SETUP_ARDUINO_BOOTLOADER_BURN(${TARGET_NAME} ${BOARD_ID} ${PROGRAMMER_ID} ${PORT} "${AVRDUDE_FLAGS}")
     endif ()
 endfunction()
 
@@ -950,7 +962,7 @@ endfunction()
 # The target for burning the bootloader is ${TARGET_NAME}-burn-bootloader
 #
 #=============================================================================#
-function(setup_arduino_bootloader_burn TARGET_NAME BOARD_ID PROGRAMMER PORT AVRDUDE_FLAGS)
+function(SETUP_ARDUINO_BOOTLOADER_BURN TARGET_NAME BOARD_ID PROGRAMMER PORT AVRDUDE_FLAGS)
     set(BOOTLOADER_TARGET ${TARGET_NAME}-burn-bootloader)
 
     set(AVRDUDE_ARGS)
@@ -1137,14 +1149,14 @@ function(find_sources VAR_NAME LIB_PATH RECURSE)
 endfunction()
 
 #=============================================================================#
-# [PRIVATE/INTERNAL]
+# [PUBLIC]
 #
 # setup_serial_targets()
 #
 # Creates serial targets.
 #
 #=============================================================================#
-function(setup_serial_targets)
+function(SETUP_SERIAL_TARGETS)
     # Detect screen command
     if (CMAKE_HOST_UNIX)
         find_program(SCREEN screen)

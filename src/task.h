@@ -11,8 +11,8 @@
 #include "sonar/sonar.h"
 #include "ir/ir.h"
 #include "laser/laser.h"
-#include "nav/nav.h"
 #include "map/map.h"
+#include "nav/nav-struct.h"
 
 #define ONE_MS 63 // defines 1 millisecond
 #define ONE_AND_A_HALF_MS 94 // defines 1.5 millisecond

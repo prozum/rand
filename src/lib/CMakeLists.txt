@@ -12,12 +12,18 @@ add_subdirectory(ir)
 add_subdirectory(sonar)
 add_subdirectory(laser)
 
-# Kalman library
+# Math libraries
 add_subdirectory(libfixmath)
-add_subdirectory(kalman)
 add_subdirectory(matrix)
 
+# Kalman filter library
+add_subdirectory(kalman)
+
+# Navigation library
 add_subdirectory(nav)
-# Positioning and control
+
+# Searching
+add_subdirectory(search)
+
 # Map library
 add_subdirectory(map)

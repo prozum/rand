@@ -2,8 +2,6 @@
 
 #include "sonar/sonar.h"
 
-
-
 sonar_t *sonar_init(dpin_t trig, dpin_t echo) {
     sonar_t *sonar = malloc(sizeof(sonar_t));
 
