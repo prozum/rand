@@ -12,9 +12,9 @@
 
 #define SONAR_DEG 15
 #define PERPENDICULAR 90
-#define DRONE_RIGHT_SIDE 270
+#define DRONE_RIGHT_SIDE 27000
 #define LASER_MAX_RANGE 2200
-#define DRONE_LEFT_SIDE 90
+#define DRONE_LEFT_SIDE 9000
 
 #define SENSOR_DEVIATION 5
 #define MIN_DIFF_LASER_SONAR 30
@@ -33,7 +33,8 @@
 
 #define MAP_MIDDLE 800
 
-
+//todo: skal udregnes ud fra WCET af løkken i findpath funktionen
+#define ALLOWED_SEARCH_ITERATIONS 10
 
 typedef struct rep_s{
     fc_t *fc;
@@ -96,6 +97,7 @@ typedef struct search_s{
     uint16_t closedset_size;
     uint16_t openset_size;
     pixel_coord_t goal;
+    uint8_t active;
 }search_t;
 
 typedef enum set_e{
@@ -166,9 +168,9 @@ fix16_t calculate_x_distance(uint16_t degrees_100th, fix16_t distance);
 void update_angle(nav_t *nav, fix16_t degrees);
 
 void init_search(search_t *search);
-void findpath(nav_t *nav, pixel_coord_t goal);
-void addnode(search_t *list, search_node_t node, set_t set);
-void close_node(search_t *list, search_node_t *node);
+search_node_t* findpath(nav_t *nav);
+search_node_t* addnode(search_t *list, search_node_t node, set_t set);
+search_node_t* close_node(search_t *list, search_node_t *node);
 void add_neighbours(search_t *list, search_node_t *node);
 uint8_t estimate(search_node_t *node, pixel_coord_t pos);
 search_node_t lowestf(search_t *search);

@@ -79,7 +79,7 @@ int avr_init(avr_t * avr)
 
 	AVR_LOG(avr, LOG_TRACE, "%s init\n", avr->mmcu);
 
-	// cpu is in limbo before init is finished.
+	// cpu is in limbo before init is active.
 	avr->state = cpu_Limbo;
 	avr->frequency = 1000000;	// can be overridden via avr_mcu_section
 	avr_cmd_init(avr);

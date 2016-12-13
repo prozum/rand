@@ -87,7 +87,7 @@ enum {
  * Core states.
  */
 enum {
-	cpu_Limbo = 0,	// before initialization is finished
+	cpu_Limbo = 0,	// before initialization is active
 	cpu_Stopped,	// all is stopped, timers included
 
 	cpu_Running,	// we're free running

@@ -143,7 +143,7 @@ static void avr_bitbang_clk_edge(avr_bitbang_t *p)
 	}
 
 	if ( p->clk_count >= (p->buffer_size*2) ) {
-		// transfer finished
+		// transfer active
 		if ( p->callback_transfer_finished ) {
 			p->data = p->callback_transfer_finished(p->data, p->callback_param);
 		}
