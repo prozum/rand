@@ -17,12 +17,12 @@ void Sonar::calcDist(std::vector<Block> &Blocks) {
 
     for (auto &Block : Blocks) {
         for (auto &Ray : Rays) {
-            bool Intersects = Block.intersection(Ray, Res);
+            bool Intersects = Block.intersect(Ray, Res);
             if (Intersects) Dist = std::min(Dist, Res.length());
         }
 
         if (Dist <= Length) {
-            Struct.value = Dist;
+            Struct.value = (uint16_t)Dist;
             Struct.valid = 1;
         }
     }

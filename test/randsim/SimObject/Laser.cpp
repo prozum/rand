@@ -25,13 +25,13 @@ void Laser::calcDist(std::vector<Block>& Blocks) {
         if (B.Type == BlockType::Window)
             continue;
 
-        Intersects = B.intersection(Rays[0], Res);
+        Intersects = B.intersect(Rays[0], Res);
         if (Intersects) Struct.val_left = std::min(Struct.val_left, (uint16_t)Res.length());
 
-        Intersects = B.intersection(Rays[1], Res);
+        Intersects = B.intersect(Rays[1], Res);
         if (Intersects) Struct.front_value = std::min(Struct.front_value, (uint16_t)Res.length());
 
-        Intersects = B.intersection(Rays[2], Res);
+        Intersects = B.intersect(Rays[2], Res);
         if (Intersects) Struct.val_right = std::min(Struct.val_right, (uint16_t)Res.length());
     }
 

@@ -30,7 +30,7 @@
 
 # Build files
 build
-cmake-build-*
+cmake-build-debug
 .idea
 CMakeLists.txt.user
 

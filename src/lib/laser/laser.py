@@ -12,7 +12,7 @@ if __name__ == '__main__':
         rand.write(str(laser_dist))
 
     while rand.read() != 'armed':
-        0
+        pass
 
     while True:
         i = rand.read()

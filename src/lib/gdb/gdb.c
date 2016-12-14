@@ -746,27 +746,8 @@ static void gdb_write_memory(const uint8_t *buff) {
         addr;
         for (i = 0; i < sz; ++i) {
             ptr[i] = hex2nib(*buff++) << 4;
-            ptr[i] |= hex2nib(*buff++);
+            ptr[i] |= hex2nib(*buff++)
         }
-    } else if ((addr & MEM_SPACE_MASK) == FLASH_OFFSET) {
-        /* jd: for now not implemented */
-        /* posix EIO error */
-        gdb_send_reply("E05");
-        return;
-#if 0    /* writing to flash not supported */
-        addr &= ~MEM_SPACE_MASK;
-        /* to words */
-        addr >>= 1;
-        /* we assume sz is always multiple of two, i.e. write words */
-        for (uint8_t i = 0; i < sz/2; ++i) {
-            uint16_t word;
-            word  = hex2nib(*buff++) << 4;
-            word |= hex2nib(*buff++);
-            word |= hex2nib(*buff++) << 12;
-            word |= hex2nib(*buff++) << 8;
-            safe_pgm_write(&word, addr + i, sizeof(word));
-        }
-#endif
     } else {
         /* posix EIO error */
         gdb_send_reply("E05");

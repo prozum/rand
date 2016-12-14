@@ -16,7 +16,7 @@ typedef struct ir_s {
 
 ir_t *IR_init(apin_t pin);
 
-uint16_t IR_read(ir_t *ir);
+uint16_t ir_read(ir_t *ir);
 
 /*
 float IR_top_to_meters();

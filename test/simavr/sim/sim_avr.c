@@ -125,7 +125,7 @@ void avr_terminate(avr_t * avr)
 
 void avr_reset(avr_t * avr)
 {
-	int noof_ios = MAX_IOs > avr->ramend ? avr->ramend : avr->ramend;
+	int noof_ios = avr->ramend;
 	AVR_LOG(avr, LOG_TRACE, "%s reset\n", avr->mmcu);
 
 	avr->state = cpu_Running;

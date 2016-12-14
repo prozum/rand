@@ -88,9 +88,4 @@ typedef enum pwm_e {
     PWM11 = 11
 } pwm_t;
 
-typedef enum serial_e {
-    SERIAL0 = 0
-} serial_t;
-
-
 #endif //RAND_M328P_H

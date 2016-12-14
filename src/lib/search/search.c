@@ -37,11 +37,10 @@ search_node_t* findpath(nav_t *nav){
 }
 
 search_node_t* addnode(search_t *list, search_node_t node, set_t set){
-    uint16_t i;
     uint8_t found;
 
     if(set == OPEN) {
-        for (i = 0; i < list->openset_size + 1;) {
+        for (uint16_t i = 0; i < list->openset_size + 1;) {
             if (!list->open_set[i].valid) {
                 i++;
             } else {

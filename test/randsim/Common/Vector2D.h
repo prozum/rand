@@ -16,7 +16,6 @@ public:
     Vector2D invert();
     double determinant(Vector2D&);
     double dot(Vector2D&);
-    double dist(Vector2D&);
     double length();
     void compose(double Length, double Angle);
 

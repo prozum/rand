@@ -21,6 +21,8 @@ kalman_state *kalman_init(fix16_t _a, fix16_t _r, log_sender component) {
     state->u_k = fix16_from_int(0);
 
     state->source_components = component;
+
+    return state;
 }
 
 void kalman_run(kalman_state *state, fix16_t z_k) {

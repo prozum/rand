@@ -1,6 +1,5 @@
 #include "Ray.h"
 
-#include <stdio.h>
 #include <Simulator.h>
 
 Ray::Ray(Vector2D Origin, double Length, double Angle) : Length(Length), Angle(Angle), Origin(Origin) {

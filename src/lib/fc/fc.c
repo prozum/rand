@@ -1,7 +1,6 @@
 #include "fc/fc.h"
-#include <core/m328p.h>
 
-fc_t *init_fc(serial_t serial, uint16_t ms)
+fc_t *init_fc(tx_t serial, uint16_t ms)
 {
     fc_t *fc = malloc(sizeof(fc_t));
 
@@ -112,6 +111,8 @@ void update_velocity(fc_t *fc, acceleration_t *a, float time){
 acceleration_t fc_read_acceleration(fc_t *fc) {
     ERROR("This function is not supported yet.");
 
-    acceleration_t accel = {0, 0.5, 0};
+    acceleration_t accel = {fix16_from_float(0),
+                            fix16_from_float(0.5),
+                            fix16_from_float(0)};
     return accel;
 }

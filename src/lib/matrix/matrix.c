@@ -296,7 +296,6 @@ matrix_t *ident_mat(uint8_t size) {
  * @return a pointer to the allocated matrix
  */
 matrix_t *matrix_constructor(uint8_t rows, uint8_t columns) {
-    uint8_t i;
     matrix_t *new_matrix = malloc(sizeof(matrix_t));
     new_matrix->rows = rows;
     new_matrix->columns = columns;

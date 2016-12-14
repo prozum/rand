@@ -1,6 +1,8 @@
 #include "Block.h"
 #include "Simulator.h"
 
+using namespace std;
+
 Block::Block(Vector2D Pos, BlockType Type) : SimObject(Pos), Type(Type) {
     Min.X = Pos.X - (Size / 2);
     Min.Y = Pos.Y - (Size / 2);
@@ -28,20 +30,20 @@ void Block::update() {
 
 }
 
-bool Block::intersection(Ray Ray, Vector2D &res) {
+bool Block::intersect(Ray Ray, Vector2D &Res) {
     double tx1 = (Min.X - Ray.Origin.X) / Ray.Direction.X;
     double tx2 = (Max.X - Ray.Origin.X) / Ray.Direction.X;
 
-    double tmin = std::min(tx1, tx2);
-    double tmax = std::max(tx1, tx2);
+    double tmin = min(tx1, tx2);
+    double tmax = max(tx1, tx2);
 
     double ty1 = (Min.Y - Ray.Origin.Y) / Ray.Direction.Y;
     double ty2 = (Max.Y - Ray.Origin.Y) / Ray.Direction.Y;
 
-    tmin = std::max(tmin, std::min(ty1, ty2));
-    tmax = std::min(tmax, std::max(ty1, ty2));
+    tmin = max(tmin, min(ty1, ty2));
+    tmax = min(tmax, max(ty1, ty2));
 
-    res = Ray.Direction * tmin;
+    Res = Ray.Direction * tmin;
 
-    return tmax > std::max(tmin, 0.0);
+    return tmax > max(tmin, 0.0);
 }
