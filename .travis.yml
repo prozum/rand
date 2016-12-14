@@ -10,9 +10,28 @@ before_install:
 
 install:
   - mkdir build && cd build
-  - cmake -DTESTS=1 .. 
+  - cmake -DTESTS=1 -DSAMPLES=1 ..
 
 script:
   - make -j 8
   - ./test/unit/unit-tests
   - ./test/component/component-tests
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "X4L5tluJlZv0WwSNHtpoHKs0+XKKPyPwRCtsR5RwUo2t0QgZjXX11og+lM5EWoU+ak+jvBeM1boUu9gdnzMETVZRnz/t+SwTPpY61hxCkYWFH8V5FLriiObNkGm0d36N+bVQKE1XZU1tkfSpDmsXILH0UsjXzrv8tIBXd8D8snCSFBOpGBoapb586aGLr/tRsRLNwzyTBgTU1P4+u8Ik8200IuiDaPSfDw2179o23UB1tiRCSXq6q2VbNBQyVceurdIwDsc+HSmtGx3u63Pd4xo3QHkRiu9py0aYY0dGOlBr7iR7yX+8QlM4P1Fj2X8JgcA/30R/hcGFHPHm9C3d39dH0O8ppDT+b7K9adJuzqkXqzhWEhyHs0ZW5gL5+C7rM4HOp0mjXYB9eUDhz/9PLe3D/5v+8ixfl2PW42V0NxlmOHLk/kIYoUPJjnECoSX4kmIOBCrGyjHwyMnOtlc/q/ehgZRdPClwUUEUO+L5vPukzZPpXDkQ29NDY5/gS6dqzJSFBNRjBgk6zlpT+6vFRwoPptu9TVOiy4+3km+liisdKOFYI6KlS//4w5xu27+t7klx2yQz4qsyTv7lD8YrAXIr52zcw2BxmOosXGLHzdQQVAE+X2+E9vKsQtqKZlCvTulqsk4Im74HhceUaIE0EACe2LyHLe+fUIebdpoD1I4="
+
+before_install:
+      - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "prozum/rand"
+      description: "Build submitted via Travis CI"
+    notification_email: nimoov@prozum.dk
+    build_command_prepend: "./cmake -DTESTS=1 -DSAMPLES=1; make clean"
+    build_command:   "make -j 4"
+    branch_pattern: coverity
