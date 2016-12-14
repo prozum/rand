@@ -28,6 +28,7 @@ inline double DegToRad(double Degrees) {
 }
 
 #define NINETY_DEGREES_IN_RAD M_PI_2
+#define MINIMAP_BLOCK_SIZE 10
 
 // String functions
 std::string DoubleToStr(double Double, int Precision = 5);
@@ -62,6 +63,12 @@ public:
     virtual void drawCircleRel(Vector2D Center, int Radius) = 0;
     virtual void drawPieRel(Vector2D Center, int Radius, int Start, int End) = 0;
     virtual void drawTextRel(std::string Text, Vector2D Pos, Color Background = {0, 0, 0}) = 0;
+
+    // Targets
+    virtual void setScreenTarget() = 0;
+    virtual void setMinimapTarget() = 0;
+    virtual void drawTarget(Vector2D Pos, Vector2D Size, bool Screen = false) = 0;
+
 
     // Relative functions
     inline int rel(double Val) { return int(Val * Zoom); }

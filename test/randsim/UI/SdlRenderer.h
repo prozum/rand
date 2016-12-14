@@ -11,6 +11,9 @@ class SdlRenderer : public Renderer {
     SDL_Renderer *Renderer;
     TTF_Font *Font;
     SDL_Color CurColor = {0, 0, 0, 0};
+    SDL_Texture *CurTexture;
+
+    SDL_Texture *MinimapTexture;
 
     float MinFrameTime = 1000 / 60;
     int LastTime = 0;
@@ -38,5 +41,10 @@ public:
     void drawCircleRel(Vector2D Center, int Radius);
     void drawPieRel(Vector2D Center, int Radius, int Start, int End);
     void drawTextRel(std::string Text, Vector2D Pos, Color Background = {0, 0, 0});
+
+    // Targets
+    void setScreenTarget();
+    void setMinimapTarget();
+    void drawTarget(Vector2D Pos, Vector2D Size, bool ToScreen = false);
 };
 

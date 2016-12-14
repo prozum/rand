@@ -3,10 +3,10 @@
 #include <math.h>
 
 //Defines the lowest and highest accepted world-position on the internal drone map
-#define LOWEST_Y_ORG (MAP_MIDDLE) - (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
-#define HIGHEST_Y_ORG (MAP_MIDDLE) + (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
-#define LOWEST_X_ORG (MAP_MIDDLE) - (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
-#define HIGHEST_X_ORG (MAP_MIDDLE) + (MAP_HEIGHT * CENTIMETERS_PR_PIXEL / 2)
+#define LOWEST_Y_ORG 0
+#define HIGHEST_Y_ORG MAP_HEIGHT * CENTIMETERS_PR_PIXEL
+#define LOWEST_X_ORG 0
+#define HIGHEST_X_ORG MAP_WIDTH * CENTIMETERS_PR_PIXEL
 
 /**
  * Convert from the angle representation of this project (100th subdivisions of each angle) to dix16 radians
@@ -58,8 +58,8 @@ void update_angle(nav_t *nav, fix16_t degrees) {
 }
 
 uint8_t check_wall_front(rep_t *rep, state_t state){
-    if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->val_front <= MIN_RANGE) &&
-            is_sonar_reliable(rep, state)){
+    if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->val_front <= MIN_RANGE)) {
+        // &&   is_sonar_reliable(rep, state)){
         return 1;
     }
     return 0;
@@ -173,8 +173,8 @@ void init_nav(nav_t *nav){
     nav->prev_dist_wall = 0;
 
     //Assmumes drone to start in the middle of the room.
-    nav->posx = MAP_MIDDLE;
-    nav->posy = MAP_MIDDLE;
+    nav->posx = MAP_MIDDLE * CENTIMETERS_PR_PIXEL;
+    nav->posy = MAP_MIDDLE * CENTIMETERS_PR_PIXEL;
 
     *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
 
@@ -393,8 +393,6 @@ fieldstate_t map_check_position(nav_t *nav) {
     return map_read(pixel.x, pixel.y);
 }
 
-#define SONAR_DEG 15
-#define PERPENDICULAR 90
 uint8_t is_sonar_reliable(rep_t *rep, state_t state){
     /* finds the distance to the wall the drone is following
      * if blockedR returns 0, then the wall is to the left, otherwise the right
@@ -406,7 +404,7 @@ uint8_t is_sonar_reliable(rep_t *rep, state_t state){
     fix16_t calcSonarDistToWall = fix16_mul(distToWall, sonar_reliable_constant);
 
     /* If the measured value compared to the calculated value is less or equal to the allowed deviation of the sensor */
-    if (fix16_abs(calcSonarDistToWall - fix16_from_int(rep->sonar->value) <= fix16_from_int(SENSOR_DEVIATION)) && rep->sonar->valid)
+    if (fix16_abs(fix16_sub(calcSonarDistToWall, fix16_from_int(rep->sonar->value)) <= fix16_from_int(SENSOR_DEVIATION)) && rep->sonar->valid)
     {
         return 1;
     } else {

@@ -2,6 +2,10 @@
 
 #include "iostream"
 
+extern "C" {
+#include "map/map.h"
+}
+
 using namespace std;
 
 bool SdlRenderer::init() {
@@ -42,6 +46,14 @@ bool SdlRenderer::init() {
         std::cout << " Failed to load font : " << SDL_GetError() << std::endl;
         return false;
     }
+
+    MinimapTexture = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, MAP_WIDTH * MINIMAP_BLOCK_SIZE, MAP_HEIGHT * MINIMAP_BLOCK_SIZE);
+    if (MinimapTexture == nullptr)
+    {
+        std::cout << " Failed to create texture : " << SDL_GetError() << std::endl;
+        return false;
+    }
+
     return true;
 }
 
@@ -54,7 +66,7 @@ SdlRenderer::~SdlRenderer() {
 }
 
 void SdlRenderer::clear() {
-    setColor({255, 255, 255});
+    setColor(WHITE);
     SDL_RenderClear(Renderer);
 }
 
@@ -125,3 +137,30 @@ void SdlRenderer::drawPixel(Vector2D Pos) {
     SDL_RenderDrawPoint(Renderer, Pos.X, Pos.Y);
 }
 
+void SdlRenderer::setScreenTarget() {
+    SDL_SetRenderTarget(Renderer, NULL);
+    CurTexture = nullptr;
+}
+
+void SdlRenderer::setMinimapTarget() {
+    SDL_SetRenderTarget(Renderer, MinimapTexture);
+    CurTexture = MinimapTexture;
+}
+
+
+void SdlRenderer::drawTarget(Vector2D Pos, Vector2D Size, bool ToScreen) {
+    if (CurTexture == nullptr) {
+        std::cout << "Don't draw screen texture to other texture" << std::endl;
+        return;
+    }
+
+    if (ToScreen)
+        SDL_SetRenderTarget(Renderer, NULL);
+
+    SDL_Rect RenderQuad = { int(Pos.X),  int(Pos.Y), int(Size.X), int(Size.Y) };
+    SDL_RenderCopyEx(Renderer, CurTexture, NULL, &RenderQuad, 0, 0, SDL_FLIP_NONE);
+
+    if (ToScreen)
+        SDL_SetRenderTarget(Renderer, CurTexture);
+
+}

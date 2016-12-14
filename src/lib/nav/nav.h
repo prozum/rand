@@ -41,7 +41,7 @@
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 #define PERIOD_SECONDS PERIOD_MILLIS / 1000.0f
 
-#define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 4 * CENTIMETERS_PR_PIXEL
+#define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 4
 
 #define ANGLE_RESOLUTION 0.01    // Means that each degree is split in 100
 #define INV_ANGLE_RESOLUTION 100 // One degree is 100 steps on the scale

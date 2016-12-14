@@ -15,7 +15,7 @@ extern "C" {
 // All speeds are measured in cm (or rads)/sec
 #define ROTATION_SPEED M_PI/2
 #define STRAFE_SPEED   20.0 // Defines speed in the left, right direction
-#define MOVEMENT_SPEED 20.0 // Defines speed in forward, backward direction
+#define MOVEMENT_SPEED 100.0 // Defines speed in forward, backward direction
 #define ALTITUDE_SPEED 10.0 // Defines speed in up/down direction
 
 #define FC_OFFSET 1
