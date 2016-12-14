@@ -10,7 +10,7 @@ void init_not_timed() {
     laser = laser_init(USB_RX);
     top_ir = IR_init(IR_TOP_PIN);
     bottom_ir = IR_init(IR_BOTTOM_PIN);
-    fc = init_fc(SERIAL0, ONE_MS);
+    fc = init_fc(TX1, ONE_MS);
     task_init_fc();
     map_init(MAP_WIDTH,MAP_HEIGHT,CLEAN); //Init map and clean it
 
@@ -20,8 +20,8 @@ void init_not_timed() {
     init_rep(fc, laser, sonar, top_ir, bottom_ir, world_rep);
 
     read_sonar(sonar);
-    IR_read(bottom_ir);
-    IR_read(top_ir);
+    ir_read(bottom_ir);
+    ir_read(top_ir);
     //laser_read(laser);
 }
 
@@ -154,8 +154,8 @@ void task_navigation()
 
 void task_read_ir()
 {
-    IR_read(bottom_ir);
-    IR_read(top_ir);
+    ir_read(bottom_ir);
+    ir_read(top_ir);
 }
 
 void task_read_sonar()

@@ -10,14 +10,6 @@ laser_t *laser_init(tx_t pin) {
 
     return laser;
 }
-
-void set_laser_values(laser_t *laser, float left, float right, float front){
-    laser->val_left = left;
-    laser->val_right = right;
-    laser->val_front = front;
-}
-
-
 void laser_read_dist(laser_t *laser)
 {
     uint16_t res = 0;

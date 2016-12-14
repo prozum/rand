@@ -103,9 +103,9 @@ void WARNING(log_sender sender, const char *msg) {
  * @param sender is the module to log from
  * @param msg is the error to log
  */
-void SERIOUS_WARNING(log_sender sender, const char *msg) {
+void SERIOUS_WARNING(const char *msg) {
 #ifndef MOCK
-    if (!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
+    if (logging_level >= LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
         strcpy(tmp, msg);
 

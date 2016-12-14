@@ -15,10 +15,17 @@ typedef struct laser_s {
     uint16_t val_front;
 } laser_t;
 
+/**
+ * Initializes a laser-struct
+ * @param pin - The pin to read laser-values from
+ * @return - A pointer to the newly allocated laser_t struct
+ */
 laser_t *laser_init(tx_t pin);
 
-void set_laser_values(laser_t *l, float, float, float);
-
+/**
+ * Read values from the laser
+ * @param laser - A pointer to the laser-struct to read from
+ */
 void laser_read_dist(laser_t *laser);
 
 #endif //RAND_LASER_H

@@ -36,15 +36,36 @@ typedef enum fieldstate_e{
 typedef struct map_coord_s {
     uint8_t x, y;
 } map_coord_t;
-
+/**
+ * Initialzes a map on the EEPROM of the Arduino with specified width and height
+ * @param width - The width of the map
+ * @param height - The height of the map
+ * @param clean - Flag that indicated whether the EEPROM should be cleaned
+ */
 void map_init(uint8_t width, uint8_t height, uint8_t clean);
-
+/**
+ * Writes a value to the map at specified position
+ * @param x - x-coordinate to write to
+ * @param y - y-coordinate to write to
+ * @param state - The value to write (VISITED, UNVISITED, WALL or WINDOW)
+ */
 void map_write(uint8_t x, uint8_t y, fieldstate_t state);
 
+/**
+ * Reads a value from the map at specified position
+ * @param x - x-coordinate
+ * @param y - y-coordinate
+ * @return - The state of the given position (VISITED, UNVISITED, WALL or WINDOW)
+ */
 fieldstate_t map_read(uint8_t x, uint8_t y);
 
+/**
+ * Cleans the map
+ */
 void map_clean();
-
+/**
+ * Shows the map
+ */
 void map_show();
 
 

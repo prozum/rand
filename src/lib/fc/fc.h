@@ -44,23 +44,81 @@ typedef struct fc_s {
 } fc_t;
 
 // ms = value of 1 ms
+/**
+ * Initialize the flight controller
+ * @param serial - The serial pin the flight controller is connected to
+ * @param ms - The shortes length of the pulse when used with PWM signals
+ * @return - A pointer to the allocated flight controller struct
+ */
 fc_t *init_fc(tx_t serial, uint16_t ms);
+/**
+ * A destructor for the flight controller, frees all allocated memory and the pointer
+ * @param fc - Pointer to a fc_t struct - DO NOT USE THIS AFTER THIS FUNCTION CALL
+ */
 void clean_fc(fc_t *fc);
+/**
+ * Arms the flight controller
+ * @param fc - Pointer to the flight controller to arm
+ */
 void set_arm(fc_t *fc);
+/**
+ * Disarms the flight controller
+ * @param fc - Pointer to the flight controller to disarm
+ */
 void set_disarm(fc_t *fc);
 
+/**
+ * Rotate the drone left around its' own axis
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void rotate_left(fc_t *fc);
+/**
+ * Rotate the drone right around its' own axis
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void rotate_right(fc_t *fc);
+/**
+ * Stops rotation around the drone's own axis
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void rotate_stop(fc_t *fc);
 
+/**
+ * Move the drone left relative to its' own forward
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void move_left(fc_t *fc);
+/**
+ * Move the drone right relative to its' own forward
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void move_right(fc_t *fc);
+/**
+ * Move the drone forward relative to its' own forward
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void move_forward(fc_t *fc);
+/**
+ * Move the drone back relative to its' own forward
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void move_back(fc_t *fc);
 
+/**
+ * Move the drone up, increasing altitude
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void move_up(fc_t *fc);
+/**
+ * Move the drone down, decreasing altitude
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void move_down(fc_t *fc);
 
+/**
+ * Stops the drones movement on all axes
+ * @param fc - Pointer to the flight controller that controls the drone
+ */
 void move_stop(fc_t *fc);
 
 acceleration_t fc_read_acceleration(fc_t *fc);

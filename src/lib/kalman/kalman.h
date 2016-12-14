@@ -21,10 +21,27 @@ typedef struct kalman_state_t {
 
 } kalman_state;
 
+/**
+ * Initialize a Kalman filter for use on a single sensor
+ * @param _a - The estimated change of the system in percentage / 100
+ * @param _r - The variance of the sensor
+ * @param component - The component the filter is attached to (used only for logging)
+ * @return - A pointer to the newly allocated kalman_state
+ */
 kalman_state *kalman_init(fix16_t _a, fix16_t _r, log_sender component);
 
+/**
+ * Run the Kalman filter on a new input-value
+ * @param state - A pointer to the kalman state
+ * @param z_k - The latest value read by the filtered sensor
+ */
 void kalman_run(kalman_state *state, fix16_t z_k);
 
+/**
+ * Calibrate the filter to align first estimation with first reading
+ * @param initial_state - A pointer to the Kalman state to calibrate
+ * @param z_0 - The first reading taken by the given sensor
+ */
 void kalman_calibrate(kalman_state *initial_state, fix16_t z_0);
 
 #endif //RAND_SINGLE_KALMAN_H

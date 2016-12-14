@@ -14,16 +14,16 @@ typedef struct ir_s {
     uint8_t value; // latest reading in cm
 } ir_t;
 
+/**
+ * Initialize an ir_t struct on the specified pin
+ * @param pin - The pin to read infrared values from
+ * @return - A pointer to the allocated struct
+ */
 ir_t *IR_init(apin_t pin);
-
+/**
+ * Reads a value from the ir specified by the pointer
+ * @param ir - A pointer to the ir_t struct that represents the infrared sensor
+ * @return - The value read by the sensor
+ */
 uint16_t ir_read(ir_t *ir);
-
-/*
-float IR_top_to_meters();
-
-float IR_bottom_to_meters();
-*/
-
-void IR_calibrate(float z_0);
-
 #endif //RAND_IR_H
