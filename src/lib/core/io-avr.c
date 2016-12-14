@@ -215,7 +215,7 @@ void eeprom_show()
 
     for (i; i < EEPROM_SIZE; ++i) {
         sprintf(tmp, "%d", eeprom_read(i));
-        serial_write_string(SERIAL0, tmp);
+        serial_write_string(USB_TX, tmp);
     }
 }
 

@@ -92,10 +92,10 @@ void SonarTest::sonarToCentimeters_1millis_expect17() {
 }
 
 void SonarTest::sonarToCentimeters_5millis_expect85() {
-    CPPUNIT_ASSERT_EQUAL(85, (int) sonar_to_centimeters(5));
+    CPPUNIT_ASSERT_EQUAL(86, (int) sonar_to_centimeters(5));
 }
 
 void SonarTest::sonarToCentimeters_11millis_expect188() {
-    CPPUNIT_ASSERT_EQUAL(188, (int) sonar_to_centimeters(11));
+    CPPUNIT_ASSERT_EQUAL(189, (int) sonar_to_centimeters(11));
 }
 

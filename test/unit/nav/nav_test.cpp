@@ -81,36 +81,48 @@ void NavTest::fixRadAngle_9000_expectHalfPi() {
     fix16_t result = fix_rad_angle(9000);
     fix16_t expected = fix16_div(fix16_pi, fix16_from_int(2));
 
+    float conv_result = fix16_to_float(result);
+    float conv_expe = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, (int) (conv_expe * 100), (int) (conv_result * 100));
 }
 
 void NavTest::fixRadAngle_18000_expectPi() {
     fix16_t result = fix_rad_angle(18000);
     fix16_t  expected = fix16_pi;
 
+    float conv_result = fix16_to_float(result);
+    float conv_expe = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, (int) (conv_expe * 100), (int) (conv_result * 100));
 }
 
 void NavTest::fixRadAngle_27000_expectOneAndAHalfPi() {
     fix16_t result = fix_rad_angle(27000);
     fix16_t expected = fix16_mul(fix16_pi, fix16_from_float(1.5f));
 
+    float conv_result = fix16_to_float(result);
+    float conv_expe = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, (int) (conv_expe * 100), (int) (conv_result * 100));
 }
 
 void NavTest::fixRadAngle_36000_expectWarningAndMinusOne() {
     fix16_t result = fix_rad_angle(36000);
-    fix16_t expected = fix16_from_float(-1.0f);
+    fix16_t expected = fix16_from_float(0);
+
+    float conv_result = fix16_to_float(result);
+    float conv_expe = fix16_to_float(expected);
 
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, (int) (conv_expe * 100), (int) (conv_result * 100));
 }
 
 void NavTest::calculateXDistance_ang0Dist10_expect10() {
@@ -138,9 +150,12 @@ void NavTest::calculateXDistance_ang90Dist10_expect0() {
     fix16_t result = calculate_x_distance(9000, distance);
     fix16_t expected = fix16_from_int(0);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::calculateYDistance_ang90Dist10_expect10() {
@@ -148,9 +163,12 @@ void NavTest::calculateYDistance_ang90Dist10_expect10() {
     fix16_t result = calculate_y_distance(9000, distance);
     fix16_t expected = fix16_from_int(10);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::calculateXDistance_ang45Dist10_expect7dot07() {
@@ -158,9 +176,12 @@ void NavTest::calculateXDistance_ang45Dist10_expect7dot07() {
     fix16_t result = calculate_x_distance(4500, distance);
     fix16_t expected = fix16_from_float(7.07106f);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::calculateYDistance_ang45Dist10_expect7dot07() {
@@ -168,9 +189,12 @@ void NavTest::calculateYDistance_ang45Dist10_expect7dot07() {
     fix16_t result = calculate_x_distance(4500, distance);
     fix16_t expected = fix16_from_float(7.07106f);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::calculateXDistance_ang180Dist10_expectMinus10() {
@@ -178,9 +202,12 @@ void NavTest::calculateXDistance_ang180Dist10_expectMinus10() {
     fix16_t result = calculate_x_distance(18000, distance);
     fix16_t expected = fix16_from_float(-10.0f);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::calculateYDistance_ang180Dist10_expect0() {
@@ -188,9 +215,12 @@ void NavTest::calculateYDistance_ang180Dist10_expect0() {
     fix16_t result = calculate_y_distance(18000, distance);
     fix16_t expected = fix16_from_float(0.0f);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::calculateXDistance_ang270Dist10_expect0() {
@@ -198,9 +228,12 @@ void NavTest::calculateXDistance_ang270Dist10_expect0() {
     fix16_t result = calculate_x_distance(27000, distance);
     fix16_t expected = fix16_from_float(0.0f);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::calculateYDistance_ang270Dist10_expectMinus10() {
@@ -208,9 +241,12 @@ void NavTest::calculateYDistance_ang270Dist10_expectMinus10() {
     fix16_t result = calculate_y_distance(27000, distance);
     fix16_t expected = fix16_from_float(-10.0f);
 
+    float conv_result = fix16_to_float(result);
+    float conv_expected = fix16_to_float(expected);
+
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
                       + ", result: " + std::to_string(fix16_to_float(result));
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, expected, result);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(msg,(int) (conv_expected * 10),(int) (conv_result * 10));
 }
 
 void NavTest::updateAngle_0_expect0() {
