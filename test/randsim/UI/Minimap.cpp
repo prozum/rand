@@ -1,5 +1,6 @@
 #include "Minimap.h"
 #include "Simulator.h"
+#include "Drone.h"
 
 extern "C" {
 #include "map/map.h"
@@ -61,30 +62,29 @@ void Minimap::printMap() {
 void Minimap::draw() {
     auto WinWidth  = Sim->Render->WinWidth;
     auto WinHeight = Sim->Render->WinHeight;
-    auto MapWidth  = WinHeight * 0.3;
-    auto MapHeight = WinHeight * 0.3;
-    auto BlockSize = Vector2D(ceil(MapWidth / MAP_WIDTH), ceil(MapHeight / MAP_HEIGHT));
+    auto MinimapWidth  = WinHeight * 0.3;
+    auto MinimapHeight = WinHeight * 0.3;
+    auto BlockSize = Vector2D(ceil(MinimapWidth / MAP_WIDTH), ceil(MinimapHeight / MAP_HEIGHT));
     //Sim->Render->setColor({0, 255, 255});
     //Sim->Render->drawRect(Vector2D(WinWidth - WinHeight * 0.3, 0.0), Vector2D(WinHeight * 0.3, WinHeight * 0.3));
     //map_show();
 
     Sim->Render->setColor(WHITE);
-    Sim->Render->drawRect({WinWidth - MapWidth, 0.0}, {MapWidth, MapHeight});
+    Sim->Render->drawRect({WinWidth - MinimapWidth, 0.0}, {MinimapWidth, MinimapHeight});
 
     Sim->Render->setColor(BLACK);
-    Sim->Render->drawLine({WinWidth - MapWidth, 0.0}, {WinWidth - MapWidth, MapHeight});
-    Sim->Render->drawLine({WinWidth - MapWidth, MapHeight}, {double(WinWidth), MapHeight});
+    Sim->Render->drawLine({WinWidth - MinimapWidth, 0.0}, {WinWidth - MinimapWidth, MinimapHeight});
+    Sim->Render->drawLine({WinWidth - MinimapWidth, MinimapHeight}, {double(WinWidth), MinimapHeight});
+
+
 
     for(int X = 0; X < MAP_WIDTH; ++X) {
         for(int Y = 0; Y < MAP_HEIGHT; ++Y) {
             fieldstate_t Val = map_read(X, (MAP_HEIGHT - 1) - Y);
-            auto realX = (WinWidth - MapWidth) + X * BlockSize.X;
+            auto realX = (WinWidth - MinimapWidth) + X * BlockSize.X;
             auto realY = Y * BlockSize.Y;
             switch (Val) {
                 case UNVISITED:
-                    //Sim->Render->setColor({255, 0, 0});
-                    //Sim->Render->drawRect({realX, realY}, BlockSize);
-                    //Sim->Render->drawPixel({realX, realY});
                     break;
                 case VISITED:
                     Sim->Render->setColor(GREEN);
@@ -104,6 +104,12 @@ void Minimap::draw() {
             }
         }
     }
+
+    // Current drone position
+    auto realX = (WinWidth - MinimapWidth) + (Sim->Drn->NavStruct.posx / double(MAP_CENTI_WIDTH)) * MinimapWidth;
+    auto realY = MinimapHeight - (Sim->Drn->NavStruct.posy / double(MAP_CENTI_HEIGHT)) * MinimapHeight;
+    Sim->Render->setColor(RED);
+    Sim->Render->drawRect({realX, realY}, BlockSize);
 }
 
 void Minimap::update() {

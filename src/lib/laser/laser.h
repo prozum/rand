@@ -12,7 +12,7 @@ typedef struct laser_s {
     //latests readings in cm
     uint16_t val_left;
     uint16_t val_right;
-    uint16_t front_value;
+    uint16_t val_front;
 } laser_t;
 
 laser_t *laser_init(tx_t pin);

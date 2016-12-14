@@ -58,7 +58,7 @@ void update_angle(nav_t *nav, fix16_t degrees) {
 }
 
 uint8_t check_wall_front(rep_t *rep, state_t state){
-    if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->front_value <= MIN_RANGE) &&
+    if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->val_front <= MIN_RANGE) &&
             is_sonar_reliable(rep, state)){
         return 1;
     }
@@ -181,11 +181,6 @@ void init_nav(nav_t *nav){
     nav->timer = 0;
 
     init_search(&nav->search_data);
-
-    //Setup fix16_t constants
-    fix16_t SONAR_ANGLE_RAD = fix16_deg_to_rad(fix16_from_int(15));
-    fix16_t PERPENDICULAR_RAD = fix16_deg_to_rad(fix16_from_int(90));
-    SONAR_RELIABLE_CONSTANT = fix16_div(PERPENDICULAR_RAD, SONAR_ANGLE_RAD);
 }
 
 /**
@@ -398,17 +393,19 @@ fieldstate_t map_check_position(nav_t *nav) {
     return map_read(pixel.x, pixel.y);
 }
 
+#define SONAR_DEG 15
+#define PERPENDICULAR 90
 uint8_t is_sonar_reliable(rep_t *rep, state_t state){
     /* finds the distance to the wall the drone is following
      * if blockedR returns 0, then the wall is to the left, otherwise the right
      * if the wall is on the left distToWall receives the distance to left, otherwise right */
     fix16_t distToWall = fix16_from_int(state.blocked_right ? rep->laser->val_left : rep->laser->val_right);
 
-    /* find the distance to the wall with a 15 degree angle from front view */
-    //by using b = a (sin(B) / sin(A))
-    fix16_t calcSonarDistToWall = fix16_mul(distToWall, SONAR_RELIABLE_CONSTANT);
+    /* Find the distance to the wall with a 15 degree angle from front view
+     * by using b = a (sin(B) / sin(A)) */
+    fix16_t calcSonarDistToWall = fix16_mul(distToWall, sonar_reliable_constant);
 
-    /* if the measured value compared to the calculated value is less or equal to the allowed deviation of the sensor */
+    /* If the measured value compared to the calculated value is less or equal to the allowed deviation of the sensor */
     if (fix16_abs(calcSonarDistToWall - fix16_from_int(rep->sonar->value) <= fix16_from_int(SENSOR_DEVIATION)) && rep->sonar->valid)
     {
         return 1;
@@ -493,14 +490,14 @@ void draw_obstacle(uint16_t val, nav_t *nav, const int16_t side_offset, fieldsta
 
 void draw_map(rep_t *rep, nav_t *nav){
 
-    if((rep->sonar->value < MIN_RANGE || rep->laser->front_value <= MIN_RANGE)
-       && rep->laser->front_value != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
-        uint16_t mes_diff = abs(rep->laser->front_value - rep->sonar->value);
+    if((rep->sonar->value < MIN_RANGE || rep->laser->val_front <= MIN_RANGE)
+       && rep->laser->val_front != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
+        uint16_t mes_diff = abs(rep->laser->val_front - rep->sonar->value);
         //Draw map in direct front of the drone
         if (mes_diff > WINDOW_RECON_THRESHOLD) {
-            draw_obstacle(rep->laser->front_value, nav, 0, WINDOW);
+            draw_obstacle(rep->laser->val_front, nav, 0, WINDOW);
         } else {
-            draw_obstacle(rep->laser->front_value, nav, 0, WALL);
+            draw_obstacle(rep->laser->val_front, nav, 0, WALL);
         }
     }
 

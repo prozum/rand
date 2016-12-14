@@ -3,7 +3,8 @@
 
 Sonar::Sonar(Drone &Drn, uint32_t RayCount, double Span, double Length) : Drn(Drn),
                                                                           SimObject(Drn.Pos),
-                                                                          Span(Span), RayCount(RayCount) {
+                                                                          Span(Span), RayCount(RayCount), Length(Length) {
+    Struct = *sonar_init(P0, P1);
 
     for (int i = 0; i < RayCount; ++i) {
         Rays.push_back(Ray(Drn.Pos, Length, Drn.Angle));
@@ -18,7 +19,8 @@ void Sonar::calcDist(std::vector<Block> &Blocks) {
     for (auto &Block : Blocks) {
         for (auto &Ray : Rays) {
             bool Intersects = Block.intersect(Ray, Res);
-            if (Intersects) Dist = std::min(Dist, Res.length());
+            if (Intersects)
+                Dist = std::min(Dist, Res.length());
         }
 
         if (Dist <= Length) {

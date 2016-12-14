@@ -253,7 +253,7 @@ void Simulator::drawInfoBox() {
     int LaserOffset = DroneOffset + PropSpace * 6 + ObjSpace;
     Render->drawText(string("Laser:"), {OffsetX, LaserOffset}, BGColor);
     Render->drawText(string("Left: ")  + DoubleToStr(Drn->LaserModule.Struct.val_left ) + " cm", {Indent, LaserOffset + PropSpace * 1}, BGColor);
-    Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.Struct.front_value) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Front: ") + DoubleToStr(Drn->LaserModule.Struct.val_front) + " cm", {Indent, LaserOffset + PropSpace * 2}, BGColor);
     Render->drawText(string("Right: ") + DoubleToStr(Drn->LaserModule.Struct.val_right) + " cm", {Indent, LaserOffset + PropSpace * 3}, BGColor);
 
     // Sonar info

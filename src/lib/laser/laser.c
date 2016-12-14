@@ -6,7 +6,7 @@ laser_t *laser_init(tx_t pin) {
     laser->pin = pin;
     laser->val_left = 0;
     laser->val_right = 0;
-    laser->front_value = 0;
+    laser->val_front = 0;
 
     return laser;
 }
@@ -14,7 +14,7 @@ laser_t *laser_init(tx_t pin) {
 void set_laser_values(laser_t *laser, float left, float right, float front){
     laser->val_left = left;
     laser->val_right = right;
-    laser->front_value = front;
+    laser->val_front = front;
 }
 
 
@@ -29,5 +29,5 @@ void laser_read_dist(laser_t *laser)
         res += input[i] << (INPUT_SIZE - (i + 1));
     }
 
-    laser->front_value = res;
+    laser->val_front = res;
 }

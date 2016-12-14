@@ -30,7 +30,6 @@
 #define WINDOW_RECON_THRESHOLD 50
 #define MIN_RANGE 60
 
-static fix16_t SONAR_RELIABLE_CONSTANT;
 
 #define DRONE_RIGHT_SIDE 27000
 #define LASER_MAX_RANGE 2200
@@ -42,15 +41,16 @@ static fix16_t SONAR_RELIABLE_CONSTANT;
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 #define PERIOD_SECONDS PERIOD_MILLIS / 1000.0f
 
-#define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 2 * CENTIMETERS_PR_PIXEL
+#define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 4 * CENTIMETERS_PR_PIXEL
 
 #define ANGLE_RESOLUTION 0.01    // Means that each degree is split in 100
 #define INV_ANGLE_RESOLUTION 100 // One degree is 100 steps on the scale
 #define FULL_TURN_SCALED (uint16_t) 360 * INV_ANGLE_RESOLUTION
 
+/* Constant used to find the distance to the wall with a 15 degree angle from front view */
+static const fix16_t sonar_reliable_constant = 0x5290; // sin(15) / sin(75)
+
 //todo: Skal udregnes ud fra WCET af løkken i findpath funktionen
-
-
 
 typedef enum side_e{
     RIGHT = 0,

@@ -17,7 +17,7 @@ void Laser::calcDist(std::vector<Block>& Blocks) {
     bool Intersects;
 
     Struct.val_left = 2200;
-    Struct.front_value = 2200;
+    Struct.val_front = 2200;
     Struct.val_right = 2200;
 
     for (auto &B : Blocks) {
@@ -29,14 +29,14 @@ void Laser::calcDist(std::vector<Block>& Blocks) {
         if (Intersects) Struct.val_left = std::min(Struct.val_left, (uint16_t)Res.length());
 
         Intersects = B.intersect(Rays[1], Res);
-        if (Intersects) Struct.front_value = std::min(Struct.front_value, (uint16_t)Res.length());
+        if (Intersects) Struct.val_front = std::min(Struct.val_front, (uint16_t)Res.length());
 
         Intersects = B.intersect(Rays[2], Res);
         if (Intersects) Struct.val_right = std::min(Struct.val_right, (uint16_t)Res.length());
     }
 
     if (Struct.val_left > Length) Struct.val_left = 2200;
-    if (Struct.front_value > Length) Struct.front_value = 2200;
+    if (Struct.val_front > Length) Struct.val_front = 2200;
     if (Struct.val_right > Length) Struct.val_right = 2200;
 }
 
