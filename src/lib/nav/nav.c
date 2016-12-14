@@ -219,7 +219,7 @@ void navigation(rep_t *rep, nav_t *nav){
 void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
     fix16_t result = fix16_sub(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
 
-    if(fix16_to_int(result) < 0)
+    if(fix16_to_int(result) <= 0)
         *nav_val = fix16_from_int(0);
     else
         *nav_val = result;
