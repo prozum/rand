@@ -1,14 +1,23 @@
 #include "task.h"
 
+static inline uint16_t TIMER_TICK_TO_MILIS(uint16_t x) {
+    return x / ONE_MS;
+}
+
 void init_not_timed() {
-    // initialize tasks
+    // initialize sensors
     sonar = sonar_init(SONAR_TRIGGER_PIN, SONAR_ECHO_PIN);
     laser = laser_init(USB_RX);
     top_ir = IR_init(IR_TOP_PIN);
     bottom_ir = IR_init(IR_BOTTOM_PIN);
+    fc = init_fc(SERIAL0, ONE_MS);
     task_init_fc();
     map_init(MAP_WIDTH,MAP_HEIGHT,CLEAN); //Init map and clean it
-    /*Maybe some error-checking here*/
+
+    nav_state = malloc(sizeof(nav_t));
+    world_rep = malloc(sizeof(rep_t));
+    init_nav(nav_state);
+    init_rep(fc, laser, sonar, top_ir, bottom_ir, world_rep);
 
     read_sonar(sonar);
     IR_read(bottom_ir);
@@ -35,8 +44,6 @@ void task_timer_setup()
 
 void task_init_fc()
 {
-    init_fc(fc, SERIAL0, ONE_MS);
-
     set_pin_mode(YAW, OUTPUT);
     set_pin_mode(ROLL, OUTPUT);
     set_pin_mode(PITCH, OUTPUT);
@@ -73,6 +80,20 @@ void task_disarm_fc()
 
         TCNT1 = 0;
     }
+}
+
+void test_dig_and_comp() {
+    if(fc->yaw == TWO_MS)
+        digital_write(YAW, LOW);
+
+    if(fc->roll == TWO_MS)
+        digital_write(ROLL, LOW);
+
+    if(fc->pitch == TWO_MS)
+        digital_write(PITCH, LOW);
+
+    if(fc->throttle == TWO_MS)
+        digital_write(THROTTLE, LOW);
 }
 
 void task_pulse()
@@ -128,7 +149,7 @@ void task_pulse()
 
 void task_navigation()
 {
-
+    navigation(world_rep, nav_state);
 }
 
 void task_read_ir()
@@ -169,6 +190,10 @@ void task_read_sonar()
             break;
         }
     }
+}
+
+void conversion() {
+    sonar_to_centimeters(TIMER_TICK_TO_MILIS(sonar->value));
 }
 
 void task_read_acceleration()

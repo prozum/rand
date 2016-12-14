@@ -19,16 +19,18 @@ int main ()
         TCNT1 = 0;
 
         task_pulse();
-        task_read_laser_left();
-        task_read_ir();
-        task_read_laser_front();
+        //Uncomment here to introduce laser in the scheduler
+        //task_read_laser_left();
+        //task_read_ir();
+        //task_read_laser_front();
 
         while (TCNT1 < MINOR_CYCLE);
 
         TCNT1 = 0;
 
         task_pulse();
-        task_read_laser_right();
+        // Same here
+        // task_read_laser_right();
 
         while (TCNT1 < MINOR_CYCLE);
 
@@ -46,6 +48,7 @@ int main ()
 
         while (TCNT1 < MINOR_CYCLE);
 
+        task_navigation();
         TCNT1 = 0;
     }
 }

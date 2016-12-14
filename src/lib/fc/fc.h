@@ -44,7 +44,7 @@ typedef struct fc_s {
 } fc_t;
 
 // ms = value of 1 ms
-void init_fc(fc_t *fc, serial_t serial, uint16_t ms);
+fc_t *init_fc(serial_t serial, uint16_t ms);
 void clean_fc(fc_t *fc);
 void set_arm(fc_t *fc);
 void set_disarm(fc_t *fc);

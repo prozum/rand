@@ -19,7 +19,7 @@ laser_t *laser_init(tx_t pin);
 
 void set_laser_values(laser_t *l, float, float, float);
 
-uint16_t laser_read_dist(laser_t *laser);
+void laser_read_dist(laser_t *laser);
 
 #endif //RAND_LASER_H
 

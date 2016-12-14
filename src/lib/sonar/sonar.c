@@ -1,6 +1,5 @@
-#include <stdint.h>
-
 #include "sonar/sonar.h"
+#include "libfixmath/fix16.h"
 
 sonar_t *sonar_init(dpin_t trig, dpin_t echo) {
     sonar_t *sonar = malloc(sizeof(sonar_t));
@@ -26,13 +25,12 @@ void read_sonar(sonar_t *sonar) {
     digital_read(sonar->echo);
 }
 
-uint16_t sonar_to_centimeters(float millis) {
+uint16_t sonar_to_centimeters(uint16_t millis) {
     //Speed of sound is 34.32 cm/millisecond and the sound travels twice the distance to the measured object
-    return (uint16_t) (millis * 34.32f) / 2.0f;
-}
+    const fix16_t speed_of_sound = fix16_from_float(34.32f);
+    const fix16_t half = fix16_from_float(0.5f);
 
-void set_sonar(sonar_t *sonar, float value){
-    sonar->value = value;
+    return (uint16_t) fix16_to_int(fix16_mul(fix16_mul(fix16_from_int(millis), speed_of_sound), half));
 }
 
 #if MOCK

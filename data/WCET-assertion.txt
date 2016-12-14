@@ -4,63 +4,68 @@ subprogram "task_pulse"
     repeat <16128 times;
   end loop;
   loop after line 80
-    repeat <7936 times;
+    repeat <16128 times;
   end loop;
 end "task_pulse";
-
-subprogram "task_sonar"
+--------------- IO --------------------
+subprogram "uart_getchar"
+  -- the longest wait-time (in clock-cycles)  with a baud-rate of 9600 b/s is
+  -- 8 * 0.0001042 * clock-freq
+  -- 8 * 0.0001042 * 16000000 = 13337.6
   loop
-    repeat <125 times;
+    repeat <13338 times;
   end loop;
-end "task_sonar";
+end "uart_getchar";
+subprogram "uart_putchar"
+  loop
+    repeat <13338 times;
+  end loop;
+end "uart_putchar";
 
-------------- LASER -------------------
-subprogram "laser_read_dist"
-  loop repeats 4 times; end loop;
-end "laser_read_dist";
+subprogram "eeprom_write"
+ time 2200 cycles; --Must be filled with runtime analysis
+end "eeprom_write";
+subprogram "eeprom_read"
+  time 2200 cycles; -- Must be analysed
+end "eeprom_read";
+--------------- LOG -------------------
+subprogram "disable_device"
+  loop
+    repeat <7 times; -- the number of different devices in the log_sender enum.
+  end loop;
+end "disable_device";
 
+subprogram "sender_ignored"
+  loop
+    repeat <7 times; -- again the number of different devices in the log_sender enum.
+  end loop;
+end "sender_ignored";
+--------------- LIBFIXMATH ------------
+subprogram "fix16_sqrt"
+  loop
+    repeat <16 times;
+  end loop;
+  loop that is in loop
+    repeat <16 times;
+  end loop;
+end "fix16_sqrt";
+
+subprogram "fix16_div"
+  loop at line 385
+    repeat <31 times;
+  end loop;
+  loop at line 410
+    repeat <31 times;
+  end loop;
+end "fix16_div";
+------------- MAP ---------------------
+subprogram "map_write"
+  loop
+    repeat <256 times;
+  end loop;
+end "map_write";
 
 ------------- MATRIX ------------------
-subprogram "matrix_destructor"
-  loop repeats <3 times; end loop; --all matrices are at most 2x2, so small overestimation
-end "matrix_destructor";
-
-subprogram "mult_mat_mat"
-  time 100 cycles; --fill with runtime-analysis
-end "mult_mat_mat";
-
-subprogram "mult_const_vec"
-  time 100 cycles; --fill with runtime-analysis
-end "mult_const_vec";
-
-subprogram "trans_matrix"
-  time 100 cycles; --fill with runtime-analysis
-end "trans_matrix";
-
-subprogram "mult_mat_vec"
-  time 100 cycles;
-end "mult_mat_vec";
-
-subprogram "add_mat_mat"
-  time 100 cycles;
-end "add_mat_mat";
-
-subprogram "sub_mat_mat"
-  time 100 cycles;
-end "sub_mat_mat";
-
-subprogram "add_vec_vec"
-  time 100 cycles;
-end "add_vec_vec";
-
-subprogram "sub_vec_vec"
-  time 100 cycles;
-end "sub_vec_vec";
-
-subprogram "inv_mat"
-  time 100 cycles;
-end "inv_mat";
-
 subprogram "ident_mat"
   loop that contains loop
     repeats <3 times;
@@ -72,11 +77,11 @@ end "ident_mat";
 
 ------------- STDLIB ----------------
 --free--
-subprogram "002036"
-  time 500 cycles; --use Kaspers WCET-tool for estimation!!!
-end "002036";
+--subprogram "002036"
+--  time 500 cycles; --use Kaspers WCET-tool for estimation!!!
+--end "002036";
 
 --malloc--
-subprogram "001F18"
-  time 500 cycles; --use Kaspers WECET-tool for estimation!!
-end "001F18";
+--subprogram "001F18"
+--  time 500 cycles; --use Kaspers WECET-tool for estimation!!
+--end "001F18";

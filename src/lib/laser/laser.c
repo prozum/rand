@@ -18,7 +18,7 @@ void set_laser_values(laser_t *laser, float left, float right, float front){
 }
 
 
-uint16_t laser_read_dist(laser_t *laser)
+void laser_read_dist(laser_t *laser)
 {
     uint8_t i = 0;
     uint16_t res = 0;

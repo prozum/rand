@@ -2,6 +2,7 @@
 #define __libfixmath_fix16_h__
 
 #define FIXMATH_NO_CACHE
+#define FIXMATH_OPTIMIZE_8BIT
 
 #ifdef __cplusplus
 extern "C"

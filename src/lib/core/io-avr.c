@@ -123,12 +123,16 @@ char uart_trygetchar() {
     if (!(UCSR0A & (1 << UDRE0))) {  /* if unread data exists. */
         return UDR0;
     }
-    return (char) 0;
-    return (char)0; //return \0 if no unread data is found.
+    return (char) 0; //return \0 if no unread data is found.
 }
 
 void serial_write_string(tx_t pin, char *out) {
-    int i;
+    uint8_t i;
+    uint8_t len = strlen(out);
+
+    if(len > MAX_IO_STR_LEN)
+        return;
+
     for (i = 0; i < strlen(out); i++) { //(out[i] != '\0')
         uart_putchar(out[i]);
     }

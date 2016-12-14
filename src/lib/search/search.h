@@ -16,7 +16,7 @@ typedef enum set_e{
 }set_t;
 
 struct search_node_s{
-    pixel_coord_t pos;
+    map_coord_t pos;
     search_node_t *parent;
     uint8_t gscore;
     uint8_t fscore;
@@ -28,7 +28,7 @@ typedef struct search_s{
     search_node_t *open_set;
     uint16_t closedset_size;
     uint16_t openset_size;
-    pixel_coord_t goal;
+    map_coord_t goal;
     uint8_t active;
 }search_t;
 
@@ -37,7 +37,7 @@ search_node_t* findpath(nav_t *nav);
 search_node_t* addnode(search_t *list, search_node_t node, set_t set);
 search_node_t* close_node(search_t *list, search_node_t *node);
 void add_neighbours(search_t *list, search_node_t *node);
-uint8_t estimate(search_node_t *node, pixel_coord_t pos);
+uint8_t estimate(search_node_t *node, map_coord_t pos);
 search_node_t lowestf(search_t *search);
 
 
