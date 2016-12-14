@@ -18,7 +18,7 @@ fix16_t fix_rad_angle(uint16_t degrees_100th) {
         degrees_100th %= FULL_TURN_SCALED;
     }
 
-    fix16_t angle_scaled = fix16_mul(fix16_from_float(ANGLE_RESOLUTION), fix16_to_int(degrees_100th));
+    fix16_t angle_scaled = fix16_mul(fix16_from_float(ANGLE_RESOLUTION), fix16_from_int(degrees_100th));
     return fix16_deg_to_rad(angle_scaled);
 }
 

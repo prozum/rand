@@ -88,7 +88,7 @@ void MatrixTest::mult_mat_mat_ValidMatrix_ExpectCorrect() {
 
     for (int i = 0; i < resMat->rows; ++i) {
         for (int j = 0; j < resMat->columns; ++j) {
-            CPPUNIT_ASSERT_EQUAL(ResMulMat3x3[i][j], fix16_to_float(matrix_get(resMat, i, j)));
+            CPPUNIT_ASSERT_EQUAL((int) ResMulMat3x3[i][j] * 100, (int) fix16_to_float(matrix_get(resMat, i, j)) * 100);
         }
     }
     matrix_destructor(resMat);
@@ -112,7 +112,7 @@ void MatrixTest::mult_mat_mat_DifferentSizes_ExpectCorrect() {
 
     for (int i = 0; i < resMat->rows; ++i) {
         for (int j = 0; j < resMat->columns; ++j) {
-            CPPUNIT_ASSERT_EQUAL( ResMulMat[i][j], fix16_to_float(matrix_get(resMat, i, j)));
+            CPPUNIT_ASSERT_EQUAL((int) ResMulMat[i][j] * 100,(int) fix16_to_float(matrix_get(resMat, i, j)) * 100);
         }
     }
     matrix_destructor(resMat);
