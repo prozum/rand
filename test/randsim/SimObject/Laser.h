@@ -8,19 +8,22 @@ extern "C" {
 #include "laser/laser.h"
 }
 
-class Laser {
-private:
-    double Length;
-    double Angle;
-    Vector2D Pos;
+class Drone;
 
-    void update(Vector2D Origin, double Angle);
+class Laser : public SimObject {
+private:
+    Drone &Drn;
+    double Length;
+
+    void updateRays(Vector2D Pos, double Angle);
+    void calcDist(std::vector<Block>& Blocks);
 public:
     std::vector<Ray> Rays;
     laser_t Struct;
 
-    Laser(Vector2D Origin, double Length, double Angle);
-    void calcDist(std::vector<Block>& Blocks, Vector2D& Origin, double Angle);
+    Laser(Drone &Drn, double Length);
+
+    void update();
     void draw();
 };
 

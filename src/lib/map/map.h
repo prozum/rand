@@ -3,6 +3,9 @@
 
 #include "core/io.h"
 
+#define MAP_HEIGHT 64
+#define MAP_WIDTH 64
+
 #define FIELDS_PER_BYTE 4
 #define MAX_MAP_SIZE EEPROM_SIZE * FIELDS_PER_BYTE
 #define FULL_FIELD 3 // for bit masking (11 in binary)

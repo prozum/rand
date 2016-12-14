@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SimObject.h"
-#include "Ray.h"
+#include "Common/Ray.h"
 
 enum class BlockType {
     Air,

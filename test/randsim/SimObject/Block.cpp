@@ -44,31 +44,4 @@ bool Block::intersection(Ray Ray, Vector2D &res) {
     res = Ray.Direction * tmin;
 
     return tmax > std::max(tmin, 0.0);
-
-
-    /*
-    double tmin = (Min.X - Ray.Origin.X) / Ray.Direction.X; // Ray.Inverted.X;
-    double tmax = (Max.X - Ray.Origin.X) / Ray.Direction.X; // Ray.Inverted.X;
-
-    if (tmin > tmax) std::swap(tmin, tmax);
-
-    double tymin = (Min.Y - Ray.Origin.Y) / Ray.Direction.Y; // Ray.Inverted.Y;
-    double tymax = (Max.Y - Ray.Origin.Y) / Ray.Direction.Y; // Ray.Inverted.Y;
-
-    if (tymin > tymax) std::swap(tymin, tymax);
-
-    if ((tmin > tymax) || (tymin > tmax))
-        return false;
-
-    if (tymin > tmin) tmin = tymin;
-
-    if (tymax < tmax) tmax = tymax;
-
-    if (tmin < 0) return false;
-
-    res.X = Ray.Direction.X * tmin;
-    res.Y = Ray.Direction.Y * tymin;
-
-    return true;
-     */
 }

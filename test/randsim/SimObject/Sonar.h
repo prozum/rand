@@ -9,19 +9,23 @@ extern "C" {
 #include "sonar/sonar.h"
 }
 
-class Sonar {
+class Drone;
+
+class Sonar : public SimObject {
 private:
+    Drone &Drn;
     double Length;
-    double Angle;
     double Span;
     uint32_t RayCount;
-    Vector2D Pos;
-    void update(Vector2D& Origin, double Angle);
+
+    void calcDist(std::vector<Block> & Blocks);
+    void updateRays(Vector2D Pos, double Angle);
 public:
     sonar_t Struct;
     std::vector<Ray> Rays;
 
-    Sonar(Vector2D Origin, uint32_t RayCount, double Angle, double Span, double Length);
-    void calcDist(std::vector<Block> & Blocks, Vector2D& Origin, double Angle);
+    Sonar(Drone &Drn, uint32_t RayCount, double Span, double Length);
+
+    void update();
     void draw();
 };

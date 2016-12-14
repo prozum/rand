@@ -1,9 +1,9 @@
 #include "Block.h"
 #include "Drone.h"
 #include "Simulator.h"
-#include "Minimap.h"
-#include "SdlRenderer.h"
-#include "BlockBuilder.h"
+#include "UI/Minimap.h"
+#include "UI/SdlRenderer.h"
+#include "UI/BlockBuilder.h"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>

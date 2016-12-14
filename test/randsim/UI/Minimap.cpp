@@ -12,9 +12,6 @@ extern "C" {
 
 using namespace std;
 
-#define MAP_HEIGHT 64
-#define MAP_WIDTH  64
-
 Minimap::Minimap() : SimObject(Vector2D()) {
     map_init(MAP_WIDTH, MAP_HEIGHT, 0);
 }

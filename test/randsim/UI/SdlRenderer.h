@@ -4,7 +4,7 @@
 #include <SDL_ttf.h>
 #include <SDL2_gfxPrimitives.h>
 
-#include "Renderer.h"
+#include "UI/Renderer.h"
 
 class SdlRenderer : public Renderer {
     SDL_Window *Window;

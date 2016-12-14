@@ -5,10 +5,10 @@ extern "C" {
 #include "nav/nav.h"
 #include "ir/ir.h"
 }
-#include "Renderer.h"
+#include "UI/Renderer.h"
 #include "SimObject.h"
 #include "Sonar.h"
-#include "Vector2D.h"
+#include "Common/Vector2D.h"
 #include "Simulator.h"
 #include "Laser.h"
 

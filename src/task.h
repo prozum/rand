@@ -34,8 +34,6 @@
 #define IR_BOTTOM_PIN A0
 #define IR_TOP_PIN A1
 
-#define MAP_HEIGHT 64
-#define MAP_WIDTH 64
 #define CLEAN 1
 #define DONT_CLEAN 0
 

@@ -27,8 +27,8 @@ add_definitions(-DMOCK)
 add_definitions(-D__AVR_ATmega328P__)
 
 # Target
-include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Renderer ${CMAKE_CURRENT_SOURCE_DIR}/SimObject)
-add_executable(randsim Main.cpp SimObject/Drone.cpp SimObject/Minimap.cpp Fonts/Ubuntu-C.ttf map.txt Simulator.cpp Simulator.h Renderer/Renderer.cpp Renderer/Renderer.h Renderer/SdlRenderer.cpp Renderer/SdlRenderer.h SimObject/SimObject.cpp SimObject/SimObject.h SimObject/Block.cpp SimObject/Block.h SimObject/Vector2D.cpp SimObject/Vector2D.h SimObject/Sonar.cpp SimObject/Sonar.h SimObject/Ray.cpp SimObject/Ray.h SimObject/Laser.cpp SimObject/Laser.h BlockBuilder.cpp BlockBuilder.h)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} Common UI SimObject)
+add_executable(randsim Main.cpp SimObject/Drone.cpp UI/Minimap.cpp Fonts/Ubuntu-C.ttf map.txt Simulator.cpp Simulator.h UI/Renderer.cpp UI/Renderer.h UI/SdlRenderer.cpp UI/SdlRenderer.h SimObject/SimObject.cpp SimObject/SimObject.h SimObject/Block.cpp SimObject/Block.h Common/Vector2D.cpp Common/Vector2D.h SimObject/Sonar.cpp SimObject/Sonar.h Common/Ray.cpp Common/Ray.h SimObject/Laser.cpp SimObject/Laser.h UI/BlockBuilder.cpp UI/BlockBuilder.h)
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS} ${SDL2GFX_INCLUDE_DIRS})
 target_link_libraries(randsim nav fc kalman matrix map sonar ir laser ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES} ${SDL2GFX_LIBRARIES})
 

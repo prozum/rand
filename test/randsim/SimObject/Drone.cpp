@@ -1,8 +1,8 @@
 #include "Drone.h"
 
 Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0),
-                                       SonarModule(Pos, 57, Angle, DegToRad(15), 220),
-                                       LaserModule(Pos, 400.0, Angle),
+                                       SonarModule(*this, 57, DegToRad(15), 220),
+                                       LaserModule(*this, 400.0),
                                        Height(0) {
     //Initialize the structs
     init_fc(&FC, SERIAL0, 1);
@@ -29,18 +29,14 @@ void Drone::draw() {
     Sim->Render->setColor(BLACK);
     Sim->Render->drawCircleRel(Pos, Size / 2);
 
-    // Direction line
-    Sim->Render->setColor(RED);
-    Sim->Render->drawLineRel(Pos, {Pos.X + int(cos(Angle) * Size / 2), Pos.Y + int(sin(Angle) * Size / 2)});
-
     // Modules
     SonarModule.draw();
     LaserModule.draw();
 }
 
 void Drone::update() {
-    SonarModule.calcDist(Sim->Blocks, Pos, Angle);
-    LaserModule.calcDist(Sim->Blocks, Pos, Angle);
+    SonarModule.update();
+    LaserModule.update();
 
     if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
         navigation(&WorldRepresentation, &NavStruct);
