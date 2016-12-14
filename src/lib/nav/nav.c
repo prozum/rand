@@ -478,19 +478,7 @@ map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord) {
     return coord;
 }
 
-void draw_front(uint16_t val, nav_t *nav, fieldstate_t state) {
-    fix16_t fixed_val = fix16_from_int(val);
-
-    fix16_t x_offset = calculate_x_distance(nav->angle, fixed_val);
-    fix16_t y_offset = calculate_y_distance(nav->angle, fixed_val);
-
-    //And convert to pixel-coord
-    map_coord_t pix_obst = align_to_map(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
-
-    map_write(pix_obst.x, pix_obst.y, state);
-}
-
-void draw_side(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state) {
+void draw_obstacle(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state) {
     fix16_t fixed_val = fix16_from_int(val);
 
     fix16_t x_offset = calculate_x_distance(nav->angle + side_offset, fixed_val);
@@ -509,17 +497,17 @@ void draw_map(rep_t *rep, nav_t *nav){
         uint16_t mes_diff = abs(rep->laser->front_value - rep->sonar->value);
         //Draw map in direct front of the drone
         if (mes_diff > WINDOW_RECON_THRESHOLD) {
-            draw_front(rep->laser->front_value, nav, WINDOW);
+            draw_obstacle(rep->laser->front_value, nav, 0, WINDOW);
         } else {
-            draw_front(rep->laser->front_value, nav, WALL);
+            draw_obstacle(rep->laser->front_value, nav, 0, WALL);
         }
     }
 
     if (nav->state.wall_right && rep->laser->val_right <= MIN_RANGE) {
-        draw_side(rep->laser->val_right, nav, DRONE_RIGHT_SIDE, WALL);
+        draw_obstacle(rep->laser->val_right, nav, DRONE_RIGHT_SIDE, WALL);
     }
 
     if (nav->state.wall_left && rep->laser->val_left <= MIN_RANGE) {
-        draw_side(rep->laser->val_left, nav, DRONE_LEFT_SIDE, WALL);
+        draw_obstacle(rep->laser->val_left, nav, DRONE_LEFT_SIDE, WALL);
     }
 }

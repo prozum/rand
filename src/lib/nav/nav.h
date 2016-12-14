@@ -152,17 +152,12 @@ fix16_t calculate_x_distance(uint16_t degrees_100th, fix16_t distance);
  */
 void update_angle(nav_t *nav, fix16_t degrees);
 
-/// Draw an obstacle directly in front of the drone
-/// @param val - The distance to the obstacle
-/// @param nav - A pointer to a nav_t, i.e. the drone's current position
-/// @param state - The determined obstacle type (WINDOW, WALL, VISITED or UNVISITED)
-void draw_front(uint16_t val, nav_t *nav, fieldstate_t state);
-/// Draws the specified obstacle at a specified angle and distance from the drone's current position
+/// Draws an obstacle at a specified angle and distance from the drone's current position
 /// @param val - The measured distance to the obstacle
 /// @param nav - A pointer to the navigation struct, i.e. the drone's position
 /// @param side_offset - The angle measured to the obstacle in 100th degrees
 /// @param state - The determined obstacle type (WINDOW, WALL, VISITED or UNVISITED)
-void draw_side(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state);
+void draw_obstacle(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state);
 /// Draws the map from the drone current position and world representation
 /// @param rep - A pointer to a rep_t, i.e. the drone's world representation
 /// @param nav - A pointer to a nav_t, i.e. the drone's current position
