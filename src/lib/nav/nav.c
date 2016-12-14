@@ -248,11 +248,13 @@ void on_idle(rep_t *rep, nav_t *nav) {
 }
 
 void on_turning(rep_t *rep, nav_t *nav){
+    fix16_t moved_degrees = fix16_mul(rep->fc->gyro, fix16_from_float(PERIOD_SECONDS));
+
     // Ugly workaround since rotation direction cannot be read from gyro
     if (rep->fc->yaw == rep->fc->duty->MIN_FC_DUTY)
-        update_angle(nav, fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
+        update_angle(nav, moved_degrees);
     else
-        update_angle(nav, - fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
+        update_angle(nav, - moved_degrees);
 
     update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
@@ -261,7 +263,7 @@ void on_turning(rep_t *rep, nav_t *nav){
     }
 }
 
-void onTurnaround(rep_t *rep, nav_t *nav){
+void on_turnaround(rep_t *rep, nav_t *nav){
 
     update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->val == 0){
@@ -271,30 +273,29 @@ void onTurnaround(rep_t *rep, nav_t *nav){
     }
 }
 
-void alignToWall(rep_t *rep, nav_t *nav){
-    fix16_t diffWall = 0, directionDistance = fix16_div(rep->fc->vel->y, fix16_from_int(PERIODS_PER_SEC)), degreesToTurn = 0;
+void align_to_wall(rep_t *rep, nav_t *nav){
+    fix16_t diff_wall = 0, degrees_to_turn = 0;
+    //fix16_t drift = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
 
     if (nav->state.blocked_left){
-        diffWall = fix16_from_int(rep->laser->val_left - nav->prev_dist_wall);
+        diff_wall = fix16_from_int(rep->laser->val_left - nav->prev_dist_wall);
         nav->prev_dist_wall = rep->laser->val_left;
     }
     else if (nav->state.blocked_right){
-        diffWall = fix16_from_int(rep->laser->val_right - nav->prev_dist_wall);
+        diff_wall = fix16_from_int(rep->laser->val_right - nav->prev_dist_wall);
         nav->prev_dist_wall = rep->laser->val_right;
     }
 
-    if(diffWall == fix16_from_int(1))
-        diffWall = fix16_from_float(1);
-    degreesToTurn = diffWall;  //fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR_RAD)), diffWall)))); todo: Insert proper calculation
+    degrees_to_turn = diff_wall;  //fix16_rad_to_deg(fix16_asin(fix16_div(drift, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR_RAD)), diffWall)))); todo: Insert proper calculation
 
-    if (diffWall < fix16_from_int(0) && rep->laser->val_left < MIN_RANGE){
-        nav_turn_right(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall < fix16_from_int(0) && rep->laser->val_right < MIN_RANGE) {
-        nav_turn_left(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall > fix16_from_int(0) && rep->laser->val_left < MIN_RANGE) {
-        nav_turn_left(rep, nav, abs(fix16_to_int(degreesToTurn)));
-    } else if (diffWall > fix16_from_int(0) && rep->laser->val_right < MIN_RANGE) {
-        nav_turn_right(rep, nav, abs(fix16_to_int(degreesToTurn)));
+    if (diff_wall < 0 && rep->laser->val_left < MIN_RANGE){
+        nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
+    } else if (diff_wall < 0 && rep->laser->val_right < MIN_RANGE) {
+        nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
+    } else if (diff_wall > 0 && rep->laser->val_left < MIN_RANGE) {
+        nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
+    } else if (diff_wall > 0 && rep->laser->val_right < MIN_RANGE) {
+        nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
     }
 }
 
@@ -307,7 +308,7 @@ void on_move_forward(rep_t *rep, nav_t *nav){
     map_set_position(nav, VISITED);
 
     if(!check_alignment_wall(rep, nav))
-        alignToWall(rep, nav);
+        align_to_wall(rep, nav);
 
     draw_map(rep, nav);
     if(fix16_to_int(nav->val) > 0 && nav->task == MOVEFORWARD)
