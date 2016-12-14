@@ -14,11 +14,12 @@
  * @return the degree in fix16 radians
  */
 fix16_t fix_rad_angle(uint16_t degrees_100th) {
-    if(degrees_100th >= (uint16_t) 360 * INV_ANGLE_RESOLUTION) {
-        degrees_100th %= 360 * INV_ANGLE_RESOLUTION;
+    if(degrees_100th >= FULL_TURN_SCALED) {
+        degrees_100th %= FULL_TURN_SCALED;
     }
 
-    return fix16_deg_to_rad(fix16_from_int(ANGLE_RESOLUTION * degrees_100th));
+    fix16_t angle_scaled = fix16_mul(fix16_from_float(ANGLE_RESOLUTION), fix16_to_int(degrees_100th));
+    return fix16_deg_to_rad(angle_scaled);
 }
 
 /**
@@ -47,11 +48,11 @@ void update_angle(nav_t *nav, fix16_t degrees) {
     //Must use a 32-bit int here, because degrees may be between -36000 and 36000
     int32_t converted_degrees = fix16_to_int(degrees) * INV_ANGLE_RESOLUTION;
     int32_t res_angle = (int32_t) nav->angle + converted_degrees;
-    if(res_angle >= (uint16_t) 360 * INV_ANGLE_RESOLUTION) {
-        res_angle %= 360 * INV_ANGLE_RESOLUTION;
+    if(res_angle >= FULL_TURN_SCALED) {
+        res_angle %= FULL_TURN_SCALED;
     }
     else if(res_angle < 0) {
-        res_angle += 360 * INV_ANGLE_RESOLUTION;
+        res_angle += FULL_TURN_SCALED;
     }
     nav->angle = (uint16_t) res_angle;
 }
@@ -152,6 +153,9 @@ void update_state(state_t *state, rep_t *rep){
 }
 
 void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep){
+    if(!rep)
+        rep = malloc(sizeof(rep));
+
     rep->fc = fc;
     rep->laser = laser;
     rep->sonar = sonar;
@@ -160,6 +164,9 @@ void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBot
 }
 
 void init_nav(nav_t *nav){
+    if(!nav)
+        nav = malloc(sizeof(nav_t));
+
     nav->task = IDLE;
     nav->val = 0;
     nav->angle = 0;
@@ -174,6 +181,11 @@ void init_nav(nav_t *nav){
     nav->timer = 0;
 
     init_search(&nav->search_data);
+
+    //Setup fix16_t constants
+    fix16_t SONAR_ANGLE_RAD = fix16_deg_to_rad(fix16_from_int(15));
+    fix16_t PERPENDICULAR_RAD = fix16_deg_to_rad(fix16_from_int(90));
+    SONAR_RELIABLE_CONSTANT = fix16_div(PERPENDICULAR_RAD, SONAR_ANGLE_RAD);
 }
 
 /**
@@ -210,7 +222,8 @@ void navigation(rep_t *rep, nav_t *nav){
 }
 
 void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
-    fix16_t result = fix16_sub(*nav_val, fix16_div(velocity, fix16_from_int(PERIODS_PER_SEC)));
+    fix16_t result = fix16_sub(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
+
     if(fix16_to_int(result) < 0)
         *nav_val = fix16_from_int(0);
     else
@@ -242,7 +255,7 @@ void on_turning(rep_t *rep, nav_t *nav){
         update_angle(nav, - fix16_div(rep->fc->gyro, fix16_from_float(PERIODS_PER_SEC)));
 
     update_nav_value(&nav->val, rep->fc->gyro);
-    if(fix16_to_int(nav->val) == 0){
+    if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
     }
@@ -272,7 +285,7 @@ void alignToWall(rep_t *rep, nav_t *nav){
 
     if(diffWall == fix16_from_int(1))
         diffWall = fix16_from_float(1);
-    degreesToTurn = diffWall;  //fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR)), diffWall)))); todo: Insert proper calculation
+    degreesToTurn = diffWall;  //fix16_rad_to_deg(fix16_asin(fix16_div(directionDistance, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR_RAD)), diffWall)))); todo: Insert proper calculation
 
     if (diffWall < fix16_from_int(0) && rep->laser->val_left < MIN_RANGE){
         nav_turn_right(rep, nav, abs(fix16_to_int(degreesToTurn)));
@@ -286,11 +299,11 @@ void alignToWall(rep_t *rep, nav_t *nav){
 }
 
 void on_move_forward(rep_t *rep, nav_t *nav){
+    fix16_t dist = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
+
     //calculate the current position from the current position and angle
-    nav->posx = nav->posx + fix16_to_int(calculate_x_distance(nav->angle, fix16_div(rep->fc->vel->y,
-                                                                                    fix16_from_int(PERIODS_PER_SEC))));
-    nav->posy = nav->posy + fix16_to_int(calculate_y_distance(nav->angle, fix16_div(rep->fc->vel->y,
-                                                                                    fix16_from_int(PERIODS_PER_SEC))));
+    nav->posx = (uint16_t) (nav->posx + fix16_to_int(calculate_x_distance(nav->angle, dist)));
+    nav->posy = (uint16_t) (nav->posy + fix16_to_int(calculate_y_distance(nav->angle, dist)));
     map_set_position(nav, VISITED);
 
     if(!check_alignment_wall(rep, nav))
@@ -369,7 +382,7 @@ void map_set_point(uint8_t x, uint8_t y,fieldstate_t field){
 }
 
 void map_set_position(nav_t *nav, fieldstate_t field) {
-    pixel_coord_t pixel = align_to_pixel(nav->posx, nav->posy);
+    map_coord_t pixel = align_to_map(nav->posx, nav->posy);
 
     map_write(pixel.x, pixel.y, field);
 }
@@ -379,7 +392,7 @@ fieldstate_t map_check_point(uint8_t x, uint8_t y){
 }
 
 fieldstate_t map_check_position(nav_t *nav) {
-    pixel_coord_t pixel = align_to_pixel(nav->posx, nav->posy);
+    map_coord_t pixel = align_to_map(nav->posx, nav->posy);
 
     return map_read(pixel.x, pixel.y);
 }
@@ -391,7 +404,8 @@ uint8_t is_sonar_reliable(rep_t *rep, state_t state){
     fix16_t distToWall = fix16_from_int(state.blocked_right ? rep->laser->val_left : rep->laser->val_right);
 
     /* find the distance to the wall with a 15 degree angle from front view */
-    fix16_t calcSonarDistToWall = fix16_mul(distToWall/fix16_sin(fix16_from_float(fix16_rad_to_deg(SONAR_DEG))), fix16_sin(fix16_from_float(fix16_rad_to_deg(PERPENDICULAR))));
+    //by using b = a (sin(B) / sin(A))
+    fix16_t calcSonarDistToWall = fix16_mul(distToWall, SONAR_RELIABLE_CONSTANT);
 
     /* if the measured value compared to the calculated value is less or equal to the allowed deviation of the sensor */
     if (fix16_abs(calcSonarDistToWall - fix16_from_int(rep->sonar->value) <= fix16_from_int(SENSOR_DEVIATION)) && rep->sonar->valid)
@@ -431,7 +445,7 @@ uint8_t check_alignment_wall(rep_t *rep, nav_t *nav){
     return 1;
 }
 
-pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord) {
+map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord) {
     uint8_t x_pixel, y_pixel;
 
     uint16_t y_low = (uint16_t) LOWEST_Y_ORG;
@@ -439,54 +453,57 @@ pixel_coord_t align_to_pixel(uint16_t x_coord, uint16_t y_coord) {
 
     if(x_coord < LOWEST_X_ORG)
     {
-        WARNING(SENDER_MAP, "align_to_pixel: x-coord out of bounds");
+        WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
         x_pixel = 0;
     }
     else if (x_coord > HIGHEST_X_ORG) {
-        WARNING(SENDER_MAP, "align_to_pixel: x-coord out of bounds");
+        WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
         x_pixel = MAP_HEIGHT;
     }
     else
         x_pixel = (x_coord - y_low) / CENTIMETERS_PR_PIXEL;
 
     if(y_coord < LOWEST_Y_ORG) {
-        WARNING(SENDER_MAP, "align_to_pixel: y-coord out of bounds");
+        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
         y_pixel = 0;
     }
     else if(y_coord > HIGHEST_Y_ORG) {
-        WARNING(SENDER_MAP, "align_to_pixel: y-coord out of bounds");
+        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
         y_pixel = MAP_WIDTH;
     }
     else
         y_pixel = (y_coord - x_low) / CENTIMETERS_PR_PIXEL;
 
-    pixel_coord_t coord = { .x = x_pixel, .y = y_pixel};
+    map_coord_t coord = { .x = x_pixel, .y = y_pixel};
     return coord;
 }
 
 void draw_front(uint16_t val, nav_t *nav, fieldstate_t state) {
-    //Calculate the x-offset with cos(angle) * laser
-    fix16_t x_offset = calculate_x_distance(nav->angle, fix16_from_int(val));
-    //Calculate the y-offset with sin(angle) * laser
-    fix16_t y_offset = calculate_y_distance(nav->angle, fix16_from_int(val));
+    fix16_t fixed_val = fix16_from_int(val);
+
+    fix16_t x_offset = calculate_x_distance(nav->angle, fixed_val);
+    fix16_t y_offset = calculate_y_distance(nav->angle, fixed_val);
 
     //And convert to pixel-coord
-    pixel_coord_t pix_win = align_to_pixel(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
+    map_coord_t pix_obst = align_to_map(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
 
-    map_write(pix_win.x, pix_win.y, state);
+    map_write(pix_obst.x, pix_obst.y, state);
 }
 
 void draw_side(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state) {
-    fix16_t x_offset = calculate_x_distance(nav->angle + side_offset, fix16_from_int(val));
-    fix16_t y_offset = calculate_y_distance(nav->angle + side_offset, fix16_from_int(val));
+    fix16_t fixed_val = fix16_from_int(val);
+
+    fix16_t x_offset = calculate_x_distance(nav->angle + side_offset, fixed_val);
+    fix16_t y_offset = calculate_y_distance(nav->angle + side_offset, fixed_val);
 
     //And convert to pixel-coord
-    pixel_coord_t pix_obst = align_to_pixel(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
+    map_coord_t pix_obst = align_to_map(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
 
     map_write(pix_obst.x, pix_obst.y, state);
 }
 
 void draw_map(rep_t *rep, nav_t *nav){
+
     if((rep->sonar->value < MIN_RANGE || rep->laser->front_value <= MIN_RANGE)
        && rep->laser->front_value != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
         uint16_t mes_diff = abs(rep->laser->front_value - rep->sonar->value);

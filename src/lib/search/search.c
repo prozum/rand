@@ -12,7 +12,7 @@ search_node_t* findpath(nav_t *nav){
         search_node_t start;
         addnode(search, start, OPEN);
 
-        pixel_coord_t startpos = align_to_pixel(nav->posx, nav->posy);
+        map_coord_t startpos = align_to_map(nav->posx, nav->posy);
         start.pos = startpos;
 
         start.parent = NULL;
@@ -65,7 +65,7 @@ search_node_t* close_node(search_t *list, search_node_t *node){
     return addnode(list, *node, CLOSED);
 }
 
-uint8_t is_node_in_set(search_t *list, pixel_coord_t coord, set_t set, search_node_t *foundnode){
+uint8_t is_node_in_set(search_t *list, map_coord_t coord, set_t set, search_node_t *foundnode){
     uint16_t i;
     search_node_t *node;
     if(set == OPEN){
@@ -96,7 +96,7 @@ uint8_t is_node_in_set(search_t *list, pixel_coord_t coord, set_t set, search_no
 }
 
 void add_neighbours(search_t *list, search_node_t *node){
-    pixel_coord_t coords[4]; //coords of neighbours
+    map_coord_t coords[4]; //coords of neighbours
     coords[0] = node->pos; coords->x--;coords->y--;
     coords[1] = node->pos; coords->x--;coords->y++;
     coords[2] = node->pos; coords->x++;coords->y--;
@@ -124,7 +124,7 @@ void add_neighbours(search_t *list, search_node_t *node){
     }
 }
 
-uint8_t estimate(search_node_t *node, pixel_coord_t pos) {
+uint8_t estimate(search_node_t *node, map_coord_t pos) {
     return (uint8_t) abs((node->pos.x - pos.x) + (node->pos.y - pos.y));
 }
 

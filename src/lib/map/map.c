@@ -7,7 +7,7 @@ uint8_t map_width,
 void map_init(uint8_t width, uint8_t height, uint8_t clean)
 {
     if (map_width * map_height > MAX_MAP_SIZE) {
-        SERIOUS_WARNING(SENDER_MAP, "Map size too big!");
+        SERIOUS_WARNING(SENDER_MAP, "map_init: Map size too big!");
     }
 
     map_width = width;
@@ -19,8 +19,11 @@ void map_init(uint8_t width, uint8_t height, uint8_t clean)
 
 void map_write(uint8_t x, uint8_t y, fieldstate_t value)
 {
-    uint16_t addr = (y * map_width + x) / FIELDS_PER_BYTE;
-    uint16_t offset =  ((y * map_width + x) % FIELDS_PER_BYTE) * FIELD_SIZE;
+    uint16_t index = y * map_width + x;
+    uint16_t addr = index / (uint16_t) FIELDS_PER_BYTE;
+    //Use fix16_mod because native avr-% is not boundable
+    //fix16_t unscaled_offset = fix16_mod(fix16_from_int(index), FIELDS_PER_BYTE);
+    uint16_t offset = (uint16_t) ((index % FIELDS_PER_BYTE) * FIELD_SIZE);
     uint8_t  new_value = 0;
 
     if(addr >= EEPROM_SIZE) {
@@ -76,7 +79,7 @@ void map_show()
                     uart_putchar(CHAR_TRANSPARENT);
                     break;
                 default:
-                    ERROR("Unrecognized character");
+                    ERROR("map_show: Unrecognized character");
             }
         }
         uart_putchar('|');

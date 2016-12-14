@@ -1,5 +1,3 @@
-add_definitions(-DFIXMATH_OPTIMIZE_8BIT)
-
 generate_avr_library(libfixmath
     MOCK
     BOARD uno

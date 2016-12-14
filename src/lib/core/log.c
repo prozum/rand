@@ -27,11 +27,6 @@ static level logging_level = LOG_NONE;
  */
 void init_logging(level lvl) {
 #if MOCK
-    //for (int i = 0; i < SERIAL_PINS; i++) {
-    //    serial_buffer
-    //}
-
-
     //Produce a message with version and project-name
     char init_msg[30];
     strcpy(init_msg, MAJOR_VERSION);
@@ -128,18 +123,16 @@ void SERIOUS_WARNING(log_sender sender, const char *msg) {
  */
 void ERROR(const char *msg) {
 #ifndef MOCK
-    char cpy[strlen(msg) + PREFIX_SIZE];
+    //TODO: Add code for safely landing drone
+    /*char cpy[strlen(msg) + PREFIX_SIZE];
     strcpy(cpy, msg);
 
-    serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));
+    serial_write_string(USB_TX, strcat(cpy, ERROR_PREFIX));*/
 #endif //!MOCK
-    //TODO: Add code for safely landing drone
 #if MOCK
     printf("%s%s\n", "ERROR: ", msg);
 #endif //MOCK
 }
-
-#if MOCK
 
 /**
  * Disables a module, blocking all future logs
@@ -170,6 +163,7 @@ void disable_device(log_sender device) {
         free(new_dev);
 }
 
+#if MOCK
 uint8_t count_disabled_devices() {
     uint8_t devices = 0;
     disabled_device *ptr = head;

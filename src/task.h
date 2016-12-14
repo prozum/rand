@@ -13,6 +13,7 @@
 #include "laser/laser.h"
 #include "map/map.h"
 #include "nav/nav-struct.h"
+#include "nav/nav.h"
 
 #define ONE_MS 63 // defines 1 millisecond
 #define ONE_AND_A_HALF_MS 94 // defines 1.5 millisecond
@@ -21,14 +22,13 @@
 #define MINOR_CYCLE 1125
 #define SCHEDULER_OVERFLOW (MAJOR_CYCLE + ONE_MS) // 100 ms + 1 ms
 
-#define TIMER_TICK_TO_MILIS(x) ((x) / ONE_MS)
-
 #define YAW         P8
 #define ROLL        P9
 #define PITCH       P10
 #define THROTTLE    P11
 
-#define SONAR_TIMEOUT 11 * ONE_MS
+//this allows the speed to travel 4.42 meters thus a bit above the cap of 2.2 meters
+#define SONAR_TIMEOUT 13 * ONE_MS
 #define SONAR_TRIGGER_PIN P2
 #define SONAR_ECHO_PIN P3
 #define IR_BOTTOM_PIN A0
@@ -39,12 +39,14 @@
 #define CLEAN 1
 #define DONT_CLEAN 0
 
-sonar_t *sonar;
-laser_t *laser;
-ir_t *top_ir;
-ir_t *bottom_ir;
+nav_t *nav_state;
+rep_t *world_rep;
 fc_t *fc;
+laser_t *laser;
+sonar_t *sonar;
 search_t *search_data;
+ir_t *bottom_ir;
+ir_t *top_ir;
 
 
 void task_timer_setup();
