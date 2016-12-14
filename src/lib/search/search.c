@@ -6,7 +6,7 @@
 /// \param nav
 /// \param x
 /// \param y
-search_node_t* findpath(nav_t *nav){
+search_node_t* find_path(nav_t *nav){
     search_t *search = &nav->search_data;
     if(!search->active){
         search_node_t start;
@@ -37,18 +37,14 @@ search_node_t* findpath(nav_t *nav){
 }
 
 search_node_t* addnode(search_t *list, search_node_t node, set_t set){
-    uint8_t found;
-
     if(set == OPEN) {
         for (uint16_t i = 0; i < list->openset_size + 1;) {
             if (!list->open_set[i].valid) {
                 i++;
             } else {
-                if (set == OPEN) {
-                    node.valid = 1;
-                    list->open_set[list->openset_size++] = node;
-                    return &list->open_set[list->openset_size];
-                }
+                node.valid = 1;
+                list->open_set[list->openset_size++] = node;
+                return &list->open_set[list->openset_size];
             }
         }
         ERROR("could not add search node, set is broken"); // actual set size does not match variable

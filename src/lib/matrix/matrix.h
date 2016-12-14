@@ -13,69 +13,69 @@ typedef struct matrix_s {
 
 /**
  * Multiplies two matrices
- * @param left_matrix
- * @param right_matrix
- * @return
+ * @param left_matrix - A pointer to a N x M matrix
+ * @param right_matrix - A pointer to a M x P matrix
+ * @return - A pointer to the resulting N x P matrix (or NULL if the sizes does not comply with specified requirements)
  */
 matrix_t *mult_mat_mat(matrix_t *left_matrix, matrix_t *right_matrix);
 /**
  * Multiplies a matrix with a vector
- * @param matrix
- * @param vector
- * @return
+ * @param matrix - A pointer to a N x M matrix
+ * @param vector - A pointer to a M x 1 vector
+ * @return - A pointer to the resulting N x M matrix (or NULL if the sizes does not comply with specified requirements)
  */
 matrix_t *mult_mat_vec(matrix_t *matrix, matrix_t *vector);
 /**
  * Translates a matrix
- * @param matrix
- * @return
+ * @param matrix A pointer to a N x M matrix
+ * @return A pointer to the resulting M x N matrix
  */
 matrix_t *trans_matrix(matrix_t *matrix);
 /**
  * Adds the indices of two matrices
- * @param left
- * @param right
- * @return
+ * @param left - A pointer to a N x M matrix
+ * @param right - A pointer to a N x M matrix
+ * @return - A pointer to the resulting N x M matrix (or NULL if the matrices are not equal size)
  */
 matrix_t *add_mat_mat(matrix_t *left, matrix_t *right);
 /**
  * Subtracts the indices of two matrices
- * @param left
- * @param right
- * @return
+ * @param left - A pointer to a N x M matrix
+ * @param right - A pointer to a N x M matrix
+ * @return - A pointer to the resulting N x M matrix (or NULL if the matrices are not equal size)
  */
 matrix_t *sub_mat_mat(matrix_t *left, matrix_t *right);
 /**
  * Produces the identity matrix of a specified size
  * @param size - Width and height of the desired identity matrix
- * @return
+ * @return - A pointer to the resulting size x size identity matrix
  */
 matrix_t *ident_mat(uint8_t size);
 /**
  * Multiplies the indices of a vector with a constant
- * @param vector
- * @param k
- * @return
+ * @param vector - A pointer to a row or column vector
+ * @param k - a constant in 16.16 fixed pattern
+ * @return - A pointer to the resulting vector
  */
 matrix_t *mult_const_vec(matrix_t *vector, fix16_t k);
 /**
- * Sums the indices of two vectors
- * @param left_vector
- * @param right_vector
- * @return
+ * Sums the indices of two equal sized vectors
+ * @param left_vector - A pointer to a vector
+ * @param right_vector - A pointer to a vector
+ * @return - The resulting vector (or NULL if the vector are not equal size)
  */
 matrix_t *add_vec_vec(matrix_t *left_vector, matrix_t *right_vector);
 /**
- * Subtracts the indices of two vectors
- * @param left
- * @param right
- * @return
+ * Subtracts the indices of two equal sized vectors
+ * @param left - A pointer to a vector
+ * @param right - A pointer to a vector
+ * @return - The resulting vector (or NULL if the vector are not equal size)
  */
 matrix_t *sub_vec_vec(matrix_t *left, matrix_t *right);
 /**
- * Finds the inverse of a specified matrix
- * @param matrix
- * @return
+ * Finds the inverse of a 2 x 2 matrix
+ * @param matrix - A pointer to a 2 x 2 matrix
+ * @return - A pointer to the resulting 2 x 2 inverse matrix (or NULL if the given matrix is not 2 x 2)
  */
 matrix_t *inv_mat(matrix_t *matrix);
 /**
