@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include "libfixmath/fix16.h"
 
-#define __USE_MISC
-#include "math.h"
+# define M_PI       3.14159265358979323846
 
 int main(int argc, char *argv[]) {
     fix16_t val1 = fix16_from_float(64.123);
