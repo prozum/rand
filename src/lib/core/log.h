@@ -34,9 +34,10 @@ void LOG(log_sender sender, const char *msg);
 void WARNING(log_sender sender, const char *msg);
 /**
  * Logs a serious warning, which bypasses the ignore-system
+ * @param sender - The sender component
  * @param msg - The warning to log
  */
-void SERIOUS_WARNING(const char *msg);
+void SERIOUS_WARNING(log_sender sender, const char *msg);
 /**
  * Logs an error to and causes the drone to emergency land
  * @param msg - The error to log

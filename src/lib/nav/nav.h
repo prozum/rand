@@ -207,7 +207,7 @@ uint8_t is_sonar_reliable(rep_t *rep, state_t state);
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
-void check_alignment_wall(rep_t *rep, nav_t *nav);
+uint8_t check_alignment_wall(rep_t *rep, nav_t *nav);
 
 /**
  * Enters the IDLE state
