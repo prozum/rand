@@ -1,7 +1,7 @@
 #ifndef RAND_MATRIX_MATH_H
 #define RAND_MATRIX_MATH_H
 
-/** @file ½3yymatrix.h
+/** @file matrix.h
  * \brief Matrix calculation functions and data
  *
  * \addtogroup Matrix
