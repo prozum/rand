@@ -33,7 +33,7 @@ void map_write(uint8_t x, uint8_t y, fieldstate_t value)
     // Load the byte to be read from
     new_value = eeprom_read(addr);
 
-    new_value &= ~(0b11 << offset);
+    new_value &= ~(FULL_FIELD << offset);
     new_value |= value << offset;
 
     eeprom_write(addr, new_value);
@@ -46,7 +46,7 @@ fieldstate_t map_read(uint8_t x, uint8_t y)
 
     uint8_t value = eeprom_read(addr);
 
-    return (value >> offset) & 0b11;
+    return (value >> offset) & FULL_FIELD;
 }
 
 void map_clean()

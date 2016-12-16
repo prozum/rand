@@ -1,0 +1,18 @@
+PROJECT_NAME           = "@CMAKE_PROJECT_NAME@"
+PROJECT_NUMBER         = @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
+STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@
+INPUT                  = @PROJECT_SOURCE_DIR@
+EXCLUDE                = @PROJECT_SOURCE_DIR@/src/lib/libfixmath/ \
+EXCLUDE                = @PROJECT_SOURCE_DIR@/src/lib/gdb/        \
+                         @PROJECT_SOURCE_DIR@/test/               \
+
+EXCLUDE_PATTERN        = *.cmake \
+                         */cmake-build-debug/* \
+                         *CMakeLists.txt*
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+
+RECURSIVE              = YES
+WARNINGS               = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+SORT_GROUP_NAMES       = YES

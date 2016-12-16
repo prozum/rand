@@ -8,7 +8,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 # Options
 option(SAMPLES "Samples" OFF)
-option(TESTS "Tests" ON)
+option(TESTS "Tests" OFF)
+option(DOC "Documentation" OFF)
 option(SERIAL_TARGETS "Serial Targets" OFF)
 option(SIZE_TARGETS "Size Targets" OFF)
 
@@ -17,16 +18,18 @@ avr_include_directories(src src/lib)
 
 add_subdirectory(src)
 
-message("compiler: ${CMAKE_CXX_COMPILER_ID}")
-
-if (SERIAL_TARGETS)
-    setup_serial_targets()
-endif ()
-
 if (SAMPLES)
     add_subdirectory(samples)
 endif ()
 
 if (TESTS)
     add_subdirectory(test)
+endif ()
+
+if (DOC)
+	include(cmake/Doxygen.cmake)
+endif()	
+
+if (SERIAL_TARGETS)
+    setup_serial_targets()
 endif ()

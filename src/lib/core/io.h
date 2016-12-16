@@ -1,6 +1,13 @@
 #ifndef RAND_IO_H
 #define RAND_IO_H
 
+/** @file io.h
+ * \brief Input/Output functions and data
+ *
+ * \addtogroup IO
+ * @{
+ */
+
 #include <stdint.h>
 #include <stdio.h>
 
@@ -64,7 +71,7 @@ dval_t digital_read(dpin_t pin);
  * @param pin The pin to read from
  */
 void analog_read_setpin(apin_t pin);
-//void analog_write(apin_t pin, aval_t out);
+
 /**
  * Read a value from the analog pin specified in the last call to analog_read_setpin
  * @return The value read from the pin
@@ -192,3 +199,5 @@ pin_mode_t get_pin_mode(dpin_t pin);
 #endif //MOCK
 
 #endif //RAND_IO_H
+
+//! @}

@@ -7,7 +7,7 @@ extern "C" {
 CPPUNIT_TEST_SUITE_REGISTRATION(KalmanTest);
 
 void KalmanTest::KalmanInit_ValidParams_ExpectValidStateMalloced() {
-    kalman_state *NullState = NULL;
+    kalman_state_t *NullState = NULL;
 
     fix16_t a = fix16_from_int(1), r = fix16_from_int(10);
 
@@ -23,7 +23,7 @@ void KalmanTest::KalmanInit_ValidParams_ExpectValidStateMalloced() {
 }
 
 void KalmanTest::KalmanRun_NullStateValidParam_ExpectStateStillNull() {
-    kalman_state *state = NULL;
+    kalman_state_t *state = NULL;
 
     kalman_run(state, fix16_from_int(10));
 
@@ -31,7 +31,7 @@ void KalmanTest::KalmanRun_NullStateValidParam_ExpectStateStillNull() {
 }
 
 void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev() {
-    kalman_state *state;
+    kalman_state_t *state;
     float a = fix16_from_int(1), r = fix16_from_int(1), z_k = fix16_from_int(10), x_prev = fix16_from_int(4);
     state = kalman_init(a, r, SENDER_BOARD);
     state->x_k = x_prev;
@@ -43,7 +43,7 @@ void KalmanTest::KalmanRun_ValidStatezkGxk_ExpectxkGxkprev() {
 }
 
 void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev() {
-    kalman_state *state;
+    kalman_state_t *state;
     fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_k = fix16_from_int(400), x_prev = fix16_from_int(200);
     state = kalman_init(a, r, SENDER_BOARD);
     state->x_k = x_prev;
@@ -56,7 +56,7 @@ void KalmanTest::KalmanRun_ValidStatezkLxk_ExpectxkLxkprev() {
 }
 
 void KalmanTest::KalmanCalibrate_ValidStateValidz0_ExpectxkCloseToz0() {
-    kalman_state *state;
+    kalman_state_t *state;
     fix16_t a = fix16_from_int(1), r = fix16_from_int(1), z_0 = fix16_from_int(60);
     fix16_t x_k = fix16_from_int(10);
     state = kalman_init(a, r, SENDER_BOARD);

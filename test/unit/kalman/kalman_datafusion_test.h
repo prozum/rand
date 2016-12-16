@@ -9,7 +9,7 @@
 #include <cppunit/TestResult.h>
 
 extern "C" {
-#include "kalman/kalman_datafusion.h"
+#include "kalman/kalman-datafusion.h"
 #include "sonar/sonar.h"
 #include "laser/laser.h"
 }

@@ -1,6 +1,13 @@
 #ifndef RAND_SEARCH_H
 #define RAND_SEARCH_H
 
+/** @file search.h
+ * \brief Search algorithm functions and data
+ *
+ * \addtogroup Search
+ * @{
+ */
+
 #include <stdint.h>
 
 #include "map/map.h"
@@ -10,12 +17,12 @@ typedef struct nav_s nav_t;
 
 #define ALLOWED_SEARCH_ITERATIONS 10
 
-typedef enum set_e{
+typedef enum set_e {
     OPEN,
     CLOSED
-}set_t;
+} set_t;
 
-struct search_node_s{
+struct search_node_s {
     map_coord_t pos;
     search_node_t *parent;
     uint8_t gscore;
@@ -23,14 +30,14 @@ struct search_node_s{
     uint8_t valid;
 };
 
-typedef struct search_s{
+typedef struct search_s {
     search_node_t *closed_set;
     search_node_t *open_set;
     uint16_t closedset_size;
     uint16_t openset_size;
     map_coord_t goal;
     uint8_t active;
-}search_t;
+} search_t;
 
 /**
  * Initializes a heuristic search struct
@@ -78,5 +85,6 @@ uint8_t estimate(search_node_t *node, map_coord_t pos);
  */
 search_node_t lowestf(search_t *search);
 
-
 #endif //RAND_SEARCH_H
+
+//! @}

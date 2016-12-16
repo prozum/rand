@@ -1,8 +1,8 @@
 #include <libfixmath/fix16.h>
 #include "kalman/kalman.h"
 
-kalman_state *kalman_init(fix16_t _a, fix16_t _r, log_sender component) {
-    kalman_state *state = malloc(sizeof(kalman_state));
+kalman_state_t *kalman_init(fix16_t _a, fix16_t _r, log_sender_t component) {
+    kalman_state_t *state = malloc(sizeof(kalman_state_t));
 
     //Insufficient memory on the heap, call for a safe-landing
     if(!state) {
@@ -25,7 +25,7 @@ kalman_state *kalman_init(fix16_t _a, fix16_t _r, log_sender component) {
     return state;
 }
 
-void kalman_run(kalman_state *state, fix16_t z_k) {
+void kalman_run(kalman_state_t *state, fix16_t z_k) {
     if (!state)
         return;
 
@@ -50,7 +50,7 @@ void kalman_run(kalman_state *state, fix16_t z_k) {
     state->p_k = fix16_mul(fix16_sub(fix16_from_int(1), state->g_k), state->p_k);
 }
 
-void kalman_calibrate(kalman_state *initial_state, fix16_t z_0) {
+void kalman_calibrate(kalman_state_t *initial_state, fix16_t z_0) {
     uint8_t calibration_done = 0;
 
     //Run the filter until the difference between first reading and estimated value

@@ -14,7 +14,7 @@ extern "C" {
 
 using namespace std;
 
-Minimap::Minimap() : SimObject(Vector2D()) {
+Minimap::Minimap(Simulator &Sim) : Sim(Sim) {
     map_init(MAP_WIDTH, MAP_HEIGHT, 0);
 }
 
@@ -61,16 +61,16 @@ void Minimap::printMap() {
 }
 
 void Minimap::draw() {
-    auto WinWidth  = Sim->Render->WinWidth;
-    auto WinHeight = Sim->Render->WinHeight;
+    auto WinWidth  = Sim.Render->WinWidth;
+    auto WinHeight = Sim.Render->WinHeight;
 
     auto MinimapSize = Vector2D(WinHeight * 0.3, WinHeight * 0.3);
     auto MinimapPos = Vector2D(WinWidth - MinimapSize.X, 0.0);
     auto BlockSize = Vector2D(10, 10);
 
 
-    Sim->Render->setMinimapTarget();
-    Sim->Render->clear();
+    Sim.Render->setMinimapTarget();
+    Sim.Render->clear();
 
     for(int X = 0; X < MAP_WIDTH; ++X) {
         for(int Y = 0; Y < MAP_HEIGHT; ++Y) {
@@ -79,19 +79,16 @@ void Minimap::draw() {
                 case UNVISITED:
                     break;
                 case VISITED:
-                    Sim->Render->setColor(GREEN);
-                    Sim->Render->drawRect({X * BlockSize.X, Y * BlockSize.Y}, BlockSize);
+                    Sim.Render->setColor(GREEN);
+                    Sim.Render->drawRect({X * BlockSize.X, Y * BlockSize.Y}, BlockSize);
                     break;
                 case WALL:
-                    Sim->Render->setColor(BLACK);
-                    Sim->Render->drawRect({X * BlockSize.X, Y * BlockSize.Y}, BlockSize);
+                    Sim.Render->setColor(BLACK);
+                    Sim.Render->drawRect({X * BlockSize.X, Y * BlockSize.Y}, BlockSize);
                     break;
                 case WINDOW:
-                    Sim->Render->setColor(BLUE);
-                    Sim->Render->drawRect({X * BlockSize.X, Y * BlockSize.Y}, BlockSize);
-                    break;
-                default:
-                    exit(1);
+                    Sim.Render->setColor(BLUE);
+                    Sim.Render->drawRect({X * BlockSize.X, Y * BlockSize.Y}, BlockSize);
                     break;
             }
         }
@@ -100,13 +97,13 @@ void Minimap::draw() {
     // Current drone position
     auto cmPerBlock = CENTIMETERS_PR_PIXEL / double(MINIMAP_BLOCK_SIZE);
     auto MapHeightBlock = MAP_HEIGHT * MINIMAP_BLOCK_SIZE;
-    Sim->Render->setColor(RED);
-    Sim->Render->drawRect({(Sim->Drn->NavStruct.posx)/ cmPerBlock,
-                           MapHeightBlock - (Sim->Drn->NavStruct.posy + BlockSize.Y) / cmPerBlock}, BlockSize);
+    Sim.Render->setColor(RED);
+    Sim.Render->drawRect({(Sim.Drn->NavStruct.posx)/ cmPerBlock,
+                           MapHeightBlock - (Sim.Drn->NavStruct.posy + BlockSize.Y) / cmPerBlock}, BlockSize);
 
 
-    Sim->Render->drawTarget(MinimapPos, MinimapSize, true);
-    Sim->Render->setScreenTarget();
+    Sim.Render->drawTarget(MinimapPos, MinimapSize, true);
+    Sim.Render->setScreenTarget();
 }
 
 void Minimap::update() {

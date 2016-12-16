@@ -1,8 +1,12 @@
 #ifndef RAND_M328P_H
 #define RAND_M328P_H
 
-// IO header defines for the atmega 328p
-// which is on the Arduino Uno
+/** @file m328p.h
+ * \brief IO header data for the atmega328p which is on the Arduino Uno
+ *
+ * \addtogroup IO-Uno
+ * @{
+ */
 
 #include <stdint.h>
 
@@ -89,3 +93,5 @@ typedef enum pwm_e {
 } pwm_t;
 
 #endif //RAND_M328P_H
+
+//! @}

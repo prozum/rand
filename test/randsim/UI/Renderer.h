@@ -7,9 +7,9 @@
 #include "Common/Vector2D.h"
 
 struct Color {
-    int R;
-    int G;
-    int B;
+    int R;  //!< Red
+    int G;  //!< Green
+    int B;  //!< Blue
 };
 
 #define WHITE  {255, 255, 255}

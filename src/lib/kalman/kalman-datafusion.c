@@ -1,6 +1,6 @@
-#include "kalman_datafusion.h"
+#include "kalman-datafusion.h"
 
-kalman_state_matrix *kalman_datafusion_init (fix16_t a, fix16_t b, log_sender component,
+kalman_state_matrix *kalman_datafusion_init (fix16_t a, fix16_t b, log_sender_t component,
                              matrix_t* C, matrix_t* R)
 {
     kalman_state_matrix *state = malloc(sizeof(kalman_state_matrix));

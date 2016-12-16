@@ -1,8 +1,15 @@
 #ifndef RAND_NAV_H
 #define RAND_NAV_H
 
+/** @file nav.h
+ * \brief Navigation functions and constants
+ *
+ * \addtogroup Navigation
+ * @{
+ */
+
 #define FULL_TURN 90
-//This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
+//! This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
 #define WINDOW_RECON_THRESHOLD 50
 #define MIN_RANGE 60
 #define LASER_MAX_DISTANCE_CM 2200
@@ -18,7 +25,7 @@
 
 #include "nav-struct.h"
 #include "fc/fc.h"
-#include "kalman/kalman_datafusion.h"
+#include "kalman/kalman-datafusion.h"
 #include "kalman/kalman.h"
 #include "core/log.h"
 #include "map/map.h"
@@ -26,7 +33,7 @@
 #include "search/search.h"
 
 #define FULL_TURN 90
-//This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
+//! This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
 #define WINDOW_RECON_THRESHOLD 50
 #define MIN_RANGE 60
 
@@ -37,20 +44,20 @@
 
 #define SENSOR_DEVIATION 5
 
-#define PERIOD_MILLIS 100 //The time between calls of the navigator.
+#define PERIOD_MILLIS 100 //!< The time between calls of the navigator.
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
 #define PERIOD_SECONDS PERIOD_MILLIS / 1000.0f
 
 #define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 4
 
-#define ANGLE_RESOLUTION 0.01    // Means that each degree is split in 100
-#define INV_ANGLE_RESOLUTION 100 // One degree is 100 steps on the scale
+#define ANGLE_RESOLUTION 0.01    //!< Means that each degree is split in 100
+#define INV_ANGLE_RESOLUTION 100 //!< One degree is 100 steps on the scale
 #define FULL_TURN_SCALED (uint16_t) 360 * INV_ANGLE_RESOLUTION
 
-/* Constant used to find the distance to the wall with a 15 degree angle from front view */
+//! Constant used to find the distance to the wall with a 15 degree angle from front view
 static const fix16_t sonar_reliable_constant = 0x5290; // sin(15) / sin(75)
 
-//todo: Skal udregnes ud fra WCET af løkken i findpath funktionen
+// todo: Skal udregnes ud fra WCET af løkken i findpath funktionen
 
 typedef enum side_e{
     RIGHT = 0,
@@ -331,4 +338,4 @@ void draw_map(rep_t *rep, nav_t *nav);
 
 #endif //RAND_NAV_H
 
-
+//! @}

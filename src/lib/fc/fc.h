@@ -1,6 +1,13 @@
 #ifndef RAND_FC_H
 #define RAND_FC_H
 
+/** @file fc.h
+ * \brief Flight controller functions and data
+ *
+ * \addtogroup FlightController
+ * @{
+ */
+
 #include <stdint.h>
 #include <stdlib.h>
 #include "libfixmath/fix16.h"
@@ -12,15 +19,15 @@
 #include "core/io.h"
 
 typedef struct acceleration_s {
-    fix16_t x; // left/right
-    fix16_t  y; // forward/backwards
-    fix16_t  z; // up/down
+    fix16_t x;  //!< Left/right
+    fix16_t  y; //!< Forward/backwards
+    fix16_t  z; //!< Up/down
 } acceleration_t;
 
 typedef struct velocity_s {
-    fix16_t  x; // left/right
-    fix16_t  y; // forward/backwards
-    fix16_t  z; // up/down
+    fix16_t  x; //!< Left/right
+    fix16_t  y; //!< Forward/backwards
+    fix16_t  z; //!< Up/down
 } velocity_t;
 
 typedef struct duty_s {
@@ -40,10 +47,9 @@ typedef struct fc_s {
     uint16_t pitch;
     uint16_t roll;
     uint16_t throttle;
-    fix16_t gyro; //Rotation Velocity
+    fix16_t gyro; //!< Rotation Velocity
 } fc_t;
 
-// ms = value of 1 ms
 /**
  * Initialize the flight controller
  * @param serial - The serial pin the flight controller is connected to
@@ -130,3 +136,5 @@ void set_velocity(fc_t *fc, float, float);
 void update_velocity(fc_t *fc, acceleration_t *a, float);
 
 #endif //RAND_FC_H
+
+//! @}

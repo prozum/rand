@@ -2,7 +2,7 @@
 #include "task.h"
 #include <math.h>
 
-//Defines the lowest and highest accepted world-position on the internal drone map
+//! Defines the lowest and highest accepted world-position on the internal drone map
 #define LOWEST_Y_ORG 0
 #define HIGHEST_Y_ORG MAP_HEIGHT * CENTIMETERS_PR_PIXEL
 #define LOWEST_X_ORG 0

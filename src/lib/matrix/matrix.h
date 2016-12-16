@@ -1,6 +1,13 @@
 #ifndef RAND_MATRIX_MATH_H
 #define RAND_MATRIX_MATH_H
 
+/** @file ½3yymatrix.h
+ * \brief Matrix calculation functions and data
+ *
+ * \addtogroup Matrix
+ * @{
+ */
+
 #include <stdint.h>
 #include <stdlib.h>
 #include "core/log.h"
@@ -108,3 +115,5 @@ void matrix_set(matrix_t *matrix, uint8_t row, uint8_t column, fix16_t value);
 fix16_t matrix_get(matrix_t *matrix, uint8_t row, uint8_t column);
 
 #endif //RAND_MATRIX_MATH_H
+
+//! @}

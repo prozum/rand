@@ -1,23 +1,30 @@
 #ifndef RAND_SONAR_H
 #define RAND_SONAR_H
 
+/** @file sonar.h
+ * \brief Sonar sensor functions and data
+ *
+ * \addtogroup SensorSonar
+ * @{
+ */
+
 #include <stdlib.h>
 #include <stdint.h>
 
 #include "core/io.h"
 #include "core/log.h"
 
-#define MIN_OUTPUT 110 //Roughly 2cm, which is the minimum range for the sonar
+#define MIN_OUTPUT 110 //!< Roughly 2cm, which is the minimum range for the sonar
 
 #ifndef MOCK
 #include <avr/io.h>
 #endif
 
 typedef struct sonar_s {
-    dpin_t trig;    // trigger pin
-    dpin_t echo;    // receive pin
-    uint8_t valid;  // flag to check if latest value is valid
-    uint16_t value; // latest reading in cm
+    dpin_t trig;    //!< Trigger pin
+    dpin_t echo;    //!< Receive pin
+    uint8_t valid;  //!< Flag to check if latest value is valid
+    uint16_t value; //!< Latest reading in cm
 } sonar_t;
 
 /**
@@ -53,8 +60,9 @@ uint16_t sonar_to_centimeters(uint16_t millis);
  * @param sonar - The sonar to ping
  */
 void pulse_sonar(sonar_t *sonar);
+
 #endif //MOCK
 
 #endif //RAND_SONAR_H
 
-
+//! @}

@@ -14,13 +14,14 @@ extern "C" {
 
 
 
-class Minimap : SimObject {
+class Minimap {
+    Simulator &Sim;
 
 public:
     unsigned long Width = 0;
     unsigned long Height = 0;
 
-    Minimap();
+    Minimap(Simulator &Sim);
 
     bool loadMap(std::string Path);
     void printMap();

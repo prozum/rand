@@ -1,6 +1,13 @@
 #ifndef RAND_MAP_H
 #define RAND_MAP_H
 
+/** @file map.h
+ * \brief Map reader/writer functions and data
+ *
+ * \addtogroup Map
+ * @{
+ */
+
 #include "core/io.h"
 #include "libfixmath/fix16.h"
 
@@ -9,12 +16,9 @@
 
 #define CENTIMETERS_PR_PIXEL 25
 
-#define MAP_CENTI_HEIGHT MAP_HEIGHT * CENTIMETERS_PR_PIXEL
-#define MAP_CENTI_WIDTH MAP_WIDTH * CENTIMETERS_PR_PIXEL
-
 #define FIELDS_PER_BYTE 4
 #define MAX_MAP_SIZE EEPROM_SIZE * FIELDS_PER_BYTE
-#define FULL_FIELD 0b11 // for bit masking (11 in binary)
+#define FULL_FIELD 0b11 //!< For bit masking (11 in binary)
 #define FIELD_SIZE 2
 
 #define CHAR_UNVISITED ' '
@@ -34,7 +38,8 @@ typedef enum fieldstate_e{
 }fieldstate_t;
 
 typedef struct map_coord_s {
-    uint8_t x, y;
+    uint8_t x;
+    uint8_t y;
 } map_coord_t;
 /**
  * Initialzes a map on the EEPROM of the Arduino with specified width and height
@@ -63,10 +68,12 @@ fieldstate_t map_read(uint8_t x, uint8_t y);
  * Cleans the map
  */
 void map_clean();
+
 /**
  * Shows the map
  */
 void map_show();
 
-
 #endif //RAND_MAP_H
+
+//! @}

@@ -9,23 +9,17 @@ const char WARNING_PREFIX[PREFIX_SIZE] = "W: ";
 const char ERROR_PREFIX[PREFIX_SIZE] = "E: ";
 const char MSG_PREFIX[PREFIX_SIZE] = "M: ";
 
-typedef struct disabled_device_node disabled_device;
-
-struct disabled_device_node {
-    log_sender blocked_device;
-    disabled_device *next;
-};
 
 //Head for the list of disable devices
-static disabled_device *head = NULL;
+static disabled_device_t *head = NULL;
 //logging_level defines which class(es) of errors that should be logged
-static level logging_level = LOG_NONE;
+static log_level_t logging_level = LOG_NONE;
 
 /**
  * Toggles logging for the system at the given level.
  * @param lvl which classes of errors to log (may be LOG_ONLY_ERRORS, LOG_MOCK, LOG_ALL, LOG_NONE)
  */
-void init_logging(level lvl) {
+void init_logging(log_level_t lvl) {
 #if MOCK
     //Produce a message with version and project-name
     char init_msg[30];
@@ -45,8 +39,8 @@ void init_logging(level lvl) {
  * @param sender
  * @return 0 if the sender has not been ignored, 1 if it has.
  */
-uint8_t sender_ignored(log_sender sender) {
-    disabled_device *itr = head;
+uint8_t sender_ignored(log_sender_t sender) {
+    disabled_device_t *itr = head;
 
     while (itr != NULL) {
         //see if the sender is in the list of blocked senders, return 'true' if it is.
@@ -65,7 +59,7 @@ uint8_t sender_ignored(log_sender sender) {
  * @param sender is the module to log from
  * @param msg is the message to log.
  */
-void LOG(log_sender sender, const char *msg) {
+void LOG(log_sender_t sender, const char *msg) {
 #ifndef MOCK
     if (!sender_ignored(sender) && logging_level == LOG_ALL) {
         char tmp[strlen(msg) + PREFIX_SIZE];
@@ -84,7 +78,7 @@ void LOG(log_sender sender, const char *msg) {
  * @param sender is the module to log from
  * @param msg  is the warning to log
  */
-void WARNING(log_sender sender, const char *msg) {
+void WARNING(log_sender_t sender, const char *msg) {
 #ifndef MOCK
     if (!sender_ignored(sender) && logging_level > LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
@@ -103,7 +97,7 @@ void WARNING(log_sender sender, const char *msg) {
  * @param sender is the module to log from
  * @param msg is the error to log
  */
-void SERIOUS_WARNING(log_sender sender, const char *msg) {
+void SERIOUS_WARNING(log_sender_t sender, const char *msg) {
 #ifndef MOCK
     if (!sender_ignored(sender) && logging_level >= LOG_ONLY_ERRORS) {
         char tmp[strlen(msg) + PREFIX_SIZE];
@@ -138,8 +132,8 @@ void ERROR(const char *msg) {
  * Disables a module, blocking all future logs
  * @param device to disable.
  */
-void disable_device(log_sender device) {
-    disabled_device *new_dev = malloc(sizeof(disabled_device));;
+void disable_device(log_sender_t device) {
+    disabled_device_t *new_dev = malloc(sizeof(disabled_device_t));;
     new_dev->blocked_device = device;
     new_dev->next = NULL;
 
@@ -149,7 +143,7 @@ void disable_device(log_sender device) {
         return;
     }
 
-    disabled_device *ptr = head;
+    disabled_device_t *ptr = head;
     while (ptr->next) {
         //return if the device is already in the list.
         if (ptr->blocked_device == device)
@@ -166,7 +160,7 @@ void disable_device(log_sender device) {
 #if MOCK
 uint8_t count_disabled_devices() {
     uint8_t devices = 0;
-    disabled_device *ptr = head;
+    disabled_device_t *ptr = head;
 
     while (ptr != NULL) {
         devices++;
@@ -177,7 +171,7 @@ uint8_t count_disabled_devices() {
 }
 
 void clear_list() {
-    disabled_device *next;
+    disabled_device_t *next;
 
     if(!head)
         return;
