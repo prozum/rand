@@ -297,13 +297,13 @@ void align_to_wall(rep_t *rep, nav_t *nav){
 void on_move_forward(rep_t *rep, nav_t *nav){
     fix16_t dist = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
 
-    //calculate the current position from the current position and angle
+    // Calculate the current position from the current position and angle
     nav->posx = (uint16_t) (nav->posx + fix16_to_int(calculate_x_distance(nav->angle, dist)));
     nav->posy = (uint16_t) (nav->posy + fix16_to_int(calculate_y_distance(nav->angle, dist)));
     map_set_position(nav, VISITED);
 
-    if(!check_alignment_wall(rep, nav))
-        align_to_wall(rep, nav);
+    //if(!check_alignment_wall(rep, nav))
+    //    align_to_wall(rep, nav);
 
     draw_map(rep, nav);
     if(fix16_to_int(nav->val) > 0 && nav->task == MOVEFORWARD)
