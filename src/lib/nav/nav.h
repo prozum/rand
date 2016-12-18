@@ -62,6 +62,7 @@ void update_state(state_t *state, rep_t *rep);
  * @param nav - A pointer to a nav_t struct that should be initialized
  */
 void init_nav(nav_t *nav);
+
 /**
  * Initializes the world representation for the navigation system
  * @param fc - A pointer to the flight-controller that controls the drone
@@ -89,18 +90,21 @@ void navigation(rep_t *rep, nav_t *nav);
  * @return - A boolean flag that is TRUE if there is a wall, and FALSE if not
  */
 uint8_t check_wall_front(rep_t *rep, state_t state);
+
 /**
  * Checks if there's a wall to the left of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @return - A boolean flag that is TRUE if there is a wall, and FALSE if not.
  */
 uint8_t check_wall_left(rep_t *rep);
+
 /**
  * Checks if there's a wall to the right of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @return - A boolean flag that is TRUE if there is a wall, and FALSE if not.
  */
 uint8_t check_wall_right(rep_t *rep);
+
 /**
  * Checks if there's a window in front of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -114,36 +118,42 @@ uint8_t check_win_front(rep_t *rep, state_t state);
  * @return - A boolean flag that is TRUE if there is a window and FALSE if not
  */
 uint8_t check_win_left(rep_t *rep);
+
 /**
  * Checks if there's a window to the right of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @return - A boolean flag that is TRUE if there is a window and FALSE if not
  */
 uint8_t check_win_right(rep_t *rep);
+
 /**
  * Checks if there's ground closely below the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @return - A boolean flag that is TRUE if the ground is close by and FALSE if not
  */
 uint8_t check_ground(rep_t *rep);
+
 /**
  * Checks if the ceiling is closely above the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @return - A boolean flag that is TRUE if the ceiling is close by and FALSE if not
  */
 uint8_t check_ceiling(rep_t *rep);
+
 /**
  * Check if something blocks the drone in front of it
  * @param state - The current state
  * @return - A boolean flag that is TRUE if there's something in front of the drone and FALSE if not
  */
 uint8_t check_blocked_front(state_t *state);
+
 /**
  * Check if something blocks the drone to the right of it
  * @param state - The current state
  * @return - A boolean flag that is TRUE if there's something to the right of the drone and FALSE if not
  */
 uint8_t check_blocked_right(state_t *state);
+
 /**
  * Check if something blocks the drone to the left of it
  * @param state - The current state
@@ -152,35 +162,68 @@ uint8_t check_blocked_right(state_t *state);
 uint8_t check_blocked_left(state_t *state);
 
 /**
+ * Check if drone is following wall
+ * @param state - The current state
+ * @return - A boolean flag that is TRUE if the drone is following a wall and FALSE if not
+ */
+uint8_t check_follow_wall(state_t *state);
+
+/**
  * Implements the IDLE-state of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void on_idle(rep_t *rep, nav_t *nav);
+
 /**
  * Implements the MOVE_FORWARD-state of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void on_move_forward(rep_t *rep, nav_t *nav);
+
 /**
  * Implements the MOVE_UP-state of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void on_move_up(rep_t *rep, nav_t *nav);
+
 /**
  * Implements the MOVE_DOWN-state of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void on_move_down(rep_t *rep, nav_t *nav);
+
+/**
+ * Implements the FOLLOW_FORWARD-state of the drone
+ * @param rep - A pointer to the struct maintaining the drone's world representation
+ * @param nav - A pointer to the navigation struct maintaining position, angle etc.
+ */
+void on_follow_forward(rep_t *rep, nav_t *nav);
+
+/**
+ * Implements the FOLLOW_FURTHER-state of the drone
+ * @param rep - A pointer to the struct maintaining the drone's world representation
+ * @param nav - A pointer to the navigation struct maintaining position, angle etc.
+ */
+void on_follow_further(rep_t *rep, nav_t *nav);
+
+/**
+ * Implements the FOLLOW_TURN-state of the drone
+ * @param rep - A pointer to the struct maintaining the drone's world representation
+ * @param nav - A pointer to the navigation struct maintaining position, angle etc.
+ */
+void on_follow_turn(rep_t *rep, nav_t *nav);
+
 /**
  * Implements the SEARCHING-state of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void on_searching(rep_t *rep, nav_t *nav);
+
 /**
  * Implements the TURNING-state of the drone
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -195,6 +238,7 @@ void on_turning(rep_t *rep, nav_t *nav);
  * @return - A boolean flag that is TRUE if the sonar is reliable and FALSE if not
  */
 uint8_t is_sonar_reliable(rep_t *rep, state_t state);
+
 /**
  * Aligns the drone to a wall either to the left or right of it, depending on the current state
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -208,6 +252,7 @@ uint8_t check_alignment_wall(rep_t *rep, nav_t *nav);
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void nav_idle(rep_t *rep, nav_t *nav);
+
 /**
  * Enters the TURNING-state and turns the drone left
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -215,6 +260,7 @@ void nav_idle(rep_t *rep, nav_t *nav);
  * @param angle - The angle to turn the drone
  */
 void nav_turn_left(rep_t *rep, nav_t *nav, fix16_t angle);
+
 /**
  * Enters the TURNING-state and turns the drone right
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -222,12 +268,14 @@ void nav_turn_left(rep_t *rep, nav_t *nav, fix16_t angle);
  * @param angle - The angle to turn the drone
  */
 void nav_turn_right(rep_t *rep, nav_t *nav, fix16_t angle);
+
 /**
  * Enter the TURNING-state and turns the drone 180 degrees
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void nav_turn_around(rep_t *rep, nav_t *nav);
+
 /**
  * Enters the MOVING-state and move the drone forward
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -235,18 +283,42 @@ void nav_turn_around(rep_t *rep, nav_t *nav);
  * @param distance - The distance to move the drone specified in centimeters
  */
 void nav_move_forward(rep_t *rep, nav_t *nav, fix16_t distance);
+
 /**
  * Enters the MOVEUP-state and move the drone upwards
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void nav_move_up(rep_t *rep, nav_t *nav);
+
 /**
  * Enters the MOVEDOWN-state and move the drone downwards
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
  */
 void nav_move_down(rep_t *rep, nav_t *nav);
+
+/**
+ * Enters the FOLLOW_FORWARD state
+ * @param rep - A pointer to the struct maintaining the drone's world representation
+ * @param nav - A pointer to the navigation struct maintaining position, angle etc.
+ */
+void nav_follow_forward(rep_t *rep, nav_t *nav);
+
+/**
+ * Enters the FOLLOW_FURTHER state
+ * @param rep - A pointer to the struct maintaining the drone's world representation
+ * @param nav - A pointer to the navigation struct maintaining position, angle etc.
+ */
+void nav_follow_further(rep_t *rep, nav_t *nav);
+
+/**
+ * Enters the FOLLOW_TURN state
+ * @param rep - A pointer to the struct maintaining the drone's world representation
+ * @param nav - A pointer to the navigation struct maintaining position, angle etc.
+ */
+void nav_follow_turn(rep_t *rep, nav_t *nav);
+
 /**
  * Enters the SEARCHING state to search for unexplored areas of the map
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -261,12 +333,14 @@ void nav_searching(rep_t *rep, nav_t *nav);
  * @param field - The state to set the point to
  */
 void map_set_point(uint8_t x, uint8_t y, fieldstate_t field);
+
 /**
  * Sets the position of the drone's current position on the map
  * @param nav - A pointer to a nav_t, i.e. the current position and angle of the drone
  * @param field - The state to set on the map
  */
 void map_set_position(nav_t *nav, fieldstate_t field);
+
 /**
  * Checks the state of a specified point on the map
  * @param x - The x-coordinate to check
@@ -274,6 +348,7 @@ void map_set_position(nav_t *nav, fieldstate_t field);
  * @return - The state of the specified position
  */
 fieldstate_t map_check_point(uint8_t x, uint8_t y);
+
 /**
  * Checks what state the drones current position has on the internal map
  * @param nav - A pointer to a nav_t, i.e. the current position and angle of the drone
@@ -296,6 +371,7 @@ map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord);
  * @return - The offset on the y-axis
  */
 fix16_t calc_y_dist(fix16_t angle, fix16_t distance);
+
 /**
  * Calculates offset on the x-axis from an angle and a distance
  * @param angle- The angle specified in radians
@@ -303,22 +379,33 @@ fix16_t calc_y_dist(fix16_t angle, fix16_t distance);
  * @return - The offset on the x-axis
  */
 fix16_t calc_x_dist(fix16_t angle, fix16_t distance);
+
 /**
  * Updates the current angle of the drone
+ * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to a nav_t, i.e. the current position and angle of the drone
- * @param degrees - The angle to increment with, specified in ordinary degrees
  */
-void update_angle(nav_t *nav, fix16_t degrees);
+void update_angle(rep_t *rep, nav_t *nav);
 
-/// Draws an obstacle at a specified angle and distance from the drone's current position
-/// @param val - The measured distance to the obstacle
-/// @param nav - A pointer to the navigation struct, i.e. the drone's position
-/// @param side_offset - The angle measured to the obstacle in 100th degrees
-/// @param state - The determined obstacle type (WINDOW, WALL, VISITED or UNVISITED)
+/**
+ * Updates the current position of the drone
+ * @param rep - A pointer to the struct maintaining the drone's world representation
+ * @param nav - A pointer to a nav_t, i.e. the current position and angle of the drone
+ */
+void update_pos(rep_t *rep, nav_t *nav);
+
+/** Draws an obstacle at a specified angle and distance from the drone's current position
+ * @param val - The measured distance to the obstacle
+ *   @param nav - A pointer to the navigation struct, i.e. the drone's position
+ *   @param side_offset - The angle measured to the obstacle in 100th degrees
+ *   @param state - The determined obstacle type (WINDOW, WALL, VISITED or UNVISITED)
+ */
 void draw_obstacle(uint16_t val, nav_t *nav, const fix16_t side_offset, fieldstate_t state);
-/// Draws the map from the drone current position and world representation
-/// @param rep - A pointer to a rep_t, i.e. the drone's world representation
-/// @param nav - A pointer to a nav_t, i.e. the drone's current position
+
+/** Draws the map from the drone current position and world representation
+ * @param rep - A pointer to a rep_t, i.e. the drone's world representation
+ * @param nav - A pointer to a nav_t, i.e. the drone's current position
+ */
 void draw_map(rep_t *rep, nav_t *nav);
 
 #endif //RAND_NAV_H

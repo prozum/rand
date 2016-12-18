@@ -24,6 +24,9 @@ typedef enum task_e {
     MOVEFORWARD,
     MOVEUP,
     MOVEDOWN,
+    FOLLOW_FORWARD,
+    FOLLOW_FURTHER,
+    FOLLOW_TURN,
     SEARCHING
 } task_t;
 
@@ -39,6 +42,9 @@ typedef struct state_s {
     uint8_t blocked_front   : 1; //!< There is either a window or WALL in front
     uint8_t blocked_left    : 1; //!< Either a window or WALL on the left
     uint8_t blocked_right   : 1; //!< Either a window or WALL on the right
+    uint8_t follow_left     : 1; //!< Follow left wall
+    uint8_t follow_right    : 1; //!< Follow right wall
+    uint8_t follow          : 1; //!< Follow right or left wall
 } state_t;
 
 typedef struct rep_s {

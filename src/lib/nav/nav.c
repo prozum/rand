@@ -21,13 +21,21 @@ fix16_t calc_x_dist(fix16_t angle, fix16_t distance) {
     return fix16_mul(cos_angle, distance);
 }
 
-void update_angle(nav_t *nav, fix16_t degrees) {
+void update_angle(rep_t *rep, nav_t *nav) {
+    fix16_t degrees = fix16_mul(rep->fc->gyro, fix16_from_float(PERIOD_SECONDS));
+
     nav->angle = fix16_add(nav->angle, degrees);
     if (nav->angle > fix16_from_dbl(M_PI * 2)) {
         nav->angle = fix16_mod(nav->angle, fix16_from_dbl(M_PI * 2));
     } else if (nav->angle < fix16_from_int(0)) {
         nav->angle = fix16_add(fix16_from_dbl(M_PI * 2), nav->angle);
     }
+}
+
+void update_pos(rep_t *rep, nav_t *nav) {
+    fix16_t dist = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
+    nav->posx = (uint16_t) (nav->posx + fix16_to_int(calc_x_dist(nav->angle, dist)));
+    nav->posy = (uint16_t) (nav->posy + fix16_to_int(calc_y_dist(nav->angle, dist)));
 }
 
 uint8_t check_wall_front(rep_t *rep, state_t state){
@@ -111,6 +119,13 @@ uint8_t check_blocked_left(state_t *state){
     return 0;
 }
 
+uint8_t check_follow_wall(state_t *state){
+    if(state->follow_left || state->follow_right){
+        return 1;
+    }
+    return 0;
+}
+
 void update_state(state_t *state, rep_t *rep){
     state->ceiling = check_ceiling(rep);
     state->ground = check_ground(rep);
@@ -123,6 +138,7 @@ void update_state(state_t *state, rep_t *rep){
     state->blocked_front = check_blocked_front(state);
     state->blocked_left = check_blocked_left(state);
     state->blocked_right = check_blocked_right(state);
+    state->follow = check_follow_wall(state);
 }
 
 void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom, rep_t *rep){
@@ -166,6 +182,10 @@ void navigation(rep_t *rep, nav_t *nav){
     update_state(&nav->state, rep);
     task_t currenttask = nav->task;
 
+    update_angle(rep,nav);
+    update_pos(rep, nav);
+    draw_map(rep, nav);
+
     switch(currenttask){
         case IDLE:
             on_idle(rep, nav); break;
@@ -177,6 +197,12 @@ void navigation(rep_t *rep, nav_t *nav){
             on_move_up(rep, nav); break;
         case MOVEDOWN:
             on_move_down(rep, nav); break;
+        case FOLLOW_FORWARD:
+            on_follow_forward(rep, nav); break;
+        case FOLLOW_FURTHER:
+            on_follow_further(rep, nav); break;
+        case FOLLOW_TURN:
+            on_follow_turn(rep, nav); break;
         case SEARCHING:
             on_searching(rep, nav); break;
         default: printf("Invalid task!"); break;
@@ -190,42 +216,42 @@ void navigation(rep_t *rep, nav_t *nav){
 }
 
 void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
-    fix16_t result;
-    if (velocity > fix16_from_int(0)) {
-        result = fix16_sub(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
+    fix16_t res;
+    if (velocity > 0) {
+        res = fix16_sub(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
     } else {
-        result = fix16_add(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
+        res = fix16_add(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
     }
 
-    if(result <= 0)
+    if(res <= 0)
         *nav_val = fix16_from_int(0);
     else
-        *nav_val = result;
+        *nav_val = res;
 }
 
 // These functions run according to the current task being done.
 void on_idle(rep_t *rep, nav_t *nav) {
     state_t state = nav->state;
-    if (state.blocked_front) {
-        if (state.blocked_right) {
-            if (state.blocked_left)
-                nav_turn_around(rep, nav);
-            else
-                nav_turn_left(rep, nav, full_turn);
-        }
-        else
-            nav_turn_right(rep, nav, full_turn);
-    }
-    else
+
+    if (!(state.blocked_front || check_follow_wall(&state))) {
         nav_move_forward(rep, nav, fix16_from_int(25));
+        return;
+    }
+
+    if (state.follow_right) {
+        nav_follow_forward(rep, nav);
+        return;
+    }
+
+    if (state.follow_left) {
+        nav_follow_forward(rep, nav);
+        return;
+    }
+
+    nav_turn_around(rep, nav);
 }
 
 void on_turning(rep_t *rep, nav_t *nav){
-    fix16_t moved_degrees = fix16_mul(rep->fc->gyro, fix16_from_float(PERIOD_SECONDS));
-
-    update_angle(nav, moved_degrees);
-
-    draw_map(rep, nav);
     update_nav_value(&nav->val, rep->fc->gyro);
 
     if(nav->val == 0){
@@ -235,75 +261,74 @@ void on_turning(rep_t *rep, nav_t *nav){
 }
 
 void on_turnaround(rep_t *rep, nav_t *nav){
-
     update_nav_value(&nav->val, rep->fc->gyro);
 
     if(nav->val == 0){
-        update_angle(nav, fix16_from_float(M_PI));
+        update_angle(rep, nav);
         move_stop(rep->fc);
         nav->task = IDLE;
-    }
-}
-
-void align_to_wall(rep_t *rep, nav_t *nav){
-    fix16_t diff_wall = 0, degrees_to_turn = 0;
-    //fix16_t drift = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
-
-    if (nav->state.blocked_left){
-        diff_wall = fix16_from_int(rep->laser->val_left - nav->prev_dist_wall);
-        nav->prev_dist_wall = rep->laser->val_left;
-    }
-    else if (nav->state.blocked_right){
-        diff_wall = fix16_from_int(rep->laser->val_right - nav->prev_dist_wall);
-        nav->prev_dist_wall = rep->laser->val_right;
-    }
-
-    degrees_to_turn = diff_wall;  //fix16_rad_to_deg(fix16_asin(fix16_div(drift, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR_RAD)), diffWall)))); todo: Insert proper calculation
-
-    if (diff_wall < 0 && rep->laser->val_left < MIN_RANGE){
-        nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
-    } else if (diff_wall < 0 && rep->laser->val_right < MIN_RANGE) {
-        nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
-    } else if (diff_wall > 0 && rep->laser->val_left < MIN_RANGE) {
-        nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
-    } else if (diff_wall > 0 && rep->laser->val_right < MIN_RANGE) {
-        nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
     }
 }
 
 void on_move_forward(rep_t *rep, nav_t *nav){
-    fix16_t dist = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
-
-    // Calculate the current position from the current position and angle
-    nav->posx = (uint16_t) (nav->posx + fix16_to_int(calc_x_dist(nav->angle, dist)));
-    nav->posy = (uint16_t) (nav->posy + fix16_to_int(calc_y_dist(nav->angle, dist)));
-    map_set_position(nav, VISITED);
-
     //if(!check_alignment_wall(rep, nav))
     //    align_to_wall(rep, nav);
 
-    draw_map(rep, nav);
-    if(fix16_to_int(nav->val) > 0)
-        update_nav_value(&nav->val, rep->fc->gyro);
-    if(nav->state.wall_front || fix16_to_int(nav->val) == 0){
+    update_nav_value(&nav->val, rep->fc->vel->y);
+
+    if(nav->state.blocked_front) {
+        nav->state.follow_left = 1;
         move_stop(rep->fc);
-        nav->val = 0;
-        nav->task = IDLE;
+        nav_turn_right(rep, nav, fix16_from_float(M_PI/2));
+    } else if (nav->val == 0) {
+        nav_idle(rep, nav);
     }
 }
 
 void on_move_up(rep_t *rep, nav_t *nav){
-
     if (nav->state.ceiling){
-        move_stop(rep->fc);
-        nav->task = IDLE;
+        nav_idle(rep, nav);
     }
 }
 
 void on_move_down(rep_t *rep, nav_t *nav){
-
     if(nav->state.ground){
+        nav_idle(rep, nav);
+    }
+}
+
+void on_follow_forward(rep_t *rep, nav_t *nav){
+    if (nav->state.follow_left && !nav->state.blocked_left) {
+        nav_follow_further(rep, nav);
+    }
+
+    if (nav->state.follow_right && !nav->state.blocked_right) {
+        nav_follow_further(rep, nav);
+    }
+
+    update_nav_value(&nav->val, rep->fc->vel->y);
+
+    if (nav->state.blocked_front) {
         move_stop(rep->fc);
+        nav_follow_turn(rep, nav);
+    }
+}
+
+void on_follow_further(rep_t *rep, nav_t *nav){
+    update_nav_value(&nav->val, rep->fc->vel->y);
+
+    if (nav->state.wall_front ||  nav->val == 0) {
+        move_stop(rep->fc);
+        nav_follow_turn(rep, nav);
+    }
+}
+
+void on_follow_turn(rep_t *rep, nav_t *nav) {
+    update_nav_value(&nav->val, rep->fc->gyro);
+
+    if(nav->val == 0){
+        move_stop(rep->fc);
+        nav_move_forward(rep, nav, fix16_from_int(MIN_RANGE));
     }
 }
 
@@ -348,6 +373,54 @@ void nav_move_up(rep_t *rep, nav_t *nav){
 void nav_move_down(rep_t *rep, nav_t *nav){
     move_down(rep->fc);
     nav->task = MOVEDOWN;
+}
+
+void nav_follow_forward(rep_t *rep, nav_t *nav){
+    move_forward(rep->fc);
+    nav->task = FOLLOW_FORWARD;
+}
+
+void nav_follow_further(rep_t *rep, nav_t *nav) {
+    move_forward(rep->fc);
+    nav->val = fix16_from_int(MIN_RANGE);
+    nav->task = FOLLOW_FURTHER;
+}
+
+void nav_follow_turn(rep_t *rep, nav_t *nav){
+    if (nav->state.follow_left && !nav->state.blocked_left) {
+        rotate_left(rep->fc);
+    } else {
+        rotate_right(rep->fc);
+    }
+    nav->val = fix16_from_float(M_PI/2);
+    nav->task = FOLLOW_TURN;
+}
+
+// Support functions
+void align_to_wall(rep_t *rep, nav_t *nav){
+    fix16_t diff_wall = 0, degrees_to_turn = 0;
+    //fix16_t drift = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
+
+    if (nav->state.blocked_left){
+        diff_wall = fix16_from_int(rep->laser->val_left - nav->prev_dist_wall);
+        nav->prev_dist_wall = rep->laser->val_left;
+    }
+    else if (nav->state.blocked_right){
+        diff_wall = fix16_from_int(rep->laser->val_right - nav->prev_dist_wall);
+        nav->prev_dist_wall = rep->laser->val_right;
+    }
+
+    degrees_to_turn = diff_wall;  //fix16_rad_to_deg(fix16_asin(fix16_div(drift, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR_RAD)), diffWall)))); todo: Insert proper calculation
+
+    if (diff_wall < 0 && rep->laser->val_left < MIN_RANGE){
+        nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
+    } else if (diff_wall < 0 && rep->laser->val_right < MIN_RANGE) {
+        nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
+    } else if (diff_wall > 0 && rep->laser->val_left < MIN_RANGE) {
+        nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
+    } else if (diff_wall > 0 && rep->laser->val_right < MIN_RANGE) {
+        nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
+    }
 }
 
 void map_set_point(uint8_t x, uint8_t y,fieldstate_t field){
@@ -481,45 +554,10 @@ void draw_obstacle(uint16_t val, nav_t *nav, const fix16_t side_offset, fieldsta
     if (pix_obst.valid)
         map_write(pix_obst.x, pix_obst.y, state);
     //map_write_line(pix_drone, pix_obst, VISITED);
-
-    /*
-    fix16_t D = fix16_sub(
-            fix16_mul(fix16_from_int(2), y_offset),
-            x_offset);
-
-    fix16_t y = fix16_from_int(fix16_from_int(0));
-
-    fix16_t x_start;
-    fix16_t x_end;
-    fix16_t x_inc;
-
-    if (x_offset >= 0) {
-        x_start = fix16_from_int(0);
-        x_end = fix16_sub(x_offset, fix16_from_int(CENTIMETERS_PR_PIXEL));
-        x_inc = fix16_from_int(CENTIMETERS_PR_PIXEL);
-    } else if (x_offset < 0) {
-        x_start = fix16_sub(x_offset, fix16_from_int(CENTIMETERS_PR_PIXEL));
-        x_end = fix16_from_int(0);
-        x_inc = fix16_from_int(- CENTIMETERS_PR_PIXEL);
-        return;
-    } else {
-        return;
-    }
-
-    for (fix16_t x = x_start; x > x_end; x = fix16_add(x, x_inc)) {
-        map_coord_t pix_visited  = align_to_map(nav->posx + fix16_to_int(x), nav->posy + fix16_to_int(y));
-        map_write(pix_visited.x, pix_visited.y, VISITED);
-
-        if (D >= fix16_from_int(0)) {
-            y = fix16_add(y, fix16_one);
-            D = fix16_sub(D, fix16_one);
-        }
-        D = fix16_add(D, y_offset);
-    }
-    */
 }
 
 void draw_map(rep_t *rep, nav_t *nav){
+    map_set_position(nav, VISITED);
 
     if((rep->sonar->value < MIN_DRAW_RANGE || rep->laser->val_front <= MIN_DRAW_RANGE)
        && rep->laser->val_front != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
@@ -537,6 +575,6 @@ void draw_map(rep_t *rep, nav_t *nav){
     }
 
     if (rep->laser->val_left <= MIN_DRAW_RANGE) {
-        //draw_obstacle(rep->laser->val_left, nav, drone_left_side, WALL);
+        draw_obstacle(rep->laser->val_left, nav, drone_left_side, WALL);
     }
 }
