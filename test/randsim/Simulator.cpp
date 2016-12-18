@@ -19,7 +19,7 @@ Simulator::Simulator()  {
     BBuilder = make_unique<BlockBuilder>(*this);
     Map = make_unique<Minimap>(*this);
 
-    Drn = make_unique<Drone>(Vector2D(100.0, -100.0), 50);
+    Drn = make_unique<Drone>(Vector2D(80.0, -90.0), 50);
 
     Time = 0;
     DeltaTime = 10;
@@ -71,6 +71,13 @@ int Simulator::run() {
                             break;
                         case SDLK_ESCAPE:
                             return 0;
+
+                        case SDLK_q:
+                            BBuilder->setCurBlockType(BlockType::Wall);
+                            break;
+                        case SDLK_w:
+                            BBuilder->setCurBlockType(BlockType::Window);
+                            break;
                     }
                     break;
                 case SDL_WINDOWEVENT:
@@ -243,11 +250,11 @@ void Simulator::drawInfoBox() {
     int DroneOffset = SimOffset + PropSpace * 3 + ObjSpace;
     Render->drawText(string("Drone:"), {OffsetX, DroneOffset}, BGColor);
     Render->drawText(string("Pos: (") + to_string(Drn->NavStruct.posx) + " cm, " + to_string(Drn->NavStruct.posy) + " cm)", {Indent, DroneOffset + PropSpace}, BGColor);
-    Render->drawText(string("Angle: ") + to_string(Drn->NavStruct.angle * ANGLE_RESOLUTION) + " deg", {Indent, DroneOffset + PropSpace * 2}, BGColor);
+    Render->drawText(string("Angle: ") + to_string(RadToDeg(fix16_to_dbl(Drn->NavStruct.angle))) + " deg", {Indent, DroneOffset + PropSpace * 2}, BGColor);
     Render->drawText(string("Pitch: ") + DoubleToStr(fix16_to_float(Drn->FC.vel->y)) + " cm", {Indent, DroneOffset + PropSpace * 3}, BGColor);
     Render->drawText(string("Roll: ") + DoubleToStr(fix16_to_float(Drn->FC.vel->x)) + " cm", {Indent, DroneOffset + PropSpace * 4}, BGColor);
     Render->drawText(string("Throttle: ") + DoubleToStr(fix16_to_float(Drn->FC.vel->z)) + " cm", {Indent, DroneOffset + PropSpace * 5}, BGColor);
-    Render->drawText(string("Yaw: ") + DoubleToStr(fix16_to_float(Drn->FC.gyro)) + " deg", {Indent, DroneOffset + PropSpace * 6}, BGColor);
+    Render->drawText(string("Yaw: ") + DoubleToStr(RadToDeg(fix16_to_float(Drn->FC.gyro))) + " deg", {Indent, DroneOffset + PropSpace * 6}, BGColor);
 
     // Laser info
     int LaserOffset = DroneOffset + PropSpace * 6 + ObjSpace;

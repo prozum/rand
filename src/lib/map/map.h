@@ -14,7 +14,7 @@
 #define MAP_HEIGHT 64
 #define MAP_WIDTH 64
 
-#define CENTIMETERS_PR_PIXEL 10
+#define CENTIMETERS_PR_PIXEL 25
 
 #define FIELDS_PER_BYTE 4
 #define MAX_MAP_SIZE EEPROM_SIZE * FIELDS_PER_BYTE
@@ -40,6 +40,7 @@ typedef enum fieldstate_e{
 typedef struct map_coord_s {
     uint8_t x;
     uint8_t y;
+    uint8_t valid;
 } map_coord_t;
 /**
  * Initialzes a map on the EEPROM of the Arduino with specified width and height
@@ -55,6 +56,13 @@ void map_init(uint8_t width, uint8_t height, uint8_t clean);
  * @param state - The value to write (VISITED, UNVISITED, WALL or WINDOW)
  */
 void map_write(uint8_t x, uint8_t y, fieldstate_t state);
+/**
+ * Writes a line to the map
+ * @param start - Start coordinate set
+ * @param end   - End coordinate set
+ * @param state - The value to write (VISITED, UNVISITED, WALL or WINDOW)
+ */
+void map_write_line(map_coord_t start, map_coord_t end, fieldstate_t state);
 
 /**
  * Reads a value from the map at specified position

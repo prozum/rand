@@ -53,7 +53,7 @@ typedef struct nav_s {
     state_t state;
     task_t task;
     uint16_t timer;
-    uint16_t angle;
+    fix16_t angle;
     uint16_t posx;
     uint16_t posy;
     int16_t prev_dist_wall;

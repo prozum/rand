@@ -8,6 +8,7 @@
 /// \param y
 search_node_t* find_path(nav_t *nav){
     search_t *search = &nav->search_data;
+    uint8_t valid;
     if(!search->active){
         search_node_t start;
         addnode(search, start, OPEN);

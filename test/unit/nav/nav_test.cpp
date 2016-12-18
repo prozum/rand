@@ -127,7 +127,7 @@ void NavTest::fixRadAngle_36000_expectWarningAndMinusOne() {
 
 void NavTest::calculateXDistance_ang0Dist10_expect10() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_x_distance(0, distance);
+    fix16_t result = calc_x_dist(0, distance);
     fix16_t expected = fix16_from_int(10);
 
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
@@ -137,7 +137,7 @@ void NavTest::calculateXDistance_ang0Dist10_expect10() {
 
 void NavTest::calculateYDistance_ang0Dist10_expect0() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_y_distance(0, distance);
+    fix16_t result = calc_y_dist(0, distance);
     fix16_t expected = fix16_from_int(0);
 
     std::string msg = "Converted to floats: expected: " + std::to_string(fix16_to_float(expected))
@@ -147,7 +147,7 @@ void NavTest::calculateYDistance_ang0Dist10_expect0() {
 
 void NavTest::calculateXDistance_ang90Dist10_expect0() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_x_distance(9000, distance);
+    fix16_t result = calc_x_dist(9000, distance);
     fix16_t expected = fix16_from_int(0);
 
     float conv_result = fix16_to_float(result);
@@ -160,7 +160,7 @@ void NavTest::calculateXDistance_ang90Dist10_expect0() {
 
 void NavTest::calculateYDistance_ang90Dist10_expect10() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_y_distance(9000, distance);
+    fix16_t result = calc_y_dist(9000, distance);
     fix16_t expected = fix16_from_int(10);
 
     float conv_result = fix16_to_float(result);
@@ -173,7 +173,7 @@ void NavTest::calculateYDistance_ang90Dist10_expect10() {
 
 void NavTest::calculateXDistance_ang45Dist10_expect7dot07() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_x_distance(4500, distance);
+    fix16_t result = calc_x_dist(4500, distance);
     fix16_t expected = fix16_from_float(7.07106f);
 
     float conv_result = fix16_to_float(result);
@@ -186,7 +186,7 @@ void NavTest::calculateXDistance_ang45Dist10_expect7dot07() {
 
 void NavTest::calculateYDistance_ang45Dist10_expect7dot07() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_x_distance(4500, distance);
+    fix16_t result = calc_x_dist(4500, distance);
     fix16_t expected = fix16_from_float(7.07106f);
 
     float conv_result = fix16_to_float(result);
@@ -199,7 +199,7 @@ void NavTest::calculateYDistance_ang45Dist10_expect7dot07() {
 
 void NavTest::calculateXDistance_ang180Dist10_expectMinus10() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_x_distance(18000, distance);
+    fix16_t result = calc_x_dist(18000, distance);
     fix16_t expected = fix16_from_float(-10.0f);
 
     float conv_result = fix16_to_float(result);
@@ -212,7 +212,7 @@ void NavTest::calculateXDistance_ang180Dist10_expectMinus10() {
 
 void NavTest::calculateYDistance_ang180Dist10_expect0() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_y_distance(18000, distance);
+    fix16_t result = calc_y_dist(18000, distance);
     fix16_t expected = fix16_from_float(0.0f);
 
     float conv_result = fix16_to_float(result);
@@ -225,7 +225,7 @@ void NavTest::calculateYDistance_ang180Dist10_expect0() {
 
 void NavTest::calculateXDistance_ang270Dist10_expect0() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_x_distance(27000, distance);
+    fix16_t result = calc_x_dist(27000, distance);
     fix16_t expected = fix16_from_float(0.0f);
 
     float conv_result = fix16_to_float(result);
@@ -238,7 +238,7 @@ void NavTest::calculateXDistance_ang270Dist10_expect0() {
 
 void NavTest::calculateYDistance_ang270Dist10_expectMinus10() {
     fix16_t distance = fix16_from_int(10);
-    fix16_t result = calculate_y_distance(27000, distance);
+    fix16_t result = calc_y_dist(27000, distance);
     fix16_t expected = fix16_from_float(-10.0f);
 
     float conv_result = fix16_to_float(result);

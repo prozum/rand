@@ -1,6 +1,7 @@
 #include "nav.h"
 #include "task.h"
 #include <math.h>
+#include <stdbool.h>
 
 //! Defines the lowest and highest accepted world-position on the internal drone map
 #define LOWEST_Y_ORG 0
@@ -8,53 +9,25 @@
 #define LOWEST_X_ORG 0
 #define HIGHEST_X_ORG MAP_WIDTH * CENTIMETERS_PR_PIXEL
 
-/**
- * Convert from the angle representation of this project (100th subdivisions of each angle) to dix16 radians
- * @param degrees_100th the angle in 100th subdivisions of an angle
- * @return the degree in fix16 radians
- */
-fix16_t fix_rad_angle(uint16_t degrees_100th) {
-    if(degrees_100th >= FULL_TURN_SCALED) {
-        degrees_100th %= FULL_TURN_SCALED;
-    }
+#define M_PI 3.14159265358979323846
 
-    fix16_t angle_scaled = fix16_mul(fix16_from_float(ANGLE_RESOLUTION), fix16_from_int(degrees_100th));
-    return fix16_deg_to_rad(angle_scaled);
-}
-
-/**
- * Calculates the distance on the y-axis given an angle and a distance
- * @param angle in 1/100 degrees
- * @param distance in cm
- * @return the distance on the y-axis
- */
-fix16_t calculate_y_distance (uint16_t angle, fix16_t distance) {
-    fix16_t sin_angle = fix16_sin(fix_rad_angle(angle));
+fix16_t calc_y_dist(fix16_t angle, fix16_t distance) {
+    fix16_t sin_angle = fix16_sin(angle);
     return fix16_mul(sin_angle, distance);
 }
 
-/**
- * Calculates the distance on the x-axis given an angle a distance
- * @param angle in 1/100 degrees
- * @param distance in cm
- * @return the distance on the x-axis
- */
-fix16_t calculate_x_distance (uint16_t angle, fix16_t distance) {
-    fix16_t cos_angle = fix16_cos(fix_rad_angle(angle));
+fix16_t calc_x_dist(fix16_t angle, fix16_t distance) {
+    fix16_t cos_angle = fix16_cos(angle);
     return fix16_mul(cos_angle, distance);
 }
 
 void update_angle(nav_t *nav, fix16_t degrees) {
-    //Must use a 32-bit int here, because degrees may be between -36000 and 36000
-    int32_t converted_degrees = fix16_to_int(degrees) * INV_ANGLE_RESOLUTION;
-    int32_t res_angle = (int32_t) nav->angle + converted_degrees;
-    if(res_angle >= FULL_TURN_SCALED) {
-        res_angle %= FULL_TURN_SCALED;
+    nav->angle = fix16_add(nav->angle, degrees);
+    if (nav->angle > fix16_from_dbl(M_PI * 2)) {
+        nav->angle = fix16_mod(nav->angle, fix16_from_dbl(M_PI * 2));
+    } else if (nav->angle < fix16_from_int(0)) {
+        nav->angle = fix16_add(fix16_from_dbl(M_PI * 2), nav->angle);
     }
-    else if(res_angle < 0) {
-        res_angle += FULL_TURN_SCALED;
-    }
-    nav->angle = (uint16_t) res_angle;
 }
 
 uint8_t check_wall_front(rep_t *rep, state_t state){
@@ -152,15 +125,15 @@ void update_state(state_t *state, rep_t *rep){
     state->blocked_right = check_blocked_right(state);
 }
 
-void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep){
+void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom, rep_t *rep){
     if(!rep)
         rep = malloc(sizeof(rep));
 
     rep->fc = fc;
     rep->laser = laser;
     rep->sonar = sonar;
-    rep->ir_top = irTop;
-    rep->ir_bottom = irBottom;
+    rep->ir_top = ir_top;
+    rep->ir_bottom = ir_bottom;
 }
 
 void init_nav(nav_t *nav){
@@ -168,15 +141,15 @@ void init_nav(nav_t *nav){
         nav = malloc(sizeof(nav_t));
 
     nav->task = IDLE;
-    nav->val = 0;
-    nav->angle = 0;
+    nav->val = fix16_from_int(0);
+    nav->angle = fix16_from_int(0);
     nav->prev_dist_wall = 0;
 
-    //Assmumes drone to start in the middle of the room.
+    // Assume es drone to start in the middle of the room.
     nav->posx = MAP_MIDDLE * CENTIMETERS_PR_PIXEL;
     nav->posy = MAP_MIDDLE * CENTIMETERS_PR_PIXEL;
 
-    *((uint16_t*) &nav->state) &= 0x0000; //hacky (albeit quick) way to set all states to zero
+    *((uint16_t*) &nav->state) &= 0x0000; // Hacky (albeit quick) way to set all states to zero
 
     nav->timer = 0;
 
@@ -217,15 +190,20 @@ void navigation(rep_t *rep, nav_t *nav){
 }
 
 void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
-    fix16_t result = fix16_sub(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
+    fix16_t result;
+    if (velocity > fix16_from_int(0)) {
+        result = fix16_sub(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
+    } else {
+        result = fix16_add(*nav_val, fix16_mul(velocity, fix16_from_float(PERIOD_SECONDS)));
+    }
 
-    if(fix16_to_int(result) <= 0)
+    if(result <= 0)
         *nav_val = fix16_from_int(0);
     else
         *nav_val = result;
 }
 
-//These functions run according to the current task being done.
+// These functions run according to the current task being done.
 void on_idle(rep_t *rep, nav_t *nav) {
     state_t state = nav->state;
     if (state.blocked_front) {
@@ -233,10 +211,10 @@ void on_idle(rep_t *rep, nav_t *nav) {
             if (state.blocked_left)
                 nav_turn_around(rep, nav);
             else
-                nav_turn_left(rep, nav, FULL_TURN);
+                nav_turn_left(rep, nav, full_turn);
         }
         else
-            nav_turn_right(rep, nav, FULL_TURN);
+            nav_turn_right(rep, nav, full_turn);
     }
     else
         nav_move_forward(rep, nav, fix16_from_int(25));
@@ -245,13 +223,11 @@ void on_idle(rep_t *rep, nav_t *nav) {
 void on_turning(rep_t *rep, nav_t *nav){
     fix16_t moved_degrees = fix16_mul(rep->fc->gyro, fix16_from_float(PERIOD_SECONDS));
 
-    // Ugly workaround since rotation direction cannot be read from gyro
-    if (rep->fc->yaw == rep->fc->duty->MIN_FC_DUTY)
-        update_angle(nav, moved_degrees);
-    else
-        update_angle(nav, - moved_degrees);
+    update_angle(nav, moved_degrees);
 
+    draw_map(rep, nav);
     update_nav_value(&nav->val, rep->fc->gyro);
+
     if(nav->val == 0){
         move_stop(rep->fc);
         nav->task = IDLE;
@@ -261,8 +237,9 @@ void on_turning(rep_t *rep, nav_t *nav){
 void on_turnaround(rep_t *rep, nav_t *nav){
 
     update_nav_value(&nav->val, rep->fc->gyro);
+
     if(nav->val == 0){
-        update_angle(nav, fix16_from_int(180));
+        update_angle(nav, fix16_from_float(M_PI));
         move_stop(rep->fc);
         nav->task = IDLE;
     }
@@ -298,15 +275,15 @@ void on_move_forward(rep_t *rep, nav_t *nav){
     fix16_t dist = fix16_mul(rep->fc->vel->y, fix16_from_float(PERIOD_SECONDS));
 
     // Calculate the current position from the current position and angle
-    nav->posx = (uint16_t) (nav->posx + fix16_to_int(calculate_x_distance(nav->angle, dist)));
-    nav->posy = (uint16_t) (nav->posy + fix16_to_int(calculate_y_distance(nav->angle, dist)));
+    nav->posx = (uint16_t) (nav->posx + fix16_to_int(calc_x_dist(nav->angle, dist)));
+    nav->posy = (uint16_t) (nav->posy + fix16_to_int(calc_y_dist(nav->angle, dist)));
     map_set_position(nav, VISITED);
 
     //if(!check_alignment_wall(rep, nav))
     //    align_to_wall(rep, nav);
 
     draw_map(rep, nav);
-    if(fix16_to_int(nav->val) > 0 && nav->task == MOVEFORWARD)
+    if(fix16_to_int(nav->val) > 0)
         update_nav_value(&nav->val, rep->fc->gyro);
     if(nav->state.wall_front || fix16_to_int(nav->val) == 0){
         move_stop(rep->fc);
@@ -339,21 +316,21 @@ void nav_idle(rep_t *rep, nav_t *nav) {
     nav->task = IDLE;
 }
 
-void nav_turn_left(rep_t *rep, nav_t *nav, uint8_t degrees){
+void nav_turn_left(rep_t *rep, nav_t *nav, fix16_t angle){
     rotate_left(rep->fc);
-    nav->val = fix16_from_int(degrees);
+    nav->val = angle;
     nav->task = TURNING;
 }
 
-void nav_turn_right(rep_t *rep, nav_t *nav, uint8_t degrees){
+void nav_turn_right(rep_t *rep, nav_t *nav, fix16_t angle){
     rotate_right(rep->fc);
-    nav->val = fix16_from_int(degrees);
+    nav->val = angle;
     nav->task = TURNING;
 }
 
 void nav_turn_around(rep_t *rep, nav_t *nav){
     rotate_right(rep->fc);
-    nav->val = fix16_from_int(180); //Complete turnaround
+    nav->val = fix16_pi; //Complete turnaround
     nav->task = TURNING;
 }
 
@@ -380,7 +357,8 @@ void map_set_point(uint8_t x, uint8_t y,fieldstate_t field){
 void map_set_position(nav_t *nav, fieldstate_t field) {
     map_coord_t pixel = align_to_map(nav->posx, nav->posy);
 
-    map_write(pixel.x, pixel.y, field);
+    if (pixel.valid)
+        map_write(pixel.x, pixel.y, field);
 }
 
 fieldstate_t map_check_point(uint8_t x, uint8_t y){
@@ -394,17 +372,17 @@ fieldstate_t map_check_position(nav_t *nav) {
 }
 
 uint8_t is_sonar_reliable(rep_t *rep, state_t state){
-    /* finds the distance to the wall the drone is following
-     * if blockedR returns 0, then the wall is to the left, otherwise the right
-     * if the wall is on the left distToWall receives the distance to left, otherwise right */
-    fix16_t distToWall = fix16_from_int(state.blocked_right ? rep->laser->val_left : rep->laser->val_right);
+    /* Finds the distance to the wall the drone is following
+     * If blockedR returns 0, then the wall is to the left, otherwise the right
+     * If the wall is on the left dist_to_wall receives the distance to left, otherwise right */
+    fix16_t dist_to_wall = fix16_from_int(state.blocked_right ? rep->laser->val_left : rep->laser->val_right);
 
     /* Find the distance to the wall with a 15 degree angle from front view
      * by using b = a (sin(B) / sin(A)) */
-    fix16_t calcSonarDistToWall = fix16_mul(distToWall, sonar_reliable_constant);
+    fix16_t calc_sonar_dist_to_wall = fix16_mul(dist_to_wall, sonar_reliable_constant);
 
     /* If the measured value compared to the calculated value is less or equal to the allowed deviation of the sensor */
-    if (fix16_abs(fix16_sub(calcSonarDistToWall, fix16_from_int(rep->sonar->value)) <= fix16_from_int(SENSOR_DEVIATION)) && rep->sonar->valid)
+    if (fix16_abs(fix16_sub(calc_sonar_dist_to_wall, fix16_from_int(rep->sonar->value)) <= fix16_from_int(SENSOR_DEVIATION)) && rep->sonar->valid)
     {
         return 1;
     } else {
@@ -442,68 +420,123 @@ uint8_t check_alignment_wall(rep_t *rep, nav_t *nav){
 }
 
 map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord) {
-    uint8_t x_pixel, y_pixel;
 
     uint16_t y_low = (uint16_t) LOWEST_Y_ORG;
     uint16_t x_low = (uint16_t) LOWEST_X_ORG;
 
-    if(x_coord < LOWEST_X_ORG)
+    map_coord_t res;
+    res.valid = true;
+
+    uint8_t x_mod = (x_coord - x_low) % CENTIMETERS_PR_PIXEL;
+    if (x_mod >= CENTIMETERS_PR_PIXEL / 2) {
+        res.x = (x_coord - x_low) / CENTIMETERS_PR_PIXEL + 1;
+    } else {
+        res.x = (x_coord - x_low) / CENTIMETERS_PR_PIXEL;
+    }
+
+    if(res.x < 0)
     {
         WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
-        x_pixel = 0;
+        res.valid = false;
+        res.x = 0;
     }
-    else if (x_coord > HIGHEST_X_ORG) {
+    else if (res.x >= MAP_WIDTH) {
         WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
-        x_pixel = MAP_HEIGHT;
+        res.valid = false;
+        res.x = MAP_WIDTH;
     }
-    else
-        x_pixel = (x_coord - y_low) / CENTIMETERS_PR_PIXEL;
 
-    if(y_coord < LOWEST_Y_ORG) {
-        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
-        y_pixel = 0;
+    uint8_t y_mod = (y_coord - y_low) % CENTIMETERS_PR_PIXEL;
+    if (y_mod >= CENTIMETERS_PR_PIXEL / 2) {
+        res.y = (y_coord - y_low) / CENTIMETERS_PR_PIXEL + 1;
+    } else {
+        res.y = (y_coord - y_low) / CENTIMETERS_PR_PIXEL;
     }
-    else if(y_coord > HIGHEST_Y_ORG) {
-        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
-        y_pixel = MAP_WIDTH;
-    }
-    else
-        y_pixel = (y_coord - x_low) / CENTIMETERS_PR_PIXEL;
 
-    map_coord_t coord = { .x = x_pixel, .y = y_pixel};
-    return coord;
+    if(res.y < 0) {
+        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
+        res.valid = false;
+        res.y = 0;
+    }
+    else if(res.y >= MAP_HEIGHT) {
+        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
+        res.valid = false;
+        res.y = MAP_HEIGHT;
+    }
+
+    return res;
 }
 
-void draw_obstacle(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state) {
+void draw_obstacle(uint16_t val, nav_t *nav, const fix16_t side_offset, fieldstate_t state) {
     fix16_t fixed_val = fix16_from_int(val);
 
-    fix16_t x_offset = calculate_x_distance(nav->angle + side_offset, fixed_val);
-    fix16_t y_offset = calculate_y_distance(nav->angle + side_offset, fixed_val);
+    fix16_t x_offset = calc_x_dist(fix16_add(nav->angle, side_offset), fixed_val);
+    fix16_t y_offset = calc_y_dist(fix16_add(nav->angle, side_offset), fixed_val);
 
-    //And convert to pixel-coord
-    map_coord_t pix_obst = align_to_map(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
+    // And convert to pixel-coord
+    map_coord_t pix_obst  = align_to_map(nav->posx + fix16_to_int(x_offset), nav->posy + fix16_to_int(y_offset));
+    map_coord_t pix_drone  = align_to_map(nav->posx, nav->posy);
 
-    map_write(pix_obst.x, pix_obst.y, state);
+    // Draw obstacle
+    if (pix_obst.valid)
+        map_write(pix_obst.x, pix_obst.y, state);
+    //map_write_line(pix_drone, pix_obst, VISITED);
+
+    /*
+    fix16_t D = fix16_sub(
+            fix16_mul(fix16_from_int(2), y_offset),
+            x_offset);
+
+    fix16_t y = fix16_from_int(fix16_from_int(0));
+
+    fix16_t x_start;
+    fix16_t x_end;
+    fix16_t x_inc;
+
+    if (x_offset >= 0) {
+        x_start = fix16_from_int(0);
+        x_end = fix16_sub(x_offset, fix16_from_int(CENTIMETERS_PR_PIXEL));
+        x_inc = fix16_from_int(CENTIMETERS_PR_PIXEL);
+    } else if (x_offset < 0) {
+        x_start = fix16_sub(x_offset, fix16_from_int(CENTIMETERS_PR_PIXEL));
+        x_end = fix16_from_int(0);
+        x_inc = fix16_from_int(- CENTIMETERS_PR_PIXEL);
+        return;
+    } else {
+        return;
+    }
+
+    for (fix16_t x = x_start; x > x_end; x = fix16_add(x, x_inc)) {
+        map_coord_t pix_visited  = align_to_map(nav->posx + fix16_to_int(x), nav->posy + fix16_to_int(y));
+        map_write(pix_visited.x, pix_visited.y, VISITED);
+
+        if (D >= fix16_from_int(0)) {
+            y = fix16_add(y, fix16_one);
+            D = fix16_sub(D, fix16_one);
+        }
+        D = fix16_add(D, y_offset);
+    }
+    */
 }
 
 void draw_map(rep_t *rep, nav_t *nav){
 
-    if((rep->sonar->value < MIN_RANGE || rep->laser->val_front <= MIN_RANGE)
+    if((rep->sonar->value < MIN_DRAW_RANGE || rep->laser->val_front <= MIN_DRAW_RANGE)
        && rep->laser->val_front != LASER_MAX_DISTANCE_CM && rep->sonar->value != 0) {
         uint16_t mes_diff = abs(rep->laser->val_front - rep->sonar->value);
-        //Draw map in direct front of the drone
+        // Draw map in direct front of the drone
         if (mes_diff > WINDOW_RECON_THRESHOLD) {
-            draw_obstacle(rep->laser->val_front, nav, 0, WINDOW);
+            //draw_obstacle(rep->sonar->value, nav, 0, WINDOW);
         } else {
-            draw_obstacle(rep->laser->val_front, nav, 0, WALL);
+            //draw_obstacle(rep->laser->val_front, nav, 0, WALL);
         }
     }
 
-    if (nav->state.wall_right && rep->laser->val_right <= MIN_RANGE) {
-        draw_obstacle(rep->laser->val_right, nav, DRONE_RIGHT_SIDE, WALL);
+    if (rep->laser->val_right <= MIN_DRAW_RANGE) {
+        draw_obstacle(rep->laser->val_right, nav, drone_right_side, WALL);
     }
 
-    if (nav->state.wall_left && rep->laser->val_left <= MIN_RANGE) {
-        draw_obstacle(rep->laser->val_left, nav, DRONE_LEFT_SIDE, WALL);
+    if (rep->laser->val_left <= MIN_DRAW_RANGE) {
+        //draw_obstacle(rep->laser->val_left, nav, drone_left_side, WALL);
     }
 }

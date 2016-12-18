@@ -8,21 +8,7 @@
  * @{
  */
 
-#define FULL_TURN 90
-//! This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
-#define WINDOW_RECON_THRESHOLD 50
-#define MIN_RANGE 60
-#define LASER_MAX_DISTANCE_CM 2200
-
-#define DRONE_RIGHT_SIDE 27000
-#define LASER_MAX_RANGE 2200
-#define DRONE_LEFT_SIDE 9000
-
-#define SENSOR_DEVIATION 5
-#define MIN_DIFF_LASER_SONAR 30
-
 #include <stdint.h>
-
 #include "nav-struct.h"
 #include "fc/fc.h"
 #include "kalman/kalman-datafusion.h"
@@ -32,17 +18,18 @@
 #include "libfixmath/fix16.h"
 #include "search/search.h"
 
-#define FULL_TURN 90
 //! This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
-#define WINDOW_RECON_THRESHOLD 50
+#define WINDOW_RECON_THRESHOLD 20
 #define MIN_RANGE 60
+#define MIN_DRAW_RANGE 100
+#define LASER_MAX_DISTANCE_CM 2200
 
-
-#define DRONE_RIGHT_SIDE 27000
+#define DRONE_RIGHT_SIDE 0x4b65f //!< 270 degrees
+#define DRONE_LEFT_SIDE 0x19220  //!< 90 degrees
 #define LASER_MAX_RANGE 2200
-#define DRONE_LEFT_SIDE 9000
 
 #define SENSOR_DEVIATION 5
+#define MIN_DIFF_LASER_SONAR 30
 
 #define PERIOD_MILLIS 100 //!< The time between calls of the navigator.
 #define PERIODS_PER_SEC 1000 / PERIOD_MILLIS
@@ -50,12 +37,11 @@
 
 #define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 4
 
-#define ANGLE_RESOLUTION 0.01    //!< Means that each degree is split in 100
-#define INV_ANGLE_RESOLUTION 100 //!< One degree is 100 steps on the scale
-#define FULL_TURN_SCALED (uint16_t) 360 * INV_ANGLE_RESOLUTION
-
 //! Constant used to find the distance to the wall with a 15 degree angle from front view
 static const fix16_t sonar_reliable_constant = 0x5290; // sin(15) / sin(75)
+static const fix16_t drone_right_side = 0x4b65f; //!< 270 degrees
+static const fix16_t drone_left_side = 0x19220;  //!< 90 degrees
+static const fix16_t full_turn = 0x19220; //!< 90 degrees
 
 // todo: Skal udregnes ud fra WCET af løkken i findpath funktionen
 
@@ -81,11 +67,11 @@ void init_nav(nav_t *nav);
  * @param fc - A pointer to the flight-controller that controls the drone
  * @param laser - A pointer to the laser-component
  * @param sonar - A pointer to the sonar-component
- * @param irTop - A pointer to the ir-sensor on top of the drone
- * @param irBottom - A pointer to the ir-sensor on the bottom of the drone
+ * @param ir_top - A pointer to the ir-sensor on top of the drone
+ * @param ir_bottom - A pointer to the ir-sensor on the bottom of the drone
  * @param rep - A pointer to the rep_t struct to initialize
  */
-void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *irTop, ir_t *irBottom, rep_t *rep);
+void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom, rep_t *rep);
 
 /**
  * The main entry point for the navigation struct
@@ -226,16 +212,16 @@ void nav_idle(rep_t *rep, nav_t *nav);
  * Enters the TURNING-state and turns the drone left
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
- * @param degrees - The number of degrees to turn the drone
+ * @param angle - The angle to turn the drone
  */
-void nav_turn_left(rep_t *rep, nav_t *nav, uint8_t degrees);
+void nav_turn_left(rep_t *rep, nav_t *nav, fix16_t angle);
 /**
  * Enters the TURNING-state and turns the drone right
  * @param rep - A pointer to the struct maintaining the drone's world representation
  * @param nav - A pointer to the navigation struct maintaining position, angle etc.
- * @param degrees - The number of degrees to turn the drone
+ * @param angle - The angle to turn the drone
  */
-void nav_turn_right(rep_t *rep, nav_t *nav, uint8_t degrees);
+void nav_turn_right(rep_t *rep, nav_t *nav, fix16_t angle);
 /**
  * Enter the TURNING-state and turns the drone 180 degrees
  * @param rep - A pointer to the struct maintaining the drone's world representation
@@ -303,21 +289,20 @@ fieldstate_t map_check_position(nav_t *nav);
  */
 map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord);
 
-fix16_t fix_rad_angle(uint16_t degrees_100th);
 /**
  * Calculate offset on the y-axis from an angle and a distance
- * @param degrees_100th The angle specified in 100th degrees
+ * @param angle - The angle specified in radians
  * @param distance - The distance to the object
  * @return - The offset on the y-axis
  */
-fix16_t calculate_y_distance(uint16_t degrees_100th, fix16_t distance);
+fix16_t calc_y_dist(fix16_t angle, fix16_t distance);
 /**
  * Calculates offset on the x-axis from an angle and a distance
- * @param degrees_100th - The angle specified in 100th degrees
+ * @param angle- The angle specified in radians
  * @param distance - The distance to the object
  * @return - The offset on the x-axis
  */
-fix16_t calculate_x_distance(uint16_t degrees_100th, fix16_t distance);
+fix16_t calc_x_dist(fix16_t angle, fix16_t distance);
 /**
  * Updates the current angle of the drone
  * @param nav - A pointer to a nav_t, i.e. the current position and angle of the drone
@@ -330,7 +315,7 @@ void update_angle(nav_t *nav, fix16_t degrees);
 /// @param nav - A pointer to the navigation struct, i.e. the drone's position
 /// @param side_offset - The angle measured to the obstacle in 100th degrees
 /// @param state - The determined obstacle type (WINDOW, WALL, VISITED or UNVISITED)
-void draw_obstacle(uint16_t val, nav_t *nav, const int16_t side_offset, fieldstate_t state);
+void draw_obstacle(uint16_t val, nav_t *nav, const fix16_t side_offset, fieldstate_t state);
 /// Draws the map from the drone current position and world representation
 /// @param rep - A pointer to a rep_t, i.e. the drone's world representation
 /// @param nav - A pointer to a nav_t, i.e. the drone's current position

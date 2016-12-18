@@ -69,3 +69,7 @@ void BlockBuilder::createBlock(int X, int Y) {
 
 }
 
+void BlockBuilder::setCurBlockType(BlockType Type) {
+    CurType = Type;
+}
+

@@ -1,6 +1,8 @@
 #include "map.h"
 #include "core/log.h"
 
+#include <stdlib.h>
+
 uint8_t map_width,
         map_height;
 
@@ -84,5 +86,19 @@ void map_show()
         }
         uart_putchar('|');
         uart_putchar('\n');
+    }
+}
+
+void map_write_line(map_coord_t start, map_coord_t end, fieldstate_t state) 
+{
+    uint8_t dx = abs(end.x - start.x), sx = start.x < end.x ? 1 : -1;
+    uint8_t dy = abs(end.y - start.y), sy = start.y < end.y ? 1 : -1;
+    uint8_t err = (dx > dy ? dx : -dy)/2;
+
+    for(;;){
+        map_write(start.x, start.y, state);
+        if (start.x==end.x && start.y==end.y) break;
+        if (err >-dx) { err -= dy; start.x += sx; }
+        if (err < dy) { err += dx; start.y += sy; }
     }
 }

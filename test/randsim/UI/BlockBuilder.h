@@ -16,6 +16,7 @@ public:
     BlockBuilder(Simulator &Sim);
     void handleEvent(SDL_Event &Event);
     void createBlock(int X, int Y);
+    void setCurBlockType(BlockType Type);
 };
 
 
