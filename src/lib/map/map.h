@@ -14,7 +14,7 @@
 #define MAP_HEIGHT 64 //!< Defines the map's height in fields
 #define MAP_WIDTH 64 //!< Defines the map's width in fields
 
-#define CENTIMETERS_PR_PIXEL 25 //!< Defines the resolution of the map, i.e. one field is CENTIMETERS_PR_PIXEL x CENTIMETERS_PR_PIXEL
+#define CENTIMETERS_PR_FIELD 25 //!< Defines the resolution of the map, i.e. one field is CENTIMETERS_PR_FIELD x CENTIMETERS_PR_FIELD
 
 #define MAP_CENTI_HEIGHT MAP_HEIGHT * CENTIMETERS_PR_FIELD //!< Defines the height of the map in centimeters
 #define MAP_CENTI_WIDTH MAP_WIDTH * CENTIMETERS_PR_FIELD //!< Defines the width of the map in centimeters

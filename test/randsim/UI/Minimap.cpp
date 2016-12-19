@@ -95,7 +95,7 @@ void Minimap::draw() {
     }
 
     // Current drone position
-    auto CentPerBlock = CENTIMETERS_PR_PIXEL / double(MINIMAP_BLOCK_SIZE);
+    auto CentPerBlock = CENTIMETERS_PR_FIELD / double(MINIMAP_BLOCK_SIZE);
     auto MapHeightBlock = (MAP_HEIGHT - 1) * MINIMAP_BLOCK_SIZE;
     Sim.Render->setColor(RED);
     Sim.Render->drawRect(

@@ -5,9 +5,9 @@
 
 //! Defines the lowest and highest accepted world-position on the internal drone map
 #define LOWEST_Y_ORG 0
-#define HIGHEST_Y_ORG MAP_HEIGHT * CENTIMETERS_PR_PIXEL
+#define HIGHEST_Y_ORG MAP_HEIGHT * CENTIMETERS_PR_FIELD
 #define LOWEST_X_ORG 0
-#define HIGHEST_X_ORG MAP_WIDTH * CENTIMETERS_PR_PIXEL
+#define HIGHEST_X_ORG MAP_WIDTH * CENTIMETERS_PR_FIELD
 
 #define M_PI 3.14159265358979323846
 
@@ -156,8 +156,8 @@ void init_nav(nav_t *nav){
     nav->prev_dist_wall = 0;
 
     // Assume es drone to start in the middle of the room.
-    nav->posx = MAP_MIDDLE * CENTIMETERS_PR_PIXEL;
-    nav->posy = MAP_MIDDLE * CENTIMETERS_PR_PIXEL;
+    nav->posx = MAP_MIDDLE * CENTIMETERS_PR_FIELD;
+    nav->posy = MAP_MIDDLE * CENTIMETERS_PR_FIELD;
 
     *((uint16_t*) &nav->state) &= 0x0000; // Hacky (albeit quick) way to set all states to zero
 
@@ -562,11 +562,11 @@ map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord) {
     map_coord_t res;
     res.valid = true;
 
-    uint8_t x_mod = (x_coord - x_low) % CENTIMETERS_PR_PIXEL;
-    if (x_mod >= CENTIMETERS_PR_PIXEL / 2) {
-        res.x = (x_coord - x_low) / CENTIMETERS_PR_PIXEL + 1;
+    uint8_t x_mod = (x_coord - x_low) % CENTIMETERS_PR_FIELD;
+    if (x_mod >= CENTIMETERS_PR_FIELD / 2) {
+        res.x = (x_coord - x_low) / CENTIMETERS_PR_FIELD + 1;
     } else {
-        res.x = (x_coord - x_low) / CENTIMETERS_PR_PIXEL;
+        res.x = (x_coord - x_low) / CENTIMETERS_PR_FIELD;
     }
 
     if(res.x < 0)
@@ -581,11 +581,11 @@ map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord) {
         res.x = MAP_WIDTH;
     }
 
-    uint8_t y_mod = (y_coord - y_low) % CENTIMETERS_PR_PIXEL;
-    if (y_mod >= CENTIMETERS_PR_PIXEL / 2) {
-        res.y = (y_coord - y_low) / CENTIMETERS_PR_PIXEL + 1;
+    uint8_t y_mod = (y_coord - y_low) % CENTIMETERS_PR_FIELD;
+    if (y_mod >= CENTIMETERS_PR_FIELD / 2) {
+        res.y = (y_coord - y_low) / CENTIMETERS_PR_FIELD + 1;
     } else {
-        res.y = (y_coord - y_low) / CENTIMETERS_PR_PIXEL;
+        res.y = (y_coord - y_low) / CENTIMETERS_PR_FIELD;
     }
 
     if(res.y < 0) {
