@@ -66,14 +66,14 @@ void init_nav(nav_t *nav);
 
 /**
  * Initializes the world representation for the navigation system
+ * @param rep - A pointer to the rep_t struct to initialize
  * @param fc - A pointer to the flight-controller that controls the drone
  * @param laser - A pointer to the laser-component
  * @param sonar - A pointer to the sonar-component
  * @param ir_top - A pointer to the ir-sensor on top of the drone
  * @param ir_bottom - A pointer to the ir-sensor on the bottom of the drone
- * @param rep - A pointer to the rep_t struct to initialize
  */
-void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom, rep_t *rep);
+void init_rep(rep_t *rep, fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom);
 
 /**
  * The main entry point for the navigation struct

@@ -141,10 +141,7 @@ void update_state(state_t *state, rep_t *rep){
     state->follow = check_follow_wall(state);
 }
 
-void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom, rep_t *rep){
-    if(!rep)
-        rep = malloc(sizeof(rep));
-
+void init_rep(rep_t *rep, fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_bottom){
     rep->fc = fc;
     rep->laser = laser;
     rep->sonar = sonar;
@@ -153,9 +150,6 @@ void init_rep(fc_t *fc, laser_t *laser, sonar_t *sonar, ir_t *ir_top, ir_t *ir_b
 }
 
 void init_nav(nav_t *nav){
-    if(!nav)
-        nav = malloc(sizeof(nav_t));
-
     nav->task = IDLE;
     nav->val = fix16_from_int(0);
     nav->angle = fix16_from_int(0);

@@ -11,7 +11,7 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0),
     IrBottom.value = 80;
 
     init_nav(&NavStruct);
-    init_rep(&FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop, &IrBottom, &RepStruct);
+    init_rep(&RepStruct, &FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop, &IrBottom);
 
     //Set FC duties to simplify movement for this simulation
     FC.duty->MIN_FC_DUTY = 0 * FC_OFFSET;

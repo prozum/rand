@@ -28,12 +28,6 @@ CPPUNIT_TEST_SUITE(NavTest);
     CPPUNIT_TEST(alignToGrid_outOfBoundsTop_expectWarningAndY64);
     CPPUNIT_TEST(alignToGrid_outOfBoundsBottom_expectWarningAndY0);
 
-    CPPUNIT_TEST(fixRadAngle_0_expect0);
-    CPPUNIT_TEST(fixRadAngle_9000_expectHalfPi);
-    CPPUNIT_TEST(fixRadAngle_18000_expectPi);
-    CPPUNIT_TEST(fixRadAngle_27000_expectOneAndAHalfPi);
-    CPPUNIT_TEST(fixRadAngle_36000_expectWarningAndMinusOne);
-
     CPPUNIT_TEST(calculateXDistance_ang0Dist10_expect10);
     CPPUNIT_TEST(calculateYDistance_ang0Dist10_expect0);
     CPPUNIT_TEST(calculateXDistance_ang90Dist10_expect0);
@@ -44,17 +38,16 @@ CPPUNIT_TEST_SUITE(NavTest);
     CPPUNIT_TEST(calculateYDistance_ang180Dist10_expect0);
     CPPUNIT_TEST(calculateXDistance_ang270Dist10_expect0);
     CPPUNIT_TEST(calculateYDistance_ang270Dist10_expectMinus10);
-
-    CPPUNIT_TEST(updateAngle_0_expect0);
-    CPPUNIT_TEST(updateAngle_90_expect9000);
-    CPPUNIT_TEST(updateAngle_180_expect18000);
-    CPPUNIT_TEST(updateAngle_270_expect27000);
-    CPPUNIT_TEST(updateAngle_360_expect0);
-    CPPUNIT_TEST(updateAngle_minus90_expect27000);
-    CPPUNIT_TEST(updateAngle_minus180_expect18000);
-    CPPUNIT_TEST(updateAngle_minus270_expect9000);
 CPPUNIT_TEST_SUITE_END();
 
+    void initNav();
+    nav_t NavStruct;
+    rep_t RepStruct;
+    fc_t FCStruct;
+    ir_t IrTopStruct;
+    ir_t IrBottomStruct;
+    sonar_t SonarStruct;
+    laser_t LaserStruct;
 
 public:
     void alignToGrid_centerOfRoom_expectCenterOfMap();
@@ -66,12 +59,6 @@ public:
     void alignToGrid_outOfBoundsRight_expectWarningAndX64();
     void alignToGrid_outOfBoundsTop_expectWarningAndY64();
     void alignToGrid_outOfBoundsBottom_expectWarningAndY0();
-
-    void fixRadAngle_0_expect0();
-    void fixRadAngle_9000_expectHalfPi();
-    void fixRadAngle_18000_expectPi();
-    void fixRadAngle_27000_expectOneAndAHalfPi();
-    void fixRadAngle_36000_expectWarningAndMinusOne();
 
     void calculateXDistance_ang0Dist10_expect10();
     void calculateYDistance_ang0Dist10_expect0();
