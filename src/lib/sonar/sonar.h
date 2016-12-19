@@ -29,11 +29,11 @@ typedef struct sonar_s {
 
 /**
  * Initializes a sonar_t struct with the specified trigger- and echo-pin
+ * @param sonar - A pointer to the sonar_t struct for the sonar
  * @param trig - The trigger-pin the sonar is wired to
  * @param echo - The echo-pin the sonar is wired to
- * @return - A pointer to the allocated struct for the sonar
  */
-sonar_t *sonar_init(dpin_t trig, dpin_t echo);
+void sonar_init(sonar_t *sonar, dpin_t trig, dpin_t echo);
 
 /**
  * Checks if the sound-wave had returned to the sonar yet, sets the ->valid field of the struct to 1 if that is the case

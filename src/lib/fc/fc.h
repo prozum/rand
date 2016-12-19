@@ -52,11 +52,11 @@ typedef struct fc_s {
 
 /**
  * Initialize the flight controller
+ * @param fc - Pointer to the flight controller to init
  * @param serial - The serial pin the flight controller is connected to
  * @param ms - The shortes length of the pulse when used with PWM signals
- * @return - A pointer to the allocated flight controller struct
  */
-fc_t *init_fc(tx_t serial, uint16_t ms);
+void init_fc(fc_t *fc, tx_t serial, uint16_t ms);
 /**
  * A destructor for the flight controller, frees all allocated memory and the pointer
  * @param fc - Pointer to a fc_t struct - DO NOT USE THIS AFTER THIS FUNCTION CALL

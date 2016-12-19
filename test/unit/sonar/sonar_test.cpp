@@ -10,15 +10,15 @@ using namespace std;
 CPPUNIT_TEST_SUITE_REGISTRATION(SonarTest);
 
 void SonarTest::pulseSonar_expectBuffer010() {
-    sonar_t *sonar;
+    sonar_t sonar;
 
-    sonar = sonar_init(TRIGGER, ECHO);
-    pulse_sonar(sonar);
+    sonar_init(&sonar, TRIGGER, ECHO);
+    pulse_sonar(&sonar);
 
     //The values in the buffer is stored in reverse order:
-    dval_t low2 = digital_read((dpin_t) sonar->trig);
-    dval_t high = digital_read((dpin_t) sonar->trig);
-    dval_t low1 = digital_read((dpin_t) sonar->trig);
+    dval_t low2 = digital_read((dpin_t) sonar.trig);
+    dval_t high = digital_read((dpin_t) sonar.trig);
+    dval_t low1 = digital_read((dpin_t) sonar.trig);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The first low pulse was not send correctly", LOW, low1);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The high pulse was not send correctly", HIGH, high);
@@ -76,12 +76,11 @@ void SonarTest::readSonar_tooClose_expectValidByteZero() {
 }*/
 
 void SonarTest::sonarInit_expectTriggerOutAndEchoIn() {
-    sonar_t *sonar;
+    sonar_t sonar;
+    sonar_init(&sonar, TRIGGER, ECHO);
 
-    sonar = sonar_init(TRIGGER, ECHO);
-
-    pin_mode_t mode_echo = get_pin_mode(sonar->echo);
-    pin_mode_t mode_trigger = get_pin_mode(sonar->trig);
+    pin_mode_t mode_echo = get_pin_mode(sonar.echo);
+    pin_mode_t mode_trigger = get_pin_mode(sonar.trig);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The echo pin was not setup correctly.", mode_echo, INPUT);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The trigger pin was not setup correctly.", mode_trigger, OUTPUT);

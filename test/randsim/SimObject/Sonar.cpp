@@ -4,7 +4,7 @@
 Sonar::Sonar(Drone &Drn, uint32_t RayCount, double Span, double Length) : Drn(Drn),
                                                                           SimObject(Drn.Pos),
                                                                           Span(Span), RayCount(RayCount), Length(Length) {
-    Struct = *sonar_init(P0, P1);
+    sonar_init(&Struct, P0, P1);
 
     for (int i = 0; i < RayCount; ++i) {
         Rays.push_back(Ray(Drn.Pos, Length, Drn.Angle));

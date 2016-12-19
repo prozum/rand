@@ -1,15 +1,12 @@
 #include "laser/laser.h"
 
-laser_t *laser_init(tx_t pin) {
-    laser_t *laser = malloc(sizeof(laser_t));
-
+void laser_init(laser_t *laser, tx_t pin) {
     laser->pin = pin;
     laser->val_left = 0;
     laser->val_right = 0;
     laser->val_front = 0;
-
-    return laser;
 }
+
 void laser_read_dist(laser_t *laser)
 {
     uint16_t res = 0;

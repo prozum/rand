@@ -1,9 +1,7 @@
 #include "fc/fc.h"
 
-fc_t *init_fc(tx_t serial, uint16_t ms)
+void init_fc(fc_t *fc, tx_t serial, uint16_t ms)
 {
-    fc_t *fc = malloc(sizeof(fc_t));
-
     fc->acc = (acceleration_t *)malloc(sizeof(acceleration_t));
     fc->vel = (velocity_t *) malloc(sizeof(velocity_t));
     fc->duty = (duty_t *)malloc(sizeof(duty_t));
@@ -12,8 +10,6 @@ fc_t *init_fc(tx_t serial, uint16_t ms)
     fc->duty->MIN_FC_DUTY = ms;
     fc->duty->MID_FC_DUTY = (uint16_t)(ms * 1.5);
     fc->duty->MAX_FC_DUTY = (uint16_t)(ms * 2);
-
-    return fc;
 }
 
 void clean_fc(fc_t *fc)

@@ -41,13 +41,9 @@ uint8_t IR_to_cm[256] =
         };
 
 
-ir_t *ir_init(apin_t pin) {
-    ir_t *ir = malloc(sizeof(ir_t));
-
+void ir_init(ir_t *ir, apin_t pin) {
     ir->pin = pin;
     ir->value = 0;
-    
-    return ir;
 }
 
 /**

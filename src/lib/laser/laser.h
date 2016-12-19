@@ -24,10 +24,10 @@ typedef struct laser_s {
 
 /**
  * Initializes a laser-struct
+ * @param laser - A pointer to the laser-struct to init
  * @param pin - The pin to read laser-values from
- * @return - A pointer to the newly allocated laser_t struct
  */
-laser_t *laser_init(tx_t pin);
+void laser_init(laser_t *laser, tx_t pin);
 
 /**
  * Read values from the laser

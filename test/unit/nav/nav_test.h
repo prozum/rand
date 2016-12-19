@@ -70,13 +70,4 @@ public:
     void calculateYDistance_ang180Dist10_expect0();
     void calculateXDistance_ang270Dist10_expect0();
     void calculateYDistance_ang270Dist10_expectMinus10();
-
-    void updateAngle_0_expect0();
-    void updateAngle_90_expect9000();
-    void updateAngle_180_expect18000();
-    void updateAngle_270_expect27000();
-    void updateAngle_360_expect0();
-    void updateAngle_minus90_expect27000();
-    void updateAngle_minus180_expect18000();
-    void updateAngle_minus270_expect9000();
 };

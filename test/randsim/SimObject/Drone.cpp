@@ -5,9 +5,9 @@ Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0),
                                        LaserModule(*this, 400.0),
                                        Height(0) {
     //Initialize the structs
-    FC = *init_fc(TX1, 1);
-    IrTop = *ir_init(A0);
-    IrBottom = *ir_init(A1);
+    init_fc(&FC, TX1, 1);
+    ir_init(&IrTop, A0);
+    ir_init(&IrBottom, A1);
     IrBottom.value = 80;
 
     init_nav(&NavStruct);

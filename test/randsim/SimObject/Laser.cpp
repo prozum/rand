@@ -9,7 +9,7 @@ Laser::Laser(Drone &Drn, double Length) : Drn(Drn),
         Rays.push_back(Ray(Drn.Pos, Length, Drn.Angle));
     }
 
-    Struct = *laser_init(TX1);
+    laser_init(&Struct, TX1);
 }
 
 void Laser::calcDist(std::vector<Block>& Blocks) {

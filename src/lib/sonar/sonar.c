@@ -1,9 +1,7 @@
 #include "sonar/sonar.h"
 #include "libfixmath/fix16.h"
 
-sonar_t *sonar_init(dpin_t trig, dpin_t echo) {
-    sonar_t *sonar = malloc(sizeof(sonar_t));
-
+void sonar_init(sonar_t *sonar, dpin_t trig, dpin_t echo) {
     sonar->trig = trig;
     sonar-> echo = echo;
     sonar->valid = 0;
@@ -11,8 +9,6 @@ sonar_t *sonar_init(dpin_t trig, dpin_t echo) {
 
     set_pin_mode(trig, OUTPUT);
     set_pin_mode(echo, INPUT);
-
-    return sonar;
 }
 
 void sonar_ping(sonar_t *sonar, dval_t value) {

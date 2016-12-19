@@ -75,19 +75,21 @@ void sensor_setup(kalman_state_matrix *state, laser_t *z_0_laser, sonar_t *z_0_s
 
 void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToBoth(){
     kalman_state_matrix *state;
+    laser_t z_0_laser;
+    sonar_t z_0_sonar;
+    laser_init(&z_0_laser, USB_TX);
+    sonar_init(&z_0_sonar, P2, P1);
 
     const fix16_t a = fix16_from_int(1);
     const fix16_t b = fix16_from_float(0.6f);
     const fix16_t r_avg = fix16_from_int(1);
 
     state = kalman_datafusion_init(a, b, SENDER_BOARD, C, R);
-    laser_t *z_0_laser = laser_init(USB_TX);
-    sonar_t *z_0_sonar = sonar_init(P2 ,P1);
 
-    sensor_setup(state, z_0_laser, z_0_sonar, 1, fix16_from_int(300), fix16_from_int(300));
+    sensor_setup(state, &z_0_laser, &z_0_sonar, 1, fix16_from_int(300), fix16_from_int(300));
     state->x_k = fix16_from_int(60);
-    kalman_datafusion_calibrate(state, z_0_laser->val_front, z_0_sonar->value);
-    float diff = abs(state->x_k - z_0_laser->val_front);
+    kalman_datafusion_calibrate(state, z_0_laser.val_front, z_0_sonar.value);
+    float diff = abs(state->x_k - z_0_laser.val_front);
 
     CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
 }
@@ -147,6 +149,11 @@ void KalmanDatafusionTest::KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax(){
 void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev(){
     kalman_state_matrix *state;
 
+    laser_t z_laser;
+    sonar_t z_sonar;
+    laser_init(&z_laser, USB_TX);
+    sonar_init(&z_sonar, P0, P1);
+
     const fix16_t a = fix16_from_int(1);
     const fix16_t b = fix16_from_float(0.6f);
 
@@ -154,12 +161,10 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev
 
     const fix16_t x_prev = fix16_from_int(370);
     state->x_k = x_prev;
-    laser_t *z_laser = laser_init(USB_TX);
-    z_laser->val_front = fix16_from_int(120);
-    sonar_t *z_sonar = sonar_init(P0, P1);
-    z_sonar->value = fix16_from_int(120);
-    z_sonar->valid = fix16_from_int(1);
-    kalman_datafusion_filter(state, z_laser->val_front, z_sonar->value);
+    z_laser.val_front = (uint16_t)fix16_from_int(120);
+    z_sonar.value = (uint16_t)fix16_from_int(120);
+    z_sonar.valid = (uint8_t)fix16_from_int(1);
+    kalman_datafusion_filter(state, z_laser.val_front, z_sonar.value);
 
     std::string msg = "x_k = " + std::to_string(state->x_k) + ", x_prev = " + std::to_string(x_prev);
     CPPUNIT_ASSERT_MESSAGE(msg, x_prev > state->x_k);
@@ -168,6 +173,11 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev
 void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxprev(){
     kalman_state_matrix *state;
 
+    laser_t z_laser;
+    sonar_t z_sonar;
+    laser_init(&z_laser, USB_TX);
+    sonar_init(&z_sonar, P0, P1);
+
     const fix16_t a = fix16_from_int(1);
     const fix16_t b = fix16_from_float(0.6f);
 
@@ -175,11 +185,9 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxpre
 
     const fix16_t x_prev = fix16_from_int(120);
     state->x_k = x_prev;
-    laser_t *z_laser = laser_init(USB_TX);
-    z_laser->val_front = 300;
-    sonar_t *z_sonar = sonar_init(P0, P1);
-    z_sonar->value = 300;
-    kalman_datafusion_filter(state, fix16_from_int(z_laser->val_front), fix16_from_int(z_sonar->value));
+    z_laser.val_front = 300;
+    z_sonar.value = 300;
+    kalman_datafusion_filter(state, fix16_from_int(z_laser.val_front), fix16_from_int(z_sonar.value));
 
     std::string msg = "x_k was supposed to increase, x_k = " + std::to_string(fix16_to_float(state->x_k)) +
             ", x_prev = " + std::to_string(fix16_to_float(x_prev));
