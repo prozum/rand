@@ -1,8 +1,8 @@
 #pragma once
 
-#include <SimObject/Block.h>
 #include "SDL.h"
 #include "Simulator.h"
+#include <SimObject/Block.h>
 
 class BlockBuilder {
     Simulator &Sim;
@@ -11,12 +11,9 @@ class BlockBuilder {
     bool First = false;
     bool DeleteMode = false;
 
-
-public:
+  public:
     BlockBuilder(Simulator &Sim);
     void handleEvent(SDL_Event &Event);
     void createBlock(int X, int Y);
     void setCurBlockType(BlockType Type);
 };
-
-

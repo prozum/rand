@@ -1,9 +1,8 @@
 #include "Laser.h"
 #include "Drone.h"
 
-Laser::Laser(Drone &Drn, double Length) : Drn(Drn),
-                                          SimObject(Drn.Pos),
-                                          Length(Length) {
+Laser::Laser(Drone &Drn, double Length)
+    : Drn(Drn), SimObject(Drn.Pos), Length(Length) {
 
     for (int i = 0; i < 3; ++i) {
         Rays.push_back(Ray(Drn.Pos, Length, Drn.Angle));
@@ -12,7 +11,7 @@ Laser::Laser(Drone &Drn, double Length) : Drn(Drn),
     laser_init(&Struct, TX1);
 }
 
-void Laser::calcDist(std::vector<Block>& Blocks) {
+void Laser::calcDist(std::vector<Block> &Blocks) {
     Vector2D Res;
     bool Intersects;
 
@@ -26,18 +25,26 @@ void Laser::calcDist(std::vector<Block>& Blocks) {
             continue;
 
         Intersects = B.intersect(Rays[0], Res);
-        if (Intersects) Struct.val_left = std::min(Struct.val_left, (uint16_t)Res.length());
+        if (Intersects)
+            Struct.val_left = std::min(Struct.val_left, (uint16_t)Res.length());
 
         Intersects = B.intersect(Rays[1], Res);
-        if (Intersects) Struct.val_front = std::min(Struct.val_front, (uint16_t)Res.length());
+        if (Intersects)
+            Struct.val_front =
+                std::min(Struct.val_front, (uint16_t)Res.length());
 
         Intersects = B.intersect(Rays[2], Res);
-        if (Intersects) Struct.val_right = std::min(Struct.val_right, (uint16_t)Res.length());
+        if (Intersects)
+            Struct.val_right =
+                std::min(Struct.val_right, (uint16_t)Res.length());
     }
 
-    if (Struct.val_left > Length) Struct.val_left = 2200;
-    if (Struct.val_front > Length) Struct.val_front = 2200;
-    if (Struct.val_right > Length) Struct.val_right = 2200;
+    if (Struct.val_left > Length)
+        Struct.val_left = 2200;
+    if (Struct.val_front > Length)
+        Struct.val_front = 2200;
+    if (Struct.val_right > Length)
+        Struct.val_right = 2200;
 }
 
 void Laser::updateRays(Vector2D Pos, double Angle) {

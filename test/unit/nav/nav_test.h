@@ -1,23 +1,23 @@
 #pragma once
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
-#include <cppunit/TestResultCollector.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestFixture.h>
 #include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/extensions/HelperMacros.h>
 
 #include <stdlib.h>
 
 extern "C" {
-#include "nav/nav.h"
 #include "map/map.h"
+#include "nav/nav.h"
 #include "task.h"
 }
 
 class NavTest : public CppUnit::TestCase {
-CPPUNIT_TEST_SUITE(NavTest);
+    CPPUNIT_TEST_SUITE(NavTest);
     CPPUNIT_TEST(alignToGrid_centerOfRoom_expectCenterOfMap);
     CPPUNIT_TEST(alignToGrid_leftInRoom_expectLeftEdgeOfMap);
     CPPUNIT_TEST(alignToGrid_rightInRoom_expectRightEdgeOfMap);
@@ -38,7 +38,7 @@ CPPUNIT_TEST_SUITE(NavTest);
     CPPUNIT_TEST(calculateYDistance_ang180Dist10_expect0);
     CPPUNIT_TEST(calculateXDistance_ang270Dist10_expect0);
     CPPUNIT_TEST(calculateYDistance_ang270Dist10_expectMinus10);
-CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE_END();
 
     void initNav();
     nav_t NavStruct;
@@ -49,7 +49,7 @@ CPPUNIT_TEST_SUITE_END();
     sonar_t SonarStruct;
     laser_t LaserStruct;
 
-public:
+  public:
     void alignToGrid_centerOfRoom_expectCenterOfMap();
     void alignToGrid_leftInRoom_expectLeftEdgeOfMap();
     void alignToGrid_rightInRoom_expectRightEdgeOfMap();

@@ -2,30 +2,30 @@
 
 extern "C" {
 #include "fc/fc.h"
-#include "nav/nav.h"
 #include "ir/ir.h"
+#include "nav/nav.h"
 }
-#include "UI/Renderer.h"
-#include "SimObject.h"
-#include "Sonar.h"
 #include "Common/Vector2D.h"
-#include "Simulator.h"
 #include "Laser.h"
+#include "SimObject.h"
+#include "Simulator.h"
+#include "Sonar.h"
+#include "UI/Renderer.h"
 
 // All speeds are measured in cm (or rads)/sec
-#define ROTATION_SPEED M_PI/4
-#define STRAFE_SPEED   20.0 // Defines speed in the left, right direction
+#define ROTATION_SPEED M_PI / 4
+#define STRAFE_SPEED 20.0    // Defines speed in the left, right direction
 #define MOVEMENT_SPEED 100.0 // Defines speed in forward, backward direction
-#define ALTITUDE_SPEED 10.0 // Defines speed in up/down direction
+#define ALTITUDE_SPEED 10.0  // Defines speed in up/down direction
 
 #define FC_OFFSET 1
 #define ROTATION_OFFSET M_PI
 #define NAV_UPDATE_TIME 100
 
 class Drone : public SimObject {
-public:
-    double Angle;    // Angle in radians
-    double Size;     // Size in cm
+  public:
+    double Angle; // Angle in radians
+    double Size;  // Size in cm
     double Height;
 
     Sonar SonarModule;
@@ -42,7 +42,7 @@ public:
     void draw();
     void update();
 
-private:
+  private:
     void updateYaw(uint16_t YawValue);
     void updateRoll(uint16_t RollValue);
     void updatePitch(uint16_t PitchValue);

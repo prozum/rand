@@ -1,23 +1,21 @@
 #pragma once
 
-#include <vector>
 #include <memory>
 #include <string>
+#include <vector>
 
-#include "UI/Renderer.h"
-#include "SimObject.h"
 #include "Block.h"
+#include "SimObject.h"
+#include "UI/Renderer.h"
 
 extern "C" {
 #include "map/map.h"
 }
 
-
-
 class Minimap {
     Simulator &Sim;
 
-public:
+  public:
     unsigned long Width = 0;
     unsigned long Height = 0;
 

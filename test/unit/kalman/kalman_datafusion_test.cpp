@@ -2,22 +2,28 @@
 
 CPPUNIT_TEST_SUITE_REGISTRATION(KalmanDatafusionTest);
 
-void KalmanDatafusionTest::assert(kalman_state_matrix *state, const fix16_t a, const fix16_t b, const fix16_t p_0) {
+void KalmanDatafusionTest::assert(kalman_state_matrix *state, const fix16_t a,
+                                  const fix16_t b, const fix16_t p_0) {
     CPPUNIT_ASSERT_MESSAGE("The state was not initialized", state != NULL);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("a-value not set in state", a, state->a);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("b-value not set in state", b, state->b);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("p_0-value not set in state", p_0, state->p_k);
     for (int i = 0; i < 2; ++i) {
-        CPPUNIT_ASSERT_EQUAL_MESSAGE("A C-value was not set correctly", matrix_get(C, i, 0), matrix_get(state->C, i, 0));
+        CPPUNIT_ASSERT_EQUAL_MESSAGE("A C-value was not set correctly",
+                                     matrix_get(C, i, 0),
+                                     matrix_get(state->C, i, 0));
     }
     for (int i = 0; i < 2; ++i) {
         for (int j = 0; j < 2; ++j) {
-            CPPUNIT_ASSERT_EQUAL_MESSAGE("A R-value was not set correctly", matrix_get(R, i, j), matrix_get(state->R,i,j));
+            CPPUNIT_ASSERT_EQUAL_MESSAGE("A R-value was not set correctly",
+                                         matrix_get(R, i, j),
+                                         matrix_get(state->R, i, j));
         }
     }
 }
 
-void KalmanDatafusionTest::KalmanDFInit_NullStateValidParams_StateMallocedAndInitialized(){
+void KalmanDatafusionTest::
+    KalmanDFInit_NullStateValidParams_StateMallocedAndInitialized() {
     kalman_state_matrix *state = NULL;
 
     const fix16_t a = fix16_from_int(1);
@@ -28,7 +34,8 @@ void KalmanDatafusionTest::KalmanDFInit_NullStateValidParams_StateMallocedAndIni
 
     assert(state, a, b, p_0);
 }
-void KalmanDatafusionTest::KalmanDFInit_ValidStateValidParams_StateInitialized(){
+void KalmanDatafusionTest::
+    KalmanDFInit_ValidStateValidParams_StateInitialized() {
     kalman_state_matrix *state;
 
     const fix16_t a = fix16_from_int(1);
@@ -39,7 +46,8 @@ void KalmanDatafusionTest::KalmanDFInit_ValidStateValidParams_StateInitialized()
 
     assert(state, a, b, p_0);
 }
-void KalmanDatafusionTest::KalmanDFInit_ValidStateCNull_StateInitializedWithCzero(){
+void KalmanDatafusionTest::
+    KalmanDFInit_ValidStateCNull_StateInitializedWithCzero() {
     kalman_state_matrix *state;
 
     const fix16_t a = fix16_from_int(1);
@@ -50,7 +58,8 @@ void KalmanDatafusionTest::KalmanDFInit_ValidStateCNull_StateInitializedWithCzer
 
     assert(state, a, b, p_0);
 }
-void KalmanDatafusionTest::KalmanDFInit_ValidStateRNull_StateInitializedWithRone(){
+void KalmanDatafusionTest::
+    KalmanDFInit_ValidStateRNull_StateInitializedWithRone() {
     kalman_state_matrix *state;
 
     const fix16_t a = fix16_from_int(1);
@@ -62,8 +71,8 @@ void KalmanDatafusionTest::KalmanDFInit_ValidStateRNull_StateInitializedWithRone
     assert(state, a, b, p_0);
 }
 
-
-void sensor_setup(kalman_state_matrix *state, laser_t *z_0_laser, sonar_t *z_0_sonar, uint8_t sonar_valid,
+void sensor_setup(kalman_state_matrix *state, laser_t *z_0_laser,
+                  sonar_t *z_0_sonar, uint8_t sonar_valid,
                   uint16_t laser_reading, uint16_t sonar_reading) {
 
     z_0_laser->val_front = laser_reading;
@@ -73,7 +82,8 @@ void sensor_setup(kalman_state_matrix *state, laser_t *z_0_laser, sonar_t *z_0_s
     kalman_datafusion_calibrate(state, z_0_laser->val_front, z_0_sonar->value);
 }
 
-void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToBoth(){
+void KalmanDatafusionTest::
+    KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToBoth() {
     kalman_state_matrix *state;
     laser_t z_0_laser;
     sonar_t z_0_sonar;
@@ -86,15 +96,18 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToB
 
     state = kalman_datafusion_init(a, b, SENDER_BOARD, C, R);
 
-    sensor_setup(state, &z_0_laser, &z_0_sonar, 1, fix16_from_int(300), fix16_from_int(300));
+    sensor_setup(state, &z_0_laser, &z_0_sonar, 1, fix16_from_int(300),
+                 fix16_from_int(300));
     state->x_k = fix16_from_int(60);
     kalman_datafusion_calibrate(state, z_0_laser.val_front, z_0_sonar.value);
     float diff = abs(state->x_k - z_0_laser.val_front);
 
-    CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.", diff <= r_avg);
+    CPPUNIT_ASSERT_MESSAGE("Filter was not calibrated correctly.",
+                           diff <= r_avg);
 }
 
-/*void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0MuchHigherThanSonar0_xkCloseToSonar(){
+/*void
+KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0MuchHigherThanSonar0_xkCloseToSonar(){
     kalman_state_matrix *state;
 
     const float a = 1;
@@ -109,10 +122,12 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaser0EQSonar0_xkCloseToB
 
     float diff = abs(state->x_k - z_0_sonar->value);
 
-    std::string msg = "diff = " + std::to_string(diff) + ", r_avg" + std::to_string(r_avg);
+    std::string msg = "diff = " + std::to_string(diff) + ", r_avg" +
+std::to_string(r_avg);
     CPPUNIT_ASSERT_MESSAGE(msg, diff <= r_avg);
 }
-void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaserValidSonarInvalid_xkCloseToLaser(){
+void
+KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaserValidSonarInvalid_xkCloseToLaser(){
     kalman_state_matrix *state;
 
     const float a = 1;
@@ -127,7 +142,8 @@ void KalmanDatafusionTest::KalmanDFCalibrate_ValidStateLaserValidSonarInvalid_xk
 
     float diff = abs(state->x_k - z_0_laser->front_value);
 
-    std::string msg = "diff = " + std::to_string(diff) + ", r_avg = " + std::to_string(r_avg);
+    std::string msg = "diff = " + std::to_string(diff) + ", r_avg = " +
+std::to_string(r_avg);
     CPPUNIT_ASSERT_MESSAGE(msg, diff <= r_avg);
 }
 void KalmanDatafusionTest::KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax(){
@@ -141,12 +157,15 @@ void KalmanDatafusionTest::KalmanDFCalibrate_BothOutOfRange_xkEQSonarMax(){
     sonar_t *z_0_sonar = sonar_init(P0, P1);
 
     sensor_setup(state, z_0_laser, z_0_sonar, 0, 0, 1000, 1000);
-    kalman_datafusion_calibrate(state, z_0_laser->front_value, z_0_sonar->value);
+    kalman_datafusion_calibrate(state, z_0_laser->front_value,
+z_0_sonar->value);
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Filter was not calibrated correctly.", 1000.0f, state->x_k);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Filter was not calibrated correctly.",
+1000.0f, state->x_k);
 }*/
 
-void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev(){
+void KalmanDatafusionTest::
+    KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev() {
     kalman_state_matrix *state;
 
     laser_t z_laser;
@@ -166,11 +185,12 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxLTxprev_xkLowerThanxprev
     z_sonar.valid = (uint8_t)fix16_from_int(1);
     kalman_datafusion_filter(state, z_laser.val_front, z_sonar.value);
 
-    std::string msg = "x_k = " + std::to_string(state->x_k) + ", x_prev = " + std::to_string(x_prev);
+    std::string msg = "x_k = " + std::to_string(state->x_k) + ", x_prev = " +
+                      std::to_string(x_prev);
     CPPUNIT_ASSERT_MESSAGE(msg, x_prev > state->x_k);
-
 }
-void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxprev(){
+void KalmanDatafusionTest::
+    KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxprev() {
     kalman_state_matrix *state;
 
     laser_t z_laser;
@@ -187,10 +207,12 @@ void KalmanDatafusionTest::KalmanDFFilter_SonarxEQLaserxGTxprev_xkHigherThanxpre
     state->x_k = x_prev;
     z_laser.val_front = 300;
     z_sonar.value = 300;
-    kalman_datafusion_filter(state, fix16_from_int(z_laser.val_front), fix16_from_int(z_sonar.value));
+    kalman_datafusion_filter(state, fix16_from_int(z_laser.val_front),
+                             fix16_from_int(z_sonar.value));
 
-    std::string msg = "x_k was supposed to increase, x_k = " + std::to_string(fix16_to_float(state->x_k)) +
-            ", x_prev = " + std::to_string(fix16_to_float(x_prev));
+    std::string msg = "x_k was supposed to increase, x_k = " +
+                      std::to_string(fix16_to_float(state->x_k)) +
+                      ", x_prev = " + std::to_string(fix16_to_float(x_prev));
     CPPUNIT_ASSERT_MESSAGE(msg, state->x_k > x_prev);
 }
 

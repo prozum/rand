@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-//The room is 300 cm high
+// The room is 300 cm high
 #define ROOM_HEIGHT 300
 
 class Renderer;
@@ -14,7 +14,7 @@ class BlockBuilder;
 
 class Simulator {
 
-public:
+  public:
     std::unique_ptr<Renderer> Render;
     std::unique_ptr<BlockBuilder> BBuilder;
     std::unique_ptr<Minimap> Map;
@@ -36,7 +36,4 @@ public:
 
     void drawBlockGrid();
     void drawInfoBox();
-
-private:
-    unsigned int frameStartTime;
 };

@@ -1,5 +1,5 @@
-#include <sim/sim_avr.h>
 #include "io_test.h"
+#include <sim/sim_avr.h>
 
 CPPUNIT_TEST_SUITE_REGISTRATION(IOTest);
 
@@ -11,7 +11,7 @@ void IOTest::SetPinMode_Pin0SetIN_ExpectIN() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin7SetIN_ExpectIN() {
@@ -22,7 +22,7 @@ void IOTest::SetPinMode_Pin7SetIN_ExpectIN() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin8SetIN_ExpectIN() {
@@ -33,7 +33,7 @@ void IOTest::SetPinMode_Pin8SetIN_ExpectIN() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin13SetIN_ExpectIN() {
@@ -44,7 +44,7 @@ void IOTest::SetPinMode_Pin13SetIN_ExpectIN() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin0SetOUT_ExpectOUT() {
@@ -55,7 +55,7 @@ void IOTest::SetPinMode_Pin0SetOUT_ExpectOUT() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin7SetOUT_ExpectOUT() {
@@ -66,7 +66,7 @@ void IOTest::SetPinMode_Pin7SetOUT_ExpectOUT() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x80, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x80, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin8SetOUT_ExpectOUT() {
@@ -77,7 +77,7 @@ void IOTest::SetPinMode_Pin8SetOUT_ExpectOUT() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin13SetOUT_ExpectOUT() {
@@ -88,7 +88,7 @@ void IOTest::SetPinMode_Pin13SetOUT_ExpectOUT() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x20, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x20, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin13SetHigherThan1_ExpectNoChange() {
@@ -99,7 +99,7 @@ void IOTest::SetPinMode_Pin13SetHigherThan1_ExpectNoChange() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.ddr);
 }
 
 void IOTest::SetPinMode_Pin13SetLessThan0_ExpectNoChange() {
@@ -110,7 +110,7 @@ void IOTest::SetPinMode_Pin13SetLessThan0_ExpectNoChange() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.ddr);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.ddr);
 }
 
 void IOTest::WritePin_Pin0WriteLOW_ExpectLOW() {
@@ -122,7 +122,7 @@ void IOTest::WritePin_Pin0WriteLOW_ExpectLOW() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.port);
 }
 
 void IOTest::WritePin_Pin7WriteLOW_ExpectLOW() {
@@ -134,7 +134,7 @@ void IOTest::WritePin_Pin7WriteLOW_ExpectLOW() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.port);
 }
 
 void IOTest::WritePin_Pin8WriteLOW_ExpectLOW() {
@@ -146,7 +146,7 @@ void IOTest::WritePin_Pin8WriteLOW_ExpectLOW() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.pin);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.pin);
 }
 
 void IOTest::WritePin_Pin13WriteLOW_ExpectLOW() {
@@ -158,7 +158,7 @@ void IOTest::WritePin_Pin13WriteLOW_ExpectLOW() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.port);
 }
 
 void IOTest::WritePin_Pin0WriteHIGH_ExpectHIGH() {
@@ -170,7 +170,7 @@ void IOTest::WritePin_Pin0WriteHIGH_ExpectHIGH() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int)state.port);
 }
 
 void IOTest::WritePin_Pin7WriteHIGH_ExpectHIGH() {
@@ -182,7 +182,7 @@ void IOTest::WritePin_Pin7WriteHIGH_ExpectHIGH() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'D');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x80, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x80, (int)state.port);
 }
 
 void IOTest::WritePin_Pin8WriteHIGH_ExpectHIGH() {
@@ -194,7 +194,7 @@ void IOTest::WritePin_Pin8WriteHIGH_ExpectHIGH() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x01, (int)state.port);
 }
 
 void IOTest::WritePin_Pin13WriteHIGH_ExpectHIGH() {
@@ -206,7 +206,7 @@ void IOTest::WritePin_Pin13WriteHIGH_ExpectHIGH() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x20, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x20, (int)state.port);
 }
 
 void IOTest::WritePin_Pin13WriteHigherThan1_ExpectNoChange() {
@@ -218,7 +218,7 @@ void IOTest::WritePin_Pin13WriteHigherThan1_ExpectNoChange() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.port);
 }
 
 void IOTest::WritePin_Pin13WriteLessThan0_ExpectNoChange() {
@@ -230,7 +230,7 @@ void IOTest::WritePin_Pin13WriteLessThan0_ExpectNoChange() {
 
     avr_ioport_state_t state = Tools::avr_get_state(avr, 'B');
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int) state.port);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, 0x00, (int)state.port);
 }
 
 void IOTest::ReadPin_Pin0ReadLOW_ExpectLOW() {
@@ -312,4 +312,3 @@ void IOTest::ReadPin_Pin13ReadHIGH_ExpectHIGH() {
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE(INVALID_DDR, (int)0xCFFF, (int)avr->opcode);
 }
-

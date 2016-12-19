@@ -1,7 +1,7 @@
 #pragma once
 
-#include <vector>
 #include <stdint.h>
+#include <vector>
 
 #include "Block.h"
 
@@ -12,15 +12,16 @@ extern "C" {
 class Drone;
 
 class Sonar : public SimObject {
-private:
+  private:
     Drone &Drn;
     double Length;
     double Span;
     uint32_t RayCount;
 
-    void calcDist(std::vector<Block> & Blocks);
+    void calcDist(std::vector<Block> &Blocks);
     void updateRays(Vector2D Pos, double Angle);
-public:
+
+  public:
     sonar_t Struct;
     std::vector<Ray> Rays;
 

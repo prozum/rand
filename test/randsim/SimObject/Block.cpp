@@ -13,22 +13,20 @@ Block::Block(Vector2D Pos, BlockType Type) : SimObject(Pos), Type(Type) {
 
 void Block::draw() {
     switch (Type) {
-        case BlockType::Air:
-            Sim->Render->setColor(WHITE);
-            break;
-        case BlockType::Wall:
-            Sim->Render->setColor(BLACK);
-            break;
-        case BlockType::Window:
-            Sim->Render->setColor(BLUE);
-            break;
+    case BlockType::Air:
+        Sim->Render->setColor(WHITE);
+        break;
+    case BlockType::Wall:
+        Sim->Render->setColor(BLACK);
+        break;
+    case BlockType::Window:
+        Sim->Render->setColor(BLUE);
+        break;
     }
     Sim->Render->drawRectRel({Min.X, Max.Y}, {Size, Size});
 }
 
-void Block::update() {
-
-}
+void Block::update() {}
 
 bool Block::intersect(Ray Ray, Vector2D &Res) {
     double tx1 = (Min.X - Ray.Origin.X) / Ray.Direction.X;

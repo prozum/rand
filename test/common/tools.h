@@ -2,13 +2,13 @@
 
 #include <stdint.h>
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <libgen.h>
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "sim_avr.h"
 #include "avr_ioport.h"
+#include "sim_avr.h"
 #include "sim_elf.h"
 #include "sim_gdb.h"
 #include "sim_vcd_file.h"
@@ -27,25 +27,16 @@ enum {
     PORTD_ = 0x0D
 };
 
-enum {
-    PIN0,
-    PIN1,
-    PIN2,
-    PIN3,
-    PIN4,
-    PIN5,
-    PIN6,
-    PIN7
-};
-
+enum { PIN0, PIN1, PIN2, PIN3, PIN4, PIN5, PIN6, PIN7 };
 
 class Tools {
-public:
+  public:
     static avr_t *init(char const *fname, uint32_t freq);
 
     static void avr_step(avr_t *avr, uint32_t steps);
 
     static avr_ioport_state_t avr_get_state(avr_t *avr, char port);
 
-    static void avr_set_state(avr_t *avr, uint32_t reg, uint32_t pin, uint32_t val);
+    static void avr_set_state(avr_t *avr, uint32_t reg, uint32_t pin,
+                              uint32_t val);
 };

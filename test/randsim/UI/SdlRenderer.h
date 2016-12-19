@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SDL.h>
-#include <SDL_ttf.h>
 #include <SDL2_gfxPrimitives.h>
+#include <SDL_ttf.h>
 
 #include "UI/Renderer.h"
 
@@ -18,7 +18,7 @@ class SdlRenderer : public Renderer {
     float MinFrameTime = 1000 / 60;
     int LastTime = 0;
 
-public:
+  public:
     bool init();
     ~SdlRenderer();
 
@@ -40,11 +40,11 @@ public:
     void drawRectRel(Vector2D Pos, Vector2D Size);
     void drawCircleRel(Vector2D Center, int Radius);
     void drawPieRel(Vector2D Center, int Radius, int Start, int End);
-    void drawTextRel(std::string Text, Vector2D Pos, Color Background = {0, 0, 0});
+    void drawTextRel(std::string Text, Vector2D Pos,
+                     Color Background = {0, 0, 0});
 
     // Targets
     void setScreenTarget();
     void setMinimapTarget();
     void drawTarget(Vector2D Pos, Vector2D Size, bool ToScreen = false);
 };
-

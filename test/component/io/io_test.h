@@ -1,16 +1,16 @@
 #pragma once
 
-#include <cppunit/TestFixture.h>
-#include <cppunit/extensions/HelperMacros.h>
-#include <cppunit/CompilerOutputter.h>
-#include <cppunit/TestRunner.h>
 #include <cppunit/BriefTestProgressListener.h>
-#include <cppunit/TestResultCollector.h>
+#include <cppunit/CompilerOutputter.h>
+#include <cppunit/TestFixture.h>
 #include <cppunit/TestResult.h>
+#include <cppunit/TestResultCollector.h>
+#include <cppunit/TestRunner.h>
+#include <cppunit/extensions/HelperMacros.h>
 
 extern "C" {
-#include "tools.h"
 #include "avr_mcu_section.h"
+#include "tools.h"
 }
 
 #define ATMEGA328p "atmega328p"
@@ -25,16 +25,13 @@ extern "C" {
 #define LOW 0
 #define HIGH 1
 
-
 class IOTest : public CppUnit::TestFixture {
-CPPUNIT_TEST_SUITE(IOTest);
+    CPPUNIT_TEST_SUITE(IOTest);
 
-        CPPUNIT_TEST(SetPinMode_Pin0AndPin7SetOUT_ExpectBothOUT);
-
+    CPPUNIT_TEST(SetPinMode_Pin0AndPin7SetOUT_ExpectBothOUT);
 
     CPPUNIT_TEST_SUITE_END();
 
-public:
-
+  public:
     void SetPinMode_Pin0AndPin7SetOUT_ExpectBothOUT();
 };

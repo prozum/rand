@@ -2,15 +2,15 @@
 
 #include <vector>
 
-#include "UI/Renderer.h"
 #include "Common/Vector2D.h"
-
+#include "UI/Renderer.h"
 
 class Simulator;
 
 class SimObject {
     static Simulator *DefaultSim;
-public:
+
+  public:
     Simulator *Sim;
 
     Vector2D Pos;
@@ -22,4 +22,3 @@ public:
     virtual void draw() = 0;
     virtual void update() = 0;
 };
-

@@ -11,13 +11,14 @@ extern "C" {
 class Drone;
 
 class Laser : public SimObject {
-private:
+  private:
     Drone &Drn;
     double Length;
 
     void updateRays(Vector2D Pos, double Angle);
-    void calcDist(std::vector<Block>& Blocks);
-public:
+    void calcDist(std::vector<Block> &Blocks);
+
+  public:
     std::vector<Ray> Rays;
     laser_t Struct;
 
@@ -26,4 +27,3 @@ public:
     void update();
     void draw();
 };
-

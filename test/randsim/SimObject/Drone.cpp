@@ -1,24 +1,25 @@
 #include "Drone.h"
 
-Drone::Drone(Vector2D Pos, int Size) : SimObject(Pos), Size(Size), Angle(0),
-                                       SonarModule(*this, 57, DegToRad(15), 220),
-                                       LaserModule(*this, 400.0),
-                                       Height(0) {
-    //Initialize the structs
+Drone::Drone(Vector2D Pos, int Size)
+    : SimObject(Pos), Size(Size), Angle(0),
+      SonarModule(*this, 57, DegToRad(15), 220), LaserModule(*this, 400.0),
+      Height(0) {
+    // Initialize the structs
     init_fc(&FC, TX1, 1);
     ir_init(&IrTop, A0);
     ir_init(&IrBottom, A1);
     IrBottom.value = 80;
 
     init_nav(&NavStruct);
-    init_rep(&RepStruct, &FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop, &IrBottom);
+    init_rep(&RepStruct, &FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop,
+             &IrBottom);
 
-    //Set FC duties to simplify movement for this simulation
+    // Set FC duties to simplify movement for this simulation
     FC.duty->MIN_FC_DUTY = 0 * FC_OFFSET;
     FC.duty->MID_FC_DUTY = 1 * FC_OFFSET;
     FC.duty->MAX_FC_DUTY = 2 * FC_OFFSET;
 
-    //Makes sure the drone starts in a non-moving state
+    // Makes sure the drone starts in a non-moving state
     rotate_stop(&FC);
     move_stop(&FC);
     LastNavUpdate = 0;
@@ -38,7 +39,7 @@ void Drone::update() {
     SonarModule.update();
     LaserModule.update();
 
-    if((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
+    if ((Sim->Time - LastNavUpdate) >= NAV_UPDATE_TIME) {
         navigation(&RepStruct, &NavStruct);
         LastNavUpdate = Sim->Time;
     }
@@ -58,7 +59,8 @@ double Drone::calcDistance(const double Speed, double DeltaTime) {
 }
 
 void Drone::updateYaw(uint16_t YawValue) {
-    //Check rotation and update, 1 means right, -1 means left and 0 means no rotation
+    // Check rotation and update, 1 means right, -1 means left and 0 means no
+    // rotation
     double YawVelocity = calcVelocity(YawValue, ROTATION_SPEED);
     double YawDistance = calcDistance(YawVelocity, Sim->DeltaTime);
 
@@ -75,7 +77,7 @@ void Drone::updateYaw(uint16_t YawValue) {
 void Drone::updateRoll(uint16_t RollValue) {
     double RollVelocity = calcVelocity(RollValue, STRAFE_SPEED);
     double RollDistance = calcDistance(RollVelocity, Sim->DeltaTime);
-    //double OrthogAngle = Angle + NINETY_DEGREES_IN_RAD + ROTATION_OFFSET;
+    // double OrthogAngle = Angle + NINETY_DEGREES_IN_RAD + ROTATION_OFFSET;
     double OrthogAngle = Angle + NINETY_DEGREES_IN_RAD;
 
     Pos.X += cos(OrthogAngle) * RollDistance;
@@ -87,11 +89,11 @@ void Drone::updateRoll(uint16_t RollValue) {
 }
 
 void Drone::updatePitch(uint16_t PitchValue) {
-    //Calculate the direction of movement
+    // Calculate the direction of movement
     double PitchVelocity = calcVelocity(PitchValue, MOVEMENT_SPEED);
     double PitchDistance = calcDistance(PitchVelocity, Sim->DeltaTime);
 
-    //Calculate the new position of the drone
+    // Calculate the new position of the drone
     Pos.X += cos(Angle) * PitchDistance;
     Pos.Y += sin(Angle) * PitchDistance;
 
@@ -101,14 +103,14 @@ void Drone::updatePitch(uint16_t PitchValue) {
 }
 
 void Drone::updateThrottle(uint16_t ThrottleValue) {
-    //Calculate the altitude velocity based on input from FC
+    // Calculate the altitude velocity based on input from FC
     double ThrottleVelocity = calcVelocity(ThrottleValue, ALTITUDE_SPEED);
     double ThrottleDistance = calcDistance(ThrottleVelocity, Sim->DeltaTime);
 
-    //Update height field and IR-sensors
+    // Update height field and IR-sensors
     Height += ThrottleDistance;
     uint16_t DistToFloor = Height;
-    if(DistToFloor >= IR_MAX_DIST_CM)
+    if (DistToFloor >= IR_MAX_DIST_CM)
         IrBottom.value = IR_MAX_DIST_CM;
     else if (DistToFloor < IR_MIN_DIST_CM)
         IrBottom.value = IR_MIN_DIST_CM;
@@ -116,7 +118,7 @@ void Drone::updateThrottle(uint16_t ThrottleValue) {
         IrBottom.value = DistToFloor;
 
     uint16_t DistToCeil = ROOM_HEIGHT - Height;
-    if(DistToCeil >= IR_MAX_DIST_CM)
+    if (DistToCeil >= IR_MAX_DIST_CM)
         IrTop.value = IR_MAX_DIST_CM;
     else if (DistToCeil < IR_MIN_DIST_CM)
         IrTop.value = IR_MIN_DIST_CM;
