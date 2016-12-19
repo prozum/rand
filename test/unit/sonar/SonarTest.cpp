@@ -1,4 +1,4 @@
-#include "sonar_test.h"
+#include "SonarTest.h"
 
 extern "C" {
 #include "core/io.h"
@@ -15,10 +15,10 @@ void SonarTest::pulseSonar_expectBuffer010() {
     sonar_init(&sonar, TRIGGER, ECHO);
     pulse_sonar(&sonar);
 
-    //The values in the buffer is stored in reverse order:
-    dval_t low2 = digital_read((dpin_t) sonar.trig);
-    dval_t high = digital_read((dpin_t) sonar.trig);
-    dval_t low1 = digital_read((dpin_t) sonar.trig);
+    // The values in the buffer is stored in reverse order:
+    dval_t low2 = digital_read((dpin_t)sonar.trig);
+    dval_t high = digital_read((dpin_t)sonar.trig);
+    dval_t low1 = digital_read((dpin_t)sonar.trig);
 
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The first low pulse was not send correctly", LOW, low1);
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The high pulse was not send correctly", HIGH, high);
@@ -86,15 +86,8 @@ void SonarTest::sonarInit_expectTriggerOutAndEchoIn() {
     CPPUNIT_ASSERT_EQUAL_MESSAGE("The trigger pin was not setup correctly.", mode_trigger, OUTPUT);
 }
 
-void SonarTest::sonarToCentimeters_1millis_expect17() {
-    CPPUNIT_ASSERT_EQUAL(17, (int) sonar_to_centimeters(1));
-}
+void SonarTest::sonarToCentimeters_1millis_expect17() { CPPUNIT_ASSERT_EQUAL(17, (int)sonar_to_centimeters(1)); }
 
-void SonarTest::sonarToCentimeters_5millis_expect85() {
-    CPPUNIT_ASSERT_EQUAL(86, (int) sonar_to_centimeters(5));
-}
+void SonarTest::sonarToCentimeters_5millis_expect85() { CPPUNIT_ASSERT_EQUAL(86, (int)sonar_to_centimeters(5)); }
 
-void SonarTest::sonarToCentimeters_11millis_expect188() {
-    CPPUNIT_ASSERT_EQUAL(189, (int) sonar_to_centimeters(11));
-}
-
+void SonarTest::sonarToCentimeters_11millis_expect188() { CPPUNIT_ASSERT_EQUAL(189, (int)sonar_to_centimeters(11)); }

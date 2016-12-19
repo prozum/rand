@@ -23,7 +23,7 @@ typedef struct nav_s nav_t; //!< Forward declare due to circular dependencies
  * An enum for storing possible states for the sets of the heuristic search algorithm
  */
 typedef enum set_e {
-    OPEN, //!< The set is open, meaning there's still a chance to find a path to the goal
+    OPEN,  //!< The set is open, meaning there's still a chance to find a path to the goal
     CLOSED //!< The set is closed, there's no chance to find a path to the goal
 } set_t;
 
@@ -32,11 +32,11 @@ typedef enum set_e {
  */
 typedef struct search_node_s search_node_t;
 struct search_node_s {
-    map_coord_t pos; //!< Position on the drone's internal map
+    map_coord_t pos;       //!< Position on the drone's internal map
     search_node_t *parent; //!< The parent of the node in the constructed search-tree
-    uint8_t gscore; //!< ARNE MUST DOCUMENT
-    uint8_t fscore; //!< ARNE MUST DOCUMENT
-    uint8_t valid; //!< ARNE MUST DOCUMENT
+    uint8_t gscore;        //!< ARNE MUST DOCUMENT
+    uint8_t fscore;        //!< ARNE MUST DOCUMENT
+    uint8_t valid;         //!< ARNE MUST DOCUMENT
 };
 
 /**
@@ -44,11 +44,11 @@ struct search_node_s {
  */
 typedef struct search_s {
     search_node_t *closed_set; //!< A pointer to the head of the closed-set list of the search
-    search_node_t *open_set; //!< A pointer to the head of the open-set list of the search
-    uint16_t closedset_size; //!< Stores the size of the closed set
-    uint16_t openset_size; //!< Stored the size of the open set
+    search_node_t *open_set;   //!< A pointer to the head of the open-set list of the search
+    uint16_t closedset_size;   //!< Stores the size of the closed set
+    uint16_t openset_size;     //!< Stored the size of the open set
     map_coord_t goal; //!< Stores the goal position for the search, i.e. the point on the map in which the search ends
-    uint8_t active; //!< A flag for indicating if the search is active, i.e. needs to be scheduled again
+    uint8_t active;   //!< A flag for indicating if the search is active, i.e. needs to be scheduled again
 } search_t;
 
 /**
@@ -61,7 +61,7 @@ void init_search(search_t *search);
  * @param nav - A pointer to the nav_t struct maintaining information about position, angle etc.
  * @return - A path to the specified point?
  */
-search_node_t* find_path(nav_t *nav);
+search_node_t *find_path(nav_t *nav);
 /**
  * Adds a node the the specified list
  * @param list - A pointer to the list to add to
@@ -69,14 +69,14 @@ search_node_t* find_path(nav_t *nav);
  * @param set - NEEDS DOCUMENTATION
  * @return - NEEDS DOCUMENTATION
  */
-search_node_t* addnode(search_t *list, search_node_t node, set_t set);
+search_node_t *addnode(search_t *list, search_node_t node, set_t set);
 /**
  * Close a specified node from the search list
  * @param list - The search list
  * @param node - The node to close
  * @return - NEEDS DOCUMENTATION
  */
-search_node_t* close_node(search_t *list, search_node_t *node);
+search_node_t *close_node(search_t *list, search_node_t *node);
 /**
  * Add neighbours to a specified node on the list
  * @param list - The search list
@@ -97,6 +97,6 @@ uint8_t estimate(search_node_t *node, map_coord_t pos);
  */
 search_node_t lowestf(search_t *search);
 
-#endif //RAND_SEARCH_H
+#endif // RAND_SEARCH_H
 
 //! @}

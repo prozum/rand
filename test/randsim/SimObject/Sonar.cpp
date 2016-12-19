@@ -2,8 +2,7 @@
 #include "Drone.h"
 
 Sonar::Sonar(Drone &Drn, uint32_t RayCount, double Span, double Length)
-    : Drn(Drn), SimObject(Drn.Pos), Span(Span), RayCount(RayCount),
-      Length(Length) {
+    : Drn(Drn), SimObject(Drn.Pos), Span(Span), RayCount(RayCount), Length(Length) {
     sonar_init(&Struct, P0, P1);
 
     for (int i = 0; i < RayCount; ++i) {

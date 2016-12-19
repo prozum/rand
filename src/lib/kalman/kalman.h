@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+
 #include "core/log.h"
 #include "libfixmath/fix16.h"
 
@@ -19,8 +20,8 @@
 typedef struct kalman_state_s {
     log_sender_t source_components; //!< The component the filter is running on
 
-    fix16_t a;   //!< How much we assume the next measurement differs from the previous one
-    fix16_t r;   //!< Variance of sensor, i.e. how much a measurement tends to differ from the actual
+    fix16_t a; //!< How much we assume the next measurement differs from the previous one
+    fix16_t r; //!< Variance of sensor, i.e. how much a measurement tends to differ from the actual
 
     fix16_t z_k; //!< Current observation
     fix16_t g_k; //!< Kalman gain variable
@@ -54,6 +55,6 @@ void kalman_run(kalman_state_t *state, fix16_t z_k);
  */
 void kalman_calibrate(kalman_state_t *initial_state, fix16_t z_0);
 
-#endif //RAND_SINGLE_KALMAN_H
+#endif // RAND_SINGLE_KALMAN_H
 
 //! @}

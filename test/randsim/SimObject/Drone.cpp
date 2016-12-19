@@ -1,8 +1,7 @@
 #include "Drone.h"
 
 Drone::Drone(Vector2D Pos, int Size)
-    : SimObject(Pos), Size(Size), Angle(0),
-      SonarModule(*this, 57, DegToRad(15), 220), LaserModule(*this, 400.0),
+    : SimObject(Pos), Size(Size), Angle(0), SonarModule(*this, 57, DegToRad(15), 220), LaserModule(*this, 400.0),
       Height(0) {
     // Initialize the structs
     init_fc(&FC, TX1, 1);
@@ -11,8 +10,7 @@ Drone::Drone(Vector2D Pos, int Size)
     IrBottom.value = 80;
 
     init_nav(&NavStruct);
-    init_rep(&RepStruct, &FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop,
-             &IrBottom);
+    init_rep(&RepStruct, &FC, &LaserModule.Struct, &SonarModule.Struct, &IrTop, &IrBottom);
 
     // Set FC duties to simplify movement for this simulation
     FC.duty->MIN_FC_DUTY = 0 * FC_OFFSET;
@@ -50,13 +48,9 @@ double Drone::calcAcceleration(double PrevVel, double NewVel) {
     return (NewVel - PrevVel) / (Sim->DeltaTime / MS_PR_SEC);
 }
 
-double Drone::calcVelocity(double DirectionValue, const double Speed) {
-    return (DirectionValue - FC_OFFSET) * Speed;
-}
+double Drone::calcVelocity(double DirectionValue, const double Speed) { return (DirectionValue - FC_OFFSET) * Speed; }
 
-double Drone::calcDistance(const double Speed, double DeltaTime) {
-    return Speed * (DeltaTime / MS_PR_SEC);
-}
+double Drone::calcDistance(const double Speed, double DeltaTime) { return Speed * (DeltaTime / MS_PR_SEC); }
 
 void Drone::updateYaw(uint16_t YawValue) {
     // Check rotation and update, 1 means right, -1 means left and 0 means no

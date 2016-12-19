@@ -10,29 +10,30 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "libfixmath/fix16.h"
 
-#include "sonar/sonar.h"
-#include "laser/laser.h"
-#include "ir/ir.h"
-#include "core/log.h"
 #include "core/io.h"
+#include "core/log.h"
+#include "ir/ir.h"
+#include "laser/laser.h"
+#include "libfixmath/fix16.h"
+#include "sonar/sonar.h"
+
 /**
  * A struct for containing acceleration-values read by the Naze32 Rev6 flight-controller
  */
 typedef struct acceleration_s {
-    fix16_t x;  //!< Left/right
-    fix16_t  y; //!< Forward/backwards
-    fix16_t  z; //!< Up/down
+    fix16_t x; //!< Left/right
+    fix16_t y; //!< Forward/backwards
+    fix16_t z; //!< Up/down
 } acceleration_t;
 
 /**
  * A struct for containing velocity-values read by the Naze32 Rev 6 flight-controller
  */
 typedef struct velocity_s {
-    fix16_t  x; //!< Left/right
-    fix16_t  y; //!< Forward/backwards
-    fix16_t  z; //!< Up/down
+    fix16_t x; //!< Left/right
+    fix16_t y; //!< Forward/backwards
+    fix16_t z; //!< Up/down
 } velocity_t;
 
 /**
@@ -48,17 +49,17 @@ typedef struct duty_s {
  * A data-structure for storing data related to the implementation of the flight-controller
  */
 typedef struct fc_s {
-    duty_t *duty; //!< Stores the desired duty-values
+    duty_t *duty;        //!< Stores the desired duty-values
     acceleration_t *acc; //!< Stores the readings from the flight-controllers accelerometer
-    velocity_t *vel; //!< Stores the accumulated velocity
-    tx_t serial; //!< Stores the serial pin to which the flight-controller is connected
+    velocity_t *vel;     //!< Stores the accumulated velocity
+    tx_t serial;         //!< Stores the serial pin to which the flight-controller is connected
 
     uint16_t deltatime; //!< Stores the time since the flight-controller was last scheduled
-    uint16_t yaw; //!< Stores the current duty-value for the yaw-axis (rotation around the vertical axis)
-    uint16_t pitch; //!< Stores the current duty-value for the pitch-axis (forwards/backwards)
-    uint16_t roll; //!< Stores the current duty-value for the roll-axis (left/right)
-    uint16_t throttle; //!< Stores the current duty-value for the throttle-axis (up/down)
-    fix16_t gyro; //!< Rotation Velocity
+    uint16_t yaw;       //!< Stores the current duty-value for the yaw-axis (rotation around the vertical axis)
+    uint16_t pitch;     //!< Stores the current duty-value for the pitch-axis (forwards/backwards)
+    uint16_t roll;      //!< Stores the current duty-value for the roll-axis (left/right)
+    uint16_t throttle;  //!< Stores the current duty-value for the throttle-axis (up/down)
+    fix16_t gyro;       //!< Rotation Velocity
 } fc_t;
 
 /**
@@ -171,6 +172,6 @@ void set_velocity(fc_t *fc, float x, float y, float z);
  */
 void update_velocity(fc_t *fc, acceleration_t *a, float deltatime);
 
-#endif //RAND_FC_H
+#endif // RAND_FC_H
 
 //! @}

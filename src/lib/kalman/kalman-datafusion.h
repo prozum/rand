@@ -8,15 +8,16 @@
  * @{
  */
 
+#include <math.h>
 #include <stdint.h>
+
 #include "core/log.h"
 #include "matrix/matrix.h"
-#include <math.h>
 
 //! This is a specific implementation of the Kalman filter for two units (laser + sonar)
 #define DATAFUSION_UNITS 2 //!< Defines the maximum number of sensors thay may be used in the filter
-#define ZLASER 0 //!< Defines the vector-index for the laser's readings
-#define ZSONAR 1 //!< Defines the vector-index for the sonar's readings
+#define ZLASER 0           //!< Defines the vector-index for the laser's readings
+#define ZSONAR 1           //!< Defines the vector-index for the sonar's readings
 
 /**
  * A data-structure for storing the state of the data-fusion filter
@@ -47,23 +48,22 @@ typedef struct kalman_matrix_state_s {
  * @param R - N x N diagonal matrix with sensor variances
  * @return - A pointer to the newly allocated datafusion-filter
  */
-kalman_state_matrix *kalman_datafusion_init (fix16_t a, fix16_t b, log_sender_t component,
-                             matrix_t *C, matrix_t *R);
+kalman_state_matrix *kalman_datafusion_init(fix16_t a, fix16_t b, log_sender_t component, matrix_t *C, matrix_t *R);
 /**
  * Filter a new set of readings
  * @param state - A pointer to the filter-struct
  * @param z_laser - The latest reading from the sensor
  * @param z_sonar - The latest reading from the sonar
  */
-void kalman_datafusion_filter (kalman_state_matrix *state, fix16_t z_laser, fix16_t z_sonar);
+void kalman_datafusion_filter(kalman_state_matrix *state, fix16_t z_laser, fix16_t z_sonar);
 /**
  * Calibrate the filter to the initial readings
  * @param state - The filter to calibrate
  * @param z_0_laser - The initial laser reading
  * @param z_0_sonar - The initial sonar reading
  */
-void kalman_datafusion_calibrate (kalman_state_matrix *state, fix16_t z_0_laser, fix16_t z_0_sonar);
+void kalman_datafusion_calibrate(kalman_state_matrix *state, fix16_t z_0_laser, fix16_t z_0_sonar);
 
-#endif //RAND_KALMAN_DF_H
+#endif // RAND_KALMAN_DF_H
 
 //! @}

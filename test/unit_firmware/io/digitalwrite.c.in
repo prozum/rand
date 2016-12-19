@@ -1,8 +1,8 @@
 #include "core/io.h"
 
-int main()
-{
+int main() {
     digital_write(@PIN_ID@, @PIN_VAL@);
 
-    while (1);
+    while (1)
+        ;
 }

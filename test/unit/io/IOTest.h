@@ -10,7 +10,7 @@
 
 extern "C" {
 #include "avr_mcu_section.h"
-#include "tools.h"
+#include "Tools.h"
 }
 
 #define ATMEGA328p "atmega328p"

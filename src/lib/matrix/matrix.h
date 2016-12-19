@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+
 #include "core/log.h"
 #include "libfixmath/fix16.h"
 
@@ -17,7 +18,7 @@
  * A struct for storing fixed-point rows x columns matrices
  */
 typedef struct matrix_s {
-    uint8_t rows; //!< Number of rows in the matrix
+    uint8_t rows;    //!< Number of rows in the matrix
     uint8_t columns; //!< Number of columns in the matrix
     fix16_t *values; //!< A pointer to an array of fixed-point values
 } matrix_t;
@@ -118,6 +119,6 @@ void matrix_set(matrix_t *matrix, uint8_t row, uint8_t column, fix16_t value);
  */
 fix16_t matrix_get(matrix_t *matrix, uint8_t row, uint8_t column);
 
-#endif //RAND_MATRIX_MATH_H
+#endif // RAND_MATRIX_MATH_H
 
 //! @}

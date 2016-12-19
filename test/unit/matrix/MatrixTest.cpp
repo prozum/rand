@@ -1,4 +1,4 @@
-#include "matrix_test.h"
+#include "MatrixTest.h"
 
 CPPUNIT_TEST_SUITE_REGISTRATION(MatrixTest);
 
@@ -71,19 +71,14 @@ void MatrixTest::tearDown() {
 
 void MatrixTest::mult_mat_mat_ValidMatrix_ExpectCorrect() {
     matrix_t *resMat = mult_mat_mat(ma1, ma2);
-    float ResMulMat3x3[3][3] = {
-        {52.7, 70.6, 88.5}, {32.4, 43.8, 55.2}, {60.5, 73.0, 85.5}};
+    float ResMulMat3x3[3][3] = {{52.7, 70.6, 88.5}, {32.4, 43.8, 55.2}, {60.5, 73.0, 85.5}};
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-rows", resMat->rows,
-                                 ma1->rows);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-columns", resMat->columns,
-                                 ma2->columns);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-rows", resMat->rows, ma1->rows);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-columns", resMat->columns, ma2->columns);
 
     for (int i = 0; i < resMat->rows; ++i) {
         for (int j = 0; j < resMat->columns; ++j) {
-            CPPUNIT_ASSERT_EQUAL((int)ResMulMat3x3[i][j] * 100,
-                                 (int)fix16_to_float(matrix_get(resMat, i, j)) *
-                                     100);
+            CPPUNIT_ASSERT_EQUAL((int)ResMulMat3x3[i][j] * 100, (int)fix16_to_float(matrix_get(resMat, i, j)) * 100);
         }
     }
     matrix_destructor(resMat);
@@ -100,16 +95,12 @@ void MatrixTest::mult_mat_mat_DifferentSizes_ExpectCorrect() {
     resMat = mult_mat_mat(ma1, ma4);
     float ResMulMat[3][2] = {{41.1, 59}, {25.4, 36.8}, {44.5, 57}};
 
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-rows", resMat->rows,
-                                 ma1->rows);
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-columns", resMat->columns,
-                                 ma4->columns);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-rows", resMat->rows, ma1->rows);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Incorrect matrix-columns", resMat->columns, ma4->columns);
 
     for (int i = 0; i < resMat->rows; ++i) {
         for (int j = 0; j < resMat->columns; ++j) {
-            CPPUNIT_ASSERT_EQUAL((int)ResMulMat[i][j] * 100,
-                                 (int)fix16_to_float(matrix_get(resMat, i, j)) *
-                                     100);
+            CPPUNIT_ASSERT_EQUAL((int)ResMulMat[i][j] * 100, (int)fix16_to_float(matrix_get(resMat, i, j)) * 100);
         }
     }
     matrix_destructor(resMat);
@@ -121,8 +112,7 @@ void MatrixTest::trans_matrix_SquareMatrix_ExpectTransposed() {
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            CPPUNIT_ASSERT_EQUAL(ResTransMat[i][j],
-                                 fix16_to_float(matrix_get(resMat, i, j)));
+            CPPUNIT_ASSERT_EQUAL(ResTransMat[i][j], fix16_to_float(matrix_get(resMat, i, j)));
         }
     }
     matrix_destructor(resMat);
@@ -134,11 +124,8 @@ void MatrixTest::trans_matrix_NotSquareMatrix_ExpectTransposed() {
 
     for (int i = 0; i < resMat->rows; ++i) {
         for (int j = 0; j < resMat->columns; ++j) {
-            std::string msg =
-                "At index " + std::to_string(i) + ", " + std::to_string(j);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE(
-                msg, ResTransMat[i][j],
-                fix16_to_float(matrix_get(resMat, i, j)));
+            std::string msg = "At index " + std::to_string(i) + ", " + std::to_string(j);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, ResTransMat[i][j], fix16_to_float(matrix_get(resMat, i, j)));
         }
     }
     matrix_destructor(resMat);
@@ -150,8 +137,7 @@ void MatrixTest::add_mat_mat_ValidMatrix_ExpectCorrect() {
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            CPPUNIT_ASSERT_EQUAL(fix16_from_float(ResAddMat3x3[i][j]),
-                                 matrix_get(resMat, i, j));
+            CPPUNIT_ASSERT_EQUAL(fix16_from_float(ResAddMat3x3[i][j]), matrix_get(resMat, i, j));
         }
     }
     matrix_destructor(resMat);
@@ -170,8 +156,7 @@ void MatrixTest::sub_mat_mat_ValidMatrix_ExpectCorrect() {
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            CPPUNIT_ASSERT_EQUAL(fix16_from_float(ResSubMat3x3[i][j]),
-                                 matrix_get(resMat, i, j));
+            CPPUNIT_ASSERT_EQUAL(fix16_from_float(ResSubMat3x3[i][j]), matrix_get(resMat, i, j));
         }
     }
     matrix_destructor(resMat);
@@ -189,11 +174,8 @@ void MatrixTest::ident_mat_ExpectCorrect() {
 
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
-            std::string msg =
-                "At index " + std::to_string(i) + ", " + std::to_string(j);
-            CPPUNIT_ASSERT_EQUAL_MESSAGE(
-                msg, ResIdentMat3[i][j],
-                fix16_to_float(matrix_get(resMat, i, j)));
+            std::string msg = "At index " + std::to_string(i) + ", " + std::to_string(j);
+            CPPUNIT_ASSERT_EQUAL_MESSAGE(msg, ResIdentMat3[i][j], fix16_to_float(matrix_get(resMat, i, j)));
         }
     }
     matrix_destructor(resMat);
@@ -205,8 +187,7 @@ void MatrixTest::add_vec_vec_ValidVectors_ExpectCorrect() {
     float ResAddVec[] = {2, 4, 2};
 
     for (int i = 0; i < ResVec->rows; ++i) {
-        CPPUNIT_ASSERT_EQUAL(ResAddVec[i],
-                             fix16_to_float(matrix_get(ResVec, i, 0)));
+        CPPUNIT_ASSERT_EQUAL(ResAddVec[i], fix16_to_float(matrix_get(ResVec, i, 0)));
     }
     matrix_destructor(ResVec);
 }
@@ -221,8 +202,7 @@ void MatrixTest::sub_vec_Vec_ValidVectors_ExpectCorrect() {
 
     matrix_t *ResVec = sub_vec_vec(vec, vec);
     for (int i = 0; i < ResVec->columns; ++i) {
-        CPPUNIT_ASSERT_EQUAL(ResSubVec[i],
-                             fix16_to_float(matrix_get(ResVec, i, 0)));
+        CPPUNIT_ASSERT_EQUAL(ResSubVec[i], fix16_to_float(matrix_get(ResVec, i, 0)));
     }
     matrix_destructor(ResVec);
 }
@@ -230,9 +210,7 @@ void MatrixTest::sub_vec_Vec_ValidVectors_ExpectCorrect() {
 void MatrixTest::sub_vec_vec_EmptyVectors_ExpectError() {
     matrix_t *ResVec = sub_vec_vec(vec, vecEmpty);
 
-    CPPUNIT_ASSERT_MESSAGE(
-        "sub_vec_vec allocated a vector eventhough a parameter was NULL.",
-        ResVec == NULL);
+    CPPUNIT_ASSERT_MESSAGE("sub_vec_vec allocated a vector eventhough a parameter was NULL.", ResVec == NULL);
 }
 
 void MatrixTest::inv_mat_ValidMatrix_ExpectCorrect() {
@@ -251,8 +229,7 @@ void MatrixTest::inv_mat_ValidMatrix_ExpectCorrect() {
 
     for (int i = 0; i < matToInv->rows; ++i) {
         for (int j = 0; j < matToInv->columns; ++j) {
-            CPPUNIT_ASSERT_EQUAL(ResMat[i][j],
-                                 fix16_to_float(matrix_get(resMat, i, j)));
+            CPPUNIT_ASSERT_EQUAL(ResMat[i][j], fix16_to_float(matrix_get(resMat, i, j)));
         }
     }
     matrix_destructor(matToInv);
@@ -280,8 +257,7 @@ void MatrixTest::matrix_get_1x1_ExpectCorrect() {
     matrix_t *get_from = matrix_constructor(1, 1);
     get_from->values[0] = fix16_from_float(value[0][0]);
 
-    CPPUNIT_ASSERT_EQUAL(value[0][0],
-                         fix16_to_float(matrix_get(get_from, 0, 0)));
+    CPPUNIT_ASSERT_EQUAL(value[0][0], fix16_to_float(matrix_get(get_from, 0, 0)));
     matrix_destructor(get_from);
 }
 void MatrixTest::matrix_get_1x2_ExpectCorrect() {
@@ -291,10 +267,8 @@ void MatrixTest::matrix_get_1x2_ExpectCorrect() {
     get_from->values[0] = fix16_from_float(vector[0][0]);
     get_from->values[1] = fix16_from_float(vector[0][1]);
 
-    CPPUNIT_ASSERT_EQUAL(vector[0][0],
-                         fix16_to_float(matrix_get(get_from, 0, 0)));
-    CPPUNIT_ASSERT_EQUAL(vector[0][1],
-                         fix16_to_float(matrix_get(get_from, 0, 1)));
+    CPPUNIT_ASSERT_EQUAL(vector[0][0], fix16_to_float(matrix_get(get_from, 0, 0)));
+    CPPUNIT_ASSERT_EQUAL(vector[0][1], fix16_to_float(matrix_get(get_from, 0, 1)));
     matrix_destructor(get_from);
 }
 void MatrixTest::matrix_get_2x1_ExpectCorrect() {
@@ -304,10 +278,8 @@ void MatrixTest::matrix_get_2x1_ExpectCorrect() {
     get_from->values[0] = fix16_from_float(vector[0][0]);
     get_from->values[1] = fix16_from_float(vector[1][0]);
 
-    CPPUNIT_ASSERT_EQUAL(vector[0][0],
-                         fix16_to_float(matrix_get(get_from, 0, 0)));
-    CPPUNIT_ASSERT_EQUAL(vector[1][0],
-                         fix16_to_float(matrix_get(get_from, 1, 0)));
+    CPPUNIT_ASSERT_EQUAL(vector[0][0], fix16_to_float(matrix_get(get_from, 0, 0)));
+    CPPUNIT_ASSERT_EQUAL(vector[1][0], fix16_to_float(matrix_get(get_from, 1, 0)));
     matrix_destructor(get_from);
 }
 void MatrixTest::matrix_get_2x2_ExpectCorrect() {
@@ -324,8 +296,7 @@ void MatrixTest::matrix_get_2x2_ExpectCorrect() {
 
     for (int i = 0; i < get_from->rows; i++) {
         for (int j = 0; j < get_from->columns; j++) {
-            CPPUNIT_ASSERT_EQUAL(matrix[i][j],
-                                 fix16_to_float(matrix_get(get_from, i, j)));
+            CPPUNIT_ASSERT_EQUAL(matrix[i][j], fix16_to_float(matrix_get(get_from, i, j)));
         }
     }
     matrix_destructor(get_from);
@@ -344,8 +315,7 @@ void MatrixTest::matrix_get_3x3_ExpectCorrect() {
 
     for (int i = 0; i < get_from->rows; i++) {
         for (int j = 0; j < get_from->columns; j++) {
-            CPPUNIT_ASSERT_EQUAL(matrix[i][j],
-                                 fix16_to_float(matrix_get(get_from, i, j)));
+            CPPUNIT_ASSERT_EQUAL(matrix[i][j], fix16_to_float(matrix_get(get_from, i, j)));
         }
     }
     matrix_destructor(get_from);
@@ -376,8 +346,7 @@ void MatrixTest::matrix_set_1x2_ExpectCorrect() {
     uint8_t mat_index = 0;
     for (int i = 0; i < set_to->rows; i++) {
         for (int j = 0; j < set_to->columns; j++) {
-            CPPUNIT_ASSERT_EQUAL(fix16_from_float(vector[i][j]),
-                                 set_to->values[mat_index]);
+            CPPUNIT_ASSERT_EQUAL(fix16_from_float(vector[i][j]), set_to->values[mat_index]);
             mat_index++;
         }
     }
@@ -397,8 +366,7 @@ void MatrixTest::matrix_set_2x1_ExpectCorrect() {
     uint8_t mat_index = 0;
     for (int i = 0; i < set_to->rows; i++) {
         for (int j = 0; j < set_to->columns; j++) {
-            CPPUNIT_ASSERT_EQUAL(fix16_from_float(vector[i][j]),
-                                 set_to->values[mat_index]);
+            CPPUNIT_ASSERT_EQUAL(fix16_from_float(vector[i][j]), set_to->values[mat_index]);
             mat_index++;
         }
     }
@@ -418,8 +386,7 @@ void MatrixTest::matrix_set_2x2_ExpectCorrect() {
     uint8_t mat_index = 0;
     for (int i = 0; i < set_to->rows; i++) {
         for (int j = 0; j < set_to->columns; j++) {
-            CPPUNIT_ASSERT_EQUAL(fix16_from_float(matrix[i][j]),
-                                 set_to->values[mat_index]);
+            CPPUNIT_ASSERT_EQUAL(fix16_from_float(matrix[i][j]), set_to->values[mat_index]);
             mat_index++;
         }
     }
@@ -439,8 +406,7 @@ void MatrixTest::matrix_set_3x3_ExpectCorrect() {
     uint8_t mat_index = 0;
     for (int i = 0; i < set_to->rows; i++) {
         for (int j = 0; j < set_to->columns; j++) {
-            CPPUNIT_ASSERT_EQUAL(fix16_from_float(matrix[i][j]),
-                                 set_to->values[mat_index]);
+            CPPUNIT_ASSERT_EQUAL(fix16_from_float(matrix[i][j]), set_to->values[mat_index]);
             mat_index++;
         }
     }

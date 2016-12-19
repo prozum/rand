@@ -1,4 +1,4 @@
-#include "log_test.h"
+#include "LogTest.h"
 
 using namespace std;
 CPPUNIT_TEST_SUITE_REGISTRATION(LogTest);
@@ -10,56 +10,47 @@ void LogTest::ToggleLogging_ShowAllMessages_ExpectMessage() {
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The message was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     WARNING(SENDER_BOARD, "Test warning");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The warning was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The warning was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     SERIOUS_WARNING(SENDER_BOARD, "Test error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
 
-void LogTest::
-    ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages() {
+void LogTest::ToggleLogging_ShowWarnings_ExpectErrorsAndWarningsAndNoMessages() {
     char *wb;
     init_logging(LOG_DEBUG);
 
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.",
-                           wb == NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb == NULL);
 
     clear_write_buffer(USB_TX);
     WARNING(SENDER_BOARD, "Test warning");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The warning was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The warning was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     SERIOUS_WARNING(SENDER_BOARD, "Test error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
 
 void LogTest::ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings() {
@@ -69,26 +60,22 @@ void LogTest::ToggleLogging_ShowErrors_ExpectErrorsAndNoMessagesAndWarnings() {
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     WARNING(SENDER_BOARD, "Test warning");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The warning was delivered against expectation.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The warning was delivered against expectation.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     SERIOUS_WARNING(SENDER_BOARD, "Test error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The error was not delivered correctly.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The bypassed error was not delivered correctly.", wb != NULL);
 }
 
 void LogTest::ToggleLogging_ShowNone_ExpectBypass() {
@@ -98,26 +85,22 @@ void LogTest::ToggleLogging_ShowNone_ExpectBypass() {
     clear_write_buffer(USB_TX);
     LOG(SENDER_BOARD, "Test message");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     WARNING(SENDER_BOARD, "Test warning");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The warning was delivered against expectation.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The warning was delivered against expectation.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     SERIOUS_WARNING(SENDER_BOARD, "Test error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE("The error was delivered against expectation.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The error was delivered against expectation.", wb != NULL);
 
     clear_write_buffer(USB_TX);
     ERROR("Test bypass error");
     wb = get_write_buffer(USB_TX);
-    CPPUNIT_ASSERT_MESSAGE(
-        "The bypassed error was delivered against expectation.", wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The bypassed error was delivered against expectation.", wb != NULL);
 }
 
 void LogTest::Log_Testlog_ExpectMsgTestlog() {
@@ -208,8 +191,7 @@ void LogTest::DisableDevice_LogFromDisabled_ExpectNothing() {
     LOG(SENDER_BOARD, msg);
     char *wb = get_write_buffer(USB_TX);
 
-    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.",
-                           wb == NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb == NULL);
 }
 
 void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing() {
@@ -222,8 +204,7 @@ void LogTest::DisableDevice_LogWarningFromDisabled_ExpectNothing() {
     WARNING(SENDER_BOARD, msg);
     char *wb = get_write_buffer(USB_TX);
 
-    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.",
-                           wb == NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb == NULL);
 }
 
 void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing() {
@@ -234,8 +215,7 @@ void LogTest::DisableDevice_LogErrorFromDisabled_ExpectNothing() {
     SERIOUS_WARNING(SENDER_BOARD, msg);
     char *wb = get_write_buffer(USB_TX);
 
-    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.",
-                           wb == NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was delivered against expectation.", wb == NULL);
 }
 
 void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError() {
@@ -246,8 +226,7 @@ void LogTest::DisableDevice_LogErrorBypassFromDisabled_ExpectError() {
     ERROR(msg);
     char *wb = get_write_buffer(USB_TX);
 
-    CPPUNIT_ASSERT_MESSAGE("The message was not delivered against expectation.",
-                           wb != NULL);
+    CPPUNIT_ASSERT_MESSAGE("The message was not delivered against expectation.", wb != NULL);
 }
 
 void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList() {
@@ -259,8 +238,7 @@ void LogTest::DisableDevice_DisableSameTwice_ExpectOneOnList() {
     uint8_t dev_count = count_disabled_devices();
 
     // Assert dev_count == 1
-    CPPUNIT_ASSERT_EQUAL_MESSAGE("The same device is present in list twice.", 1,
-                                 (int)dev_count);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The same device is present in list twice.", 1, (int)dev_count);
 }
 
 void LogTest::SenderIgnored_OnIgnoredList_ExpectOne() {
@@ -271,9 +249,7 @@ void LogTest::SenderIgnored_OnIgnoredList_ExpectOne() {
     uint8_t blocked = sender_ignored(SENDER_BOARD);
 
     // Assert blocked == 1
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(
-        "The SENDER_BOARD device has not been blocked properly.", 1,
-        (int)blocked);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The SENDER_BOARD device has not been blocked properly.", 1, (int)blocked);
 }
 
 void LogTest::SenderIgnored_NotOnList_ExpectZero() {
@@ -288,6 +264,5 @@ void LogTest::SenderIgnored_NotOnList_ExpectZero() {
     int blocked = sender_ignored(SENDER_BOARD);
 
     // Assert blocked == 0
-    CPPUNIT_ASSERT_EQUAL_MESSAGE(
-        "The SENDER_BOARD device was registered as blocked.", 0, blocked);
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("The SENDER_BOARD device was registered as blocked.", 0, blocked);
 }

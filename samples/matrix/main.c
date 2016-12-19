@@ -5,9 +5,6 @@
 
 int main(void) {
 
-    blas
-
     while (1) {
-
     }
 }

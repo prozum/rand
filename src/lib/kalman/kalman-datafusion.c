@@ -1,11 +1,9 @@
 #include "kalman-datafusion.h"
 
-kalman_state_matrix *kalman_datafusion_init (fix16_t a, fix16_t b, log_sender_t component,
-                             matrix_t* C, matrix_t* R)
-{
+kalman_state_matrix *kalman_datafusion_init(fix16_t a, fix16_t b, log_sender_t component, matrix_t *C, matrix_t *R) {
     kalman_state_matrix *state = malloc(sizeof(kalman_state_matrix));
     // Not enough heap-space, abort flight.
-    if(!state)
+    if (!state)
         ERROR("Failed to malloc space for the datafusion-matrix");
 
     state->source_components = component;
@@ -20,14 +18,14 @@ kalman_state_matrix *kalman_datafusion_init (fix16_t a, fix16_t b, log_sender_t 
     matrix_set(state->G_k, 0, 1, fix16_from_int(1));
 
     // Initialize and fill C and R
-    if(C)
+    if (C)
         state->C = C;
     else {
         state->C = matrix_constructor(DATAFUSION_UNITS, 1);
         matrix_set(state->C, 0, 0, fix16_from_int(1));
         matrix_set(state->C, 1, 0, fix16_from_int(1));
     }
-    if(R)
+    if (R)
         state->R = R;
     else {
         state->R = matrix_constructor(DATAFUSION_UNITS, DATAFUSION_UNITS);
@@ -88,7 +86,7 @@ void calculate_x(kalman_state_matrix *state) {
     matrix_t *mmm = mult_mat_mat(state->G_k, zCx);
 
     // G_k is 1x2 and z - C * x is 2x1 so mmm is 1x1
-    fix16_t res = fix16_add(state->x_k,  matrix_get(mmm, 0, 0));
+    fix16_t res = fix16_add(state->x_k, matrix_get(mmm, 0, 0));
 
     // Update x of the state
     state->x_k = res;
@@ -103,7 +101,7 @@ void calculate_p(kalman_state_matrix *state) {
     // p = (1 - MatrixMatrixMultiply(G, C)) * p
 
     matrix_t *mGC = mult_mat_mat(state->G_k, state->C); // G is 1x2 and C is 2x1 so result is 1x1
-    fix16_t res = fix16_mul (fix16_sub(1, matrix_get(mGC, 0, 0)), state->p_k );
+    fix16_t res = fix16_mul(fix16_sub(1, matrix_get(mGC, 0, 0)), state->p_k);
 
     // Update
     state->p_k = res;
@@ -132,7 +130,7 @@ void kalman_datafusion_calibrate(kalman_state_matrix *state, fix16_t z_0_laser, 
     // Declare variables for average variance of sensors, readings and a flag to indicate if the calibration is done.
     fix16_t diff;
     uint8_t calibrated = fix16_from_int(0);
-    fix16_t avg = fix16_div (fix16_add(z_0_laser, z_0_sonar), fix16_from_int(2));
+    fix16_t avg = fix16_div(fix16_add(z_0_laser, z_0_sonar), fix16_from_int(2));
     fix16_t r_avg = fix16_from_int(0);
 
     int i, j;
@@ -144,11 +142,11 @@ void kalman_datafusion_calibrate(kalman_state_matrix *state, fix16_t z_0_laser, 
     r_avg = fix16_div(r_avg, fix16_mul(fix16_from_int(2), fix16_from_int(DATAFUSION_UNITS)));
 
     // Run the filter until the value is lower than the average variance.
-    while(!calibrated) {
+    while (!calibrated) {
         kalman_datafusion_filter(state, z_0_laser, z_0_sonar);
 
         diff = fix16_abs(fix16_sub(avg, state->x_k));
-        if(diff <= r_avg)
+        if (diff <= r_avg)
             calibrated = 1;
     }
 }

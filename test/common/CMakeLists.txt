@@ -1,2 +1,2 @@
-add_library(common tools.cpp tools.h)
+add_library(common Tools.cpp Tools.h)
 target_link_libraries(common simavr)

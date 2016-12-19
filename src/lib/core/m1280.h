@@ -29,22 +29,21 @@ typedef enum reg_e {
  *  but PORTB1 and PORTD1 has the same values so we also need to know what port the pin is on (look at dports)
  */
 const uint8_t dpinss = {
-    _BV(PORTE0), _BV(PORTE1), _BV(PORTE4), _BV(PORTE5), //!< E
-    _BV(PORTG5),                                        //!< G
-    _BV(PORTE3),                                        //!< E
-    _BV(PORTH3), _BV(PORTH4), _BV(PORTH5), _BV(PORTH6), //!< H
-    _BV(PORTB4), _BV(PORTB5), _BV(PORTB6), _BV(PORTB7), //!< B
-    _BV(PORTJ1), _BV(PORTJ0),                           //!< J
-    _BV(PORTH1), _BV(PORTH0),                           //!< H
-    _BV(PORTD3), _BV(PORTD2), _BV(PORTD1), _BV(PORTD0), //!< D
+    _BV(PORTE0), _BV(PORTE1), _BV(PORTE4), _BV(PORTE5),                                                     //!< E
+    _BV(PORTG5),                                                                                            //!< G
+    _BV(PORTE3),                                                                                            //!< E
+    _BV(PORTH3), _BV(PORTH4), _BV(PORTH5), _BV(PORTH6),                                                     //!< H
+    _BV(PORTB4), _BV(PORTB5), _BV(PORTB6), _BV(PORTB7),                                                     //!< B
+    _BV(PORTJ1), _BV(PORTJ0),                                                                               //!< J
+    _BV(PORTH1), _BV(PORTH0),                                                                               //!< H
+    _BV(PORTD3), _BV(PORTD2), _BV(PORTD1), _BV(PORTD0),                                                     //!< D
     _BV(PORTA0), _BV(PORTA1), _BV(PORTA2), _BV(PORTA3), _BV(PORTA4), _BV(PORTA5), _BV(PORTA6), _BV(PORTA7), //!< A
     _BV(PORTC7), _BV(PORTC6), _BV(PORTC5), _BV(PORTC4), _BV(PORTC3), _BV(PORTC2), _BV(PORTC1), _BV(PORTC0), //!< C
-    _BV(PORTD7),                                        //!< D
-    _BV(PORTG2), _BV(PORTG1), _BV(PORTG0),              //!< G
+    _BV(PORTD7),                                                                                            //!< D
+    _BV(PORTG2), _BV(PORTG1), _BV(PORTG0),                                                                  //!< G
     _BV(PORTL7), _BV(PORTL6), _BV(PORTL5), _BV(PORTL4), _BV(PORTL3), _BV(PORTL2), _BV(PORTL1), _BV(PORTL0), //!< L
-    _BV(PORTB3), _BV(PORTB2), _BV(PORTB1), _BV(PORTB0)  //!< B
+    _BV(PORTB3), _BV(PORTB2), _BV(PORTB1), _BV(PORTB0)                                                      //!< B
 };
-
 
 /** Table to lookup a 1280, use a physical arduino pin to get the 1280 port value
  *  for instance if you look up dports[1] you get the CPU's value of PORTB
@@ -130,24 +129,7 @@ typedef enum dpin_e {
 /**
  * An enum for storing all analog pins on the board
  */
-typedef enum apin_e {
-    A0,
-    A1,
-    A2,
-    A3,
-    A4,
-    A5,
-    A6,
-    A7,
-    A8,
-    A9,
-    A10,
-    A11,
-    A12,
-    A13,
-    A14,
-    A15
-} apin_t;
+typedef enum apin_e { A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15 } apin_t;
 
 /**
  * An enum for storing all pins that support PWM
@@ -173,28 +155,16 @@ typedef enum pwm_e {
 /**
  * An enum for storing all serial receive pins
  */
-typedef enum rx_e {
-    RX0 = 0,
-    RX15 = 15,
-    RX17 = 17,
-    RX19 = 19
-} rx_t;
+typedef enum rx_e { RX0 = 0, RX15 = 15, RX17 = 17, RX19 = 19 } rx_t;
 
 /**
  * An enum for storing all serial transmit pins
  */
-typedef enum tx_e {
-    TX1 = 1,
-    TX14 = 14,
-    TX16 = 16,
-    TX18 = 18
-} tx_t;
+typedef enum tx_e { TX1 = 1, TX14 = 14, TX16 = 16, TX18 = 18 } tx_t;
 
 /**
  * An enum for storing the serial port
  */
-typedef enum serial_e {
-    SERIAL0 = 0
-} serial_t;
+typedef enum serial_e { SERIAL0 = 0 } serial_t;
 
-#endif //RAND_M1280_H
+#endif // RAND_M1280_H

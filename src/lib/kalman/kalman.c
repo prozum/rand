@@ -1,22 +1,22 @@
-#include <libfixmath/fix16.h>
 #include "kalman/kalman.h"
+#include <libfixmath/fix16.h>
 
 kalman_state_t *kalman_init(fix16_t _a, fix16_t _r, log_sender_t component) {
     kalman_state_t *state = malloc(sizeof(kalman_state_t));
 
-    //Insufficient memory on the heap, call for a safe-landing
-    if(!state) {
+    // Insufficient memory on the heap, call for a safe-landing
+    if (!state) {
         ERROR("Not enough heap-space for Kalman filter.");
     }
 
     state->a = _a;
     state->r = _r;
 
-    //Uncertainty values
+    // Uncertainty values
     state->p_k = fix16_from_int(10);
     state->g_k = fix16_from_int(0);
 
-    //State and control-signal
+    // State and control-signal
     state->x_k = fix16_from_int(0);
     state->u_k = fix16_from_int(0);
 
@@ -53,8 +53,8 @@ void kalman_run(kalman_state_t *state, fix16_t z_k) {
 void kalman_calibrate(kalman_state_t *initial_state, fix16_t z_0) {
     uint8_t calibration_done = 0;
 
-    //Run the filter until the difference between first reading and estimated value
-    //is less than the covariance of the sensor
+    // Run the filter until the difference between first reading and estimated value
+    // is less than the covariance of the sensor
     while (!calibration_done) {
         kalman_run(initial_state, z_0);
 

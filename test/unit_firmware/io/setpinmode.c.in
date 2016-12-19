@@ -1,8 +1,8 @@
 #include "core/io.h"
 
-int main (void)
-{
+int main(void) {
     set_pin_mode(@PIN_ID@, @PIN_MODE@);
 
-    while(1);
+    while (1)
+        ;
 }

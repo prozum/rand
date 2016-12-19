@@ -6,7 +6,8 @@
 class Ray : public SimObject {
     double Length;
     void update(double Angle);
-public:
+
+  public:
     Ray(Vector2D Origin, double Angle, double Length);
     void update(Vector2D Origin, double Angle);
     void update();

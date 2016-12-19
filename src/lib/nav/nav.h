@@ -9,41 +9,37 @@
  */
 
 #include <stdint.h>
-#include "nav-struct.h"
+
+#include "core/log.h"
 #include "fc/fc.h"
 #include "kalman/kalman-datafusion.h"
 #include "kalman/kalman.h"
-#include "core/log.h"
-#include "map/map.h"
 #include "libfixmath/fix16.h"
+#include "map/map.h"
+#include "nav-struct.h"
 #include "search/search.h"
 
 //! This defines that we belive that there is a window, if the laser reads more than a 0.5m longer than the sonar.
 #define WINDOW_RECON_THRESHOLD 20 //!< The difference in readings that triggers the drone to believe there's a window
-#define MIN_SENSOR_RANGE 60 //!< The distance at which the drone should follow the wall
-#define MIN_DRAW_RANGE 100 //!< The range at which the drone should begin to draw obstacles
+#define MIN_SENSOR_RANGE 60       //!< The distance at which the drone should follow the wall
+#define MIN_DRAW_RANGE 100        //!< The range at which the drone should begin to draw obstacles
 
 #define DRONE_RIGHT_SIDE 0x4b65f //!< 270 degrees
 #define DRONE_LEFT_SIDE 0x19220  //!< 90 degrees
 
-#define SENSOR_DEVIATION 5 //!< When following a wall indicates at how large a change of distance the drone should take action
+#define SENSOR_DEVIATION                                                                                               \
+    5 //!< When following a wall indicates at how large a change of distance the drone should take action
 
-#define PERIOD_MILLIS 100 //!< The time between calls of the navigator in milliseconds.
+#define PERIOD_MILLIS 100                      //!< The time between calls of the navigator in milliseconds.
 #define PERIOD_SECONDS PERIOD_MILLIS / 1000.0f //!< The time between calls of the navigator in seconds
 
 #define MAP_MIDDLE (MAP_HEIGHT + MAP_WIDTH) / 4 //!< Defines the middle of the drone's internal map
 
 //! Constant used to find the distance to the wall with a 15 degree angle from front view
 static const fix16_t sonar_reliable_constant = 0x5290; //!< sin(15) / sin(75)
-static const fix16_t drone_right_side = 0x4b65f; //!< 270 degrees
-static const fix16_t drone_left_side = 0x19220;  //!< 90 degrees
-static const fix16_t full_turn = 0x19220; //!< 90 degrees
-
-
-/*typedef enum side_e{
-    RIGHT = 0,
-    LEFT = 1
-}side_t;*/
+static const fix16_t drone_right_side = 0x4b65f;       //!< 270 degrees
+static const fix16_t drone_left_side = 0x19220;        //!< 90 degrees
+static const fix16_t full_turn = 0x19220;              //!< 90 degrees
 
 /**
  * Updates the state of the drone by checking its' world representation
@@ -419,6 +415,6 @@ void draw_obstacle(uint16_t val, nav_t *nav, const fix16_t side_offset, fieldsta
  */
 void update_map(rep_t *rep, nav_t *nav);
 
-#endif //RAND_NAV_H
+#endif // RAND_NAV_H
 
 //! @}

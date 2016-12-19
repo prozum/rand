@@ -1,7 +1,7 @@
-#include <stdio.h>
 #include "libfixmath/fix16.h"
+#include <stdio.h>
 
-# define M_PI       3.14159265358979323846
+#define M_PI 3.14159265358979323846
 
 int main(int argc, char *argv[]) {
     fix16_t val1 = fix16_from_float(64.123);
@@ -20,14 +20,11 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     fix16_t cases[] = {
-            fix16_from_dbl(M_PI * 0.0),
-            fix16_from_dbl(M_PI * 0.5),
-            fix16_from_dbl(M_PI * 1.0),
-            fix16_from_dbl(M_PI * 1.5),
-            fix16_from_dbl(M_PI * 2.0),
+        fix16_from_dbl(M_PI * 0.0), fix16_from_dbl(M_PI * 0.5), fix16_from_dbl(M_PI * 1.0),
+        fix16_from_dbl(M_PI * 1.5), fix16_from_dbl(M_PI * 2.0),
     };
 
-    for (int i = 0; i < sizeof(cases)/sizeof(fix16_t); i++ ) {
+    for (int i = 0; i < sizeof(cases) / sizeof(fix16_t); i++) {
         printf("val: %f\n", fix16_to_float(cases[i]));
 
         fix16_t res_sin = fix16_sin(cases[i]);
@@ -47,4 +44,3 @@ int main(int argc, char *argv[]) {
         printf("\n");
     }
 }
-

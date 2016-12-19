@@ -8,8 +8,8 @@
  * @{
  */
 
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "core/io.h"
 #include "core/log.h"
@@ -64,8 +64,8 @@ uint16_t sonar_to_centimeters(uint16_t millis);
  */
 void pulse_sonar(sonar_t *sonar);
 
-#endif //MOCK
+#endif // MOCK
 
-#endif //RAND_SONAR_H
+#endif // RAND_SONAR_H
 
 //! @}

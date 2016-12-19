@@ -3,7 +3,6 @@
 #define TRIG_PIN 2
 #define ECHO_PIN 6
 
-
 int main(void) {
     set_pin_mode(13, OUTPUT);
     while (1) {

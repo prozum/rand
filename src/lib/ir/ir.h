@@ -9,12 +9,13 @@
  */
 
 #include <math.h>
+
 #include "core/io.h"
 #include "kalman/kalman.h"
 
 //! The IR is placed on an 8-bit pin
 #define IR_MAX_DIST_CM 80 //!< Defines the maximum range of the infrared sensor
-#define IR_MIN_DIST_CM 0 //!< Defines the minimum range of the infrared sensor
+#define IR_MIN_DIST_CM 0  //!< Defines the minimum range of the infrared sensor
 
 /**
  * The data-structure representing the physical infrared sensor
@@ -37,6 +38,6 @@ void ir_init(ir_t *ir, apin_t pin);
  */
 uint16_t ir_read(ir_t *ir);
 
-#endif //RAND_IR_H
+#endif // RAND_IR_H
 
 //! @}

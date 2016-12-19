@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+
 #include "core/io.h"
 
 #define LASER_MAX_DISTANCE_CM 2200 //!< Defines the maximum reading-distance for the laser module
@@ -40,6 +41,6 @@ void laser_init(laser_t *laser, tx_t pin);
  */
 void laser_read_dist(laser_t *laser);
 
-#endif //RAND_LASER_H
+#endif // RAND_LASER_H
 
 //! @}

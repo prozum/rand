@@ -1,8 +1,7 @@
 #include "Laser.h"
 #include "Drone.h"
 
-Laser::Laser(Drone &Drn, double Length)
-    : Drn(Drn), SimObject(Drn.Pos), Length(Length) {
+Laser::Laser(Drone &Drn, double Length) : Drn(Drn), SimObject(Drn.Pos), Length(Length) {
 
     for (int i = 0; i < 3; ++i) {
         Rays.push_back(Ray(Drn.Pos, Length, Drn.Angle));
@@ -30,13 +29,11 @@ void Laser::calcDist(std::vector<Block> &Blocks) {
 
         Intersects = B.intersect(Rays[1], Res);
         if (Intersects)
-            Struct.val_front =
-                std::min(Struct.val_front, (uint16_t)Res.length());
+            Struct.val_front = std::min(Struct.val_front, (uint16_t)Res.length());
 
         Intersects = B.intersect(Rays[2], Res);
         if (Intersects)
-            Struct.val_right =
-                std::min(Struct.val_right, (uint16_t)Res.length());
+            Struct.val_right = std::min(Struct.val_right, (uint16_t)Res.length());
     }
 
     if (Struct.val_left > Length)

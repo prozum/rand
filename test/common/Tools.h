@@ -37,6 +37,5 @@ class Tools {
 
     static avr_ioport_state_t avr_get_state(avr_t *avr, char port);
 
-    static void avr_set_state(avr_t *avr, uint32_t reg, uint32_t pin,
-                              uint32_t val);
+    static void avr_set_state(avr_t *avr, uint32_t reg, uint32_t pin, uint32_t val);
 };

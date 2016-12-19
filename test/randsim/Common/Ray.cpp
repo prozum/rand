@@ -6,13 +6,9 @@ Ray::Ray(Vector2D Origin, double Length, double Angle) : Length(Length), Angle(A
     update(Origin, Angle);
 }
 
-void Ray::update() {
+void Ray::update() {}
 
-}
-
-void Ray::update(double Angle) {
-    Direction.compose(Length, Angle);
-}
+void Ray::update(double Angle) { Direction.compose(Length, Angle); }
 
 void Ray::update(Vector2D Origin, double Angle) {
     Direction.compose(Length, Angle);

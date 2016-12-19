@@ -13,34 +13,34 @@
 
 #ifndef MOCK
 
-//extern const uint16_t port_to_input[];
+// extern const uint16_t port_to_input[];
 
+#include "core/log.h"
 #include <avr/io.h>
 #include <util/delay.h>
-#include "core/log.h"
 
 /**
  * Calculates the clock-cycles pr millisecond for the target processor
  * @return - The amount of clock-cycles pr millisecond
  */
-#define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
+#define CLOCK_CYCLES_PER_MS() (F_CPU / 1000000L)
 /**
 * Converts from clock-cycles to milliseconds
 * @param x - The clock-cycles to convert
 * @return pm - The time in milliseconds
 */
-#define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )
+#define CLOCK_CYCLES_TO_MS(x) ((x) / CLOCK_CYCLES_PER_MS())
 /**
 * Converts from milliseconds to clock-cycles
 * @param x - The milliseconds to convert
 * @return pm - The number of clock-cycles
 */
-#define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
-#endif //MOCK
+#define MS_TO_CLOCK_CYCLES(x) ((x)*CLOCK_CYCLES_PER_MS())
+#endif // MOCK
 
-#if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega328__)
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega328__)
 #include "m328p.h"
-#elif defined (__AVR_ATmega1280__)
+#elif defined(__AVR_ATmega1280__)
 #include "m1280.h"
 #endif
 
@@ -64,10 +64,7 @@ typedef enum pin_mode_e {
 /**
  * A struct defining possible values for digital IO
  */
-typedef enum dval_e {
-    LOW = 0,
-    HIGH = 1
-} dval_t;
+typedef enum dval_e { LOW = 0, HIGH = 1 } dval_t;
 /**
  * Defines expected size of analog IO
  */
@@ -222,8 +219,8 @@ void set_pulse(dpin_t pin, uint16_t pulse);
  */
 pin_mode_t get_pin_mode(dpin_t pin);
 
-#endif //MOCK
+#endif // MOCK
 
-#endif //RAND_IO_H
+#endif // RAND_IO_H
 
 //! @}
