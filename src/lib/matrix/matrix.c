@@ -161,12 +161,6 @@ matrix_t *sub_mat_mat(matrix_t *left, matrix_t *right) {
     return res;
 }
 
-/**
- * Sums the values of two vectors (does not change input vectors)
- * @param left vector of addition
- * @param right vector of addition
- * @return a pointer to the resulting vector
- */
 matrix_t *add_vec_vec(matrix_t *left, matrix_t *right) {
     uint8_t i;
 
@@ -199,12 +193,6 @@ matrix_t *add_vec_vec(matrix_t *left, matrix_t *right) {
     return res;
 }
 
-/**
- * Subtracts two vectors (both row and column)
- * @param left vector of subtraction
- * @param right vector of subtraction
- * @return a pointer to the resulting vector.
- */
 matrix_t *sub_vec_vec(matrix_t *left, matrix_t *right) {
     uint8_t i;
 
@@ -238,11 +226,7 @@ matrix_t *sub_vec_vec(matrix_t *left, matrix_t *right) {
     return res;
 }
 
-/**
- * Inverts a matrix.
- * @param matrix to invert (not changed)
- * @return a pointer to the inverted matrix
- */
+
 matrix_t *inv_mat(matrix_t *matrix) {
     //Only implemented for 2x2 matrix
     const uint8_t SIZE = 2;
@@ -289,12 +273,6 @@ matrix_t *ident_mat(uint8_t size) {
     return res;
 }
 
-/**
- * Allocates a new matrix for use in the matrix-library
- * @param rows of the matrix
- * @param columns of the matrix
- * @return a pointer to the allocated matrix
- */
 matrix_t *matrix_constructor(uint8_t rows, uint8_t columns) {
     matrix_t *new_matrix = malloc(sizeof(matrix_t));
     new_matrix->rows = rows;

@@ -2,10 +2,6 @@
 #include "nav/nav.h"
 #include "task.h"
 
-/// This function finds the shortest path to a location.
-/// \param nav
-/// \param x
-/// \param y
 search_node_t* find_path(nav_t *nav){
     search_t *search = &nav->search_data;
     uint8_t valid;

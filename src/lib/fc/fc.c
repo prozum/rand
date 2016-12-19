@@ -88,20 +88,23 @@ void move_stop(fc_t *fc)
     fc->yaw = fc->duty->MID_FC_DUTY;
 }
 
-void set_acceleration(fc_t *fc, float x, float y){
-    fc->acc->y = y;
-    fc->acc->x = x;
+void set_acceleration(fc_t *fc, float x, float y, float z){
+    fc->acc->y = fix16_from_float(y);
+    fc->acc->x = fix16_from_float(x);
+    fc->acc->z = fix16_from_float(z);
 }
 
-void set_velocity(fc_t *fc, float x, float y){
-    fc->vel->y = y;
-    fc->vel->x = x;
+void set_velocity(fc_t *fc, float x, float y, float z){
+    fc->vel->y = fix16_from_float(y);
+    fc->vel->x = fix16_from_float(x);
+    fc->acc->z = fix16_from_float(z);
 }
 
 //Assumed that time is in seconds.
-void update_velocity(fc_t *fc, acceleration_t *a, float time){
-    fc->vel->x = fc->vel->x + a->x * time;
-    fc->vel->y = fc->vel->y + a->y * time;
+void update_velocity(fc_t *fc, acceleration_t *a, float deltatime){
+    fc->vel->x = fix16_add(fc->vel->x, fix16_mul(a->x, fix16_from_float(deltatime)));
+    fc->vel->y = fix16_add(fc->vel->y, fix16_mul(a->y, fix16_from_float(deltatime)));
+    fc->vel->z = fix16_add(fc->vel->z, fix16_mul(a->z, fix16_from_float(deltatime)));
 }
 
 acceleration_t fc_read_acceleration(fc_t *fc) {

@@ -13,13 +13,16 @@
 #include "matrix/matrix.h"
 #include <math.h>
 
-//! We're doing a specific implementation of the Kalman filter for two units (laser + sonar)
-#define DATAFUSION_UNITS 2
-#define ZLASER 0
-#define ZSONAR 1
+//! This is a specific implementation of the Kalman filter for two units (laser + sonar)
+#define DATAFUSION_UNITS 2 //!< Defines the maximum number of sensors thay may be used in the filter
+#define ZLASER 0 //!< Defines the vector-index for the laser's readings
+#define ZSONAR 1 //!< Defines the vector-index for the sonar's readings
 
+/**
+ * A data-structure for storing the state of the data-fusion filter
+ */
 typedef struct kalman_matrix_state_s {
-    log_sender_t source_components;
+    log_sender_t source_components; //!< The component the filter is applied to
 
     fix16_t a;   //!< How much we assume the next measurement differs from the previous one
     fix16_t b;   //!< Weight of control-input in next estimate

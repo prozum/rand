@@ -17,36 +17,47 @@
 #include "ir/ir.h"
 #include "core/log.h"
 #include "core/io.h"
-
+/**
+ * A struct for containing acceleration-values read by the Naze32 Rev6 flight-controller
+ */
 typedef struct acceleration_s {
     fix16_t x;  //!< Left/right
     fix16_t  y; //!< Forward/backwards
     fix16_t  z; //!< Up/down
 } acceleration_t;
 
+/**
+ * A struct for containing velocity-values read by the Naze32 Rev 6 flight-controller
+ */
 typedef struct velocity_s {
     fix16_t  x; //!< Left/right
     fix16_t  y; //!< Forward/backwards
     fix16_t  z; //!< Up/down
 } velocity_t;
 
+/**
+ * Defines the possible duty cycles used to control the flight-controller
+ */
 typedef struct duty_s {
-    uint16_t MIN_FC_DUTY;
-    uint16_t MID_FC_DUTY;
-    uint16_t MAX_FC_DUTY;
+    uint16_t MIN_FC_DUTY; //!< Minimum value, i.e. full backwards speed on the given axis
+    uint16_t MID_FC_DUTY; //!< Mid value, i.e. no speed on the given axis
+    uint16_t MAX_FC_DUTY; //!< Maximum value, i.e. full speed ahead on the given axis
 } duty_t;
 
+/**
+ * A data-structure for storing data related to the implementation of the flight-controller
+ */
 typedef struct fc_s {
-    duty_t *duty;
-    acceleration_t *acc;
-    velocity_t *vel;
-    tx_t serial;
+    duty_t *duty; //!< Stores the desired duty-values
+    acceleration_t *acc; //!< Stores the readings from the flight-controllers accelerometer
+    velocity_t *vel; //!< Stores the accumulated velocity
+    tx_t serial; //!< Stores the serial pin to which the flight-controller is connected
 
-    uint16_t deltatime;
-    uint16_t yaw;
-    uint16_t pitch;
-    uint16_t roll;
-    uint16_t throttle;
+    uint16_t deltatime; //!< Stores the time since the flight-controller was last scheduled
+    uint16_t yaw; //!< Stores the current duty-value for the yaw-axis (rotation around the vertical axis)
+    uint16_t pitch; //!< Stores the current duty-value for the pitch-axis (forwards/backwards)
+    uint16_t roll; //!< Stores the current duty-value for the roll-axis (left/right)
+    uint16_t throttle; //!< Stores the current duty-value for the throttle-axis (up/down)
     fix16_t gyro; //!< Rotation Velocity
 } fc_t;
 
@@ -127,13 +138,38 @@ void move_down(fc_t *fc);
  */
 void move_stop(fc_t *fc);
 
+/**
+ * Reads the acceleration from the flight-controller
+ * @param fc - A pointer to the fc_t struct that represents the physical flight-controller
+ * @return - The latest acceleration reading
+ */
 acceleration_t fc_read_acceleration(fc_t *fc);
 
-void set_acceleration(fc_t *fc, float, float);
+/**
+ * Sets the acceleration of the flight-controller (only for debugging purpose)
+ * @param fc - A pointer to the fc_t struct that represents the physical flight-controller
+ * @param x - The acceleration in the x-axis (left/right)
+ * @param y - The acceleration in the y-axis (forwards/backwards)
+ * @param z - The acceleration in the z-axis (up/down)
+ */
+void set_acceleration(fc_t *fc, float x, float y, float z);
 
-void set_velocity(fc_t *fc, float, float);
+/**
+ * Sets the velocity of the flight-controller (only for debugging purpose)
+ * @param fc - A pointer to the fc_t struct that represents the physical flight-controller
+ * @param x - The velocity in the x-axis (left/right)
+ * @param y - The velocity in the y-axis (forwards/backwards)
+ * @param z - The velocity in the z-axis (up/down)
+ */
+void set_velocity(fc_t *fc, float x, float y, float z);
 
-void update_velocity(fc_t *fc, acceleration_t *a, float);
+/**
+ * Calculates the velocity by accumulating the acceleration over the delta-time
+ * @param fc - A pointer to the fc_t struct that represents the physical flight-controller
+ * @param a - A pointer to an acceleration struct with the current acceleration
+ * @param deltatime - The time since the last call to the function
+ */
+void update_velocity(fc_t *fc, acceleration_t *a, float deltatime);
 
 #endif //RAND_FC_H
 

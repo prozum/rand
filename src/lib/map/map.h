@@ -11,20 +11,23 @@
 #include "core/io.h"
 #include "libfixmath/fix16.h"
 
-#define MAP_HEIGHT 64
-#define MAP_WIDTH 64
+#define MAP_HEIGHT 64 //!< Defines the map's height in fields
+#define MAP_WIDTH 64 //!< Defines the map's width in fields
 
-#define CENTIMETERS_PR_PIXEL 25
+#define CENTIMETERS_PR_PIXEL 25 //!< Defines the resolution of the map, i.e. one field is CENTIMETERS_PR_PIXEL x CENTIMETERS_PR_PIXEL
 
-#define FIELDS_PER_BYTE 4
-#define MAX_MAP_SIZE EEPROM_SIZE * FIELDS_PER_BYTE
+#define MAP_CENTI_HEIGHT MAP_HEIGHT * CENTIMETERS_PR_FIELD //!< Defines the height of the map in centimeters
+#define MAP_CENTI_WIDTH MAP_WIDTH * CENTIMETERS_PR_FIELD //!< Defines the width of the map in centimeters
+
+#define FIELDS_PER_BYTE 4 //!< Defines how many fields a single byte may store
+#define MAX_MAP_SIZE EEPROM_SIZE * FIELDS_PER_BYTE //!< Defines the maximum size of the memory available on the device
 #define FULL_FIELD 0b11 //!< For bit masking (11 in binary)
-#define FIELD_SIZE 2
+#define FIELD_SIZE 2 //!< Defines the size in bits for a single field
 
-#define CHAR_UNVISITED ' '
-#define CHAR_VISITED '\''
-#define CHAR_WALL '#'
-#define CHAR_TRANSPARENT '&'
+#define CHAR_UNVISITED ' ' //!< Defines the character for indicating an UNVISITED field when constructing maps as text
+#define CHAR_VISITED '\'' //!< Defines the character for indicating a VISITED field when constructing maps as text
+#define CHAR_WALL '#' //!< Defines the character for indicating a WALL field when constructing maps as text
+#define CHAR_TRANSPARENT '&' //!< Defines the character for indicating a TRANSPARENT field when constructing maps as text
 
 /**
  * Represents the states that a field in the map can be in.
@@ -37,10 +40,13 @@ typedef enum fieldstate_e{
     WINDOW = 3
 }fieldstate_t;
 
+/**
+ * Defines a single coordinate on the map, used when scaling from world-position to the map
+ */
 typedef struct map_coord_s {
-    uint8_t x;
-    uint8_t y;
-    uint8_t valid;
+    uint8_t x; //!< The x-coordinate
+    uint8_t y; //!< The y-coordinate
+    uint8_t valid; //!< ARNE MUST DOCUMENT
 } map_coord_t;
 /**
  * Initialzes a map on the EEPROM of the Arduino with specified width and height

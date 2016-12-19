@@ -6,18 +6,18 @@ static inline uint16_t TIMER_TICK_TO_MILIS(uint16_t x) {
 
 void init_not_timed() {
     // initialize sensors
-    sonar = sonar_init(SONAR_TRIGGER_PIN, SONAR_ECHO_PIN);
-    laser = laser_init(USB_RX);
-    top_ir = IR_init(IR_TOP_PIN);
-    bottom_ir = IR_init(IR_BOTTOM_PIN);
-    fc = init_fc(TX1, ONE_MS);
+    sonar_init(sonar, (dpin_t) SONAR_TRIGGER_PIN, (dpin_t) SONAR_ECHO_PIN);
+    laser_init(laser, USB_RX);
+    ir_init(top_ir, IR_TOP_PIN);
+    ir_init(bottom_ir, IR_BOTTOM_PIN);
+    init_fc(fc, TX1, ONE_MS);
     task_init_fc();
     map_init(MAP_WIDTH,MAP_HEIGHT,CLEAN); //Init map and clean it
 
     nav_state = malloc(sizeof(nav_t));
     world_rep = malloc(sizeof(rep_t));
     init_nav(nav_state);
-    init_rep(fc, laser, sonar, top_ir, bottom_ir, world_rep);
+    init_rep(world_rep, fc, laser, sonar, top_ir, bottom_ir);
 
     read_sonar(sonar);
     ir_read(bottom_ir);

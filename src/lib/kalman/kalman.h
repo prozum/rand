@@ -13,8 +13,11 @@
 #include "core/log.h"
 #include "libfixmath/fix16.h"
 
+/**
+ * A data-structure for storing the state of the kalman-filter
+ */
 typedef struct kalman_state_s {
-    log_sender_t source_components;
+    log_sender_t source_components; //!< The component the filter is running on
 
     fix16_t a;   //!< How much we assume the next measurement differs from the previous one
     fix16_t r;   //!< Variance of sensor, i.e. how much a measurement tends to differ from the actual

@@ -161,8 +161,6 @@ void init_nav(nav_t *nav){
 
     *((uint16_t*) &nav->state) &= 0x0000; // Hacky (albeit quick) way to set all states to zero
 
-    nav->timer = 0;
-
     init_search(&nav->search_data);
 }
 
@@ -538,17 +536,17 @@ uint8_t check_alignment_wall(rep_t *rep, nav_t *nav){
             return 0;
         }
         
-        if (nav->prev_dist_wall != rep->laser->val_right && rep->laser->val_right != LASER_MAX_RANGE){
+        if (nav->prev_dist_wall != rep->laser->val_right && rep->laser->val_right != LASER_MAX_DISTANCE_CM){
             return 0;
         }
     } else if (rep->laser->val_left < MIN_SENSOR_RANGE){
 
-        if(nav->prev_dist_wall == 0 && rep->laser->val_left != LASER_MAX_RANGE){
+        if(nav->prev_dist_wall == 0 && rep->laser->val_left != LASER_MAX_DISTANCE_CM){
             nav->prev_dist_wall = rep->laser->val_left;
             return 0;
         }
         
-        if (nav->prev_dist_wall != rep->laser->val_left && rep->laser->val_left != LASER_MAX_RANGE){
+        if (nav->prev_dist_wall != rep->laser->val_left && rep->laser->val_left != LASER_MAX_DISTANCE_CM){
             return 0;
         }
     }
