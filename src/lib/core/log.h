@@ -11,21 +11,29 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define MAJOR_VERSION "0.0\0"
-#define PROJECT_NAME "RAND(IE)\0"
+#define MAJOR_VERSION "0.0\0" //!< Defines the version of the firmware, read as major.minor
+#define PROJECT_NAME "RAND(IE)\0" //!< Defines the firmware's name
 
+/**
+ * An enum for storing the granularity of the logging system
+ */
 typedef enum log_level_e {
     LOG_ONLY_ERRORS = 0, LOG_DEBUG = 1, LOG_ALL = 2, LOG_NONE = -1
 } log_level_t;
+/**
+ * An enum for storing all components that may use the logging-system
+ */
 typedef enum log_sender_e {
     SENDER_SONAR, SENDER_IR, SENDER_IO, SENDER_LASER, SENDER_FC, SENDER_MAP, SENDER_BOARD
 } log_sender_t;
 
-typedef struct disabled_device_node_s disabled_device_t;
-struct disabled_device_node_s {
-    log_sender_t blocked_device;
-    disabled_device_t *next;
-};
+/**
+ * A node for the list of ignored devices
+ */
+typedef struct disabled_device_node_s {
+    log_sender_t blocked_device; //!< The blocked device
+    struct disabled_device_node_s *next; //!< A pointer to the next device in the list
+} disabled_device_t;
 
 /**
  * Toggles logging for the system at the given level.

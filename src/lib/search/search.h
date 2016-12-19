@@ -12,31 +12,43 @@
 
 #include "map/map.h"
 
-typedef struct search_node_s search_node_t;
-typedef struct nav_s nav_t;
+typedef struct nav_s nav_t; //!< Forward declare due to circular dependencies
 
+/**
+ * Defines the maximum number of iterations the search algorithm may take for each scheduled time-slice
+ */
 #define ALLOWED_SEARCH_ITERATIONS 10
 
+/**
+ * An enum for storing possible states for the sets of the heuristic search algorithm
+ */
 typedef enum set_e {
-    OPEN,
-    CLOSED
+    OPEN, //!< The set is open, meaning there's still a chance to find a path to the goal
+    CLOSED //!< The set is closed, there's no chance to find a path to the goal
 } set_t;
 
+/**
+ * Defines the data-structure used for heauristic search
+ */
+typedef struct search_node_s search_node_t;
 struct search_node_s {
-    map_coord_t pos;
-    search_node_t *parent;
-    uint8_t gscore;
-    uint8_t fscore;
-    uint8_t valid;
+    map_coord_t pos; //!< Position on the drone's internal map
+    search_node_t *parent; //!< The parent of the node in the constructed search-tree
+    uint8_t gscore; //!< ARNE MUST DOCUMENT
+    uint8_t fscore; //!< ARNE MUST DOCUMENT
+    uint8_t valid; //!< ARNE MUST DOCUMENT
 };
 
+/**
+ * Defines the data-structure used to store all relevant data of a heuristic search
+ */
 typedef struct search_s {
-    search_node_t *closed_set;
-    search_node_t *open_set;
-    uint16_t closedset_size;
-    uint16_t openset_size;
-    map_coord_t goal;
-    uint8_t active;
+    search_node_t *closed_set; //!< A pointer to the head of the closed-set list of the search
+    search_node_t *open_set; //!< A pointer to the head of the open-set list of the search
+    uint16_t closedset_size; //!< Stores the size of the closed set
+    uint16_t openset_size; //!< Stored the size of the open set
+    map_coord_t goal; //!< Stores the goal position for the search, i.e. the point on the map in which the search ends
+    uint8_t active; //!< A flag for indicating if the search is active, i.e. needs to be scheduled again
 } search_t;
 
 /**

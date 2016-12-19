@@ -46,11 +46,6 @@ void ir_init(ir_t *ir, apin_t pin) {
     ir->value = 0;
 }
 
-/**
- * Reads the distance measured by an IR sensor and translates it to centimeters
- * @param the IR sensor used
- * @return The distance in centimeters. Always in the interval 14-80cm.
- */
 uint16_t ir_read(ir_t *ir) {
     analog_read_setpin(ir->pin);
     uint16_t value = analog_read();

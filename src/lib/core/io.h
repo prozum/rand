@@ -12,14 +12,29 @@
 #include <stdio.h>
 
 #ifndef MOCK
-extern const uint16_t port_to_input[];
+
+//extern const uint16_t port_to_input[];
 
 #include <avr/io.h>
 #include <util/delay.h>
 #include "core/log.h"
 
+/**
+ * Calculates the clock-cycles pr millisecond for the target processor
+ * @return - The amount of clock-cycles pr millisecond
+ */
 #define CLOCK_CYCLES_PER_MS() ( F_CPU / 1000000L )
+/**
+* Converts from clock-cycles to milliseconds
+* @param x - The clock-cycles to convert
+* @return pm - The time in milliseconds
+*/
 #define CLOCK_CYCLES_TO_MS(x) ( (x) / CLOCK_CYCLES_PER_MS() )
+/**
+* Converts from milliseconds to clock-cycles
+* @param x - The milliseconds to convert
+* @return pm - The number of clock-cycles
+*/
 #define MS_TO_CLOCK_CYCLES(x) ( (x) * CLOCK_CYCLES_PER_MS() )
 #endif //MOCK
 
@@ -29,21 +44,38 @@ extern const uint16_t port_to_input[];
 #include "m1280.h"
 #endif
 
+/**
+ * Defines the amount of milliseconds passed pr. second
+ */
 #define MS_PR_SEC 1000
+/**
+ * Defines the maximum string length for read and write in the IO-module
+ */
 #define MAX_IO_STR_LEN 100
 
+/**
+ * A struct defining possible pin-modes for each pin on the platform
+ */
 typedef enum pin_mode_e {
-    INPUT = 0,
-    OUTPUT = 1
+    INPUT = 0, //!< The pin receives input from an external source
+    OUTPUT = 1 //!< The pin transmits output to an external source
 } pin_mode_t;
 
+/**
+ * A struct defining possible values for digital IO
+ */
 typedef enum dval_e {
     LOW = 0,
     HIGH = 1
 } dval_t;
-
+/**
+ * Defines expected size of analog IO
+ */
 typedef uint16_t aval_t;
 
+/**
+ * Defines expected size of serial IO
+ */
 typedef uint8_t sval_t;
 
 /**
@@ -126,12 +158,6 @@ char uart_getchar(/*FILE *stream*/);
  * @return The character read or '\0' if no unread data is available
  */
 char uart_trygetchar(/*FILE *stream*/);
-
-/** Sets the pulse width emitting from a pin
- * @param pin The pin to write to
- * @param width the width of the pwm pulse
- */
-//void pwn_write(pwm_t pin, uint16_t width);
 
 /**
  * Initializes the analog-to-digital converter

@@ -8,8 +8,11 @@
  * @{
  */
 
-#define EEPROM_SIZE 4096
+#define EEPROM_SIZE 4096 //!< Defines size of the EEPROM on the board
 
+/**
+ * An enum for storing the ports on the board
+ */
 typedef enum reg_e {
     PORTB_,
     PORTC_,
@@ -64,7 +67,9 @@ static uint8_t dports[] = {
     PORTB_, PORTB_, PORTB_, PORTB_,                                 //!< D50-53
 };
 
-
+/**
+ * An enum for storing all digital pins on the board
+ */
 typedef enum dpin_e {
     P0,
     P1,
@@ -122,6 +127,9 @@ typedef enum dpin_e {
     P53
 } dpin_t;
 
+/**
+ * An enum for storing all analog pins on the board
+ */
 typedef enum apin_e {
     A0,
     A1,
@@ -141,6 +149,9 @@ typedef enum apin_e {
     A15
 } apin_t;
 
+/**
+ * An enum for storing all pins that support PWM
+ */
 typedef enum pwm_e {
     PWM2 = 2,
     PWM3 = 3,
@@ -159,6 +170,9 @@ typedef enum pwm_e {
     PWM46 = 46
 } pwm_d;
 
+/**
+ * An enum for storing all serial receive pins
+ */
 typedef enum rx_e {
     RX0 = 0,
     RX15 = 15,
@@ -166,6 +180,9 @@ typedef enum rx_e {
     RX19 = 19
 } rx_t;
 
+/**
+ * An enum for storing all serial transmit pins
+ */
 typedef enum tx_e {
     TX1 = 1,
     TX14 = 14,
@@ -173,6 +190,9 @@ typedef enum tx_e {
     TX18 = 18
 } tx_t;
 
+/**
+ * An enum for storing the serial port
+ */
 typedef enum serial_e {
     SERIAL0 = 0
 } serial_t;

@@ -12,13 +12,18 @@
 #include <stdlib.h>
 #include "core/io.h"
 
-#define LASER_MAX_DISTANCE_CM 2200
+#define LASER_MAX_DISTANCE_CM 2200 //!< Defines the maximum reading-distance for the laser module
 
+/**
+ * The data-structure for the laser module
+ */
 typedef struct laser_s {
     tx_t pin; //!< Pin -- maybe not tx_t, I have no idea!
-    //! Latests readings in cm
+    //! Latests reading to the left in cm
     uint16_t val_left;
+    //! Latests reading to the right in cm
     uint16_t val_right;
+    //! Latests reading in front of the drone in cm
     uint16_t val_front;
 } laser_t;
 

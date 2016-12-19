@@ -20,6 +20,9 @@
 #include <avr/io.h>
 #endif
 
+/**
+ * The data-structure for storing sonar-readings
+ */
 typedef struct sonar_s {
     dpin_t trig;    //!< Trigger pin
     dpin_t echo;    //!< Receive pin

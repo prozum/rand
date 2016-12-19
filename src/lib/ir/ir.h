@@ -13,9 +13,12 @@
 #include "kalman/kalman.h"
 
 //! The IR is placed on an 8-bit pin
-#define IR_MAX_DIST_CM 80
-#define IR_MIN_DIST_CM 0
+#define IR_MAX_DIST_CM 80 //!< Defines the maximum range of the infrared sensor
+#define IR_MIN_DIST_CM 0 //!< Defines the minimum range of the infrared sensor
 
+/**
+ * The data-structure representing the physical infrared sensor
+ */
 typedef struct ir_s {
     apin_t pin;    //!< Receive pin
     uint8_t value; //!< Latest reading in cm
