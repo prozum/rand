@@ -31,8 +31,9 @@
 # Build files
 build
 cmake-build-debug
-.idea
 CMakeLists.txt.user
+*.xcodeproj
+.idea
 
 # Vim
 *.swp
@@ -41,6 +42,3 @@ CMakeLists.txt.user
 
 # Runtime config files
 map.txt
-
-# Xcode stuff
-*.xcodeproj
