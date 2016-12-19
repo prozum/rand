@@ -39,7 +39,7 @@ void update_pos(rep_t *rep, nav_t *nav) {
 }
 
 uint8_t check_wall_front(rep_t *rep, state_t state){
-    if((rep->sonar->valid) == 1 && (rep->sonar->value <= MIN_RANGE || rep->laser->val_front <= MIN_RANGE)) {
+    if((rep->sonar->valid) == 1 && (rep->laser->val_front <= MIN_SENSOR_RANGE)) {
         // &&   is_sonar_reliable(rep, state)){
         return 1;
     }
@@ -48,7 +48,7 @@ uint8_t check_wall_front(rep_t *rep, state_t state){
 
 uint8_t check_wall_left(rep_t *rep) {
     //Check map
-    if (rep->laser->val_left <= MIN_RANGE) {
+    if (rep->laser->val_left <= MIN_SENSOR_RANGE) {
         return 1;
     }
     return 0;
@@ -56,45 +56,45 @@ uint8_t check_wall_left(rep_t *rep) {
 
 uint8_t check_wall_right(rep_t *rep) {
     //Check map
-    if (rep->laser->val_right <= MIN_RANGE) {
+    if (rep->laser->val_right <= MIN_SENSOR_RANGE) {
         return 1;
     }
     return 0;
 }
 
 uint8_t check_ground(rep_t *rep) {
-    if (rep->ir_bottom->value <= MIN_RANGE) {
+    if (rep->ir_bottom->value <= MIN_SENSOR_RANGE) {
         return 1;
     }
     return 0;
 }
 
 uint8_t check_ceiling(rep_t *rep) {
-    if (rep->ir_top->value <= MIN_RANGE) {
+    if (rep->ir_top->value <= MIN_SENSOR_RANGE) {
         return 1;
     }
     return 0;
 }
 
 uint8_t check_win_front(rep_t *rep, state_t state) {
-    if (rep->sonar->valid && rep->laser->val_left >= MIN_RANGE && rep->sonar->value <= MIN_RANGE &&
-            is_sonar_reliable(rep, state)) {
+    if (rep->sonar->valid && rep->sonar->value <= MIN_SENSOR_RANGE) {
+            //is_sonar_reliable(rep, state)) {
         return 1;
     }
     return 0;
 }
 
-uint8_t check_win_left(rep_t *rep) {
-    if (rep->laser->val_left >= MIN_RANGE) {
+uint8_t check_win_left(state_t *state) {
+    //if (rep->laser->val_left >= MIN_RANGE) {
         //Cross reference map and turn to check with sonar if necessary
-    }
+    //}
     return 0;
 }
 
-uint8_t check_win_right(rep_t *rep) {
-    if (rep->laser->val_right >= MIN_RANGE) {
+uint8_t check_win_right(state_t *state) {
+    //if (rep->laser->val_right >= MIN_RANGE) {
         //Cross reference map and turn to check with sonar if necessary
-    }
+    //}
     return 0;
 }
 
@@ -133,8 +133,8 @@ void update_state(state_t *state, rep_t *rep){
     state->wall_left = check_wall_left(rep);
     state->wall_right = check_wall_right(rep);
     state->win_front = check_win_front(rep, *state);
-    state->win_left = check_win_left(rep);
-    state->win_right = check_win_right(rep);
+    //state->win_left = check_win_left(state);
+    //state->win_right = check_win_right(state);
     state->blocked_front = check_blocked_front(state);
     state->blocked_left = check_blocked_left(state);
     state->blocked_right = check_blocked_right(state);
@@ -180,13 +180,11 @@ void init_nav(nav_t *nav){
 void navigation(rep_t *rep, nav_t *nav){
 
     update_state(&nav->state, rep);
-    task_t currenttask = nav->task;
-
     update_angle(rep,nav);
     update_pos(rep, nav);
-    draw_map(rep, nav);
+    update_map(rep, nav);
 
-    switch(currenttask){
+    switch(nav->task){
         case IDLE:
             on_idle(rep, nav); break;
         case TURNING:
@@ -201,6 +199,8 @@ void navigation(rep_t *rep, nav_t *nav){
             on_follow_forward(rep, nav); break;
         case FOLLOW_FURTHER:
             on_follow_further(rep, nav); break;
+        case FOLLOW_CHECK:
+            on_follow_check(rep, nav); break;
         case FOLLOW_TURN:
             on_follow_turn(rep, nav); break;
         case SEARCHING:
@@ -276,12 +276,19 @@ void on_move_forward(rep_t *rep, nav_t *nav){
 
     update_nav_value(&nav->val, rep->fc->vel->y);
 
-    if(nav->state.blocked_front) {
-        nav->state.follow_left = 1;
+    nav->state.follow_left = 1;
+    if(nav->state.wall_front) {
         move_stop(rep->fc);
-        nav_turn_right(rep, nav, fix16_from_float(M_PI/2));
+        nav_follow_turn(rep, nav);
+
+    } else if (nav->state.win_front) {
+        nav->state.win_check = 1;
+        nav->state.win_left = 1;
+        move_stop(rep->fc);
+        nav_follow_check(rep, nav);
+
     } else if (nav->val == 0) {
-        nav_idle(rep, nav);
+        nav_move_forward(rep, nav, fix16_from_int(25));
     }
 }
 
@@ -298,28 +305,69 @@ void on_move_down(rep_t *rep, nav_t *nav){
 }
 
 void on_follow_forward(rep_t *rep, nav_t *nav){
-    if (nav->state.follow_left && !nav->state.blocked_left) {
-        nav_follow_further(rep, nav);
-    }
-
-    if (nav->state.follow_right && !nav->state.blocked_right) {
-        nav_follow_further(rep, nav);
-    }
-
     update_nav_value(&nav->val, rep->fc->vel->y);
 
     if (nav->state.blocked_front) {
         move_stop(rep->fc);
         nav_follow_turn(rep, nav);
+        return;
     }
+
+    if (nav->state.follow_left && !nav->state.blocked_left) {
+        nav_follow_further(rep, nav, fix16_from_int(50));
+        return;
+    }
+
+    if (nav->state.follow_right && !nav->state.blocked_right) {
+        nav_follow_further(rep, nav, fix16_from_int(50));
+        return;
+    }
+
 }
 
 void on_follow_further(rep_t *rep, nav_t *nav){
     update_nav_value(&nav->val, rep->fc->vel->y);
 
-    if (nav->state.wall_front ||  nav->val == 0) {
+    if (nav->state.blocked_front) {
         move_stop(rep->fc);
-        nav_follow_turn(rep, nav);
+        if (nav->state.blocked_left)
+            nav_follow_turn(rep, nav);
+        else
+            nav_follow_check(rep, nav);
+        return;
+    }
+
+    if (nav->state.wall_left && nav->state.follow_left) {
+        nav_follow_forward(rep, nav);
+        nav->state.win_left = 0;
+        return;
+    }
+
+    if (nav->val == 0) {
+        move_stop(rep->fc);
+        nav_follow_check(rep, nav);
+        return;
+    }
+}
+
+void on_follow_check(rep_t *rep, nav_t *nav) {
+    update_nav_value(&nav->val, rep->fc->gyro);
+
+    if(nav->val == 0) {
+        // Check window
+        if (nav->state.win_front && !nav->state.win_check) {
+            if (nav->state.follow_left)
+                nav->state.win_left = 1;
+            else
+                nav->state.win_right = 1;
+
+            nav->state.win_check = 1;
+            nav_follow_check(rep, nav);
+        } else {
+            nav->state.win_check = 0;
+            move_stop(rep->fc);
+            nav_follow_further(rep, nav, fix16_from_int(65));
+        }
     }
 }
 
@@ -327,8 +375,16 @@ void on_follow_turn(rep_t *rep, nav_t *nav) {
     update_nav_value(&nav->val, rep->fc->gyro);
 
     if(nav->val == 0){
+        /*
+        if (nav->state.win_front) {
+            if (nav->state.follow_left)
+                nav->state.win_left = 1;
+            else
+                nav->state.win_right = 1;
+        }*/
         move_stop(rep->fc);
-        nav_move_forward(rep, nav, fix16_from_int(MIN_RANGE));
+        nav_follow_forward(rep, nav);
+        //nav_follow_further(rep, nav);
     }
 }
 
@@ -380,18 +436,32 @@ void nav_follow_forward(rep_t *rep, nav_t *nav){
     nav->task = FOLLOW_FORWARD;
 }
 
-void nav_follow_further(rep_t *rep, nav_t *nav) {
+void nav_follow_further(rep_t *rep, nav_t *nav, fix16_t distance) {
     move_forward(rep->fc);
-    nav->val = fix16_from_int(MIN_RANGE);
+    nav->val = distance;
     nav->task = FOLLOW_FURTHER;
 }
 
-void nav_follow_turn(rep_t *rep, nav_t *nav){
-    if (nav->state.follow_left && !nav->state.blocked_left) {
-        rotate_left(rep->fc);
-    } else {
+void nav_follow_check(rep_t *rep, nav_t *nav) {
+    if (nav->state.win_check) {
         rotate_right(rep->fc);
+    } else {
+        rotate_left(rep->fc);
     }
+
+    nav->val = fix16_from_float(M_PI/2);
+    nav->task = FOLLOW_CHECK;
+}
+
+void nav_follow_turn(rep_t *rep, nav_t *nav){
+    if (nav->state.follow_left) {
+        nav->state.win_left = 0;
+        rotate_right(rep->fc);
+    } else {
+        nav->state.win_right = 0;
+        rotate_left(rep->fc);
+    }
+
     nav->val = fix16_from_float(M_PI/2);
     nav->task = FOLLOW_TURN;
 }
@@ -412,13 +482,13 @@ void align_to_wall(rep_t *rep, nav_t *nav){
 
     degrees_to_turn = diff_wall;  //fix16_rad_to_deg(fix16_asin(fix16_div(drift, fix16_mul(fix16_sin(fix16_from_int(PERPENDICULAR_RAD)), diffWall)))); todo: Insert proper calculation
 
-    if (diff_wall < 0 && rep->laser->val_left < MIN_RANGE){
+    if (diff_wall < 0 && rep->laser->val_left < MIN_SENSOR_RANGE){
         nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
-    } else if (diff_wall < 0 && rep->laser->val_right < MIN_RANGE) {
+    } else if (diff_wall < 0 && rep->laser->val_right < MIN_SENSOR_RANGE) {
         nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
-    } else if (diff_wall > 0 && rep->laser->val_left < MIN_RANGE) {
+    } else if (diff_wall > 0 && rep->laser->val_left < MIN_SENSOR_RANGE) {
         nav_turn_left(rep, nav, abs(fix16_to_int(degrees_to_turn)));
-    } else if (diff_wall > 0 && rep->laser->val_right < MIN_RANGE) {
+    } else if (diff_wall > 0 && rep->laser->val_right < MIN_SENSOR_RANGE) {
         nav_turn_right(rep, nav, abs(fix16_to_int(degrees_to_turn)));
     }
 }
@@ -477,7 +547,7 @@ uint8_t check_alignment_wall(rep_t *rep, nav_t *nav){
         if (nav->prev_dist_wall != rep->laser->val_right && rep->laser->val_right != LASER_MAX_RANGE){
             return 0;
         }
-    } else if (rep->laser->val_left < MIN_RANGE){
+    } else if (rep->laser->val_left < MIN_SENSOR_RANGE){
 
         if(nav->prev_dist_wall == 0 && rep->laser->val_left != LASER_MAX_RANGE){
             nav->prev_dist_wall = rep->laser->val_left;
@@ -556,7 +626,7 @@ void draw_obstacle(uint16_t val, nav_t *nav, const fix16_t side_offset, fieldsta
     //map_write_line(pix_drone, pix_obst, VISITED);
 }
 
-void draw_map(rep_t *rep, nav_t *nav){
+void update_map(rep_t *rep, nav_t *nav){
     map_set_position(nav, VISITED);
 
     if((rep->sonar->value < MIN_DRAW_RANGE || rep->laser->val_front <= MIN_DRAW_RANGE)

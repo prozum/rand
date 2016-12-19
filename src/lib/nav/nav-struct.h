@@ -26,6 +26,7 @@ typedef enum task_e {
     MOVEDOWN,
     FOLLOW_FORWARD,
     FOLLOW_FURTHER,
+    FOLLOW_CHECK,
     FOLLOW_TURN,
     SEARCHING
 } task_t;
@@ -37,6 +38,7 @@ typedef struct state_s {
     uint8_t win_front       : 1; //!< Window within 40cm in front
     uint8_t win_right       : 1; //!< Window within 40cm on the right
     uint8_t win_left        : 1; //!< Window within 40cm on the left
+    uint8_t win_check       : 1; //!< Window checked
     uint8_t ground          : 1; //!< Floor within 40cm below
     uint8_t ceiling         : 1; //!< Ceiling within 40cm above
     uint8_t blocked_front   : 1; //!< There is either a window or WALL in front
