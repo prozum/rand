@@ -26,6 +26,7 @@ Compile Instructions:
 ---------------------
 
 RANDIE uses CMake as the build system. The build system uses the following flags:
+
 CMake Options | Default Value | Meaning
 ------------- | ------------- | -------------
 TESTS         |       0       | Build the unit and component tests and the RANDSIM simulator
