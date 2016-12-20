@@ -1,10 +1,6 @@
-[![Travis: Build Status](https://travis-ci.org/prozum/rand.svg?branch=master)](https://travis-ci.org/prozum/rand)
-[![Coverity: Analysis Status](https://scan.coverity.com/projects/11118/badge.svg)](https://scan.coverity.com/projects/11118)
-
-RANDIE (Realtime Autonomous Navigational Drone for Indoor Environments
-======================================================================
-Firmware for an indoor navigation drone. The current implementation is based on the ATmega 328p microprocessor, but a header-file for the 1280p is included as well. The RANDSIM simulator is included as well, because the drone is not capable of flying yet. The firmware is written entirely in C and the simulator is written in C/C++. The following describes how to run the simulator alon
-g with general information about the project.
+RANDIE
+======
+Firmware for an indoor navigation drone. The current implementation is based on the ATmega 328p microprocessor, but a header-file for the 1280p is included as well. The RANDSIM simulator is included as well, because the drone is not capable of flying yet. The firmware is written entirely in C and the simulator is written in C/C++. The following describes how to run the simulator along with general information about the project.
 
 Dependencies:
 ------------------------------------------------
@@ -15,7 +11,7 @@ Dependencies:
 - Graphviz version 2.38.0 or newer
 - Doxygen version 1.8.11-1 or newer
 - C version c11
-- C++ version 14 
+- C++ version 14
 - avr-gcc version 4.8.1
 - avr-g++ version 4.8.1
 - avrdude version 6.1
@@ -49,4 +45,3 @@ make randsim
 cd test/randsim/
 ./randsim
 ```
-

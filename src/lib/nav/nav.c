@@ -535,7 +535,6 @@ uint8_t is_sonar_reliable(rep_t *rep, state_t state) {
     }
 }
 
-#define MIN_TAKEACITON_RANGE 20
 uint8_t check_alignment_wall(rep_t *rep, nav_t *nav) {
 
     if (nav->state.blocked_right) {
