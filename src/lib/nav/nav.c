@@ -239,17 +239,12 @@ void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
 void on_idle(rep_t *rep, nav_t *nav) {
     state_t state = nav->state;
 
-    if (!(state.blocked_front || check_follow_wall(&state))) {
+    if (!(state.blocked_front || state.follow)) {
         nav_move_forward(rep, nav, fix16_from_int(25));
         return;
     }
 
-    if (state.follow_right) {
-        nav_follow_forward(rep, nav);
-        return;
-    }
-
-    if (state.follow_left) {
+    if (state.follow) {
         nav_follow_forward(rep, nav);
         return;
     }
@@ -261,16 +256,6 @@ void on_turning(rep_t *rep, nav_t *nav) {
     update_nav_value(&nav->val, rep->fc->gyro);
 
     if (nav->val == 0) {
-        move_stop(rep->fc);
-        nav->task = IDLE;
-    }
-}
-
-void on_turnaround(rep_t *rep, nav_t *nav) {
-    update_nav_value(&nav->val, rep->fc->gyro);
-
-    if (nav->val == 0) {
-        update_angle(rep, nav);
         move_stop(rep->fc);
         nav->task = IDLE;
     }
@@ -380,16 +365,8 @@ void on_follow_turn(rep_t *rep, nav_t *nav) {
     update_nav_value(&nav->val, rep->fc->gyro);
 
     if (nav->val == 0) {
-        /*
-        if (nav->state.win_front) {
-            if (nav->state.follow_left)
-                nav->state.win_left = 1;
-            else
-                nav->state.win_right = 1;
-        }*/
         move_stop(rep->fc);
         nav_follow_forward(rep, nav);
-        // nav_follow_further(rep, nav);
     }
 }
 

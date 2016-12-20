@@ -31,6 +31,7 @@ typedef struct ir_s {
  * @param pin - The pin to read infrared values from
  */
 void ir_init(ir_t *ir, apin_t pin);
+
 /**
  * Reads a value from the ir specified by the pointer
  * @param ir - A pointer to the ir_t struct that represents the infrared sensor

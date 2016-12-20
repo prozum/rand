@@ -98,8 +98,8 @@ void uart_init() {
 #else
     UCSR0A &= ~(_BV(U2X0));
 #endif
-    UCSR0C = _BV(UCSZ01) | _BV(UCSZ00); /* 8-bit data */
-    UCSR0B = _BV(RXEN0) | _BV(TXEN0);   /* Enable RX and TX */
+    UCSR0C = _BV(UCSZ01) | _BV(UCSZ00); // 8-bit data
+    UCSR0B = _BV(RXEN0) | _BV(TXEN0);   // Enable RX and TX
 }
 
 void uart_putchar(char c) {
@@ -110,12 +110,12 @@ void uart_putchar(char c) {
 
 char uart_getchar() {
     while (!(UCSR0A) & (1 << RXC0))
-        ; /* Wait until data exists. */
+        ; // Wait until data exists.
     return UDR0;
 }
 
 char uart_trygetchar() {
-    if (!(UCSR0A & (1 << UDRE0))) { /* If unread data exists. */
+    if (!(UCSR0A & (1 << UDRE0))) { // If unread data exists.
         return UDR0;
     }
     return '\0'; // Return \0 if no unread data is found.
@@ -128,7 +128,7 @@ void serial_write_string(tx_t pin, char *out) {
     if (len > MAX_IO_STR_LEN)
         return;
 
-    for (i = 0; i < strlen(out); i++) { //(out[i] != '\0')
+    for (i = 0; i < strlen(out); i++) { // (out[i] != '\0')
         uart_putchar(out[i]);
     }
 }

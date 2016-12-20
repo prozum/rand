@@ -20,7 +20,7 @@
 /**
  * As all output values of the IR sensor that can be accurately translated are within a margin of 256
  */
-uint8_t IR_to_cm[256] = {
+uint8_t ir_to_cm[256] = {
     19, 19, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17,
     17, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15,
     15, 15, 15, 15, 15, 15, 14, 14, 14, 14, 80, 79, 78, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 64, 63, 62,
@@ -45,7 +45,7 @@ uint16_t ir_read(ir_t *ir) {
     if (value <= MAX_DISTANCE_RAW_VALUE)
         return MAX_DISTANCE;
 
-    return IR_to_cm[(uint8_t)value];
+    return ir_to_cm[(uint8_t)value];
 }
 
 /*
