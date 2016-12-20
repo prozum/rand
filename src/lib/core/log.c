@@ -20,7 +20,7 @@ void init_logging(log_level_t lvl) {
 #if MOCK
     // Produce a message with version and project-name
     char init_msg[30];
-    strcpy(init_msg, MAJOR_VERSION);
+    strcpy(init_msg, VERSION);
     strcat(init_msg, ", version: ");
     strcat(init_msg, PROJECT_NAME);
 

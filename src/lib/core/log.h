@@ -11,8 +11,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define MAJOR_VERSION "0.0\0"     //!< Defines the version of the firmware, read as major.minor
-#define PROJECT_NAME "RAND(IE)\0" //!< Defines the firmware's name
+#define VERSION "0.1 Alpha"     //!< Defines the version of the firmware, read as major.minor
+#define PROJECT_NAME "RAND(IE)" //!< Defines the firmware's name
 
 /**
  * An enum for storing the granularity of the logging system
