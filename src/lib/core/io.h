@@ -170,7 +170,7 @@ void eeprom_write(uint16_t p, uint8_t value);
 /**
  * Reads a byte from the eeprom at the specified address
  * @param p - The address to read from
- * @return
+ * @return - The value read
  */
 uint8_t eeprom_read(uint16_t p);
 /**

@@ -239,17 +239,12 @@ void update_nav_value(fix16_t *nav_val, fix16_t velocity) {
 void on_idle(rep_t *rep, nav_t *nav) {
     state_t state = nav->state;
 
-    if (!(state.blocked_front || check_follow_wall(&state))) {
-        nav_move_forward(rep, nav, fix16_from_int(25));
+    if (!(state.blocked_front || state.follow)) {
+        nav_move_forward(rep, nav, fix16_from_int(CENTIMETERS_PR_FIELD));
         return;
     }
 
-    if (state.follow_right) {
-        nav_follow_forward(rep, nav);
-        return;
-    }
-
-    if (state.follow_left) {
+    if (state.follow) {
         nav_follow_forward(rep, nav);
         return;
     }
@@ -266,33 +261,16 @@ void on_turning(rep_t *rep, nav_t *nav) {
     }
 }
 
-void on_turnaround(rep_t *rep, nav_t *nav) {
-    update_nav_value(&nav->val, rep->fc->gyro);
-
-    if (nav->val == 0) {
-        update_angle(rep, nav);
-        move_stop(rep->fc);
-        nav->task = IDLE;
-    }
-}
-
 void on_move_forward(rep_t *rep, nav_t *nav) {
     // if(!check_alignment_wall(rep, nav))
     //    align_to_wall(rep, nav);
 
     update_nav_value(&nav->val, rep->fc->vel->y);
 
-    nav->state.follow_left = 1;
-    if (nav->state.wall_front) {
+    nav->state.follow_left = 1; // Follow left by default
+    if (nav->state.blocked_front) {
         move_stop(rep->fc);
         nav_follow_turn(rep, nav);
-
-    } else if (nav->state.win_front) {
-        nav->state.win_check = 1;
-        nav->state.win_left = 1;
-        move_stop(rep->fc);
-        nav_follow_check(rep, nav);
-
     } else if (nav->val == 0) {
         nav_move_forward(rep, nav, fix16_from_int(25));
     }
@@ -380,16 +358,8 @@ void on_follow_turn(rep_t *rep, nav_t *nav) {
     update_nav_value(&nav->val, rep->fc->gyro);
 
     if (nav->val == 0) {
-        /*
-        if (nav->state.win_front) {
-            if (nav->state.follow_left)
-                nav->state.win_left = 1;
-            else
-                nav->state.win_right = 1;
-        }*/
         move_stop(rep->fc);
         nav_follow_forward(rep, nav);
-        // nav_follow_further(rep, nav);
     }
 }
 

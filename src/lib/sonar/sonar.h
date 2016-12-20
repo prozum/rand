@@ -43,6 +43,7 @@ void sonar_init(sonar_t *sonar, dpin_t trig, dpin_t echo);
  * @param sonar - A pointer to the sonar_t struct for the sonar
  */
 void read_sonar(sonar_t *sonar);
+
 /**
  * Pings the sonar with a specified value
  * @param sonar - A pointer to the sonar_t struct for the sonar
