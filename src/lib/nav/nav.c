@@ -240,7 +240,7 @@ void on_idle(rep_t *rep, nav_t *nav) {
     state_t state = nav->state;
 
     if (!(state.blocked_front || state.follow)) {
-        nav_move_forward(rep, nav, fix16_from_int(25));
+        nav_move_forward(rep, nav, fix16_from_int(CENTIMETERS_PR_FIELD));
         return;
     }
 
@@ -267,17 +267,10 @@ void on_move_forward(rep_t *rep, nav_t *nav) {
 
     update_nav_value(&nav->val, rep->fc->vel->y);
 
-    nav->state.follow_left = 1;
-    if (nav->state.wall_front) {
+    nav->state.follow_left = 1; // Follow left by default
+    if (nav->state.blocked_front) {
         move_stop(rep->fc);
         nav_follow_turn(rep, nav);
-
-    } else if (nav->state.win_front) {
-        nav->state.win_check = 1;
-        nav->state.win_left = 1;
-        move_stop(rep->fc);
-        nav_follow_check(rep, nav);
-
     } else if (nav->val == 0) {
         nav_move_forward(rep, nav, fix16_from_int(25));
     }
