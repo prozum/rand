@@ -34,7 +34,7 @@
 #define PITCH P10    //!< The pin connected to the pitch-axis of the flight-controller
 #define THROTTLE P11 //!< The pin connected to the throttle-axis of the flight-controller
 
-//! This allows the speed to travel 4.42 meters thus a bit above the cap of 2.2 meters
+//! This allows the sound to travel 4.42 meters thus a bit above the cap of 2.2 meters
 #define SONAR_TIMEOUT 13 * ONE_MS //!< The timeout for the sonar in ticks
 #define SONAR_TRIGGER_PIN P2      //!< The trigger-pin for the sonar
 #define SONAR_ECHO_PIN P3         //!< The echo-pin for the sonar

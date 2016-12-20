@@ -43,7 +43,7 @@ typedef enum fieldstate_e { UNVISITED = 0, VISITED = 1, WALL = 2, WINDOW = 3 } f
 typedef struct map_coord_s {
     uint8_t x;     //!< The x-coordinate
     uint8_t y;     //!< The y-coordinate
-    uint8_t valid; //!< ARNE MUST DOCUMENT
+    uint8_t valid; //!< True if the coordinate is within map bounds
 } map_coord_t;
 
 /**
