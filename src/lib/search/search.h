@@ -34,9 +34,9 @@ typedef struct search_node_s search_node_t;
 struct search_node_s {
     map_coord_t pos;       //!< Position on the drone's internal map
     search_node_t *parent; //!< The parent of the node in the constructed search-tree
-    uint8_t gscore;        //!< ARNE MUST DOCUMENT
-    uint8_t fscore;        //!< ARNE MUST DOCUMENT
-    uint8_t valid;         //!< ARNE MUST DOCUMENT
+    uint8_t gscore;        //!< The estimated path from the search node to the goal
+    uint8_t fscore;        //!< The traversed path from start to this node
+    uint8_t valid;         //!< False if the node has been closed, or not opened yet.
 };
 
 /**
@@ -59,22 +59,22 @@ void init_search(search_t *search);
 /**
  * Attempt to find a path between the drone's current position and the point specified in the nav->search_data->goal
  * @param nav - A pointer to the nav_t struct maintaining information about position, angle etc.
- * @return - A path to the specified point?
+ * @return - The goal node from which the shortest path to it can be reconstructed
  */
 search_node_t *find_path(nav_t *nav);
 /**
  * Adds a node the the specified list
  * @param list - A pointer to the list to add to
  * @param node - The node to add
- * @param set - NEEDS DOCUMENTATION
- * @return - NEEDS DOCUMENTATION
+ * @param set - the set which a node is added to. This can be either the open or the closed set
+ * @return - a reference to the node in the list it has been added to
  */
 search_node_t *addnode(search_t *list, search_node_t node, set_t set);
 /**
- * Close a specified node from the search list
+ * Close a specified node from the open search list and add it to the closed set
  * @param list - The search list
  * @param node - The node to close
- * @return - NEEDS DOCUMENTATION
+ * @return - a reference to the node in the closed set.
  */
 search_node_t *close_node(search_t *list, search_node_t *node);
 /**
@@ -86,14 +86,14 @@ void add_neighbours(search_t *list, search_node_t *node);
 /**
  * Estimates a given node from the current position
  * @param node - A pointer to the node to estimate
- * @param pos - The drone's current position
- * @return - NEEDS DOCUMENTATION
+ * @param pos - The goal position
+ * @return - the estimate of the path length from the node to the goal
  */
 uint8_t estimate(search_node_t *node, map_coord_t pos);
 /**
  * Finds the node with the lowest f-estimate on the search list
  * @param search The search list to search in
- * @return The node with the lowest f-estimate
+ * @return The node with the lowest traversed path from the start
  */
 search_node_t lowestf(search_t *search);
 
