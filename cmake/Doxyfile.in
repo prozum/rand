@@ -6,7 +6,8 @@ EXCLUDE                = @PROJECT_SOURCE_DIR@/src/lib/libfixmath/ \
                          @PROJECT_SOURCE_DIR@/src/lib/gdb/        \
                          @PROJECT_SOURCE_DIR@/test/
 
-EXCLUDE_PATTERNS       = */cmake-build-debug/*
+EXCLUDE_PATTERNS       = */cmake-build-debug/* \ 
+			 */build/*
 FILE_PATTERNS          = *.c \
                          *.h
 
