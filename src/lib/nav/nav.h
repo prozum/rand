@@ -364,14 +364,6 @@ fieldstate_t map_check_point(uint8_t x, uint8_t y);
 fieldstate_t map_check_position(nav_t *nav);
 
 /**
- * Aligns the drones internal representation of the world to the drone's map
- * @param x_coord - Real world x-coordinate
- * @param y_coord - Real world y-coordinate
- * @return - A struct containing the map-coordinates
- */
-map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord);
-
-/**
  * Calculate offset on the y-axis from an angle and a distance
  * @param angle - The angle specified in radians
  * @param distance - The distance to the object

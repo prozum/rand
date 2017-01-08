@@ -5,12 +5,6 @@
 
 #include "task.h"
 
-//! Defines the lowest and highest accepted world-position on the internal drone map
-#define LOWEST_Y_ORG 0
-#define HIGHEST_Y_ORG (MAP_HEIGHT * CENTIMETERS_PR_FIELD)
-#define LOWEST_X_ORG 0
-#define HIGHEST_X_ORG (MAP_WIDTH * CENTIMETERS_PR_FIELD)
-
 #define M_PI 3.14159265358979323846
 
 fix16_t calc_y_dist(fix16_t angle, fix16_t distance) {
@@ -530,51 +524,6 @@ uint8_t check_alignment_wall(rep_t *rep, nav_t *nav) {
     }
 
     return 1;
-}
-
-map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord) {
-
-    uint16_t y_low = (uint16_t)LOWEST_Y_ORG;
-    uint16_t x_low = (uint16_t)LOWEST_X_ORG;
-
-    map_coord_t res;
-    res.valid = true;
-
-    uint8_t x_mod = (x_coord - x_low) % CENTIMETERS_PR_FIELD;
-    if (x_mod >= CENTIMETERS_PR_FIELD / 2) {
-        res.x = (x_coord - x_low) / CENTIMETERS_PR_FIELD + 1;
-    } else {
-        res.x = (x_coord - x_low) / CENTIMETERS_PR_FIELD;
-    }
-
-    if (res.x < 0) {
-        WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
-        res.valid = false;
-        res.x = 0;
-    } else if (res.x >= MAP_WIDTH) {
-        WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
-        res.valid = false;
-        res.x = MAP_WIDTH;
-    }
-
-    uint8_t y_mod = (y_coord - y_low) % CENTIMETERS_PR_FIELD;
-    if (y_mod >= CENTIMETERS_PR_FIELD / 2) {
-        res.y = (y_coord - y_low) / CENTIMETERS_PR_FIELD + 1;
-    } else {
-        res.y = (y_coord - y_low) / CENTIMETERS_PR_FIELD;
-    }
-
-    if (res.y < 0) {
-        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
-        res.valid = false;
-        res.y = 0;
-    } else if (res.y >= MAP_HEIGHT) {
-        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
-        res.valid = false;
-        res.y = MAP_HEIGHT;
-    }
-
-    return res;
 }
 
 void draw_obstacle(uint16_t val, nav_t *nav, const fix16_t side_offset, fieldstate_t state) {

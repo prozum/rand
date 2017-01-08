@@ -3,6 +3,51 @@
 #include "nav/nav.h"
 #include "task.h"
 
+map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord) {
+
+    uint16_t y_low = (uint16_t)LOWEST_Y_ORG;
+    uint16_t x_low = (uint16_t)LOWEST_X_ORG;
+
+    map_coord_t res;
+    res.valid = true;
+
+    uint8_t x_mod = (x_coord - x_low) % CENTIMETERS_PR_FIELD;
+    if (x_mod >= CENTIMETERS_PR_FIELD / 2) {
+        res.x = (x_coord - x_low) / CENTIMETERS_PR_FIELD + 1;
+    } else {
+        res.x = (x_coord - x_low) / CENTIMETERS_PR_FIELD;
+    }
+
+    if (res.x < 0) {
+        WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
+        res.valid = false;
+        res.x = 0;
+    } else if (res.x >= MAP_WIDTH) {
+        WARNING(SENDER_MAP, "align_to_map: x-coord out of bounds");
+        res.valid = false;
+        res.x = MAP_WIDTH;
+    }
+
+    uint8_t y_mod = (y_coord - y_low) % CENTIMETERS_PR_FIELD;
+    if (y_mod >= CENTIMETERS_PR_FIELD / 2) {
+        res.y = (y_coord - y_low) / CENTIMETERS_PR_FIELD + 1;
+    } else {
+        res.y = (y_coord - y_low) / CENTIMETERS_PR_FIELD;
+    }
+
+    if (res.y < 0) {
+        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
+        res.valid = false;
+        res.y = 0;
+    } else if (res.y >= MAP_HEIGHT) {
+        WARNING(SENDER_MAP, "align_to_map: y-coord out of bounds");
+        res.valid = false;
+        res.y = MAP_HEIGHT;
+    }
+
+    return res;
+}
+
 search_node_t *find_path(nav_t *nav) {
     search_t *search = &nav->search_data;
     uint8_t valid;

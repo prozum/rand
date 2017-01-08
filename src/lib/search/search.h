@@ -9,8 +9,15 @@
  */
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "map/map.h"
+
+//! Defines the lowest and highest accepted world-position on the internal drone map
+#define LOWEST_Y_ORG 0
+#define HIGHEST_Y_ORG (MAP_HEIGHT * CENTIMETERS_PR_FIELD)
+#define LOWEST_X_ORG 0
+#define HIGHEST_X_ORG (MAP_WIDTH * CENTIMETERS_PR_FIELD)
 
 typedef struct nav_s nav_t; //!< Forward declare due to circular dependencies
 
@@ -56,6 +63,15 @@ typedef struct search_s {
  * @param search - A pointer to the search_t struct to initialize
  */
 void init_search(search_t *search);
+
+/**
+ * Aligns the drones internal representation of the world to the drone's map
+ * @param x_coord - Real world x-coordinate
+ * @param y_coord - Real world y-coordinate
+ * @return - A struct containing the map-coordinates
+ */
+map_coord_t align_to_map(uint16_t x_coord, uint16_t y_coord);
+
 /**
  * Attempt to find a path between the drone's current position and the point specified in the nav->search_data->goal
  * @param nav - A pointer to the nav_t struct maintaining information about position, angle etc.

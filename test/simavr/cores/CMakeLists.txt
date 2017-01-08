@@ -4,7 +4,7 @@ file(GLOB SRCS
 add_library(simavr-cores ${SRCS})
 target_link_libraries(simavr-cores simavr)
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR MINGW)
     include_directories(simavr-cores /usr/lib/avr/include)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     include_directories(simavr-cores /Applications/Arduino.app/Contents/Java/hardware/tools/avr/avr/include/)
