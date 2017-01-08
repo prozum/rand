@@ -439,7 +439,7 @@ function(GENERATE_AVR_FIRMWARE INPUT_NAME)
         elseif (CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
             file(GLOB INPUT_PORTS /dev/cu.usbmodem*)
         else ()
-            message(FATAL_ERROR "${CMAKE_HOST_SYSTEM_NAME} not supported yet.")
+          message(WARNING "${CMAKE_HOST_SYSTEM_NAME} port detection not supported yet.")
         endif ()
 
         if (INPUT_PORTS)
