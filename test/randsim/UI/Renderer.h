@@ -50,7 +50,8 @@ class Renderer {
     virtual bool init() = 0;
 
     virtual void clear() = 0;
-    virtual void update() = 0;
+    virtual void present() = 0;
+    virtual void delay() = 0;
 
     virtual void setColor(Color C, int Alpha = 255) = 0;
 

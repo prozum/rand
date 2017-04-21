@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SDL.h>
-#include <SDL2_gfxPrimitives.h>
 #include <SDL_ttf.h>
 
 #include "UI/Renderer.h"
@@ -23,7 +22,8 @@ class SdlRenderer : public Renderer {
     ~SdlRenderer();
 
     void clear();
-    void update();
+    void delay();
+    void present();
 
     void setColor(Color C, int Alpha = 255);
 

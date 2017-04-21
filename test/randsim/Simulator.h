@@ -29,6 +29,7 @@ class Simulator {
     ~Simulator();
 
     int run();
+    int loop();
 
     void drawObjects();
     void updateObjects();

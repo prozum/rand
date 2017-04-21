@@ -1,7 +1,6 @@
 #include "Simulator.h"
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <fstream>
 #include <iostream>
 
@@ -11,11 +10,22 @@
 #include "UI/Minimap.h"
 #include "UI/SdlRenderer.h"
 
+#if __EMSCRIPTEN__
+#include <emscripten.h>
+
+Simulator *ThisSim;
+extern "C" void c_loop() {
+    ThisSim->loop();
+}
+#endif
 
 using namespace std;
 
 Simulator::Simulator() {
     SimObject::setDefaultSimulator(this);
+#if __EMSCRIPTEN__
+    ThisSim = this;
+#endif
 
     Render = make_unique<SdlRenderer>();
     BBuilder = make_unique<BlockBuilder>(*this);
@@ -30,8 +40,7 @@ Simulator::Simulator() {
 Simulator::~Simulator() {}
 
 int Simulator::run() {
-    SDL_Event Event;
-
+    int Res;
     if (!Render->init()) {
         return 1;
     }
@@ -44,61 +53,80 @@ int Simulator::run() {
         return 1;
     }
 
-    while (true) {
-        while (SDL_PollEvent(&Event) == 1) {
-            BBuilder->handleEvent(Event);
+    #ifdef __EMSCRIPTEN__
+        emscripten_set_main_loop(c_loop, 0, 1);
+    #else
+        while (true) {
+            Res = loop();
+            if (Res != 0)
+                return Res;
 
-            switch (Event.type) {
-            case SDL_QUIT:
+            Render->delay();
+        }
+    #endif
+
+    return 1;
+}
+
+int Simulator::loop() {
+    SDL_Event Event;
+
+    while (SDL_PollEvent(&Event) == 1) {
+        BBuilder->handleEvent(Event);
+
+        switch (Event.type) {
+        case SDL_QUIT:
+            return 1;
+        case SDL_KEYDOWN:
+            switch (Event.key.keysym.sym) {
+            case SDLK_RIGHT:
+                Render->Offset.X += int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
+                break;
+            case SDLK_LEFT:
+                Render->Offset.X -= int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
+                break;
+            case SDLK_UP:
+                Render->Offset.Y += int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
+                break;
+            case SDLK_DOWN:
+                Render->Offset.Y -= int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
+                break;
+            case SDLK_ESCAPE:
                 return 0;
-            case SDL_KEYDOWN:
-                switch (Event.key.keysym.sym) {
-                case SDLK_RIGHT:
-                    Render->Offset.X += int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
-                    break;
-                case SDLK_LEFT:
-                    Render->Offset.X -= int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
-                    break;
-                case SDLK_UP:
-                    Render->Offset.Y += int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
-                    break;
-                case SDLK_DOWN:
-                    Render->Offset.Y -= int(1 / Render->Zoom) ? int(1 / Render->Zoom) * Block::Size : Block::Size;
-                    break;
-                case SDLK_ESCAPE:
-                    return 0;
 
-                case SDLK_q:
-                    BBuilder->setCurBlockType(BlockType::Wall);
-                    break;
-                case SDLK_w:
-                    BBuilder->setCurBlockType(BlockType::Window);
-                    break;
-                }
+            case SDLK_q:
+                BBuilder->setCurBlockType(BlockType::Wall);
                 break;
-            case SDL_WINDOWEVENT:
-                if (Event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
-                    Render->WinWidth = Event.window.data1;
-                    Render->WinHeight = Event.window.data2;
-                }
-                break;
-            case SDL_MOUSEWHEEL:
-                Render->Zoom += Event.wheel.y * 0.2;
-                if (Render->Zoom < 0.2)
-                    Render->Zoom = 0.2;
-                if (Render->Zoom > 10)
-                    Render->Zoom = 10;
+            case SDLK_w:
+                BBuilder->setCurBlockType(BlockType::Window);
                 break;
             }
+            break;
+        case SDL_WINDOWEVENT:
+            if (Event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+                Render->WinWidth = Event.window.data1;
+                Render->WinHeight = Event.window.data2;
+            }
+            break;
+        case SDL_MOUSEWHEEL:
+            Render->Zoom += Event.wheel.y * 0.2;
+            if (Render->Zoom < 0.2)
+                Render->Zoom = 0.2;
+            if (Render->Zoom > 10)
+                Render->Zoom = 10;
+            break;
         }
-
-        Render->clear();
-
-        updateObjects();
-        drawObjects();
-
-        Render->update();
     }
+
+
+    Render->clear();
+
+    updateObjects();
+    drawObjects();
+
+    Render->present();
+
+    return 0;
 }
 
 void Simulator::drawObjects() {
@@ -289,9 +317,9 @@ void Simulator::drawInfoBox() {
     Render->drawText(string("Top: ") + DoubleToStr(Drn->IrTop.value), {Indent, IROffset + PropSpace * 2}, BGColor);
 
     // Block info
-    int BlockOffset = IROffset + PropSpace * 2 + ObjSpace;
-    Render->drawText(string("Block:"), {OffsetX, BlockOffset}, BGColor);
-    Render->drawText(string("Count: ") + to_string(Blocks.size()), {Indent, BlockOffset + PropSpace * 1}, BGColor);
+    //int BlockOffset = IROffset + PropSpace * 2 + ObjSpace;
+    //Render->drawText(string("Block:"), {OffsetX, BlockOffset}, BGColor);
+    //Render->drawText(string("Count: ") + to_string(Blocks.size()), {Indent, BlockOffset + PropSpace * 1}, BGColor);
 
     // Block to cm meter
     int MeterHeight = Block::Size * 4;

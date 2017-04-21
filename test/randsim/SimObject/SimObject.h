@@ -8,9 +8,9 @@
 class Simulator;
 
 class SimObject {
+public:
     static Simulator *DefaultSim;
 
-  public:
     Simulator *Sim;
 
     Vector2D Pos;
