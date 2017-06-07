@@ -33,6 +33,7 @@ DOC           |       0       | Generate Doxygen documentation (HTML)
 SERIAL_TARGETS|       0       | Enables serial communication to the host PC (for debugging)
 SAMPLES       |       0       | Build Samples
 SIZE_TARGETS  |       0       | Shows the size of the compiled firmware
+SIMULATOR     |       0       | Builds the RANDSIM simulator
 
 Since all options are boolean, they can be enabled by adding the flag "-D<OPTION>=1" when running CMake. See the example below:
 ```bash
@@ -48,7 +49,7 @@ sudo apt install cmake libsdl2-dev libsdl2-gfx-dev libsdl2-ttf-dev libsdl2-image
 # Build randsim
 cd RAND/
 mkdir build && cd build/
-cmake -DTEST=1 .. make randsim
+cmake -DSIMULATOR=1 .. make randsim
 
 # Run randsim
 cd test/randsim/ && ./randsim
