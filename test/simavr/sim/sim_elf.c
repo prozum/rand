@@ -239,7 +239,6 @@ elf_copy_section(
 	return 0;
 }
 
-
 int elf_read_firmware(const char * file, elf_firmware_t * firmware)
 {
 	Elf32_Ehdr elf_header;			/* ELF header */

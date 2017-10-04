@@ -1,0 +1,8 @@
+  subdir('blink')
+  subdir('gdb')
+  subdir('ir')
+  subdir('serial')
+  subdir('sonar')
+  subdir('map')
+  subdir('matrix')
+  subdir('libfixmath')

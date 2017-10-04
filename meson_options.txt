@@ -1,0 +1,5 @@
+option('board', type : 'string', value : 'uno', description : 'Target board')
+option('samples', type : 'boolean', value : false, description : 'Samples')
+option('test', type : 'boolean', value : false, description : 'Tests')
+option('simulator', type : 'boolean', value : false, description : 'Simulator')
+option('doc', type : 'boolean', value : false, description : 'Documentation')

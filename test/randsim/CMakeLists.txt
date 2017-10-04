@@ -3,7 +3,7 @@ if (APPLE)
 
     set(CMAKE_MACOSX_BUNDLE true)
 
-    set_source_files_properties([map.txt PROPERTIES MACOSX_PACKAGE_LOCATION Resources/)
+    set_source_files_properties(map.txt PROPERTIES MACOSX_PACKAGE_LOCATION Resources/)
 
     file(COPY "map.txt" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug/randsim.app/Contents/MacOS/)
     file(COPY "Fonts/Ubuntu-C.ttf" DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Debug/randsim.app/Contents/Resources/Fonts/)

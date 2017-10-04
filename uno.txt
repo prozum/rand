@@ -1,0 +1,36 @@
+[binaries]
+c = 'avr-gcc'
+cpp = 'avr-g++'
+ar = 'avr-ar'
+strip = 'avr-strip'
+
+[properties]
+board = 'uno'
+c_args = [
+    '-mmcu=atmega328p',
+    '-DARDUINO=106',
+    '-DF_CPU=16000000L',
+    '-I/usr/share/arduino/hardware/arduino/avr/variants/standard',
+    '-mcall-prologues',
+    '-ffunction-sections',
+    '-fdata-sections',
+    '-fno-pic'
+    ]
+cpp_args = [
+    '-mmcu=atmega328p',
+    '-DARDUINO=106',
+    '-DF_CPU=16000000L',
+    '-I/usr/share/arduino/hardware/arduino/avr/variants/standard',
+    '-mcall-prologues',
+    '-ffunction-sections',
+    '-fdata-sections',
+    '-fno-pic'
+    ]
+c_link_args = ['-mmcu=atmega328p', '-Os']
+cpp_link_args = ['-mmcu=atmega328p', '-Os']
+
+[host_machine]
+system = 'bare'
+cpu_family = 'atmega'
+cpu = 'atmega328P'
+endian = 'none'
