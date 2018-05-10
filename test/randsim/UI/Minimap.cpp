@@ -1,5 +1,5 @@
 #include "Minimap.h"
-#include "Drone.h"
+#include "SimObject/Drone.h"
 #include "Simulator.h"
 
 extern "C" {

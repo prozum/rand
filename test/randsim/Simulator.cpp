@@ -4,8 +4,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "Block.h"
-#include "Drone.h"
+#include "SimObject/Block.h"
+#include "SimObject/Drone.h"
 #include "UI/BlockBuilder.h"
 #include "UI/Minimap.h"
 #include "UI/SdlRenderer.h"

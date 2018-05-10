@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SimObject.h"
+#include "SimObject/SimObject.h"
 #include "Vector2D.h"
 
 class Ray : public SimObject {

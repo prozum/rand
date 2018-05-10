@@ -21,3 +21,4 @@ subdir('search')
 subdir('nav')
 
 # generate_avr_firmware(['main', 'BOARD', 'uno', 'SRCS', 'main.c', 'task.c', 'LIBS', 'core', 'fc', 'sonar', 'laser', 'ir', 'nav', 'search', 'kalman', 'matrix', 'map', 'libfixmath'])
+firmware = executable('firmware', 'main.c', 'task.c')

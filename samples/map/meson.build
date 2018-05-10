@@ -2,7 +2,7 @@
   source_files = 'main.c'
   # add_definitions('-DMOCK')
   # add_definitions('-D__AVR_ATmega328P__')
-  map-sample_exe = executable('map-sample', SOURCE_FILES)
+  map_sample = executable('map-sample', 'main.c')
   # target_link_libraries(['map-sample', 'map', 'core'])
   #generate_avr_firmware(map-sample
   #        BOARD uno

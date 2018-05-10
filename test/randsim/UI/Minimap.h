@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "Block.h"
-#include "SimObject.h"
+#include "SimObject/Block.h"
+#include "SimObject/SimObject.h"
 #include "UI/Renderer.h"
 
 extern "C" {
